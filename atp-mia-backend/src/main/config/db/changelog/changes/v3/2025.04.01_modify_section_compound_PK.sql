@@ -1,0 +1,6 @@
+ALTER TABLE project_section_compound_configuration
+DROP CONSTRAINT project_section_compound_configuration_pk;
+
+ALTER TABLE project_section_compound_configuration
+ADD CONSTRAINT project_section_compound_configuration_pk
+PRIMARY KEY (section_id, compound_id, place);

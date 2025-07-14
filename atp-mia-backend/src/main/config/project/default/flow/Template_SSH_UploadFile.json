@@ -1,0 +1,35 @@
+{
+  "execType": "Process",
+  "command": {
+    "pathForUpload": ":pathForUpload",
+    "displayDownloadedFileContent": false,
+    "filesForUpload": [
+      ":input_file"
+    ],
+    "name": "UploadFile",
+    "type": "SSH_UploadFile",
+    "system": "Billing System",
+    "values": [
+      "cd :pathForUpload; ls"
+    ]
+  },
+  "name": "SSH_UploadFile",
+  "inputs": [
+    {
+      "label": "Input File",
+      "maxLength": 0,
+      "required": false,
+      "name": "input_file",
+      "type": "attachment",
+      "system": "Billing System"
+    },
+    {
+      "label": "Path For Upload",
+      "maxLength": 0,
+      "required": false,
+      "name": "pathForUpload",
+      "type": "text",
+      "system": "Billing System"
+    }
+  ]
+}

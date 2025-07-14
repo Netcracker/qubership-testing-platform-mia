@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'db_column_names'_table">
+        <addForeignKeyConstraint baseTableName="db_column_names"
+                                 baseColumnNames="source_db_table"
+                                 referencedTableName="db_table"
+                                 referencedColumnNames="id"
+                                 constraintName="db_column_names-db_table_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'db_columns'_table">
+        <addForeignKeyConstraint baseTableName="db_columns"
+                                 baseColumnNames="source_db_table"
+                                 referencedTableName="db_table_row"
+                                 referencedColumnNames="id"
+                                 constraintName="db_columns-db_table_row_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'db_table'_table">
+        <addForeignKeyConstraint baseTableName="db_table"
+                                 baseColumnNames="sql_response_id"
+                                 referencedTableName="sql_response"
+                                 referencedColumnNames="id"
+                                 constraintName="db_table-sql_response_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'db_table_row'_table">
+        <addForeignKeyConstraint baseTableName="db_table_row"
+                                 baseColumnNames="db_table_id"
+                                 referencedTableName="db_table"
+                                 referencedColumnNames="id"
+                                 constraintName="db_table_row-db_table_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'execution_step'_table">
+        <addForeignKeyConstraint baseTableName="execution_step"
+                                 baseColumnNames="recording_session_id"
+                                 referencedTableName="recording_session"
+                                 referencedColumnNames="id"
+                                 constraintName="execution_step-recording_session_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'failed_marker'_table">
+        <addForeignKeyConstraint baseTableName="failed_marker"
+                                 baseColumnNames="source_marker"
+                                 referencedTableName="marker"
+                                 referencedColumnNames="id"
+                                 constraintName="failed_marker-marker_id_fk"/>
+    </changeSet>
+
+    <!--<changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'failed_marker'_table">
+        <addForeignKeyConstraint baseTableName="failed_marker"
+                                 baseColumnNames="source_marker"
+                                 referencedTableName="marker"
+                                 referencedColumnNames="id"
+                                 constraintName="failed_marker-marker_id_fk"/>
+    </changeSet>-->
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'passed_marker'_table">
+        <addForeignKeyConstraint baseTableName="passed_marker"
+                                 baseColumnNames="source_marker"
+                                 referencedTableName="marker"
+                                 referencedColumnNames="id"
+                                 constraintName="passed_marker-marker_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'warn_marker'_table">
+        <addForeignKeyConstraint baseTableName="warn_marker"
+                                 baseColumnNames="source_marker"
+                                 referencedTableName="marker"
+                                 referencedColumnNames="id"
+                                 constraintName="warn_marker-marker_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'link'_table">
+        <addForeignKeyConstraint baseTableName="link"
+                                 baseColumnNames="sql_response_id"
+                                 referencedTableName="sql_response"
+                                 referencedColumnNames="id"
+                                 constraintName="link-sql_response_id_fk"/>
+
+        <addForeignKeyConstraint baseTableName="link"
+                                 baseColumnNames="execution_step_id"
+                                 referencedTableName="execution_step"
+                                 referencedColumnNames="id"
+                                 constraintName="link-execution_step_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'marker'_table">
+        <addForeignKeyConstraint baseTableName="marker"
+                                 baseColumnNames="status_id"
+                                 referencedTableName="process_status"
+                                 referencedColumnNames="id"
+                                 constraintName="marker-process_status_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'pot_error'_table">
+        <addForeignKeyConstraint baseTableName="pot_error"
+                                 baseColumnNames="execution_step_id"
+                                 referencedTableName="execution_step"
+                                 referencedColumnNames="id"
+                                 constraintName="pot_error-execution_step_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'process_status'_table">
+        <addForeignKeyConstraint baseTableName="process_status"
+                                 baseColumnNames="step_id"
+                                 referencedTableName="execution_step"
+                                 referencedColumnNames="id"
+                                 constraintName="process_status-execution_step_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'sql_response'_table">
+        <addForeignKeyConstraint baseTableName="sql_response"
+                                 baseColumnNames="execution_step_id"
+                                 referencedTableName="execution_step"
+                                 referencedColumnNames="id"
+                                 constraintName="sql_response-execution_step_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'table_marker_column_status'_table">
+        <addForeignKeyConstraint baseTableName="table_marker_column_status"
+                                 baseColumnNames="table_marker_result_id"
+                                 referencedTableName="table_marker_result"
+                                 referencedColumnNames="id"
+                                 constraintName="table_marker_column_status-table_marker_result_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'table_marker_result'_table">
+        <addForeignKeyConstraint baseTableName="table_marker_result"
+                                 baseColumnNames="sql_response_id"
+                                 referencedTableName="sql_response"
+                                 referencedColumnNames="id"
+                                 constraintName="table_marker_result-sql_response_id_fk"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/constraints/constraints.xml"
+               author="atp-mia" id="v1-create_relations_for_'table_marker_row_count'_table">
+        <addForeignKeyConstraint baseTableName="table_marker_row_count"
+                                 baseColumnNames="table_marker_result_id"
+                                 referencedTableName="table_marker_result"
+                                 referencedColumnNames="id"
+                                 constraintName="table_marker_row_count-table_marker_result_id_fk"/>
+    </changeSet>
+</databaseChangeLog>

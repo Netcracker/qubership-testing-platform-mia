@@ -1,0 +1,73 @@
+{
+  "execType": "Process",
+  "prerequisites": [
+    {
+      "type": "SSH",
+      "system": "Billing System",
+      "values": [
+        "echo 1;"
+      ]
+    }
+  ],
+  "command": {
+    "logFileNameFormat": "Custom_log_name.log",
+    "displayDownloadedFileContent": false,
+    "name": "BG",
+    "type": "SSH",
+    "system": "Billing System",
+    "values": [
+      "BG -a \"-a :accountNumber\""
+    ]
+  },
+  "validations": [
+    {
+      "tableName": "AccountDetails",
+      "referToCommandExecution": [
+        "BG -a \"-a :accountNumber\""
+      ],
+      "tableMarker": {
+        "tableRowCount": ">0"
+      },
+      "saveToWordFile": true,
+      "saveToZipFile": false,
+      "type": "SQL",
+      "system": "Billing System",
+      "values": [
+        "select * from ACCOUNTDETAILS where account_num = :accountNumber"
+      ]
+    },
+    {
+      "tableName": "AccountDetails",
+      "referToCommandExecution": [
+        "BG -a \"-a :accountNumber\""
+      ],
+      "tableMarker": {
+        "expectedResultForQuery": {
+          "account_num": ":accountNumber"
+        }
+      },
+      "saveToWordFile": true,
+      "saveToZipFile": false,
+      "type": "SQL",
+      "system": "Billing System",
+      "values": [
+        "select bill_period, payment_method_id from ACCOUNTDETAILS where account_num = :accountNumber"
+      ]
+    }
+  ],
+  "name": "SSH_BG",
+  "inputs": [
+    {
+      "label": "Bill Period",
+      "maxLength": 0,
+      "required": true,
+      "name": "bill_period",
+      "type": "list",
+      "system": "Billing System",
+      "values": [
+        "1",
+        "2"
+      ]
+    }
+  ]
+}

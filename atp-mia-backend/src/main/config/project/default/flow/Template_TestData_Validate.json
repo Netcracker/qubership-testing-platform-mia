@@ -1,0 +1,13 @@
+{
+  "execType": "Process",
+  "command": {
+    "displayDownloadedFileContent": false,
+    "name": "Validate",
+    "type": "VALIDATE_TEST_DATA",
+    "system": "Billing System",
+    "values": [
+      "echo 1"
+    ]
+  },
+  "name": "Validate test data"
+}

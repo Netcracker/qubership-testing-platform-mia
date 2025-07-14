@@ -1,0 +1,25 @@
+ATTR_ID,ATTR_NAME,ENTITY,ENTITY_OT_ID, STMT,IS_MANDATORY,
+33,Roles,Users & Roles,3,S,0,
+9062467268013057424,Customer Location,Order Item,9062352550013045461,S,0,
+9062467268013057424,Customer Location,Business Product Instance,9126083628313449001,S,1,
+9138974685213887695,Degree of parallelism (incremental refresh reader process),RDB Light,9130386621113282898,S,0,
+9136736273313060387,Degree of parallelism (incremental refresh),RDB Light,9130386621113282898,S,0,
+9136736967413060518,Incremental refresh job schedule,RDB Light,9130386621113282898,S,0,
+9138974696613887696,Reader job schedule,RDB Light,9130386621113282898,S,0,
+9136736967413060526,Recovery schedule,RDB Light,9130386621113282898,S,0,
+9134203286913159143,Converted to Opportunity,Business Lead,9131898390113368853,S,0,
+9134229439513176186,Manager,Team,9134202886713158036,S,1,
+9134256756013157411,Preferred Contact Method,Contact,9134255040513155158,S,0,
+9134712571913140929,Contact,Contact Role,9134697452213137308,S,1,
+,
+select distinct to_char(a.attr_id) ATTR_ID,a.name ATTR_NAME, ot.name ENTITY, to_char(ot.object_type_id) ENTITY_OT_ID, aot.required IS_MANDATORY, ta.stmt
+from nc_attributes a, nc_attr_object_types aot, nc_object_types ot, tmp_attrs ta
+where a.attr_id in (select id from tmp_attrs)
+  and a.params not like '%g2adapter%'
+  and a.name not in('\-', '\\-', '$', '|', '$hidesubgroup', '$hideButtons')
+  and (bitand(a.flags, 1)+(bitand(a.flags, 4)) != 5) /*hidden + system*/
+  and (bitand(a.flags, 8388608) != 8388608) /*Calculated Always*/
+  and aot.attr_id = a.attr_id
+  and ot.object_type_id = aot.object_type_id
+  and ta.id = a.attr_id
+"order by ENTITY_OT_ID;"

@@ -1,0 +1,71 @@
+{
+  "execType": "Process",
+  "command": {
+    "pathForUpload": "/u02/nifi/Payment/POSTAL/input/",
+    "fileExtension": ".dat",
+    "namesOfFilesForGeneration": [
+      "PP_${Random(10000)}"
+    ],
+    "ethalonFilesForGeneration": [
+      "postal-payment"
+    ],
+    "marker": {
+      "passedMarkerForLog": [
+        "The process aborted with status 0"
+      ],
+      "failedMarkersForLog": [
+        "The process aborted with status"
+      ],
+      "failWhenNoPassedMarkersFound": false
+    },
+    "displayDownloadedFileContent": false,
+    "name": "Postal Payment",
+    "type": "SSH_GenerationFile",
+    "system": "Billing System",
+    "values": [
+      "NCPP -a \"-mode POSTAL\""
+    ]
+  },
+  "validations": [
+    {
+      "tableName": "ACCOUNTPAYATTRIBUTES",
+      "saveToWordFile": true,
+      "saveToZipFile": false,
+      "type": "SQL",
+      "system": "Billing System",
+      "values": [
+        "select account_num,account_payment_seq,payment_channel_id,payment_confirmation_date,payment_extract_date,payment_file_name from ACCOUNTPAYATTRIBUTES where account_num = :accountNumber"
+      ]
+    }
+  ],
+  "name": "SSH_GenerationFile_Postal_Payment",
+  "inputs": [
+    {
+      "label": "Payment Amount",
+      "maxLength": 0,
+      "required": false,
+      "name": "payment_amount",
+      "type": "text",
+      "system": "Billing System",
+      "values": [
+        "100.00"
+      ]
+    },
+    {
+      "label": "Payment Transaction ID",
+      "maxLength": 0,
+      "required": false,
+      "name": "payment_transaction_id",
+      "type": "text",
+      "system": "Billing System"
+    },
+    {
+      "label": "Actual Payment Date",
+      "maxLength": 0,
+      "required": false,
+      "name": "actual_payment_date",
+      "type": "text",
+      "system": "Billing System"
+    }
+  ]
+}

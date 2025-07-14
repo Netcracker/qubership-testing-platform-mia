@@ -1,0 +1,103 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+  labels:
+    app: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+    name: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+    servicetype: '{{ .Values.SERVICE_TYPE }}'
+spec:
+  strategy:
+    type: RollingUpdate
+  replicas: {{ .Values.NODES_COUNT }}
+  selector:
+    matchLabels:
+      name: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+      app: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+      deploymentconfig: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+  template:
+    metadata:
+      labels:
+        name: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+        app: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+        deploymentconfig: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+        servicetype: '{{ .Values.SERVICE_TYPE }}'
+    spec:
+      {{- if .Values.SECURITY_CONTEXT_ENABLED }}
+      securityContext:
+        {{- include "securityContext.pod" . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: cred
+          secret:
+            secretName: kube2vcs
+            defaultMode: 420
+        - configMap:
+            name: atp-mia-projects
+          name: mia-projects
+      {{- if .Values.HEAPDUMP_ENABLED }}
+        - name: heapdumps
+          emptyDir: {}
+      {{- end }}
+      containers:
+        - name: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+          image: '{{ .Values.DOCKER_TAG }}'
+          {{- if .Values.SECURITY_CONTEXT_ENABLED }}
+          securityContext:
+            {{- include "securityContext.container" . | nindent 12 }}
+          {{- end }}
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: '{{ .Values.MEMORY_REQUEST }}'
+              cpu: '{{ .Values.CPU_REQUEST }}'
+            limits:
+              memory: '{{ .Values.MEMORY_LIMIT }}'
+              cpu: '{{ .Values.CPU_LIMIT }}'
+          volumeMounts:
+            - name: cred
+              readOnly: true
+              mountPath: /etc/cred
+            - name: mia-projects
+              mountPath: /{{ .Values.SERVICE_NAME }}-config/
+          {{- if .Values.HEAPDUMP_ENABLED }}
+            - mountPath: /tmp/diagnostic
+              name: heapdumps
+          {{- end }}
+          ports:
+            - containerPort: 8080
+              name: web
+              protocol: TCP
+          env:
+            {{- include "env.cloud" . | indent 12 }}
+            - name: CLOUD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+          {{- if .Values.extraEnvs }}
+          {{- toYaml .Values.extraEnvs | nindent 12 }}
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /rest/deployment/liveness
+              port: 8080
+            initialDelaySeconds: 210
+            periodSeconds: 30
+            failureThreshold: 10
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /rest/deployment/readiness
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            failureThreshold: 10
+            timeoutSeconds: 30
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "/atp-mia/pre-stop.sh" ]

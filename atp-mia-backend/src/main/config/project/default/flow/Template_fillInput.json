@@ -1,0 +1,34 @@
+{
+  "execType": "Process",
+  "command": {
+    "displayDownloadedFileContent": false,
+    "name": "Fill Input by 0",
+    "type": "SSH",
+    "system": "Billing System",
+    "values": [
+      "BG -a \"-a :accountNumber\""
+    ]
+  },
+  "name": "Fill Input by 0",
+  "inputs": [
+    {
+      "label": "New account number (filled by 0 in the start while length < 20)",
+      "maxLength": 20,
+      "required": false,
+      "name": "newAccountNumber",
+      "type": "text",
+      "system": "Billing System"
+    }
+  ],
+  "currentStatement": [
+    {
+      "saveToWordFile": true,
+      "saveToZipFile": false,
+      "type": "SQL",
+      "system": "Billing System",
+      "values": [
+        "select * from gparams where name like '%SYSdate%'"
+      ]
+    }
+  ]
+}

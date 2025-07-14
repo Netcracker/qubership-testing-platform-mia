@@ -1,0 +1,7 @@
+FROM artifactory-service-address/mongo:4.2
+
+
+ENV MONGO_INITDB_ROOT_USERNAME=root \
+MONGO_INITDB_ROOT_PASSWORD=root
+
+EXPOSE 27017

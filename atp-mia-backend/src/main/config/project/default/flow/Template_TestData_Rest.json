@@ -1,0 +1,13 @@
+{
+  "execType": "Process",
+  "command": {
+    "displayDownloadedFileContent": false,
+    "name": "Rest",
+    "type": "REST_FROM_TEST_DATA",
+    "system": "Billing System-BV",
+    "atpValues": {
+      "column1": "[BV_REST_ER, BV_REST_AR_AND_COMPARE]"
+    }
+  },
+  "name": "RestTestData"
+}

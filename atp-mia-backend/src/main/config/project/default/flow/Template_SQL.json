@@ -1,0 +1,38 @@
+{
+  "execType": "Process",
+  "command": {
+    "displayDownloadedFileContent": false,
+    "atpValues": {
+      "SELECT": "select * from gparams where name like '%SYSdate%'",
+      "UPDATE": "update gparams set name = 'SYSdateOverride' where name = '#SYSdateOverride'",
+      "INSERT": "insert into gparams (name, \"TYPE\", start_dtm, string_value, integer_value) values ('SYSdateOverride',  'STRING',  date '1995-01-01',  'ANY',  null)",
+      "DELETE": "delete from gparams where name = 'SYSdateValue'"
+    },
+    "name": "SQL",
+    "type": "SQL",
+    "system": "Billing System",
+    "values": [
+      "select * from gparams where name like '%SYSdate%'",
+      "update gparams set name = 'SYSdateOverride' where name = '#SYSdateOverride'",
+      "insert into gparams (name, \"TYPE\", start_dtm, string_value, integer_value) values ('SYSdateOverride',  'STRING',  date '1995-01-01',  'ANY',  null)",
+      "delete from gparams where name = 'SYSdateValue'",
+      "update gparams set name = '#SYSdateOverride' where name = 'SYSdateOverride'",
+      "update gparams set name = '#SYSdateValue' where name = 'SYSdateValue'",
+      "update gparams set name = 'SYSdateValue' where name = '#SYSdateValue'",
+      "update gparams set string_value = :SYSdateValue where name = 'SYSdateValue'",
+      "insert into gparams (name, \"TYPE\", start_dtm, string_value, integer_value) values ('SYSdateValue', 'STRING', to_date('01-01-1970', 'dd-mm-yyyy'), :SYSdateValue, null)"
+    ]
+  },
+  "name": "SQL_GPARAMS",
+  "inputs": [
+    {
+      "label": "SYSdateValue YYYYMMDD hhmmss",
+      "maxLength": 0,
+      "mask": "YYYYMMDD",
+      "required": true,
+      "name": "SYSdateValue",
+      "type": "date",
+      "system": "Billing System"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id" : "00000000-0000-0003-0000-000000000006",
+  "name" : "Ssh test data",
+  "projectId" : "30d636db-ea2c-4f1d-bdff-e7c15835c15c",
+  "sourceId" : "00000000-0000-0003-0000-000000000006",
+  "inCompounds" : [ ],
+  "inSections" : [ "00000000-0000-0001-0000-000000000004" ],
+  "processSettings" : {
+    "name" : "Ssh test data",
+    "inputs" : null,
+    "currentStatement" : null,
+    "referToInput" : null,
+    "prerequisites" : null,
+    "command" : {
+      "name" : "SshTestData",
+      "type" : "SSH_FROM_TEST_DATA",
+      "system" : "Billing System",
+      "values" : [ "sshExecution" ],
+      "pathForUpload" : null,
+      "regexpForFileRetrieve" : null,
+      "fileExtension" : null,
+      "namesOfFilesForGeneration" : null,
+      "ethalonFilesForGeneration" : null,
+      "delayForGeneration" : null,
+      "pathsForDownload" : null,
+      "variablesToExtractFromLog" : {
+        "COLUMN_EXTRACTED_FROM_LOG_1" : "text([\\S\\s]*)3",
+        "COLUMN_EXTRACTED_FROM_LOG_2" : "([\\S\\s]*2)"
+      },
+      "marker" : null,
+      "description" : null,
+      "warningDescription" : null,
+      "logFileNameFormat" : null,
+      "saveGeneratedFilesToParameter" : null,
+      "charsetForGeneratedFile" : null,
+      "displayDownloadedFileContent" : false,
+      "filesForUpload" : null,
+      "atpValues" : {
+        "column1" : "sshExecution"
+      },
+      "fileMarkers" : null,
+      "toExecute" : "sshExecution",
+      "testDataParams" : null,
+      "rest" : null,
+      "soap" : null,
+      "value" : "sshExecution"
+    },
+    "validations" : null,
+    "globalVariables" : null
+  }
+}

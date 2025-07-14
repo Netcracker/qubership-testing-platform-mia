@@ -1,0 +1,20 @@
+{
+  "id": "10000000-0000-0000-0000-000000000001",
+  "name": "PotHeaderConfiguration",
+  "projectId": "10000000-0000-0000-0000-000000000001",
+  "sourceId": "10000000-0000-0000-0000-000000000001",
+  "headers": [
+    {
+      "name": "MainHeader",
+      "type": "Text",
+      "system": "Billing System",
+      "value": "MainHeader"
+    },
+    {
+      "name": "SubHeader",
+      "type": "Digit",
+      "system": "Billing System",
+      "value": "1"
+    }
+  ]
+}

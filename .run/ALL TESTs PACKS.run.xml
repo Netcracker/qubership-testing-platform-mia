@@ -1,0 +1,26 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ALL TESTs PACKS" type="JUnit" factoryName="JUnit">
+    <module name="atp-mia-contract-test-pacts" />
+    <shortenClasspath name="NONE" />
+    <useClassPathOnly />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="org.qubership.atp.mia.utils.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="PACKAGE_NAME" value="org.qubership.atp.mia" />
+    <option name="MAIN_CLASS_NAME" value="" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="package" />
+    <option name="VM_PARAMETERS" value="--add-opens java.base/java.lang=ALL-UNNAMED -Dspring.main.banner-mode=OFF -DconfigPath=test -Dspring.datasource.url=jdbc:postgresql://localhost:5432/mia -DLOCAL_DOCKER_START=false -DSSHSERVER_IP=localhost -DPOSTGRES_IP=localhost -DMONGO_IP=localhost -DCASSANDRA_IP=localhost" />
+    <option name="PARAMETERS" value="" />
+    <envs>
+      <env name="MIA_USER" value="mia" />
+      <env name="MIA_PASSWORD" value="mia" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

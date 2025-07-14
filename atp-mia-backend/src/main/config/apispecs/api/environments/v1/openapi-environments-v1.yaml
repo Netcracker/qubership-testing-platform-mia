@@ -1,0 +1,1447 @@
+openapi: 3.0.3
+info:
+  title: Api Documentation
+  description: Api Documentation
+  version: "1.1"
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: 'http://localhost:8080'
+    description: Inferred Url
+tags:
+  - name: environment-controller
+    description: Environment Controller
+paths:
+  /api/environments:
+    get:
+      tags:
+        - environment-controller
+      summary: getAll
+      operationId: getAll
+      parameters:
+        - name: full
+          in: query
+          description: full
+          required: false
+          style: form
+          schema:
+            type: boolean
+
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnvironmentFullVer1View'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - environment-controller
+      summary: update
+      operationId: updateEnvironment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentDto'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - environment-controller
+      summary: createEnvironment
+      operationId: createEnvironment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Environment'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/environments/filter:
+    post:
+      tags:
+        - environment-controller
+      summary: getEnvironmentsByRequest
+      operationId: getEnvironmentsByRequest
+      parameters:
+        - name: full
+          in: query
+          description: full
+          required: false
+          style: form
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          description: full
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int64
+        - name: size
+          in: query
+          description: full
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentsWithFilterRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnvironmentFullVer1View'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/public/v1/environments/{environmentIds}/systems/htmlVersions':
+    get:
+      tags:
+        - environment-controller
+      summary: getPublicHtmlVersion
+      operationId: getPublicHtmlVersion
+      parameters:
+        - name: environmentIds
+          in: path
+          description: environmentIds
+          required: true
+          style: simple
+          schema:
+            type: array
+            items:
+                type: string
+                format: uuid
+
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/environments/{environmentId}':
+    get:
+      tags:
+        - environment-controller
+      summary: getEnvironment
+      operationId: getEnvironment
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+        - name: full
+          in: query
+          description: full
+          required: false
+          style: form
+          schema:
+            type: boolean
+
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/EnvironmentFullVer1View'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - environment-controller
+      summary: createSystem
+      operationId: createSystem
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSystemDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/System'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - environment-controller
+      summary: delete
+      operationId: deleteEnvironment
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  '/api/environments/{environmentId}/name':
+    get:
+      tags:
+        - environment-controller
+      summary: getName
+      operationId: getEnvironmentNameById
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/environments/{environmentId}/copy':
+    post:
+      tags:
+        - environment-controller
+      summary: copy
+      operationId: copy
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Environment'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/environments/{environmentId}/systems':
+    get:
+      tags:
+        - environment-controller
+      summary: getSystems
+      operationId: getEnvironmentSystems
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+        - name: system_type
+          in: query
+          description: system_type
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: full
+          in: query
+          description: full
+          required: false
+          style: form
+          schema:
+            type: boolean
+
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SystemFullVer1View'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/environments/{environmentId}/connections':
+    get:
+      tags:
+        - environment-controller
+      summary: getEnvironmentConnections
+      operationId: getEnvironmentConnections
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Connection'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/environments/{environmentId}/systems/short':
+    get:
+      tags:
+        - environment-controller
+      summary: getSystemsShort
+      operationId: getSystemsShort
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SystemNameView'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/environments/{environmentId}/systems/update-versions':
+    get:
+      tags:
+        - environment-controller
+      summary: Returns all systems with updated versions under environment
+      operationId: getEnvironmentTsg3
+      parameters:
+        - name: environmentId
+          in: path
+          description: Id of the environment. Cannot be empty.
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+        - name: full
+          in: query
+          description: full
+          required: false
+          style: form
+          schema:
+            type: boolean
+
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/EnvironmentFullVer1View'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/environments/{environmentId}/temporary':
+    post:
+      tags:
+        - environment-controller
+      summary: temporary
+      operationId: temporary
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+        - name: full
+          in: query
+          description: full
+          required: false
+          style: form
+          schema:
+            type: boolean
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/SystemTemporaryDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/EnvironmentFullVer1View'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/environments/{environmentId}/version':
+    get:
+      tags:
+        - environment-controller
+      summary: updateVersion
+      operationId: updateVersion
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/System'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/v2/environments/{environmentId}/version':
+    get:
+      tags:
+        - environment-controller
+      summary: detailedUpdateVersion
+      operationId: detailedUpdateVersion
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SystemVersionResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/v2/environments/{environmentId}/systems':
+    get:
+      tags:
+        - environment-controller
+      summary: getSystemV2
+      operationId: getSystemV2
+      parameters:
+        - name: environmentId
+          in: path
+          description: environmentId
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+        - name: system_type
+          in: query
+          description: system_type
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: full
+          in: query
+          description: full
+          required: false
+          style: form
+          schema:
+            type: boolean
+
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SystemFullVer2View'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /api/environments/search:
+    post:
+      tags:
+        - environment-controller
+      summary: findBySearchRequest
+      operationId: findBySearchRequest
+      parameters:
+        - name: full
+          in: query
+          description: full
+          required: false
+          style: form
+          schema:
+            type: boolean
+      requestBody:
+        description: searchRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseSearchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Environment'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+components:
+  schemas:
+    Connection:
+      title: Connection
+      type: object
+      properties:
+        connectionType:
+          type: string
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        description:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        services:
+          type: array
+          items:
+            type: string
+        sourceTemplateId:
+          type: string
+          format: uuid
+        systemId:
+          type: string
+          format: uuid
+    ConnectionDto:
+      title: ConnectionDto
+      type: object
+      properties:
+        connectionType:
+          type: string
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        description:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        projectId:
+          type: string
+          format: uuid
+        services:
+          type: array
+          items:
+            type: string
+        sourceTemplateId:
+          type: string
+          format: uuid
+        systemId:
+          type: string
+          format: uuid
+    ConnectionFullVer1View:
+      title: ConnectionFullVer1View
+      type: object
+      properties:
+        connectionType:
+          type: string
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        description:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        services:
+          type: array
+          items:
+            type: string
+        sourceTemplateId:
+          type: string
+          format: uuid
+        systemId:
+          type: string
+          format: uuid
+    ConnectionFullVer2View:
+      title: ConnectionFullVer2View
+      type: object
+      properties:
+        connectionType:
+          type: string
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        description:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        services:
+          type: array
+          items:
+            type: string
+        sourceTemplateId:
+          type: string
+          format: uuid
+        systemId:
+          type: string
+          format: uuid
+    ConnectionTemporaryDto:
+      title: ConnectionTemporaryDto
+      type: object
+      properties:
+        name:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+    CreateSystemDto:
+      title: CreateSystemDto
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            type: object    #$ref: '#/components/schemas/ConnectionDto'
+        dateOfCheckVersion:
+          type: integer
+          format: int64
+        dateOfLastCheck:
+          type: integer
+          format: int64
+        description:
+          type: string
+        environmentId:
+          type: string
+          format: uuid
+        externalName:
+          type: string
+        externalId:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        linkToSystemId:
+          type: string
+          format: uuid
+        mergeByName:
+          type: boolean
+        name:
+          type: string
+        parametersGettingVersion:
+          $ref: '#/components/schemas/ParametersGettingVersion'
+        parentSystemId:
+          type: string
+          format: uuid
+        serverITF:
+          type: object #$ref: '#/components/schemas/ServerItf'
+        status:
+          type: string
+          enum:
+            - FAIL
+            - NOTHING
+            - PASS
+            - WARN
+        systemCategoryId:
+          type: string
+          format: uuid
+        version:
+          type: string
+    Environment:
+      title: Environment
+      type: object
+      properties:
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        description:
+          type: string
+        graylogName:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        projectId:
+          type: string
+          format: uuid
+        systems:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/System'
+        ssmSolutionAlias:
+          type: string
+        ssmInstanceAlias:
+          type: string
+    FilterRequest:
+      title: FilterRequest
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: array
+          items:
+            type: string
+    EnvironmentsWithFilterRequest:
+      title: EnvironmentsWithFilterRequest
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            type: string
+        filter:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterRequest'
+        projectId:
+          type: string
+          format: uuid
+    EnvironmentDto:
+      title: EnvironmentDto
+      type: object
+      properties:
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        description:
+          type: string
+        graylogName:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        projectId:
+          type: string
+          format: uuid
+        systems:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/CreateSystemDto'
+        ssmSolutionAlias:
+          type: string
+        ssmInstanceAlias:
+          type: string
+    EnvironmentFullVer1View:
+      title: EnvironmentFullVer1View
+      type: object
+      properties:
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        description:
+          type: string
+        graylogName:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        projectId:
+          type: string
+          format: uuid
+        systems:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/SystemFullVer1View'
+        ssmSolutionAlias:
+          type: string
+        ssmInstanceAlias:
+          type: string
+    EnvironmentFullVer2View:
+      title: EnvironmentFullVer2View
+      type: object
+      properties:
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        description:
+          type: string
+        graylogName:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        ssmSolutionAlias:
+          type: string
+        ssmInstanceAlias:
+          type: string
+    ParametersGettingVersion:
+      title: ParametersGettingVersion
+      type: object
+      properties:
+        headers:
+          type: string
+        parameters:
+          type: string
+        parsingType:
+          type: string
+          enum:
+            - JSONPATH
+            - NONE
+            - REGEXP
+        parsingValue:
+          type: string
+        type:
+          type: string
+          enum:
+            - BY_HTTP_ENDPOINT
+            - BY_HTTP_ENDPOINT_BASIC_AUTH
+            - BY_KUBERNETES_CONFIGMAP
+            - BY_KUBERNETES_IMAGES
+            - BY_OPENSHIFT_CONFIGURATION
+            - BY_SHELL_SCRIPT
+            - BY_SQL_QUERY
+            - BY_SSM
+    ParametersGettingVersionFullVer1View:
+      title: ParametersGettingVersionFullVer1View
+      type: object
+    ParametersGettingVersionFullVer2View:
+      title: ParametersGettingVersionFullVer2View
+      type: object
+    ServerItf:
+      title: ServerItf
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+    ServerItfFullVer1View:
+      title: ServerItfFullVer1View
+      type: object
+    ServerItfFullVer2View:
+      title: ServerItfFullVer2View
+      type: object
+    System:
+      title: System
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/Connection'
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        dateOfCheckVersion:
+          type: integer
+          format: int64
+        dateOfLastCheck:
+          type: integer
+          format: int64
+        description:
+          type: string
+        environmentIds:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/Environment'
+        environments:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/Environment'
+        externalName:
+          type: string
+        externalId:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        linkToSystemId:
+          type: string
+          format: uuid
+        mergeByName:
+          type: boolean
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parametersGettingVersion:
+          $ref: '#/components/schemas/ParametersGettingVersion'
+        parentSystemId:
+          type: string
+          format: uuid
+        serverITF:
+          type: object #$ref: '#/components/schemas/ServerItf'
+        status:
+          type: string
+          enum:
+            - FAIL
+            - NOTHING
+            - PASS
+            - WARN
+        systemCategory:
+          type: object #$ref: '#/components/schemas/SystemCategory'
+        systemCategoryId:
+          type: string
+          format: uuid
+        version:
+          type: string
+    SystemVersionResponse:
+      title: SystemVersionResponse
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/Connection'
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        dateOfCheckVersion:
+          type: integer
+          format: int64
+        dateOfLastCheck:
+          type: integer
+          format: int64
+        description:
+          type: string
+        environmentIds:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/Environment'
+        environments:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/Environment'
+        externalName:
+          type: string
+        externalId:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        linkToSystemId:
+          type: string
+          format: uuid
+        mergeByName:
+          type: boolean
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parametersGettingVersion:
+          $ref: '#/components/schemas/ParametersGettingVersion'
+        parentSystemId:
+          type: string
+          format: uuid
+        serverITF:
+          type: object #$ref: '#/components/schemas/ServerItf'
+        status:
+          type: string
+          enum:
+            - FAIL
+            - NOTHING
+            - PASS
+            - WARN
+        systemCategory:
+          type: object #$ref: '#/components/schemas/SystemCategory'
+        systemCategoryId:
+          type: string
+          format: uuid
+        version:
+          type: string
+        versionError:
+          type: string
+    SystemCategory:
+      title: SystemCategory
+      type: object
+      properties:
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        description:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+    SystemCategoryFullVer2View:
+      title: SystemCategoryFullVer2View
+      type: object
+      properties:
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        description:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+    SystemFullVer1View:
+      title: SystemFullVer1View
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/ConnectionFullVer1View'
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        dateOfCheckVersion:
+          type: integer
+          format: int64
+        dateOfLastCheck:
+          type: integer
+          format: int64
+        description:
+          type: string
+        environmentIds:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/EnvironmentFullVer1View'
+        externalName:
+          type: string
+        externalId:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        linkToSystemId:
+          type: string
+          format: uuid
+        mergeByName:
+          type: boolean
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parametersGettingVersion:
+          $ref: '#/components/schemas/ParametersGettingVersionFullVer1View'
+        parentSystemId:
+          type: string
+          format: uuid
+        serverITF:
+          type: object #$ref: '#/components/schemas/ServerItfFullVer1View'
+        status:
+          type: string
+          enum:
+            - FAIL
+            - NOTHING
+            - PASS
+            - WARN
+        systemCategoryId:
+          type: string
+          format: uuid
+        version:
+          type: string
+    SystemFullVer2View:
+      title: SystemFullVer2View
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/ConnectionFullVer2View'
+        created:
+          type: integer
+          format: int64
+        createdBy:
+          type: string
+          format: uuid
+        dateOfCheckVersion:
+          type: integer
+          format: int64
+        dateOfLastCheck:
+          type: integer
+          format: int64
+        description:
+          type: string
+        environments:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/EnvironmentFullVer2View'
+        externalName:
+          type: string
+        externalId:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        linkToSystemId:
+          type: string
+          format: uuid
+        mergeByName:
+          type: boolean
+        modified:
+          type: integer
+          format: int64
+        modifiedBy:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parametersGettingVersion:
+          $ref: '#/components/schemas/ParametersGettingVersionFullVer2View'
+        parentSystemId:
+          type: string
+          format: uuid
+        serverITF:
+          type: object #$ref: '#/components/schemas/ServerItfFullVer2View'
+        status:
+          type: string
+          enum:
+            - FAIL
+            - NOTHING
+            - PASS
+            - WARN
+        systemCategory:
+          type: object #$ref: '#/components/schemas/SystemCategoryFullVer2View'
+        version:
+          type: string
+    SystemNameView:
+      title: SystemNameView
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    SystemTemporaryDto:
+      title: SystemTemporaryDto
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            type: object #$ref: '#/components/schemas/ConnectionTemporaryDto'
+        name:
+          type: string
+        systemCategory:
+          type: string
+    BaseSearchRequest:
+      title: BaseSearchRequest
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        names:
+          type: array
+          items:
+            type: string
+        projectId:
+          type: string
+          format: uuid

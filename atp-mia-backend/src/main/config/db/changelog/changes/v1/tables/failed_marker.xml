@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/failed_marker.xml"
+               author="atp-mia" id="v1-create_'failed_marker_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="failed_marker_temp"/>
+            </not>
+        </preConditions>
+        <createTable tableName="failed_marker_temp">
+            <column name="source_marker" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="failed_marker" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="failed_marker_temp"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/failed_marker.xml"
+               author="atp-mia" id="v1-copy_columns_for_'failed_marker_temp'_table">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="failed_marker"/>
+            <columnExists tableName="failed_marker" columnName="id"/>
+            <columnExists tableName="failed_marker" columnName="db_table_id"/>
+        </preConditions>
+        <sql>
+            INSERT INTO failed_marker_temp(source_marker, failed_marker)
+            SELECT source_marker, failed_marker
+            FROM failed_marker;
+        </sql>
+        <rollback>
+            <sql>
+                DELETE
+                FROM failed_marker_temp;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/failed_marker.xml"
+               author="atp-mia" id="v1-drop_old_table_'failed_marker'">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="failed_marker"/>
+        </preConditions>
+        <dropTable tableName="failed_marker"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/failed_marker.xml"
+               author="atp-mia" id="v1-rename_'failed_marker_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="failed_marker"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="failed_marker_temp" newTableName="failed_marker"/>
+    </changeSet>
+</databaseChangeLog>

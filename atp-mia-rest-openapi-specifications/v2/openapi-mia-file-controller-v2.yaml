@@ -1,0 +1,274 @@
+openapi: 3.0.1
+info:
+  title: MIA File Controller API
+  description: MIA -> Upload File, Download Logs, Download zip file.
+  version: '1.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: https://atp-public-gateway:8080/api/atp-mia/v1
+  - url: http://localhost:8080
+tags:
+  - name: mia-file-controller
+    description: MIA File Controller
+paths:
+  /rest/downloadFile/{projectId}/MIA_FILE_TYPE_LOG/{sessionId}/{logFile}:
+    get:
+      tags:
+        - mia-file-controller
+      description: Download file of execution
+      operationId: downloadFile
+      parameters:
+        - name: projectId
+          in: path
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: UUID
+        - name: sessionId
+          in: path
+          description: sessionId
+          required: true
+          schema:
+            type: string
+            format: UUID
+        - name: logFile
+          in: path
+          description: logFile
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/downloadFile/{projectId}/MIA_FILE_TYPE_UPLOAD/{sessionId}/{logFile}:
+    get:
+      tags:
+        - mia-file-controller
+      description: Download file from uploads
+      operationId: downloadFileFromUploads
+      parameters:
+        - name: projectId
+          in: path
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: UUID
+        - name: sessionId
+          in: path
+          description: sessionId
+          required: true
+          schema:
+            type: string
+            format: UUID
+        - name: logFile
+          in: path
+          description: logFile
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/downloadOutputAsZip:
+    post:
+      tags:
+        - mia-file-controller
+      description: downloadOutputAsZip
+      operationId: downloadOutputAsZip
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: UUID
+        - name: sessionId
+          in: query
+          description: sessionId
+          required: true
+          schema:
+            type: string
+            format: UUID
+        - name: processName
+          in: query
+          description: processName
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: filePaths
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/uploadFile:
+    post:
+      tags:
+        - mia-file-controller
+      description: Upload file for project.
+      operationId: handleFileUpload
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: UUID
+        - name: sessionId
+          in: query
+          description: sessionId
+          required: true
+          schema:
+            type: string
+            format: UUID
+        - name: needDos2Unix
+          in: query
+          description: needDos2Unix
+          required: false
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  type: string
+                  description: file
+                  format: binary
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/uploadTestDataFile:
+    post:
+      tags:
+        - mia-file-controller
+      description: handleTestDataFileUpload
+      operationId: handleTestDataFileUpload
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: UUID
+        - name: sessionId
+          in: query
+          description: sessionId
+          required: false
+          schema:
+            type: string
+            format: UUID
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  type: string
+                  description: file
+                  format: binary
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false

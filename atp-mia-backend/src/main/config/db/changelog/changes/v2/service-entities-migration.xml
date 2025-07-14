@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v2/service-entities-migration.xml"
+               id="2022.10.04_send_service_entities_to_kafka" author="atp-mia">
+        <preConditions onFail="CONTINUE">
+            <changeLogPropertyDefined property="service.entities.migration.enabled" value="true"/>
+        </preConditions>
+        <comment>Sending service entities to kafka topic.</comment>
+        <customChange class="org.qubership.atp.mia.repo.migration.v2.ServiceEntitiesMigrationCustomChange">
+            <param name="serviceName" value="${spring.application.name}"/>
+        </customChange>
+    </changeSet>
+
+</databaseChangeLog>

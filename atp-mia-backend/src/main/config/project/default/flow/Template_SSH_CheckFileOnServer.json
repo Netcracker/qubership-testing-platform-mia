@@ -1,0 +1,41 @@
+{
+  "execType": "Process",
+  "command": {
+    "regexpForFileRetrieve": "(?<=.csv to ).*(?<=.csv)",
+    "displayDownloadedFileContent": false,
+    "name": "Check file on server",
+    "type": "SSH_CheckFileOnServer",
+    "system": "Billing System",
+    "values": [
+      "PAYMENTREPORTGEN -a \"-mode DETAIL -extractDat :extractDat\"",
+      "PAYMENTREPORTGEN -a \"-mode DETAIL -startDat :startDat -endDat :endDat\" "
+    ]
+  },
+  "name": "SSH_CheckFileOnServer_PAYMENTREPORTGEN",
+  "inputs": [
+    {
+      "label": "Extract Dat",
+      "maxLength": 0,
+      "required": false,
+      "name": "extractDat",
+      "type": "text",
+      "system": "Billing System"
+    },
+    {
+      "label": "Start Dat",
+      "maxLength": 0,
+      "required": false,
+      "name": "startDat",
+      "type": "text",
+      "system": "Billing System"
+    },
+    {
+      "label": "End Dat",
+      "maxLength": 0,
+      "required": false,
+      "name": "endDat",
+      "type": "text",
+      "system": "Billing System"
+    }
+  ]
+}

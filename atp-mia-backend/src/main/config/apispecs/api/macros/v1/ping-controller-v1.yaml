@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: Api Documentation
+  description: Api Documentation
+  version: '1.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: 'http://localhost:8080'
+    description: Inferred Url
+tags:
+  - name: ping-controller
+    description: Ping Controller
+paths:
+  /api/v1/ping:
+    get:
+      tags:
+        - ping-controller
+      summary: Just a ping. Should always return 'true'.
+      operationId: isAlive
+      responses:
+        '200':
+          description: Successful ping
+          content:
+            'application/json':
+              schema:
+                type: boolean
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found

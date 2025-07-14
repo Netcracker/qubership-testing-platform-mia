@@ -1,0 +1,4109 @@
+{
+  "provider": {
+    "name": "atp-mia"
+  },
+  "consumer": {
+    "name": "atp-logcollector"
+  },
+  "interactions": [
+    {
+      "description": "GET /rest/config OK",
+      "request": {
+        "method": "GET",
+        "path": "/rest/config",
+        "query": {
+          "needReload": [
+            "true"
+          ],
+          "projectId": [
+            "1a20aefa-d24f-4d25-95ae-48b6630e9f7a"
+          ]
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "defaultSystem": "string",
+          "validationResult": "string",
+          "potHeaderConfiguration": {
+            "headers": [
+
+            ]
+          },
+          "headerConfiguration": {
+            "showGenevaDateBlock": true,
+            "exportToggleDefaultPosition": true,
+            "workingDirectory": "string",
+            "showWorkingDirectory": true,
+            "showResetDbCache": true,
+            "showTimeShifting": true,
+            "enableUpdateFlowJsonConfig": true,
+            "switchers": [
+
+            ],
+            "systemSwitchers": [
+
+            ],
+            "showUpdateConfig": true,
+            "showTestData": true
+          },
+          "commonConfiguration": {
+            "projectDownloadPath": "string",
+            "nextBillDateSql": "string",
+            "saveFilesToWorkingDir": true,
+            "commandShellSeparator": "string",
+            "genevaDateMask": "string",
+            "sshRsaFilePath": "string",
+            "resetCacheSql": "string",
+            "ethalonFilesPath": "string",
+            "useVariablesInsideVariable": true,
+            "saveSqlTablesToFile": true,
+            "linesAmount": 100,
+            "externalEnvironmentPrefix": "string",
+            "variableFormat": "string",
+            "commandShellPrefixes": [
+
+            ]
+          },
+          "sections": [
+
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.validationResult": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.showGenevaDateBlock": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.showWorkingDirectory": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.showResetDbCache": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.showUpdateConfig": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.showTestData": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.showTimeShifting": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.exportToggleDefaultPosition": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.enableUpdateFlowJsonConfig": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.workingDirectory": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.switchers": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.switchers[*].actionFalse": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.switchers[*].actionTrue": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.switchers[*].actionType": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.switchers[*].display": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.switchers[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.switchers[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.systemSwitchers": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.systemSwitchers[*].actionFalse": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.systemSwitchers[*].actionTrue": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.systemSwitchers[*].actionType": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.systemSwitchers[*].display": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.systemSwitchers[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.headerConfiguration.systemSwitchers[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.useVariablesInsideVariable": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.variableFormat": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.saveFilesToWorkingDir": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.saveSqlTablesToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.nextBillDateSql": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.resetCacheSql": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.ethalonFilesPath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.externalEnvironmentPrefix": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.commandShellSeparator": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.commandShellPrefixes": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.commandShellPrefixes[*].system": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.genevaDateMask": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.projectDownloadPath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.sshRsaFilePath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commonConfiguration.linesAmount": {
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.potHeaderConfiguration.headers": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.potHeaderConfiguration.headers[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.potHeaderConfiguration.headers[*].system": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.potHeaderConfiguration.headers[*].type": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.potHeaderConfiguration.headers[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.defaultSystem": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].inputs": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].inputs[*].label": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].inputs[*].maxLength": {
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].inputs[*].mask": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].inputs[*].maskPattern": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].inputs[*].required": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].currentStatements": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].currentStatements[*].tableName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].currentStatements[*].referToCommandExecution[0]": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].currentStatements[*].tableMarker.tableRowCount": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].currentStatements[*].saveToWordFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].currentStatements[*].saveToZipFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sections[*].processes[*].referToInput": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        },
+        "generators": {
+          "body": {
+            "$.validationResult": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.workingDirectory": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.switchers[*].actionFalse": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.switchers[*].actionTrue": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.switchers[*].actionType": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.switchers[*].display": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.switchers[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.systemSwitchers[*].actionFalse": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.systemSwitchers[*].actionTrue": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.systemSwitchers[*].actionType": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.systemSwitchers[*].display": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.headerConfiguration.systemSwitchers[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.variableFormat": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.nextBillDateSql": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.resetCacheSql": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.ethalonFilesPath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.externalEnvironmentPrefix": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.commandShellSeparator": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.commandShellPrefixes[*].system": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.genevaDateMask": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.projectDownloadPath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.sshRsaFilePath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commonConfiguration.linesAmount": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.potHeaderConfiguration.headers[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.potHeaderConfiguration.headers[*].system": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.potHeaderConfiguration.headers[*].type": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.potHeaderConfiguration.headers[*].value": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.defaultSystem": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.sections[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.sections[*].processes[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.sections[*].processes[*].inputs[*].label": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.sections[*].processes[*].inputs[*].maxLength": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.sections[*].processes[*].inputs[*].mask": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.sections[*].processes[*].inputs[*].maskPattern": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.sections[*].processes[*].currentStatements[*].tableName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.sections[*].processes[*].currentStatements[*].tableMarker.tableRowCount": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.sections[*].processes[*].referToInput": {
+              "type": "RandomString",
+              "size": 20
+            }
+          }
+        }
+      },
+      "providerStates": [
+        {
+          "name": "all ok"
+        }
+      ]
+    },
+    {
+      "description": "POST /rest/flow/execute/compound OK",
+      "request": {
+        "method": "POST",
+        "path": "/rest/flow/execute/compound",
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "query": {
+          "env": [
+            "env"
+          ],
+          "projectId": [
+            "1a20aefa-d24f-4d25-95ae-48b6630e9f7a"
+          ]
+        },
+        "body": {
+          "rest": {
+            "headers": "string",
+            "method": "string",
+            "checkStatusCode": [
+              "str"
+            ],
+            "bodyFile": "string",
+            "restFile": "string",
+            "body": "string",
+            "script": "string",
+            "saveCookie": true,
+            "endpoint": "string",
+            "hasFile": true,
+            "restLoopParameters": {
+              "timeoutRepeats": 100,
+              "checkTextInHeaders": true,
+              "checkTextInBody": true,
+              "maxNumberRepeats": 100,
+              "textToCheck": "string"
+            },
+            "checkStatusCodeFlag": true,
+            "disableRedirect": true,
+            "parseResponseAsTable": true
+          },
+          "process": "string",
+          "flowData": {
+            "projectId": "string",
+            "parameters": null,
+            "commonConfiguration": {
+              "projectDownloadPath": "string",
+              "nextBillDateSql": "string",
+              "saveFilesToWorkingDir": true,
+              "commandShellSeparator": "string",
+              "genevaDateMask": "string",
+              "sshRsaFilePath": "string",
+              "resetCacheSql": "string",
+              "ethalonFilesPath": "string",
+              "useVariablesInsideVariable": true,
+              "saveSqlTablesToFile": true,
+              "linesAmount": 100,
+              "externalEnvironmentPrefix": "string",
+              "variableFormat": "string",
+              "commandShellPrefixes": [
+
+              ],
+              "commonVariables": null
+            },
+            "testDataWorkbook": {
+              "loaded": true,
+              "testDataSheet": {
+                "records": [
+
+                ],
+                "scenarios": [
+
+                ]
+              },
+              "excelFile": "string",
+              "queriesSheet": {
+                "records": [
+
+                ],
+                "queries": [
+
+                ]
+              },
+              "scenariosToExecute": [
+                "str"
+              ],
+              "mainSheet": {
+                "records": [
+
+                ],
+                "scenarios": [
+
+                ]
+              },
+              "executeSql": true
+            }
+          },
+          "testDataFile": {
+            "filePath": "string",
+            "scenarios": [
+              "str"
+            ]
+          },
+          "sessionId": "e2490de5-5bd3-43d5-b7c4-526e33f71304",
+          "type": "string",
+          "switchers": [
+
+          ],
+          "systemSwitchers": [
+
+          ],
+          "compound": {
+            "processList": [
+
+            ],
+            "referToInput": "string",
+            "oldNameForEdit": "string",
+            "inputs": [
+
+            ],
+            "name": "string",
+            "execType": "string",
+            "currentStatement": [
+
+            ]
+          },
+          "command": "string"
+        },
+        "matchingRules": {
+          "body": {
+            "$.process": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.execType": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.oldNameForEdit": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.processList": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.processList[*].execType": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.inputs": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.currentStatement": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.referToInput": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.command": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.type": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.projectId": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.useVariablesInsideVariable": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.variableFormat": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.saveFilesToWorkingDir": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.saveSqlTablesToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.nextBillDateSql": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.resetCacheSql": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.ethalonFilesPath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.externalEnvironmentPrefix": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.commandShellSeparator": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.commandShellPrefixes": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.commandShellPrefixes[*].system": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.genevaDateMask": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.projectDownloadPath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.sshRsaFilePath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.linesAmount": {
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.excelFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.loaded": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.executeSql": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.records": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.records[*].scenario": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.records[*].description": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validatedParams": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validatedParams[*].key": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validatedParams[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].status": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validated": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].onMainSheet": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.records": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.records[*].scenario": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.records[*].description": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].validatedParams": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].status": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].validated": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].onMainSheet": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].query": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].validateName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].validatedName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].query": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].toValidate": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].type": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].validated": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.testDataFile.filePath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sessionId": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].actionFalse": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].actionTrue": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].actionType": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].display": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].actionFalse": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].actionTrue": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].actionType": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].display": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.endpoint": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.method": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.headers": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.body": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.bodyFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.parseResponseAsTable": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.hasFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.disableRedirect": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.saveCookie": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restLoopParameters.checkTextInBody": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restLoopParameters.checkTextInHeaders": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restLoopParameters.maxNumberRepeats": {
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restLoopParameters.textToCheck": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restLoopParameters.timeoutRepeats": {
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.checkStatusCodeFlag": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.checkStatusCode[0]": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.script": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        },
+        "generators": {
+          "body": {
+            "$.process": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.compound.execType": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.compound.oldNameForEdit": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.compound.processList[*].execType": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.compound.name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.compound.referToInput": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.command": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.type": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.projectId": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.variableFormat": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.nextBillDateSql": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.resetCacheSql": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.ethalonFilesPath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.externalEnvironmentPrefix": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.commandShellSeparator": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.commandShellPrefixes[*].system": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.genevaDateMask": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.projectDownloadPath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.sshRsaFilePath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.linesAmount": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.flowData.testDataWorkbook.excelFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.records[*].scenario": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.records[*].description": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validatedParams[*].key": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validatedParams[*].value": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.records[*].scenario": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.records[*].description": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].query": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].validateName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].validatedName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].value": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].query": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].toValidate": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].type": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].validated": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.testDataFile.filePath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.sessionId": {
+              "type": "Uuid"
+            },
+            "$.switchers[*].actionFalse": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.switchers[*].actionTrue": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.switchers[*].actionType": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.switchers[*].display": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.switchers[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.systemSwitchers[*].actionFalse": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.systemSwitchers[*].actionTrue": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.systemSwitchers[*].actionType": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.systemSwitchers[*].display": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.systemSwitchers[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.restFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.endpoint": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.method": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.headers": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.body": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.bodyFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.restLoopParameters.maxNumberRepeats": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.rest.restLoopParameters.textToCheck": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.restLoopParameters.timeoutRepeats": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.rest.script": {
+              "type": "RandomString",
+              "size": 20
+            }
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": [
+          {
+            "executedCommand": "string",
+            "globalVariables": null,
+            "processStatus": {
+              "marker": {
+                "failWhenNoPassedMarkersFound": true,
+                "passedMarkerForLog": null,
+                "warnMarkersForLog": null,
+                "failedMarkersForLog": null
+              },
+              "status": "SUCCESS"
+            },
+            "processName": "string",
+            "commandResponse": {
+              "expectedCodes": null,
+              "commandOutputs": [
+
+              ],
+              "sqlResponse": {
+                "saveToWordFile": true,
+                "data": {
+
+                },
+                "records": 100,
+                "tableMarkerResult": {
+                  "columnStatuses": [
+
+                  ],
+                  "tableRowCount": {
+                    "expectedResult": "string",
+                    "actualResult": "string",
+                    "status": "SUCCESS"
+                  }
+                },
+                "query": "string",
+                "internalPathToFile": "string",
+                "link": {
+                  "path": "string",
+                  "name": "string"
+                },
+                "description": "string",
+                "saveToZipFile": true,
+                "tableName": "string"
+              },
+              "postScriptExecutionReport": "string",
+              "checkStatusCodeFlag": true,
+              "type": "REST",
+              "command": "string",
+              "errors": [
+
+              ],
+              "htmlPage": {
+                "internalPathToFile": "string",
+                "htmlText": "string"
+              },
+              "statusCode": "string"
+            }
+          }
+        ],
+        "matchingRules": {
+          "body": {
+            "$[0].processName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].executedCommand": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.command": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.commandOutputs": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.commandOutputs[*].internalPathToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.commandOutputs[*].externalPathToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.commandOutputs[*].link.name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.commandOutputs[*].link.path": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.commandOutputs[*].displayed": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.commandOutputs[*].content": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.commandOutputs[*].markedContent": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.commandOutputs[*].markedContent[*].state": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.commandOutputs[*].markedContent[*].text": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.tableName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.query": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.description": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.records": {
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.tableRowCount.actualResult": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.tableRowCount.expectedResult": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.tableRowCount.status": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.columnStatuses": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].actualResult": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].columnName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].expectedResult": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].status": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.internalPathToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.link.name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.link.path": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.saveToWordFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.sqlResponse.saveToZipFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.htmlPage.internalPathToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.htmlPage.htmlText": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.errors": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.checkStatusCodeFlag": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.statusCode": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].commandResponse.postScriptExecutionReport": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].processStatus.marker.failWhenNoPassedMarkersFound": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[0].processStatus.status": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        },
+        "generators": {
+          "body": {
+            "$[0].processName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].executedCommand": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.command": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.commandOutputs[*].internalPathToFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.commandOutputs[*].externalPathToFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.commandOutputs[*].link.name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.commandOutputs[*].link.path": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.commandOutputs[*].markedContent[*].text": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.tableName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.query": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.description": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.records": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.tableRowCount.actualResult": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.tableRowCount.expectedResult": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].actualResult": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].columnName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].expectedResult": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.internalPathToFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.link.name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.sqlResponse.link.path": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.htmlPage.internalPathToFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.htmlPage.htmlText": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.statusCode": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$[0].commandResponse.postScriptExecutionReport": {
+              "type": "RandomString",
+              "size": 20
+            }
+          }
+        }
+      },
+      "providerStates": [
+        {
+          "name": "all ok"
+        }
+      ]
+    },
+    {
+      "description": "POST /rest/flow/execute/process OK",
+      "request": {
+        "method": "POST",
+        "path": "/rest/flow/execute/process",
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "query": {
+          "env": [
+            "env"
+          ],
+          "projectId": [
+            "1a20aefa-d24f-4d25-95ae-48b6630e9f7a"
+          ]
+        },
+        "body": {
+          "rest": {
+            "headers": "string",
+            "method": "string",
+            "checkStatusCode": [
+              "str"
+            ],
+            "bodyFile": "string",
+            "restFile": "string",
+            "body": "string",
+            "script": "string",
+            "saveCookie": true,
+            "endpoint": "string",
+            "hasFile": true,
+            "restLoopParameters": {
+              "timeoutRepeats": 100,
+              "checkTextInHeaders": true,
+              "checkTextInBody": true,
+              "maxNumberRepeats": 100,
+              "textToCheck": "string"
+            },
+            "checkStatusCodeFlag": true,
+            "disableRedirect": true,
+            "parseResponseAsTable": true
+          },
+          "process": "string",
+          "flowData": {
+            "projectId": "string",
+            "parameters": null,
+            "commonConfiguration": {
+              "projectDownloadPath": "string",
+              "nextBillDateSql": "string",
+              "saveFilesToWorkingDir": true,
+              "commandShellSeparator": "string",
+              "genevaDateMask": "string",
+              "sshRsaFilePath": "string",
+              "resetCacheSql": "string",
+              "ethalonFilesPath": "string",
+              "useVariablesInsideVariable": true,
+              "saveSqlTablesToFile": true,
+              "linesAmount": 100,
+              "externalEnvironmentPrefix": "string",
+              "variableFormat": "string",
+              "commandShellPrefixes": [
+
+              ],
+              "commonVariables": null
+            },
+            "testDataWorkbook": {
+              "loaded": true,
+              "testDataSheet": {
+                "records": [
+
+                ],
+                "scenarios": [
+
+                ]
+              },
+              "excelFile": "string",
+              "queriesSheet": {
+                "records": [
+
+                ],
+                "queries": [
+
+                ]
+              },
+              "scenariosToExecute": [
+                "str"
+              ],
+              "mainSheet": {
+                "records": [
+
+                ],
+                "scenarios": [
+
+                ]
+              },
+              "executeSql": true
+            }
+          },
+          "testDataFile": {
+            "filePath": "string",
+            "scenarios": [
+              "str"
+            ]
+          },
+          "sessionId": "e2490de5-5bd3-43d5-b7c4-526e33f71304",
+          "type": "string",
+          "switchers": [
+
+          ],
+          "systemSwitchers": [
+
+          ],
+          "compound": {
+            "processList": [
+
+            ],
+            "referToInput": "string",
+            "oldNameForEdit": "string",
+            "inputs": [
+
+            ],
+            "name": "string",
+            "execType": "string",
+            "currentStatement": [
+
+            ]
+          },
+          "command": "string"
+        },
+        "matchingRules": {
+          "body": {
+            "$.process": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.execType": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.oldNameForEdit": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.processList": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.processList[*].execType": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.inputs": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.currentStatement": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.compound.referToInput": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.command": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.type": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.projectId": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.useVariablesInsideVariable": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.variableFormat": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.saveFilesToWorkingDir": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.saveSqlTablesToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.nextBillDateSql": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.resetCacheSql": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.ethalonFilesPath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.externalEnvironmentPrefix": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.commandShellSeparator": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.commandShellPrefixes": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.commandShellPrefixes[*].system": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.genevaDateMask": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.projectDownloadPath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.sshRsaFilePath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.commonConfiguration.linesAmount": {
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.excelFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.loaded": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.executeSql": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.records": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.records[*].scenario": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.records[*].description": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validatedParams": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validatedParams[*].key": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validatedParams[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].status": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validated": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].onMainSheet": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.records": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.records[*].scenario": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.records[*].description": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].validatedParams": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].status": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].validated": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].onMainSheet": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].query": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].validateName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].validatedName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].query": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].toValidate": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].type": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].validated": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.testDataFile.filePath": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.sessionId": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].actionFalse": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].actionTrue": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].actionType": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].display": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.switchers[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].actionFalse": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].actionTrue": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].actionType": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].display": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.systemSwitchers[*].value": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.endpoint": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.method": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.headers": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.body": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.bodyFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.parseResponseAsTable": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.hasFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.disableRedirect": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.saveCookie": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restLoopParameters.checkTextInBody": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restLoopParameters.checkTextInHeaders": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restLoopParameters.maxNumberRepeats": {
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restLoopParameters.textToCheck": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.restLoopParameters.timeoutRepeats": {
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.checkStatusCodeFlag": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.checkStatusCode[0]": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.rest.script": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        },
+        "generators": {
+          "body": {
+            "$.process": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.compound.execType": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.compound.oldNameForEdit": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.compound.processList[*].execType": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.compound.name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.compound.referToInput": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.command": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.type": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.projectId": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.variableFormat": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.nextBillDateSql": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.resetCacheSql": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.ethalonFilesPath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.externalEnvironmentPrefix": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.commandShellSeparator": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.commandShellPrefixes[*].system": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.genevaDateMask": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.projectDownloadPath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.sshRsaFilePath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.commonConfiguration.linesAmount": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.flowData.testDataWorkbook.excelFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.records[*].scenario": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.records[*].description": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validatedParams[*].key": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.mainSheet.scenarios[*].descriptions[*].validatedParams[*].value": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.records[*].scenario": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.records[*].description": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.testDataSheet.scenarios[*].descriptions[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].query": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].validateName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].validatedName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.queries[*].validateValue[*].value": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].query": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].toValidate": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].type": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.flowData.testDataWorkbook.queriesSheet.records[*].validated": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.testDataFile.filePath": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.sessionId": {
+              "type": "Uuid"
+            },
+            "$.switchers[*].actionFalse": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.switchers[*].actionTrue": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.switchers[*].actionType": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.switchers[*].display": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.switchers[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.systemSwitchers[*].actionFalse": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.systemSwitchers[*].actionTrue": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.systemSwitchers[*].actionType": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.systemSwitchers[*].display": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.systemSwitchers[*].name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.restFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.endpoint": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.method": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.headers": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.body": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.bodyFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.restLoopParameters.maxNumberRepeats": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.rest.restLoopParameters.textToCheck": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.rest.restLoopParameters.timeoutRepeats": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.rest.script": {
+              "type": "RandomString",
+              "size": 20
+            }
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "executedCommand": "string",
+          "globalVariables": null,
+          "processStatus": {
+            "marker": {
+              "failWhenNoPassedMarkersFound": true,
+              "passedMarkerForLog": null,
+              "warnMarkersForLog": null,
+              "failedMarkersForLog": null
+            },
+            "status": "SUCCESS"
+          },
+          "processName": "string",
+          "commandResponse": {
+            "expectedCodes": null,
+            "commandOutputs": [
+
+            ],
+            "sqlResponse": {
+              "saveToWordFile": true,
+              "data": {
+
+              },
+              "records": 100,
+              "tableMarkerResult": {
+                "columnStatuses": [
+
+                ],
+                "tableRowCount": {
+                  "expectedResult": "string",
+                  "actualResult": "string",
+                  "status": "SUCCESS"
+                }
+              },
+              "query": "string",
+              "internalPathToFile": "string",
+              "link": {
+                "path": "string",
+                "name": "string"
+              },
+              "description": "string",
+              "saveToZipFile": true,
+              "tableName": "string"
+            },
+            "postScriptExecutionReport": "string",
+            "checkStatusCodeFlag": true,
+            "type": "REST",
+            "command": "string",
+            "errors": [
+
+            ],
+            "htmlPage": {
+              "internalPathToFile": "string",
+              "htmlText": "string"
+            },
+            "statusCode": "string"
+          }
+        },
+        "matchingRules": {
+          "body": {
+            "$.processName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.executedCommand": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.command": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.commandOutputs": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.commandOutputs[*].internalPathToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.commandOutputs[*].externalPathToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.commandOutputs[*].link.name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.commandOutputs[*].link.path": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.commandOutputs[*].displayed": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.commandOutputs[*].content": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.commandOutputs[*].markedContent": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.commandOutputs[*].markedContent[*].state": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.commandOutputs[*].markedContent[*].text": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.tableName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.query": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.description": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.records": {
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.tableRowCount.actualResult": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.tableRowCount.expectedResult": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.tableRowCount.status": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.columnStatuses": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].actualResult": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].columnName": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].expectedResult": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].status": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.internalPathToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.link.name": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.link.path": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.saveToWordFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.sqlResponse.saveToZipFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.htmlPage.internalPathToFile": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.htmlPage.htmlText": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.errors": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 0
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.checkStatusCodeFlag": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.statusCode": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.commandResponse.postScriptExecutionReport": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.processStatus.marker.failWhenNoPassedMarkersFound": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.processStatus.status": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        },
+        "generators": {
+          "body": {
+            "$.processName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.executedCommand": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.command": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.commandOutputs[*].internalPathToFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.commandOutputs[*].externalPathToFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.commandOutputs[*].link.name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.commandOutputs[*].link.path": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.commandOutputs[*].markedContent[*].text": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.tableName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.query": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.description": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.records": {
+              "type": "RandomInt",
+              "min": 0,
+              "max": 2147483647
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.tableRowCount.actualResult": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.tableRowCount.expectedResult": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].actualResult": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].columnName": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.tableMarkerResult.columnStatuses[*].expectedResult": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.internalPathToFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.link.name": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.sqlResponse.link.path": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.htmlPage.internalPathToFile": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.htmlPage.htmlText": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.statusCode": {
+              "type": "RandomString",
+              "size": 20
+            },
+            "$.commandResponse.postScriptExecutionReport": {
+              "type": "RandomString",
+              "size": 20
+            }
+          }
+        }
+      },
+      "providerStates": [
+        {
+          "name": "all ok"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "4.1.41"
+    }
+  }
+}

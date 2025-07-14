@@ -1,0 +1,4 @@
+### VERSION
+GET http://localhost:8080/version
+Content-Type: application/json
+

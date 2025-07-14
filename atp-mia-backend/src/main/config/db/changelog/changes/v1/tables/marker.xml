@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/marker.xml"
+               author="atp-mia" id="v1-create_'marker_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="marker_temp"/>
+            </not>
+        </preConditions>
+        <createTable tableName="marker_temp">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="marker_pkey"/>
+            </column>
+            <column name="fail_when_no_passed" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="marker_temp"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/marker.xml"
+               author="atp-mia" id="v1-copy_columns_for_'marker_temp'_table">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="marker"/>
+            <columnExists tableName="marker" columnName="id"/>
+            <columnExists tableName="marker" columnName="fail_when_no_passed"/>
+            <columnExists tableName="marker" columnName="status_id"/>
+        </preConditions>
+        <sql>
+            INSERT INTO marker_temp(id, fail_when_no_passed, status_id)
+            SELECT id, fail_when_no_passed, status_id
+            FROM marker;
+        </sql>
+        <rollback>
+            <sql>
+                DELETE
+                FROM marker_temp;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/marker.xml"
+               author="atp-mia" id="v1-drop_old_table_'marker'">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="marker"/>
+        </preConditions>
+        <dropTable tableName="marker"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/marker.xml"
+               author="atp-mia" id="v1-rename_'marker_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="marker"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="marker_temp" newTableName="marker"/>
+    </changeSet>
+</databaseChangeLog>

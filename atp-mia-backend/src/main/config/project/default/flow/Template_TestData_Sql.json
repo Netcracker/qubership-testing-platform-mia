@@ -1,0 +1,16 @@
+{
+  "execType": "Process",
+  "command": {
+    "displayDownloadedFileContent": false,
+    "atpValues": {
+      "column1": "sqlExecution"
+    },
+    "name": "SQL",
+    "type": "SQL_FROM_TEST_DATA",
+    "system": "Billing System",
+    "values": [
+      "sqlExecution"
+    ]
+  },
+  "name": "Sql test data"
+}

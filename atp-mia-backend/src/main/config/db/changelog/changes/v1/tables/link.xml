@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/link.xml"
+               author="atp-mia" id="v1-create_'link_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="link_temp"/>
+            </not>
+        </preConditions>
+        <createTable tableName="link_temp">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="link_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="path" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="execution_step_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="sql_response_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="link_temp"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/link.xml"
+               author="atp-mia" id="v1-copy_columns_for_'link_temp'_table">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="link"/>
+            <columnExists tableName="link" columnName="id"/>
+            <columnExists tableName="link" columnName="name"/>
+            <columnExists tableName="link" columnName="path"/>
+            <columnExists tableName="link" columnName="execution_step_id"/>
+            <columnExists tableName="link" columnName="sql_response_id"/>
+        </preConditions>
+        <sql>
+            INSERT INTO link_temp(id, name, path, execution_step_id, sql_response_id)
+            SELECT id, name, path, execution_step_id, sql_response_id
+            FROM link;
+        </sql>
+        <rollback>
+            <sql>
+                DELETE
+                FROM link_temp;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/link.xml"
+               author="atp-mia" id="v1-drop_old_table_'link'">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="link"/>
+        </preConditions>
+        <dropTable tableName="link"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/link.xml"
+               author="atp-mia" id="v1-rename_'link_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="link"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="link_temp" newTableName="link"/>
+    </changeSet>
+</databaseChangeLog>

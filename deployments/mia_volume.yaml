@@ -1,0 +1,21 @@
+kind: Template
+apiVersion: v1
+
+parameters:
+  - name: ATP_MIA_DUMP_PVC_NAME
+    description: "Sets name of pvc which stores dump"
+    value: "atp-mia-storage-dumps"
+    required: false
+
+objects:
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: "${ATP_MIA_DUMP_PVC_NAME}"
+    spec:
+      persistentVolumeReclaimPolicy: Retain
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi

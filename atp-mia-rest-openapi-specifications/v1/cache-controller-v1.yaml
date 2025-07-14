@@ -1,0 +1,152 @@
+openapi: 3.0.3
+info:
+  title: Api Documentation
+  description: Api Documentation
+  version: '1.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: //localhost:8080/
+tags:
+  - name: cache-controller
+    description: Cache Controller
+paths:
+  /rest/resetEnvCaches:
+    post:
+      tags:
+        - cache-controller
+      summary: resetEnvironmentCaches
+      operationId: resetEnvironmentCaches
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/resetPoolCache:
+    post:
+      tags:
+        - cache-controller
+      summary: resetPoolCache
+      operationId: resetPoolCache
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/markProcessForEdit:
+    post:
+      tags:
+        - cache-controller
+      summary: markProcessForEdit
+      operationId: markProcessForEdit
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+        - name: processName
+          in: query
+          description: processName
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/unmarkProcessForEdit:
+    delete:
+      tags:
+        - cache-controller
+      summary: unmarkProcessForEdit
+      operationId: unmarkProcessForEdit
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+        - name: processName
+          in: query
+          description: processName
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+components: { }

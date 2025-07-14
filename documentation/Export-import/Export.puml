@@ -1,0 +1,98 @@
+@startuml
+
+skinparam sequenceMessageAlign center
+
+box "BE" #caeaff
+    entity AtpMiaExportExecutor
+    entity ExportImportStrategiesRegistry
+    entity AtpExportStrategy
+    entity ProjectConfigurationService
+    entity ProjectConfigurationRepository
+    entity GridFsService
+    entity GridFsRepository
+    entity ObjectSaverToDiskService
+end box
+
+box "External source" #E3E3D9
+    entity DB
+    entity GridFsDB
+end box
+
+
+AtpMiaExportExecutor -> ExportImportStrategiesRegistry : getExportStrategy(ExportFormat)
+activate AtpMiaExportExecutor
+    activate ExportImportStrategiesRegistry
+        ExportImportStrategiesRegistry -> AtpMiaExportExecutor : AtpExportStrategy
+    deactivate ExportImportStrategiesRegistry
+    AtpMiaExportExecutor -> AtpExportStrategy : export(ExportImportData exportData, Path path)
+deactivate AtpMiaExportExecutor
+
+activate AtpExportStrategy #blue
+    activate AtpExportStrategy #yellow
+        AtpExportStrategy -> ProjectConfigurationService : getConfigByProjectId(UUID projectId)
+                activate ProjectConfigurationService
+                    ProjectConfigurationService -> ProjectConfigurationRepository : getConfigByProjectId(UUID projectId)
+                    activate ProjectConfigurationRepository
+                        ProjectConfigurationRepository -> DB : getConfigByProjectId(UUID projectId)
+                        activate DB
+                            DB -> ProjectConfigurationRepository : ProjectConfiguration
+                        deactivate DB
+                        ProjectConfigurationRepository -> ProjectConfigurationService : ProjectConfiguration
+                    deactivate ProjectConfigurationRepository
+                    ProjectConfigurationService -> AtpExportStrategy : ProjectConfiguration
+                deactivate ProjectConfigurationService
+    deactivate AtpExportStrategy
+
+    group #90ffbc For each Section
+        AtpExportStrategy -> AtpExportStrategy : exportSections(projectConfiguration, exportData, path)
+        AtpExportStrategy ->  ObjectSaverToDiskService : exportAtpEntity(section.getId(), new ExportImportSection(section), path.resolve("miaSections"))
+    end
+    group #90ffbc For each Compound
+        AtpExportStrategy -> AtpExportStrategy : exportCompounds(projectConfiguration, exportData, path)
+        AtpExportStrategy ->  ObjectSaverToDiskService : exportAtpEntity(compound.getId(), new ExportImportCompound(compound), path.resolve("miaSections"))
+    end
+    group #90ffbc For each Process
+        AtpExportStrategy -> AtpExportStrategy : exportProcesses(projectConfiguration, exportData, path)
+        AtpExportStrategy ->  ObjectSaverToDiskService : exportAtpEntity(process.getId(), new ExportImportSection(process), path.resolve("miaSections"))
+    end
+    group #90ffbc Export General Configuration
+        AtpExportStrategy -> AtpExportStrategy : exportGeneralConfiguration(projectConfiguration, exportData, path)
+        AtpExportStrategy ->  ObjectSaverToDiskService : exportAtpEntity(getProjectId(), new ExportImportCommonConfiguration(projectConfiguration.getCommonConfiguration()), path.resolve("miaProjectConfiguration"))
+        AtpExportStrategy ->  ObjectSaverToDiskService : exportAtpEntity(getProjectId(), new ExportImportHeaderConfiguration(projectConfiguration.getHeaderConfiguration()), path.resolve("miaProjectConfiguration"))
+        AtpExportStrategy ->  ObjectSaverToDiskService : exportAtpEntity(getProjectId(), new ExportImportPotHeaderConfiguration(projectConfiguration.getPotHeaderConfiguration()), path.resolve("miaProjectConfiguration"))
+    end
+    group #90fa77 Export Directory and Files
+        AtpExportStrategy -> AtpExportStrategy : exportFiles(projectConfiguration, exportData, path)
+        group #90fa88 For each Directory
+            AtpExportStrategy -> AtpExportStrategy : exportForDirectories(projectConfiguration, exportData, path)
+            AtpExportStrategy ->  ObjectSaverToDiskService : objectSaverToDiskService.exportAtpEntity(exportImportDirectory.getId(), exportImportDirectory, path.resolve(ExportImportEntities.MIA_FILES.getValue()))
+        end
+        group #90fa99 For each Files
+            AtpExportStrategy ->  ObjectSaverToDiskService : objectSaverToDiskService.exportAtpEntity(eiFile.getId(), eiFile, path.resolve(ExportImportEntities.MIA_FILES.getValue()))
+            AtpExportStrategy ->  GridFsService : gridFsService.getFile(exportFile.getGridFsObjectId())
+            activate GridFsService
+                GridFsService  ->  GridFsRepository : gridFsRepository.getFile(exportFile.getGridFsObjectId())
+                activate GridFsRepository
+                GridFsRepository ->  GridFsDB : fsChunk.getFile(exportFile.getGridFsObjectId())
+                GridFsDB -> GridFsRepository  : GridFsFile
+                GridFsRepository -> GridFsService : GridFsFile
+                deactivate GridFsRepository
+                GridFsService -> AtpExportStrategy : GridFsFile
+            deactivate GridFsService
+
+            AtpExportStrategy ->  GridFsService : gridFsService.getByteArrayFromGridFsFile(gridFsFile)
+            activate GridFsService
+                GridFsService  ->  GridFsRepository : gridFsRepository.getByteArrayFromGridFsFile(gridFsFile)
+                activate GridFsRepository
+                GridFsRepository ->  GridFsDB : gridFsBucket.downloadToStream(file.getObjectId(), bos);
+                GridFsDB -> GridFsRepository  : byte[]
+                GridFsRepository -> GridFsService : byte[]
+                deactivate GridFsRepository
+                GridFsService -> AtpExportStrategy : byte[]
+            deactivate GridFsService
+            AtpExportStrategy ->  AtpExportStrategy : Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        end
+    end
+
+deactivate AtpExportStrategy
+@enduml

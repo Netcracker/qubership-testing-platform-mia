@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/pot_error.xml"
+               author="atp-mia" id="v1-create_'pot_error_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="pot_error_temp"/>
+            </not>
+        </preConditions>
+        <createTable tableName="pot_error_temp">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pot_error_pkey"/>
+            </column>
+            <column name="error_code" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="http_status" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+            <column name="message" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="execution_step_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="pot_error_temp"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/pot_error.xml"
+               author="atp-mia" id="v1-copy_columns_for_'pot_error_temp'_table">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="pot_error"/>
+            <columnExists tableName="pot_error" columnName="id"/>
+            <columnExists tableName="pot_error" columnName="error_code"/>
+            <columnExists tableName="pot_error" columnName="http_status"/>
+            <columnExists tableName="pot_error" columnName="message"/>
+            <columnExists tableName="pot_error" columnName="execution_step_id"/>
+        </preConditions>
+        <sql>
+            INSERT INTO pot_error_temp(id, error_code, http_status, message, execution_step_id)
+            SELECT id, error_code, http_status, message, execution_step_id
+            FROM pot_error;
+        </sql>
+        <rollback>
+            <sql>
+                DELETE
+                FROM pot_error_temp;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/pot_error.xml"
+               author="atp-mia" id="v1-drop_old_table_'pot_error'">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="pot_error"/>
+        </preConditions>
+        <dropTable tableName="pot_error"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/pot_error.xml"
+               author="atp-mia" id="v1-rename_'pot_error_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="pot_error"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="pot_error_temp" newTableName="pot_error"/>
+    </changeSet>
+</databaseChangeLog>

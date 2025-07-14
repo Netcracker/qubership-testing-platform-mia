@@ -1,0 +1,6 @@
+ALTER TABLE project_section_process_configuration
+DROP CONSTRAINT project_section_process_configuration_pk;
+
+ALTER TABLE project_section_process_configuration
+ADD CONSTRAINT project_section_process_configuration_pk
+PRIMARY KEY (section_id, process_id, place);

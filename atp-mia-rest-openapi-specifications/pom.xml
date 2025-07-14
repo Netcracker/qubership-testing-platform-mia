@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>atp-mia</artifactId>
+        <groupId>org.qubership.atp.mia</groupId>
+        <version>${atp.service.version}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>atp-mia-rest-openapi-specifications</artifactId>
+    <packaging>jar</packaging>
+
+    <build>
+        <resources>
+            <resource>
+                <targetPath>api/mia</targetPath> <!--please set api/name of service here-->
+                <filtering>false</filtering>
+                <directory>${basedir}</directory>
+                <includes>
+                    <include>**/*.yaml</include>
+                </includes>
+                <excludes>
+                    <exclude>target/**/*</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
+</project>

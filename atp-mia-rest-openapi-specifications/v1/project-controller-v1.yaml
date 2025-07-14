@@ -1,0 +1,301 @@
+openapi: 3.0.3
+info:
+  title: Api Documentation
+  description: Api Documentation
+  version: '1.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: //localhost:8080/
+tags:
+  - name: project-controller
+    description: Project Controller
+paths:
+  /rest/environments:
+    get:
+      tags:
+        - project-controller
+      summary: getEnvironments
+      operationId: getEnvironments
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AbstractConfiguratorModel'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/environments/full:
+    get:
+      tags:
+        - project-controller
+      summary: getEnvironmentsFull
+      operationId: getEnvironmentsFull
+      parameters:
+        - name: environmentId
+          in: query
+          description: environmentId
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Environment'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/environments/systems:
+    get:
+      tags:
+        - project-controller
+      summary: getSystemsForProject
+      operationId: getSystemsForProject
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemEnvironmentsView'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/project:
+    get:
+      tags:
+        - project-controller
+      summary: getProject
+      operationId: getProject
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/projects:
+    get:
+      tags:
+        - project-controller
+      summary: getProjects
+      operationId: getProjects
+      responses:
+        200:
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AbstractConfiguratorModel'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+components:
+  schemas:
+    AbstractConfiguratorModel:
+      title: AbstractConfiguratorModel
+      type: object
+      properties:
+        created:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+        modified:
+          type: string
+        modifiedBy:
+          type: string
+        name:
+          type: string
+    Connection:
+      title: Connection
+      type: object
+      properties:
+        connectionType:
+          type: string
+        created:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+        modified:
+          type: string
+        modifiedBy:
+          type: string
+        name:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        sourceTemplateId:
+          type: string
+        systemId:
+          type: string
+    Environment:
+      title: Environment
+      type: object
+      properties:
+        created:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+        modified:
+          type: string
+        modifiedBy:
+          type: string
+        name:
+          type: string
+        projectId:
+          type: string
+        systems:
+          type: array
+          items:
+            $ref: '#/components/schemas/System'
+    System:
+      title: System
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Connection'
+        created:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        environmentId:
+          type: string
+        id:
+          type: string
+        modified:
+          type: string
+        modifiedBy:
+          type: string
+        name:
+          type: string
+    Project:
+      title: Project
+      type: object
+      properties:
+        created:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        environments:
+          type: array
+          items:
+            type: string
+            format: uuid
+        id:
+          type: string
+        modified:
+          type: string
+        modifiedBy:
+          type: string
+        name:
+          type: string
+        shortName:
+          type: string
+    SystemEnvironmentsView:
+      title: SystemEnvironmentsView
+      type: object
+      properties:
+        environmentIds:
+          type: array
+          items:
+            type: object
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string

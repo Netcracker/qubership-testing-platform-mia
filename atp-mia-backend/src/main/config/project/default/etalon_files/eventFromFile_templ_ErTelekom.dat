@@ -1,0 +1,20 @@
+Geneva: text_data_transfer_file
+Format: 1
+Character_set: ASCII8
+File_type: event_file
+File_subtype: event_file_sub_type
+File_group_number: 12
+File_in_group_number: 1
+Total_files_in_group: 16
+Source_ID: source
+Tag: tag -v13
+${CycleTextGeneration('Event: [sourceNumber],[eventType],"[eventDate]",,,,,,,,,,,,[EventAttr1],[EventAttrN],,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,', '\n', 'eventType', 'eventType->:eventType->string', 'sourceNumber->:Source_Number->string', 'eventDate->:Call_start_time->string', 'EventAttr1->:eventAttr1->string', 'EventAttrN->:eventAttrN->string')}
+Footer: text_data_transfer_file
+AuditValue_1: 0
+AuditValue_2: 0
+End: text_data_transfer_file
+Lines: 15
+Characters: 357
+Checksum:
+Security_checksum:
+End_of_file:

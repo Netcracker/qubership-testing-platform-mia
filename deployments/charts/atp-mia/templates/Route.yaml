@@ -1,0 +1,26 @@
+{{- if eq .Values.PAAS_PLATFORM "OPENSHIFT" }}
+{{- if .Values.EXTERNAL_LINK_ENABLED }}
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+  annotations:
+    haproxy.router.openshift.io/timeout: 10h
+spec:
+  host: '{{ include "env.host" . }}'
+  port:
+    targetPort: web
+  tls:
+    insecureEdgeTerminationPolicy: '{{ .Values.TERMINATION_POLICY}}'
+    termination: edge
+  to:
+    kind: Service
+    name: '{{ .Values.LABEL }}{{ .Values.SERVICE_NAME }}'
+    weight: 100
+status:
+  ingress:
+    - conditions:
+      host: '{{ include "env.host" . }}'
+{{- end }}
+{{- end }}

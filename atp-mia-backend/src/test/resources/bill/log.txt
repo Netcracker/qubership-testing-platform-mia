@@ -1,0 +1,10 @@
+INFORM----E1EXPprocess.cc:0472:08/07/19 08:46:54 > E1EXP : Output file created with File Name: 'src/test/resources/bill/EBILL_BILLTYPE_1.dat' for the input invoice : '20190726'
+INFORM----E1EXPprocess.cc:0472:08/07/19 08:46:54 > E1EXP : Output file created with File Name: 'src/test/resources/bill/EBILL_BILLTYPE_5.dat' for
+the input invoice : '20190826'
+INFORM----E1EXPprocess.cc:0472:08/07/19 08:46:54 > E1EXP : Output file created with File Name: 'src/test/resources/bill/EBILL_BILLTYPE_null.dat' for
+the input invoice : '20190826'
+INFORM----E1EXPprocess.cc:0472:08/07/19 08:46:54 > E1EXP : Output file created with File Name: 'src/test/resources/bill/EBILL_BILLTYPE_1_Prepaid.dat' for
+the input invoice : '20190826'
+INFORM----E1EXPprocess.cc:0472:08/07/19 08:46:54 > E1EXP : Output file created with File Name: 'src/test/resources/bill/EBILL_BILLTYPE_9.dat' for
+the input invoice : '20190826'
+07904:C4D67740:INFORM----TMPIgenericMain.cc:1278:08/07/2019 08:46:54 > Process finishing with status 0

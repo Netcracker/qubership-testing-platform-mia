@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/sql_response.xml"
+               author="atp-mia" id="v1-create_'sql_response_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="sql_response_temp"/>
+            </not>
+        </preConditions>
+        <createTable tableName="sql_response_temp">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="sql_response_pkey"/>
+            </column>
+            <column name="connection_info" type="jsonb">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="internal_path_to_file" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="query" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="records" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+            <column name="save_to_word_file" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+            <column name="save_to_zip_file" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+            <column name="table_name" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="execution_step_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="sql_response_temp"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/sql_response.xml"
+               author="atp-mia" id="v1-copy_columns_for_'sql_response_temp'_table">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sql_response"/>
+            <columnExists tableName="sql_response" columnName="id"/>
+            <columnExists tableName="sql_response" columnName="connection_info"/>
+            <columnExists tableName="sql_response" columnName="description"/>
+            <columnExists tableName="sql_response" columnName="internal_path_to_file"/>
+            <columnExists tableName="sql_response" columnName="query"/>
+            <columnExists tableName="sql_response" columnName="records"/>
+            <columnExists tableName="sql_response" columnName="save_to_word_file"/>
+            <columnExists tableName="sql_response" columnName="save_to_zip_file"/>
+            <columnExists tableName="sql_response" columnName="table_name"/>
+            <columnExists tableName="sql_response" columnName="execution_step_id"/>
+        </preConditions>
+        <sql>
+            INSERT INTO sql_response_temp(id, connection_info, description, internal_path_to_file, query, records, save_to_word_file, save_to_zip_file, table_name, execution_step_id)
+            SELECT id, connection_info, description, internal_path_to_file, query, records, save_to_word_file, save_to_zip_file, table_name, execution_step_id
+            FROM sql_response;
+        </sql>
+        <rollback>
+            <sql>
+                DELETE
+                FROM sql_response_temp;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/sql_response.xml"
+               author="atp-mia" id="v1-drop_old_table_'sql_response'">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sql_response"/>
+        </preConditions>
+        <dropTable tableName="sql_response"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/sql_response.xml"
+               author="atp-mia" id="v1-rename_'sql_response_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="sql_response"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="sql_response_temp" newTableName="sql_response"/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,32 @@
+{{- if eq .Values.PAAS_PLATFORM "COMPOSE" }}
+version: '2.2'
+services:
+  {{ .Values.SERVICE_NAME }}:
+    image: '{{ .Values.DOCKER_TAG }}'
+    container_name: '{{ .Values.SERVICE_NAME }}'
+    scale: {{ min 1 .Values.NODES_COUNT }}
+    restart: always
+    healthcheck:
+      test: "curl -f localhost:8080/rest/deployment/readiness || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 6
+    env_file:
+      - .secret
+    environment:
+      {{- include "env.compose" . | indent 6 }}
+    mem_limit: '{{ trimSuffix "i" .Values.MEMORY_LIMIT }}'
+    cpus: {{ .Values.CPU_LIMIT }}
+    volumes:
+      - ./data/projects_config.json:{{ .Values.ATP_MIA_PROJECTS_CONFIG }}
+    ports:
+      - 8090:8080
+
+{{- if .Values.ATP_NET }}
+networks:
+  default:
+    name: '{{ .Values.ATP_NET }}'
+    external: true
+{{- end }}
+
+{{- end }}

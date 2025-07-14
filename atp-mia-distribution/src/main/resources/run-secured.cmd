@@ -1,0 +1,1 @@
+java -DSECURE_LOGIN=MIA -DSECURE_PASSWORD=MIA -Dspring.config.location=".\config\application-secured.properties" -Dfeign.atp.environments.url=http://environments:8080 -cp "config/;lib/*" org.qubership.atp.mia.Main

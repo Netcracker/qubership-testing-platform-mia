@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/process_status.xml"
+               author="atp-mia" id="v1-create_'process_status_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="process_status_temp"/>
+            </not>
+        </preConditions>
+        <createTable tableName="process_status_temp">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="process_status_pkey"/>
+            </column>
+            <column name="status" type="INT2">
+                <constraints nullable="true"/>
+            </column>
+            <column name="step_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="process_status_temp"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/process_status.xml"
+               author="atp-mia" id="v1-copy_columns_for_'process_status_temp'_table">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="process_status"/>
+            <columnExists tableName="process_status" columnName="id"/>
+            <columnExists tableName="process_status" columnName="status"/>
+            <columnExists tableName="process_status" columnName="step_id"/>
+        </preConditions>
+        <sql>
+            INSERT INTO process_status_temp(id, status, step_id)
+            SELECT id, status, step_id
+            FROM process_status;
+        </sql>
+        <rollback>
+            <sql>
+                DELETE
+                FROM process_status_temp;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/process_status.xml"
+               author="atp-mia" id="v1-drop_old_table_'process_status'">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="process_status"/>
+        </preConditions>
+        <dropTable tableName="process_status"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/process_status.xml"
+               author="atp-mia" id="v1-rename_'process_status_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="process_status"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="process_status_temp" newTableName="process_status"/>
+    </changeSet>
+</databaseChangeLog>

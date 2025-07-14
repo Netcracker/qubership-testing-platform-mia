@@ -1,0 +1,120 @@
+@startuml
+
+skinparam sequenceMessageAlign center
+
+box "BE" #caeaff
+    entity AtpExportImportService
+    entity AtpMiaImportExecutor
+    entity AtpImportStrategy
+    entity ImportLoader
+    entity ProjectConfigurationService
+    entity ProjectConfigurationRepository
+    entity ObjectLoaderFromDiskService
+
+
+end box
+
+box "External source" #E3E3D9
+    entity DB
+    entity GitRepository
+end box
+
+== IMPORT ==
+AtpExportImportService -> AtpMiaImportExecutor : import(importData, path)
+activate AtpMiaImportExecutor
+    AtpMiaImportExecutor -> AtpImportStrategy : miaImport(importData, path)
+deactivate AtpMiaImportExecutor
+
+activate AtpImportStrategy
+    AtpImportStrategy -> ProjectConfigurationService : getConfigByProjectId(UUID projectId)
+    activate ProjectConfigurationService
+        ProjectConfigurationService -> ProjectConfigurationRepository : getConfigByProjectId(UUID projectId)
+        activate ProjectConfigurationRepository
+            ProjectConfigurationRepository -> DB : getConfigByProjectId(UUID projectId)
+            activate DB
+                DB -> ProjectConfigurationRepository : ProjectConfiguration
+            deactivate DB
+            ProjectConfigurationRepository -> ProjectConfigurationService : ProjectConfiguration
+        deactivate ProjectConfigurationRepository
+        ProjectConfigurationService -> AtpImportStrategy : ProjectConfiguration
+    deactivate ProjectConfigurationService
+
+    AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_SECTION).importEntity(...)
+    AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_PROCESSES).importEntity(...)
+    AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_COMPOUNDS).importEntity(...)
+    AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_DIRECTORY).importEntity(...)
+    AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_FILES).importEntity(...)
+    AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_COMMON_CONFIGURATION).importEntity(...)
+    AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_HEADER_CONFIGURATION).importEntity(...)
+    AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_POT_HEADER_CONFIGURATION).importEntity(...)
+
+deactivate AtpImportStrategy
+
+
+== VALIDATION ==
+
+AtpExportImportService -> AtpMiaImportExecutor : validateData(importData, workDir)
+activate AtpExportImportService
+    activate AtpMiaImportExecutor
+        AtpMiaImportExecutor -> AtpImportStrategy : validateData(importData, path)
+            activate AtpImportStrategy
+                alt if replacement
+                   AtpImportStrategy -> AtpImportStrategy : getObjectIds(Path workDir, Class<T> clazz)
+                   activate AtpImportStrategy
+                       AtpImportStrategy -> ObjectLoaderFromDiskService : getListOfObjects(workDir, clazz)
+                       activate ObjectLoaderFromDiskService
+                           ObjectLoaderFromDiskService -> AtpImportStrategy : Map<UUID, Path>
+                       deactivate ObjectLoaderFromDiskService
+                       AtpImportStrategy -> AtpImportStrategy : List<UUID>
+                   deactivate AtpImportStrategy
+                end
+                AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_SECTION).validate(...)
+                activate ImportLoader #FFFF00
+                   ImportLoader -> ImportLoader : loadSections(importData, workDir)
+                   ImportLoader -> AtpImportStrategy : List<UUID>
+                deactivate ImportLoader
+
+                AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_COMPOUNDS).validate(...)
+                activate ImportLoader #FFFF00
+                    ImportLoader -> ImportLoader : loadCompound(importData, workDir)
+                   ImportLoader -> AtpImportStrategy : List<UUID>
+                deactivate ImportLoader
+
+                AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_PROCESSES).validate(...)
+                activate ImportLoader #FFFF00
+                    ImportLoader -> ImportLoader : loadProcesses(importData, workDir)
+                   ImportLoader -> AtpImportStrategy : List<UUID>
+                deactivate ImportLoader
+
+                 AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_DIRECTORY).validate(...)
+                 activate ImportLoader #FFFF00
+                     ImportLoader -> ImportLoader : loadDirectories(importData, workDir)
+                    ImportLoader -> AtpImportStrategy : List<UUID>
+                 deactivate ImportLoader
+
+                AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_FILES).validate(...)
+                activate ImportLoader #FFFF00
+                    ImportLoader -> ImportLoader : loadFiles(importData, workDir)
+                   ImportLoader -> AtpImportStrategy : List<UUID>
+                deactivate ImportLoader
+
+                 AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_COMMON_CONFIGURATION).validate(...)
+                 activate ImportLoader #FFFF00
+                    ImportLoader -> AtpImportStrategy : Collections.emptyList()
+                 deactivate ImportLoader
+
+                AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_HEADER_CONFIGURATION).validate(...)
+                activate ImportLoader #FFFF00
+                   ImportLoader -> AtpImportStrategy : Collections.emptyList()
+                deactivate ImportLoader
+
+                AtpImportStrategy -> ImportLoader : ImportLoader(ExportImportEntities.MIA_POT_HEADER_CONFIGURATION).validate(...)
+                activate ImportLoader #FFFF00
+                   ImportLoader -> AtpImportStrategy : Collections.emptyList()
+                deactivate ImportLoader
+
+            deactivate AtpImportStrategy
+        AtpMiaImportExecutor -> AtpExportImportService : ValidationResult
+    deactivate AtpMiaImportExecutor
+deactivate AtpImportStrategy
+@enduml

@@ -1,0 +1,41 @@
+{
+  "execType": "Process",
+  "command": {
+    "displayDownloadedFileContent": false,
+    "soap": {
+      "endpoint": ":soapEndpoint",
+      "request": ":soapRequest",
+      "requestFile": ":soapRequestFile"
+    },
+    "name": "Soap",
+    "type": "SOAP",
+    "system": "ECA"
+  },
+  "name": "SOAP",
+  "inputs": [
+    {
+      "label": "Endpoint",
+      "maxLength": 0,
+      "required": false,
+      "name": "soapEndpoint",
+      "type": "text",
+      "system": "ECA"
+    },
+    {
+      "label": "Request",
+      "maxLength": 0,
+      "required": false,
+      "name": "soapRequest",
+      "type": "ace",
+      "system": "ECA"
+    },
+    {
+      "label": "File for request",
+      "maxLength": 0,
+      "required": false,
+      "name": "soapRequestFile",
+      "type": "attachment",
+      "system": "ECA"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "execType": "Process",
+  "command": {
+    "pathForUpload": ":infinys_root/",
+    "regexpForFileRetrieve": "(?<=.to ).*(?<=.dat_ERR_.{12})",
+    "fileExtension": ".dat",
+    "namesOfFilesForGeneration": [
+      "event_file_sub_${Timestamp(YYYYMMdd_hhmmss)}",
+      "control_file_${Timestamp(YYYYMMdd_hhmmss)}"
+    ],
+    "ethalonFilesForGeneration": [
+      "eventFromFile_templ_Project_One.dat",
+      "control_templ.dat"
+    ],
+    "saveGeneratedFilesToParameter": "generatedFiles",
+    "displayDownloadedFileContent": false,
+    "name": "SSH_GenerateEvent",
+    "type": "SSH_GenerateEvent",
+    "system": "Billing System",
+    "values": [
+      "{ FID -a '-sourceDir \":infinys_root\"' ; EFD ; }"
+    ]
+  },
+  "name": "SSH_GenerateEvent",
+  "inputs": [
+    {
+      "label": "Event types",
+      "maxLength": 0,
+      "required": false,
+      "name": "template",
+      "type": "checkBoxGroup",
+      "system": "Billing System",
+      "values": [
+        "SMS: :TemplateEvent1",
+        "CALL: :TemplateEvent2"
+      ]
+    },
+    {
+      "label": "Event Source",
+      "maxLength": 0,
+      "required": false,
+      "name": "Calling",
+      "type": "text",
+      "system": "Billing System",
+      "values": [
+        "32553697560"
+      ]
+    },
+    {
+      "label": "Event Date",
+      "maxLength": 0,
+      "required": false,
+      "name": "EVENT_DTM",
+      "type": "text",
+      "system": "Billing System",
+      "values": [
+        "2019/07/05-05-35-28.01"
+      ]
+    },
+    {
+      "label": "MO",
+      "maxLength": 0,
+      "required": false,
+      "name": "MO",
+      "type": "text",
+      "system": "Billing System",
+      "values": [
+        "MO_1"
+      ]
+    },
+    {
+      "label": "Destination",
+      "maxLength": 0,
+      "required": false,
+      "name": "Destination",
+      "type": "text",
+      "system": "Billing System",
+      "values": [
+        "32184854784"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+openapi: 3.0.1
+info:
+  title: MIA Service Controller API
+  description: MIA -> Different services such as 'dbSize', 'timeShifting'.
+  version: '2.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: https://atp-public-gateway:8080/api/atp-mia/v1
+  - url: http://localhost:8080
+tags:
+  - name: mia-service-controller
+    description: MIA Service Controller
+paths:
+  /rest/dbSize:
+    get:
+      tags:
+        - mia-service-controller
+      description: Get DB size.
+      operationId: dbSize
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/timeShifting/check:
+    get:
+      tags:
+        - mia-service-controller
+      summary: getTimeShifting
+      operationId: getTimeShifting
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: systemId
+          in: query
+          description: systemId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/timeShifting/update:
+    post:
+      tags:
+        - mia-service-controller
+      summary: updateTimeShifting
+      operationId: updateTimeShifting
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: systemId
+          in: query
+          description: systemId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: value
+          in: query
+          description: value
+          required: true
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false

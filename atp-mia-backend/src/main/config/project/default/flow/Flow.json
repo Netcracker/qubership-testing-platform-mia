@@ -1,0 +1,285 @@
+{
+  "validationResult": "",
+  "headerConfiguration": {
+    "showGenevaDateBlock": true,
+    "showWorkingDirectory": true,
+    "showResetDbCache": true,
+    "showUpdateConfig": true,
+    "showTestData": true,
+    "showTimeShifting": false,
+    "exportToggleDefaultPosition": true,
+    "workingDirectory": "/tmp/TA/",
+    "switchers": [
+      {
+        "value": false,
+        "actionType": "SQL",
+        "name": "Uncomment/comment Sysdatevalue",
+        "display": "Sysdatevalue Uncomment/comment",
+        "actionTrue": "update gparams set name='SYSdateValue' where name='#SYSdateValue'"
+      },
+      {
+        "value": true,
+        "actionType": "SQL",
+        "name": "comment SysdateOverride",
+        "display": "SysdateOverride comment",
+        "actionFalse": "update gparams set name='SYSdateoverride' where name='#SYSdateOverride'"
+      }
+    ],
+    "systemSwitchers": [
+      {
+        "value": false,
+        "actionType": "SSH",
+        "name": "fullTraceMode",
+        "display": "Full Trace On/Off",
+        "actionTrue": "export TRACE_LEVEL=FULL\nexport TRACE_ALL=ON"
+      },
+      {
+        "value": false,
+        "name": "needDos2Unix",
+        "display": "needDos2Unix"
+      },
+      {
+        "value": true,
+        "name": "replaceFileOnUploadAttachment",
+        "display": "Replace/Add timestamp on upload attachment",
+        "actionTrue": "replace",
+        "actionFalse": "add timestamp"
+      },
+      {
+        "value": true,
+        "name": "stopOnFail",
+        "display": "Stop compound if one of processes is fail"
+      }
+    ]
+  },
+  "commonConfiguration": {
+    "useVariablesInsideVariable": false,
+    "variableFormat": ":VARIABLE_NAME",
+    "saveFilesToWorkingDir": false,
+    "saveSqlTablesToFile": true,
+    "commonVariables": {
+      "TemplateEvent1": "Event: \":Calling\",\"1\",\":EVENT_DTM\",,\"JPY\",,,,,,,,,,\":MO\",\":Destination\",\":Calling\",\":Date2\",\":Amount\",\":Called\",,\":Called\",,,,,,,,,,,,,,,,",
+      "TemplateEvent2": "Event: \":Calling\",\"2\",\":EVENT_DTM\",,,,,,,,,,,,\":MO\",,\":Calling\",\":Date2\",,\":Called\",\"1\",,,,,,,,,\"EVENT_FILE_NAME.00\",,,,\"DOM_MO_OTHER_MOB\",,,\"1\""
+    },
+    "nextBillDateSql": "SELECT NEXT_BILL_DTM FROM ACCOUNT WHERE ACCOUNT_NUM =':accountNumber'",
+    "resetCacheSql": "{call gnvsessiongparams.clearcache()}",
+    "ethalonFilesPath": "./etalon_files/",
+    "externalEnvironmentPrefix": "",
+    "commandShellSeparator": "\n",
+    "commandShellPrefixes": [
+      {
+        "system": "Billing System",
+        "prefixes": {
+          "accountNumber": "echo \"Something with accountNumber %s\"",
+          "genevaDate": "echo \"Something with genevaDate %s\"",
+          "infinys_root": "cd %s\nsource infinys.env",
+          "workingDirectory": "mkdir -p %s",
+          "exportGenevaDate": "export GENEVA_FIXEDDATE=\":genevaDate\"",
+          "fullTraceMode": "export TRACE_LEVEL=FULL\nexport TRACE_ALL=ON"
+        }
+      },
+      {
+        "system": "OTHER",
+        "prefixes": {
+          "always": "always do that",
+          "always2": "and that"
+        }
+      }
+    ],
+    "linesAmount": 3
+  },
+  "potHeaderConfiguration": {
+    "headers": []
+  },
+  "defaultSystem": "Billing System",
+  "sections": [
+    {
+      "name": "CM",
+      "processes": [
+        {
+          "execType": "Compound",
+          "processList": [
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SQL.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_TransferFile.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_DownloadFiles.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_CheckFileOnServer.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_GenerationFile.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_UploadFileAndDownloadResult.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_REST.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SOAP.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_GenerateEvent.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_fillInput.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "EventFromFileProjectThree.json"
+            }
+          ],
+          "name": "Compound Name"
+        }
+      ]
+    },
+    {
+      "name": "Billing System",
+      "processes": [
+        {
+          "execType": "Process",
+          "pathToFile": "Template_fillInput.json"
+        }
+      ],
+      "sections": [
+        {
+          "name": "SQL",
+          "processes": [
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SQL.json"
+            }
+          ]
+        },
+        {
+          "name": "SSH",
+          "processes": [
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_TransferFile.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_DownloadFiles.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_CheckFileOnServer.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_GenerationFile.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_UploadFileAndDownloadResult.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_marker.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_UploadFile.json"
+            }
+          ]
+        },
+        {
+          "name": "REST",
+          "processes": [
+            {
+              "execType": "Process",
+              "pathToFile": "Template_REST.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_REST_BODY_FROM_FILE.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_REST_FROM_FILE.json"
+            }
+          ]
+        },
+        {
+          "name": "SOAP",
+          "processes": [
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SOAP.json"
+            }
+          ]
+        },
+        {
+          "name": "EVENTS",
+          "processes": [
+            {
+              "execType": "Process",
+              "pathToFile": "Template_SSH_GenerateEvent.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "EventFromFileProjectThree.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "EventFromFileProjectOne.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "EventFromFileProjectTwo.json"
+            }
+          ]
+        },
+        {
+          "name": "Processes from Test data",
+          "processes": [
+            {
+              "execType": "Process",
+              "pathToFile": "Template_TestData_Event.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_TestData_Validate.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_TestData_Ssh.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_TestData_Soap.json"
+            },
+            {
+              "execType": "Process",
+              "pathToFile": "Template_TestData_Sql.json"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

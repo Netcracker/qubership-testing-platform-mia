@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/recording_session.xml"
+               author="atp-mia" id="v1-create_'recording_session_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="recording_session_temp"/>
+            </not>
+        </preConditions>
+        <createTable tableName="recording_session_temp">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="recording_session_pkey"/>
+            </column>
+            <column name="environment_name" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="project_id" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="recording_session_temp"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/recording_session.xml"
+               author="atp-mia" id="v1-copy_columns_for_'recording_session_temp'_table">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="recording_session"/>
+            <columnExists tableName="recording_session" columnName="id"/>
+            <columnExists tableName="recording_session" columnName="environment_name"/>
+            <columnExists tableName="recording_session" columnName="project_id"/>
+        </preConditions>
+        <sql>
+            INSERT INTO recording_session_temp(id, environment_name, project_id)
+            SELECT id, environment_name, project_id
+            FROM recording_session;
+        </sql>
+        <rollback>
+            <sql>
+                DELETE
+                FROM recording_session_temp;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/recording_session.xml"
+               author="atp-mia" id="v1-drop_old_table_'recording_session'">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="recording_session"/>
+        </preConditions>
+        <dropTable tableName="recording_session"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/recording_session.xml"
+               author="atp-mia" id="v1-rename_'recording_session_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="recording_session"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="recording_session_temp" newTableName="recording_session"/>
+    </changeSet>
+</databaseChangeLog>

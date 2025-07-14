@@ -1,0 +1,66 @@
+### SSE CONNECT LOCALHOST SSE
+GET http://localhost:8080/sse/connect?projectId={{projectId}}&sseId={{sseId}}
+Content-Type: text/event-stream
+Authorization: {{bearer}}
+
+### EXECUTE PROCESS LOCALHOST
+POST http://localhost:8087/sse/process?projectId=75ff7376-7231-4f8f-8144-ede2a5ea9762&env=vamshi%20environment&sseId={{sseId}}
+Authorization: {{bearer}}
+Content-Type: application/json
+
+{
+  "sessionId": "61688251-d9a0-40e5-a177-bdc1e63bf7c0",
+  "process": "SSH_BG",
+  "command": "sleep 35",
+  "rest": null,
+  "compound": null,
+  "flowData": {
+    "parameters": {
+      "workingDirectory": "/tmp/TA/",
+      "exportGenevaDate": true,
+      "defaultSystem": "Billing System",
+      "environment": "vamshi environment",
+      "processName": "Compound"
+    }
+  },
+  "switchers": [
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "Uncomment/comment Sysdatevalue",
+      "value": false
+    },
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "comment SysdateOverride",
+      "value": true
+    }
+  ],
+  "systemSwitchers": [
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "fullTraceMode",
+      "value": false
+    },
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "needDos2Unix",
+      "value": false
+    },
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "replaceFileOnUploadAttachment",
+      "value": true
+    },
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "stopOnFail",
+      "value": true
+    }
+  ]
+}

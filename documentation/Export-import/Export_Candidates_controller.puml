@@ -1,0 +1,40 @@
+@startuml
+
+skinparam sequenceMessageAlign center
+
+box "BE" #caeaff
+
+    entity HTTP_Rest
+    entity ExportCandidatesController
+    entity CandidatesService
+    entity ProjectConfigurationService
+    entity ProjectConfigurationRepository
+
+end box
+box "External libraries" #E3E3D9
+    entity DB
+
+end box
+
+HTTP_Rest -> ExportCandidatesController : Rest get(projectId)
+activate ExportCandidatesController
+    ExportCandidatesController ->  CandidatesService : getCandidates(UUID projectId)
+    activate CandidatesService
+        CandidatesService -> ProjectConfigurationService : getConfigByProjectId(UUID projectId)
+            activate ProjectConfigurationService
+                ProjectConfigurationService -> ProjectConfigurationRepository : getConfigByProjectId(UUID projectId)
+                activate ProjectConfigurationRepository
+                    ProjectConfigurationRepository -> DB : getConfigByProjectId(UUID projectId)
+                    activate DB
+                        DB -> ProjectConfigurationRepository : ProjectConfiguration
+                    deactivate DB
+                    ProjectConfigurationRepository -> ProjectConfigurationService : ProjectConfiguration
+                deactivate ProjectConfigurationRepository
+                ProjectConfigurationService -> CandidatesService : ProjectConfiguration
+            deactivate ProjectConfigurationService
+        CandidatesService -> ExportCandidatesController : List<ExportFolderCandidateDto>
+    deactivate CandidatesService
+    ExportCandidatesController -> HTTP_Rest : List<ExportFolderCandidateDto>
+deactivate ExportCandidatesController
+
+@enduml

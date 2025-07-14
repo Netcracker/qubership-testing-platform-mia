@@ -1,0 +1,15 @@
+{
+  "execType": "Process",
+  "command": {
+    "pathForUpload": "/u02/qubership/billingsystem/infinys_root/PROJECT_ENGAGEONE/input/periodicbill/",
+    "regexpForFileRetrieve": "(?<=.E1EXP : Output file created with File Name: ').*?(?=')",
+    "displayDownloadedFileContent": false,
+    "name": "E1EXP",
+    "type": "SSH_TransferFile",
+    "system": "Billing System",
+    "values": [
+      "E1EXP"
+    ]
+  },
+  "name": "SSH_TransferFile_E1EXP"
+}

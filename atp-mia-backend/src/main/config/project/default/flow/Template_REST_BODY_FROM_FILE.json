@@ -1,0 +1,30 @@
+{
+  "execType": "Process",
+  "command": {
+    "displayDownloadedFileContent": false,
+    "rest": {
+      "endpoint": "/rest/config?projectId=46578a43-4cfb-46e4-80b8-95ce21151a9f&needReload=false",
+      "method": "GET",
+      "headers": "Content-Type: application/json;charset=UTF-8",
+      "bodyFile": ":bodyFile",
+      "parseResponseAsTable": false,
+      "hasFile": false,
+      "disableRedirect": false,
+      "saveCookie": false
+    },
+    "name": "REST_WITH_BODY_FROM_FILE",
+    "type": "REST",
+    "system": "Billing System"
+  },
+  "name": "REST_WITH_BODY_FROM_FILE",
+  "inputs": [
+    {
+      "label": "File for rest body",
+      "maxLength": 0,
+      "required": false,
+      "name": "bodyFile",
+      "type": "attachment",
+      "system": "Billing System"
+    }
+  ]
+}

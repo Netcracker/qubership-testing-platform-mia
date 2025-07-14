@@ -1,0 +1,21 @@
+Geneva: text_data_transfer_file
+Format: 1
+Character_set: ASCII8
+File_type: event_file
+File_subtype: event_file_sub_type
+File_group_number: 12
+File_in_group_number: 1
+Total_files_in_group: 16
+Source_ID: source
+Tag: tag -v13
+${CycleTextGeneration('Event: [eventSource],[EVENT_TYPE_ID],"2019/07/07-17-15-00.01",,,,,,,,,,,,[EventAttr1],[EventAttr2],[EventAttr3],[EventAttr4],[RATING_TARIFF_ID],[EventAttr6],[EventAttr7],[EventAttr8],[EventAttr9],[EventAttr10],[EventAttr11],[EventAttr12],[EventAttr13],[EventAttr14],[EventAttr15],[EventAttr16],[EventAttr17],[EventAttr18],,,,,,,,,,,', '\n', 'EVENT_TYPE_ID', 'EVENT_TYPE_ID->:EVENT_TYPE_ID->string', 'eventSource->:eventSource->string', 'DateTime->:DateTime->string', 'EventAttr1->:EventAttr1->string', 'EventAttr2->:EventAttr2->string', 'EventAttr3->:EventAttr3->string', 'EventAttr4->:EventAttr4->string', 'RATING_TARIFF_ID->:RATING_TARIFF_ID->string', 'EventAttr6->:EventAttr6->string', 'EventAttr7->:EventAttr7->string', 'EventAttr8->:EventAttr8->string', 'EventAttr9->:EventAttr9->string', 'EventAttr10->:EventAttr10->string', 'EventAttr11->:EventAttr11->string', 'EventAttr12->:EventAttr12->string', 'EventAttr13->:EventAttr13->string', 'EventAttr14->:EventAttr14->string', 'EventAttr15->:EventAttr15->string', 'EventAttr16->:EventAttr16->string', 'EventAttr17->:EventAttr17->string', 'EventAttr18->:EventAttr18->string')}
+
+Footer: text_data_transfer_file
+AuditValue_1: 1
+AuditValue_2: 0
+End: text_data_transfer_file
+Lines: 15
+Characters: 357
+Checksum:
+Security_checksum:
+End_of_file:

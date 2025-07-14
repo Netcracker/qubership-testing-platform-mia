@@ -1,0 +1,12 @@
+{{- if not (lookup "v1" "ConfigMap" .Release.Namespace "atp-mia-projects") }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atp-mia-projects
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+data:
+  {{- tpl (.Files.Glob "projects_config.json").AsConfig . | nindent 2 }}
+  {{- end }}

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/db_column_names.xml"
+               author="atp-mia" id="v1-create_'db_column_names_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="db_column_names_temp"/>
+            </not>
+        </preConditions>
+        <createTable tableName="db_column_names_temp">
+            <column name="source_db_table" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="db_column_names" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="db_column_names_temp"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/db_column_names.xml"
+               author="atp-mia" id="v1-copy_columns_for_'db_column_names_temp'_table">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="db_column_names"/>
+            <columnExists tableName="db_column_names" columnName="source_db_table"/>
+            <columnExists tableName="db_column_names" columnName="db_column_names"/>
+        </preConditions>
+        <sql>
+            INSERT INTO db_column_names_temp(source_db_table, db_column_names)
+            SELECT source_db_table, db_column_names
+            FROM db_column_names;
+        </sql>
+        <rollback>
+            <sql>
+                DELETE
+                FROM db_column_names_temp;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/db_column_names.xml"
+               author="atp-mia" id="v1-drop_old_table_'db_column_names'">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="db_column_names"/>
+        </preConditions>
+        <dropTable tableName="db_column_names"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/db_column_names.xml"
+               author="atp-mia" id="v1-rename_'db_column_names_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="db_column_names"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="db_column_names_temp" newTableName="db_column_names"/>
+    </changeSet>
+</databaseChangeLog>

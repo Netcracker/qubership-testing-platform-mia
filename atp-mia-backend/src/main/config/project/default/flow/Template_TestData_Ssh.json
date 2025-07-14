@@ -1,0 +1,20 @@
+{
+  "execType": "Process",
+  "command": {
+    "variablesToExtractFromLog": {
+      "COLUMN_EXTRACTED_FROM_LOG_1": "text([\\S\\s]*)3",
+      "COLUMN_EXTRACTED_FROM_LOG_2": "([\\S\\s]*2)"
+    },
+    "displayDownloadedFileContent": false,
+    "atpValues": {
+      "column1": "sshExecution"
+    },
+    "name": "SSH",
+    "type": "SSH_FROM_TEST_DATA",
+    "system": "Billing System",
+    "values": [
+      "sshExecution"
+    ]
+  },
+  "name": "Ssh test data"
+}

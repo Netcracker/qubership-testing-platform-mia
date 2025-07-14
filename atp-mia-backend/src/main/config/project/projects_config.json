@@ -1,0 +1,7 @@
+[
+  {
+    "id": "default",
+    "name": "default",
+    "configUrl": "./config/project/default/flow/Flow.json"
+  }
+]

@@ -1,0 +1,1702 @@
+openapi: 3.0.3
+info:
+  title: MIA models Api
+  description: MIA models
+  version: '2.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+tags:
+  - name: mia-models-controller
+    description: MIA models Controller
+paths: { }
+components:
+  schemas:
+    ProjectConfiguration:
+      title: ProjectConfiguration
+      type: object
+      properties:
+        projectId:
+          type: string
+          format: uuid
+        gitUrl:
+          type: string
+        validationResult:
+          type: string
+        commonConfiguration:
+          $ref: '#/components/schemas/CommonConfiguration'
+        headerConfiguration:
+          $ref: '#/components/schemas/HeaderConfiguration'
+        potHeaderConfiguration:
+          $ref: '#/components/schemas/PotHeaderConfiguration'
+    CommonConfiguration:
+      title: CommonConfiguration
+      type: object
+      properties:
+        defaultSystem:
+          type: string
+        useVariablesInsideVariable:
+          type: boolean
+        variableFormat:
+          type: string
+        saveFilesToWorkingDir:
+          type: boolean
+        saveSqlTablesToFile:
+          type: boolean
+        commonVariables:
+          type: object
+          additionalProperties:
+            type: string
+        nextBillDateSql:
+          type: string
+          default: "SELECT NEXT_BILL_DTM FROM ACCOUNT WHERE ACCOUNT_NUM =':accountNumber'"
+        resetCacheSql:
+          type: string
+          default: "{call gnvsessiongparams.clearcache()}"
+        ethalonFilesPath:
+          type: string
+          default: "etalon_files/"
+        externalEnvironmentPrefix:
+          type: string
+          default: ""
+        commandShellSeparator:
+          type: string
+          default: "\n"
+        commandShellPrefixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommandPrefix'
+        genevaDateMask:
+          type: string
+        sshRsaFilePath:
+          type: string
+        linesAmount:
+          type: integer
+          format: int32
+          default: 3
+    CommandPrefix:
+      title: CommandPrefix
+      type: object
+      properties:
+        prefixes:
+          type: object
+          additionalProperties:
+            type: string
+        system:
+          type: string
+    HeaderConfiguration:
+      title: HeaderConfiguration
+      type: object
+      properties:
+        showGenevaDateBlock:
+          type: boolean
+        showWorkingDirectory:
+          type: boolean
+        showResetDbCache:
+          type: boolean
+        showUpdateConfig:
+          type: boolean
+        showTestData:
+          type: boolean
+        showTimeShifting:
+          type: boolean
+        exportToggleDefaultPosition:
+          type: boolean
+        enableUpdateFlowJsonConfig:
+          type: boolean
+        workingDirectory:
+          type: string
+        switchers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Switcher'
+        systemSwitchers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Switcher'
+    Switcher:
+      title: Switcher
+      type: object
+      properties:
+        actionFalse:
+          type: string
+        actionTrue:
+          type: string
+        actionType:
+          type: string
+        display:
+          type: string
+        name:
+          type: string
+        value:
+          type: boolean
+    PotHeaderConfiguration:
+      title: PotHeaderConfiguration
+      type: object
+      properties:
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PotHeader'
+    PotHeader:
+      title: PotHeader
+      type: object
+      properties:
+        name:
+          type: string
+        system:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+    Sections:
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parentSection:
+          type: string
+          format: uuid
+        place:
+          type: number
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sections'
+        compounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompoundShort'
+        processes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessShort'
+    Section:
+      title: Section
+      type: object
+      required:
+        - name
+        - place
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parentSection:
+          type: string
+          format: uuid
+        place:
+          type: integer
+          nullable: false
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Section'
+        compounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Compound'
+        processes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+    CompoundShort:
+      title: Short compound (id, name short list of processes)
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        processes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessShort'
+        inSections:
+          type: array
+          items:
+            type: string
+            format: uuid
+    Compound:
+      title: Compound
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        referToInput:
+          type: string
+        processes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+        inSections:
+          type: array
+          items:
+            type: string
+            format: uuid
+    CompoundHistoryChange:
+      allOf:
+        - $ref: "#/components/schemas/AbstractCompareEntity"
+      title: CompoundHistoryChange
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        referToInput:
+          type: string
+        processes:
+          type: array
+          items:
+            type: string
+        inSections:
+          type: array
+          items:
+            type: string
+    ProcessShort:
+      title: Short Process
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        inSections:
+          type: array
+          items:
+            type: string
+            format: uuid
+        inCompounds:
+          type: array
+          items:
+            type: string
+            format: uuid
+    Process:
+      title: Process
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        processSettings:
+          $ref: '#/components/schemas/ProcessSettings'
+        inSections:
+          type: array
+          items:
+            type: string
+            format: uuid
+        inCompounds:
+          type: array
+          items:
+            type: string
+            format: uuid
+    ProcessSettings:
+      title: ProcessSettings
+      type: object
+      properties:
+        prerequisites:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prerequisite'
+        command:
+          $ref: '#/components/schemas/Command'
+        validations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Validation'
+        globalVariables:
+          type: object
+          additionalProperties:
+            type: string
+        name:
+          type: string
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Input'
+        currentStatement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Validation'
+        referToInput:
+          type: string
+    ProcessHistoryChange:
+      allOf:
+        - $ref: "#/components/schemas/AbstractCompareEntity"
+      title: ProcessHistoryChange
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        processSettings:
+          $ref: '#/components/schemas/ProcessSettings'
+        inSections:
+          type: array
+          items:
+            type: string
+        inCompounds:
+          type: array
+          items:
+            type: string
+    Command:
+      title: Command
+      type: object
+      properties:
+        pathForUpload:
+          type: string
+        regexpForFileRetrieve:
+          type: string
+        fileExtension:
+          type: string
+        namesOfFilesForGeneration:
+          type: array
+          items:
+            type: string
+        ethalonFilesForGeneration:
+          type: array
+          items:
+            type: string
+        delayForGeneration:
+          type: string
+        pathsForDownload:
+          type: array
+          items:
+            type: string
+        variablesToExtractFromLog:
+          type: object
+          additionalProperties:
+            type: string
+        marker:
+          $ref: '#/components/schemas/Marker'
+        description:
+          type: string
+        warningDescription:
+          type: string
+        logFileNameFormat:
+          type: string
+        saveGeneratedFilesToParameter:
+          type: string
+        charsetForGeneratedFile:
+          type: string
+        displayDownloadedFileContent:
+          type: boolean
+        filesForUpload:
+          type: array
+          items:
+            type: string
+        atpValues:
+          type: object
+          additionalProperties:
+            type: string
+        fileMarkers:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileMarker'
+        toExecute:
+          type: string
+        testDataParams:
+          $ref: '#/components/schemas/TestDataParams'
+        rest:
+          $ref: '#/components/schemas/Rest'
+        soap:
+          $ref: '#/components/schemas/Soap'
+        name:
+          type: string
+        type:
+          type: string
+        system:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+        value:
+          type: string
+    FileMarker:
+      title: FileMarker
+      type: object
+      properties:
+        description:
+          type: string
+        endPosition:
+          type: integer
+          format: int32
+        expectedValue:
+          type: string
+        startPosition:
+          type: integer
+          format: int32
+        stringNumber:
+          type: integer
+          format: int32
+    Input:
+      title: Input
+      type: object
+      properties:
+        label:
+          type: string
+        maxLength:
+          type: integer
+          format: int32
+        mask:
+          type: string
+        maskPattern:
+          type: string
+        required:
+          type: boolean
+        referToInput:
+          type: array
+          items:
+            $ref: '#/components/schemas/Map'
+        name:
+          type: string
+        type:
+          type: string
+        system:
+          type: string
+        value:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+    Map:
+      title: Map
+      type: object
+      additionalProperties:
+        type: object
+        properties: { }
+    Marker:
+      title: Marker
+      type: object
+      properties:
+        passedMarkerForLog:
+          type: array
+          items:
+            type: string
+        failedMarkersForLog:
+          type: array
+          items:
+            type: string
+        warnMarkersForLog:
+          type: array
+          items:
+            type: string
+        failWhenNoPassedMarkersFound:
+          type: boolean
+    Prerequisite:
+      title: Prerequisite
+      type: object
+      properties:
+        referToInputName:
+          type: array
+          items:
+            type: string
+        referToCommandValue:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        type:
+          type: string
+        system:
+          type: string
+        value:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+    Rest:
+      title: Rest
+      type: object
+      properties:
+        restFile:
+          type: string
+        endpoint:
+          type: string
+        method:
+          type: string
+        headers:
+          type: string
+        body:
+          type: string
+        bodyFile:
+          type: string
+        parseResponseAsTable:
+          type: boolean
+        hasFile:
+          type: boolean
+        disableRedirect:
+          type: boolean
+        saveCookie:
+          type: boolean
+        restLoopParameters:
+          $ref: '#/components/schemas/RestLoopParameters'
+        checkStatusCodeFlag:
+          type: boolean
+        checkStatusCode:
+          type: array
+          items:
+            type: string
+        script:
+          type: string
+    RestLoopParameters:
+      title: RestLoopParameters
+      type: object
+      properties:
+        checkTextInBody:
+          type: boolean
+        checkTextInHeaders:
+          type: boolean
+        maxNumberRepeats:
+          type: integer
+          format: int32
+        textToCheck:
+          type: string
+        timeoutRepeats:
+          type: integer
+          format: int32
+    Soap:
+      title: Soap
+      type: object
+      properties:
+        endpoint:
+          type: string
+        request:
+          type: string
+        requestFile:
+          type: string
+    TableMarker:
+      title: TableMarker
+      type: object
+      properties:
+        expectedResultForQuery:
+          type: object
+          additionalProperties:
+            type: string
+        tableRowCount:
+          type: string
+    TestDataParams:
+      title: TestDataParams
+      type: object
+      properties:
+        eventTemplate:
+          type: string
+        eventFileTemplate:
+          type: string
+        eventParameterInTemplate:
+          type: string
+        controlFileTemplate:
+          type: string
+        eventFileForEachScenario:
+          type: boolean
+        eventFileForEachDescription:
+          type: boolean
+        columnNameForGeneratedFileName:
+          type: string
+        columnNameForGeneratedFileExtension:
+          type: string
+    Validation:
+      title: Validation
+      type: object
+      properties:
+        tableName:
+          type: string
+        referToCommandExecution:
+          type: array
+          items:
+            type: string
+        tableMarker:
+          $ref: '#/components/schemas/TableMarker'
+        exportVariables:
+          type: object
+          additionalProperties:
+            type: string
+        saveToWordFile:
+          type: boolean
+        saveToZipFile:
+          type: boolean
+        name:
+          type: string
+        type:
+          type: string
+        system:
+          type: string
+        value:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+    ProjectDirectories:
+      title: Project directories from root
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        directories:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectDirectories'
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectFile'
+    ProjectFile:
+      title: ProjectFile
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        directory:
+          type: string
+          format: uuid
+        lastUpdateWhen:
+          type: string
+        lastUpdateBy:
+          type: string
+        size:
+          type: number
+          format: int64
+    ProjectDirectory:
+      title: ProjectDirectory request
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        parentDirectoryId:
+          type: string
+          format: uuid
+    DirectoryHistoryChange:
+      allOf:
+        - $ref: "#/components/schemas/AbstractCompareEntity"
+      title: DirectoryHistoryChange
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        parentDirectory:
+          type: string
+        childDirectories:
+          type: array
+          items:
+            type: string
+        files:
+          type: array
+          items:
+            type: string
+    FlowConfig:
+      deprecated: true
+      title: FlowConfig DEPRECATED!
+      type: object
+      properties:
+        validationResult:
+          type: string
+        headerConfiguration:
+          $ref: '#/components/schemas/HeaderConfiguration'
+        commonConfiguration:
+          $ref: '#/components/schemas/CommonConfiguration'
+        potHeaderConfiguration:
+          $ref: '#/components/schemas/PotHeaderConfiguration'
+        defaultSystem:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlowConfigSection'
+    FlowConfigSection:
+      title: FlowConfigSection DEPRECATED!
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        processes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Executable'
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlowConfigSection'
+    Executable:
+      title: Executable DEPRECATED!
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        execType:
+          type: string
+        pathToFile:
+          type: string
+        prerequisites:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prerequisite'
+        command:
+          $ref: '#/components/schemas/Command'
+        validations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Validation'
+        globalVariables:
+          type: object
+          additionalProperties:
+            type: string
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Input'
+        currentStatement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Validation'
+        referToInput:
+          type: string
+        processList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Executable'
+    File:
+      title: File
+      type: object
+      properties:
+        absolute:
+          type: boolean
+        absoluteFile:
+          $ref: '#/components/schemas/File'
+        absolutePath:
+          type: string
+        canonicalFile:
+          $ref: '#/components/schemas/File'
+        canonicalPath:
+          type: string
+        directory:
+          type: boolean
+        file:
+          type: boolean
+        freeSpace:
+          type: integer
+          format: int64
+        hidden:
+          type: boolean
+        name:
+          type: string
+        parent:
+          type: string
+        parentFile:
+          $ref: '#/components/schemas/File'
+        path:
+          type: string
+        totalSpace:
+          type: integer
+          format: int64
+        usableSpace:
+          type: integer
+          format: int64
+    Resource:
+      title: Resource
+      type: object
+      properties:
+        description:
+          type: string
+        file:
+          $ref: '#/components/schemas/File'
+        filename:
+          type: string
+        inputStream:
+          type: string
+          format: binary
+        open:
+          type: boolean
+        readable:
+          type: boolean
+        uri:
+          $ref: '#/components/schemas/URI'
+        url:
+          $ref: '#/components/schemas/URL'
+    URI:
+      title: URI
+      type: object
+      properties:
+        absolute:
+          type: boolean
+        authority:
+          type: string
+        fragment:
+          type: string
+        host:
+          type: string
+        opaque:
+          type: boolean
+        path:
+          type: string
+        port:
+          type: integer
+          format: int32
+        query:
+          type: string
+        rawAuthority:
+          type: string
+        rawFragment:
+          type: string
+        rawPath:
+          type: string
+        rawQuery:
+          type: string
+        rawSchemeSpecificPart:
+          type: string
+        rawUserInfo:
+          type: string
+        scheme:
+          type: string
+        schemeSpecificPart:
+          type: string
+        userInfo:
+          type: string
+    URL:
+      title: URL
+      type: object
+      properties:
+        authority:
+          type: string
+        content:
+          type: object
+          properties: { }
+        defaultPort:
+          type: integer
+          format: int32
+        file:
+          type: string
+        host:
+          type: string
+        path:
+          type: string
+        port:
+          type: integer
+          format: int32
+        protocol:
+          type: string
+        query:
+          type: string
+        ref:
+          type: string
+        userInfo:
+          type: string
+    Link:
+      title: Link
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+    AbstractConfiguratorModel:
+      title: AbstractConfiguratorModel
+      type: object
+      properties:
+        created:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: string
+        modifiedBy:
+          type: string
+        name:
+          type: string
+    Connection:
+      title: Connection
+      type: object
+      properties:
+        connectionType:
+          type: string
+        created:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: string
+        modifiedBy:
+          type: string
+        name:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        sourceTemplateId:
+          type: string
+          format: uuid
+        systemId:
+          type: string
+          format: uuid
+    Environment:
+      title: Environment
+      type: object
+      properties:
+        created:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: string
+        modifiedBy:
+          type: string
+        name:
+          type: string
+        projectId:
+          type: string
+          format: uuid
+        systems:
+          type: array
+          items:
+            $ref: '#/components/schemas/System'
+    System:
+      title: System
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Connection'
+        created:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        environmentId:
+          type: string
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: string
+        modifiedBy:
+          type: string
+        name:
+          type: string
+    Project:
+      title: Project
+      type: object
+      properties:
+        created:
+          type: string
+        createdBy:
+          type: string
+        description:
+          type: string
+        environments:
+          type: array
+          items:
+            type: string
+            format: uuid
+        id:
+          type: string
+          format: uuid
+        modified:
+          type: string
+        modifiedBy:
+          type: string
+        name:
+          type: string
+        shortName:
+          type: string
+    SystemEnvironmentsView:
+      title: SystemEnvironmentsView
+      type: object
+      properties:
+        environmentIds:
+          type: array
+          items:
+            type: object
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    CommandOutput:
+      title: CommandOutput
+      type: object
+      properties:
+        internalPathToFile:
+          type: string
+        externalPathToFile:
+          type: string
+        link:
+          $ref: '#/components/schemas/Link'
+        displayed:
+          type: boolean
+        content:
+          type: array
+          items:
+            type: string
+        markedContent:
+          type: array
+          items:
+            $ref: '#/components/schemas/MarkedContent'
+        isSizeExceedLimit:
+          type: boolean
+    CommandResponse:
+      title: CommandResponse
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/CommandTypesEnum'
+        command:
+          type: string
+        connectionInfo:
+          type: object
+          additionalProperties:
+            type: string
+        commandOutputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommandOutput'
+        sqlResponse:
+          $ref: '#/components/schemas/SqlResponse'
+        htmlPage:
+          $ref: '#/components/schemas/HtmlPage'
+        description:
+          type: array
+          items:
+            type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exception'
+        checkStatusCodeFlag:
+          type: boolean
+        statusCode:
+          type: string
+        expectedCodes:
+          type: array
+          items:
+            type: string
+        postScriptExecutionReport:
+          type: string
+    CommandTypesEnum:
+      type: string
+      enum:
+        - REST
+        - SSH
+        - SQL
+        - NO_SYSTEM_REQUIRED
+    DbTable:
+      title: DbTable
+      type: object
+      properties:
+        columns:
+          type: array
+          items:
+            type: string
+        data:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+    Description:
+      title: Description
+      type: object
+      properties:
+        name:
+          type: string
+        eventParams:
+          type: object
+          additionalProperties:
+            type: string
+        validationParams:
+          type: object
+          additionalProperties:
+            type: string
+        validatedParams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidatedParameters'
+        otherParams:
+          type: object
+          additionalProperties:
+            type: string
+        status:
+          type: boolean
+        validated:
+          type: boolean
+        onMainSheet:
+          type: boolean
+    Exception:
+      title: Exception
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/Throwable'
+        localizedMessage:
+          type: string
+        message:
+          type: string
+        stackTrace:
+          type: array
+          items:
+            $ref: '#/components/schemas/StackTraceElement'
+        suppressed:
+          type: array
+          items:
+            $ref: '#/components/schemas/Throwable'
+    ExecutionRequest:
+      title: ExecutionRequest
+      type: object
+      properties:
+        process:
+          type: string
+        compound:
+          $ref: '#/components/schemas/Compound'
+        command:
+          type: string
+        type:
+          type: string
+        flowData:
+          $ref: '#/components/schemas/FlowData'
+        testDataFile:
+          $ref: '#/components/schemas/TestDataFile'
+        sessionId:
+          type: string
+          format: uuid
+        switchers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Switcher'
+        systemSwitchers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Switcher'
+        rest:
+          $ref: '#/components/schemas/Rest'
+    ExecutionResponse:
+      title: ExecutionResponse
+      type: object
+      properties:
+        processName:
+          type: string
+        executedCommand:
+          type: string
+        commandResponse:
+          $ref: '#/components/schemas/CommandResponse'
+        validations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SqlResponse'
+        prerequisites:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommandResponse'
+        processStatus:
+          $ref: '#/components/schemas/ProcessStatus'
+        error:
+          $ref: '#/components/schemas/Exception'
+        globalVariables:
+          type: object
+          additionalProperties:
+            type: string
+        entityId:
+          type: string
+          format: uuid
+        entityUrl:
+          type: string
+        duration:
+          type: integer
+    FlowData:
+      title: FlowData
+      type: object
+      properties:
+        projectId:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        commonConfiguration:
+          $ref: '#/components/schemas/CommonConfiguration'
+        testDataWorkbook:
+          $ref: '#/components/schemas/TestDataWorkbook'
+    HtmlPage:
+      title: HtmlPage
+      type: object
+      properties:
+        internalPathToFile:
+          type: string
+        link:
+          $ref: '#/components/schemas/Link'
+        htmlText:
+          type: string
+    MainSheet:
+      title: MainSheet
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/MainSheetRecord'
+        scenarios:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scenario'
+    MainSheetRecord:
+      title: MainSheetRecord
+      type: object
+      properties:
+        scenario:
+          type: string
+        description:
+          type: string
+        otherCells:
+          type: object
+          additionalProperties:
+            type: string
+    MarkedContent:
+      title: MarkedContent
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/StatusEnum'
+        text:
+          type: string
+    StatusEnum:
+      type: string
+      enum:
+        - SUCCESS
+        - FAIL
+        - WARNING
+        - UNKNOWN
+    ProcessStatus:
+      title: ProcessStatus
+      type: object
+      properties:
+        marker:
+          $ref: '#/components/schemas/Marker'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+    QueriesSheet:
+      title: QueriesSheet
+      type: object
+      properties:
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Query'
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/QueriesSheetRecord'
+    QueriesSheetRecord:
+      title: QueriesSheetRecord
+      type: object
+      properties:
+        query:
+          type: string
+        toValidate:
+          type: string
+        type:
+          type: string
+        validated:
+          type: string
+    Query:
+      title: Query
+      type: object
+      properties:
+        query:
+          type: string
+        type:
+          $ref: '#/components/schemas/DBTypes'
+        validateValue:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidateValue'
+    DBTypes:
+      type: string
+      enum:
+        - Cassandra
+        - Oracle
+        - Postgresql
+        - Undefined
+    Scenario:
+      title: Scenario
+      type: object
+      properties:
+        name:
+          type: string
+        descriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Description'
+    SqlResponse:
+      title: SqlResponse
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DbTable'
+        tableName:
+          type: string
+        query:
+          type: string
+        description:
+          type: string
+        records:
+          type: integer
+          format: int32
+        tableMarkerResult:
+          $ref: '#/components/schemas/TableMarkerResult'
+        internalPathToFile:
+          type: string
+        link:
+          $ref: '#/components/schemas/Link'
+        saveToWordFile:
+          type: boolean
+        saveToZipFile:
+          type: boolean
+        connectionInfo:
+          type: object
+          additionalProperties:
+            type: string
+    StackTraceElement:
+      title: StackTraceElement
+      type: object
+      properties:
+        className:
+          type: string
+        fileName:
+          type: string
+        lineNumber:
+          type: integer
+          format: int32
+        methodName:
+          type: string
+        nativeMethod:
+          type: boolean
+    TableMarkerColumnStatus:
+      title: TableMarkerColumnStatus
+      type: object
+      properties:
+        actualResult:
+          type: string
+        columnName:
+          type: string
+        expectedResult:
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+    TableMarkerResult:
+      title: TableMarkerResult
+      type: object
+      properties:
+        tableRowCount:
+          $ref: '#/components/schemas/TableMarkerRowCount'
+        columnStatuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/TableMarkerColumnStatus'
+    TableMarkerRowCount:
+      title: TableMarkerRowCount
+      type: object
+      properties:
+        actualResult:
+          type: string
+        expectedResult:
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+    TestDataFile:
+      title: TestDataFile
+      type: object
+      properties:
+        filePath:
+          type: string
+        scenarios:
+          type: array
+          items:
+            type: string
+    TestDataSheet:
+      title: TestDataSheet
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/MainSheetRecord'
+        scenarios:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scenario'
+    TestDataWorkbook:
+      title: TestDataWorkbook
+      type: object
+      properties:
+        excelFile:
+          type: string
+        scenariosToExecute:
+          type: array
+          items:
+            type: string
+        loaded:
+          type: boolean
+        executeSql:
+          type: boolean
+        mainSheet:
+          $ref: '#/components/schemas/MainSheet'
+        testDataSheet:
+          $ref: '#/components/schemas/TestDataSheet'
+        queriesSheet:
+          $ref: '#/components/schemas/QueriesSheet'
+    Throwable:
+      title: Throwable
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/Throwable'
+        localizedMessage:
+          type: string
+        message:
+          type: string
+        stackTrace:
+          type: array
+          items:
+            $ref: '#/components/schemas/StackTraceElement'
+        suppressed:
+          type: array
+          items:
+            $ref: '#/components/schemas/Throwable'
+    ValidateValue:
+      title: ValidateValue
+      type: object
+      properties:
+        validateName:
+          type: string
+        validatedName:
+          type: string
+        value:
+          type: string
+    ValidatedParameters:
+      title: ValidatedParameters
+      type: object
+      properties:
+        key:
+          type: string
+        state:
+          $ref: '#/components/schemas/ValidationStatus'
+        value:
+          type: string
+    ValidationStatus:
+      type: string
+      enum:
+        - Passed
+        - Failed
+        - Skipped
+    SectionHistoryChange:
+      title: SectionHistoryChange
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AbstractCompareEntity'
+      properties:
+        name:
+          type: string
+        parentSection:
+          type: string
+        place:
+          type: integer
+        childSections:
+          type: array
+          items:
+            type: string
+        compounds:
+          type: array
+          items:
+            type: string
+        processes:
+          type: array
+          items:
+            type: string
+    ProjectConfigurationHistoryChange:
+      title: ProjectConfigurationHistoryChange
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AbstractCompareEntity'
+      properties:
+        validationResult:
+          type: string
+        commonConfiguration:
+          $ref: '#/components/schemas/CommonConfiguration'
+        headerConfiguration:
+          $ref: '#/components/schemas/HeaderConfiguration'
+        potHeaderConfiguration:
+          $ref: '#/components/schemas/PotHeaderConfiguration'
+    FileHistoryChange:
+      title: FileHistoryChange
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AbstractCompareEntity'
+      properties:
+        name:
+          type: string
+        directory:
+          type: string
+        size:
+          type: number
+          format: int64
+    HistoryItemResponse:
+      type: object
+      properties:
+        pageInfo:
+          $ref: '#/components/schemas/PageInfo'
+        historyItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/HistoryItem'
+    HistoryItemType:
+      type: string
+      enum:
+        - section
+        - compound
+        - process
+        - directory
+        - file
+        - projectconfiguration
+    HistoryItem:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/HistoryItemType'
+        version:
+          type: integer
+          minimum: 1
+          description: commit number of current changes
+        modifiedWhen:
+          type: string
+        modifiedBy:
+          type: string
+        added:
+          type: array
+          items:
+            type: string
+        deleted:
+          type: array
+          items:
+            type: string
+        changed:
+          type: array
+          items:
+            type: string
+    AbstractEntityVersioning:
+      title: AbstractEntityVersioning
+      type: object
+      properties:
+        description:
+          type: string
+        modifiedBy:
+          type: string
+        modifiedWhen:
+          type: string
+        name:
+          type: string
+    AbstractCompareEntity:
+      type: object
+      properties:
+        createdWhen:
+          type: long
+        modifiedWhen:
+          type: long
+        createdBy:
+          type: string
+        modifiedBy:
+          type: string
+        entityType:
+          $ref: '#/components/schemas/HistoryItemType'
+      discriminator:
+        propertyName: entityType
+        mapping:
+          'SECTION': '#/components/schemas/SectionHistoryChange'
+          'COMPOUND': '#/components/schemas/CompoundHistoryChange'
+          'PROCESS': '#/components/schemas/ProcessHistoryChange'
+          'FILE': '#/components/schemas/FileHistoryChange'
+          'PROJECTCONFIGURATION': '#/components/schemas/ProjectConfigurationHistoryChange'
+    CompareEntityResponse:
+      title: CompareEntityResponse
+      type: object
+      properties:
+        compareEntity:
+          $ref: '#/components/schemas/AbstractCompareEntity'
+        revision:
+          type: string
+    PageInfo:
+      type: object
+      properties:
+        offset:
+          type: integer
+        limit:
+          type: integer
+        itemsTotalCount:
+          type: integer

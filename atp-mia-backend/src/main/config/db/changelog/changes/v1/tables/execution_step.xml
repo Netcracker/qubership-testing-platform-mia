@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/execution_step.xml"
+               author="atp-mia" id="v1-create_'execution_step_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="execution_step_temp"/>
+            </not>
+        </preConditions>
+        <createTable tableName="execution_step_temp">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="execution_step_pkey"/>
+            </column>
+            <column name="executed_command" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="step_name" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="recording_session_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="execution_step_temp"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/execution_step.xml"
+               author="atp-mia" id="v1-copy_columns_for_'execution_step_temp'_table">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="execution_step"/>
+            <columnExists tableName="execution_step" columnName="id"/>
+            <columnExists tableName="execution_step" columnName="executed_command"/>
+            <columnExists tableName="execution_step" columnName="step_name"/>
+            <columnExists tableName="execution_step" columnName="recording_session_id"/>
+        </preConditions>
+        <sql>
+            INSERT INTO execution_step_temp(id, executed_command, step_name, recording_session_id)
+            SELECT id, executed_command, step_name, recording_session_id
+            FROM execution_step;
+        </sql>
+        <rollback>
+            <sql>
+                DELETE
+                FROM execution_step_temp;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/execution_step.xml"
+               author="atp-mia" id="v1-drop_old_table_'execution_step'">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="execution_step"/>
+        </preConditions>
+        <dropTable tableName="execution_step"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/execution_step.xml"
+               author="atp-mia" id="v1-rename_'execution_step_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="execution_step"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="execution_step_temp" newTableName="execution_step"/>
+    </changeSet>
+</databaseChangeLog>

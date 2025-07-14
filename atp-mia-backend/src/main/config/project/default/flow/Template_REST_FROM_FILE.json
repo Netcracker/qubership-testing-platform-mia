@@ -1,0 +1,27 @@
+{
+  "execType": "Process",
+  "command": {
+    "displayDownloadedFileContent": false,
+    "rest": {
+      "restFile": ":restFile",
+      "parseResponseAsTable": false,
+      "hasFile": false,
+      "disableRedirect": false,
+      "saveCookie": false
+    },
+    "name": "REST_FROM_FILE",
+    "type": "REST",
+    "system": "Billing System"
+  },
+  "name": "REST_FROM_FILE",
+  "inputs": [
+    {
+      "label": "File for whole rest",
+      "maxLength": 0,
+      "required": true,
+      "name": "restFile",
+      "type": "attachment",
+      "system": "Billing System"
+    }
+  ]
+}

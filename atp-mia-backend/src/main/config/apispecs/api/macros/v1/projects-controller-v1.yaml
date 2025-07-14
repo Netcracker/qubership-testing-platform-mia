@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: Api Documentation
+  description: Api Documentation
+  version: '1.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: 'http://localhost:8080'
+    description: Inferred Url
+tags:
+  - name: project-controller
+    description: Project Controller
+paths:
+  '/api/v1/projects':
+    get:
+      tags:
+        - project-controller
+      summary: getAll
+      operationId: getAll
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/api/v1/projects/sync':
+    get:
+      tags:
+        - project-controller
+      summary: sync
+      operationId: sync
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+components:
+  schemas:
+    Project:
+      title: Project
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        uuid:
+          type: string
+          format: uuid

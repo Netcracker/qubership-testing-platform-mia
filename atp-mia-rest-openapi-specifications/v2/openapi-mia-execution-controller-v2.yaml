@@ -1,0 +1,310 @@
+openapi: 3.0.3
+info:
+  title: MIA Execution Api Documentation
+  description: MIA Execution Api Documentation
+  version: '2.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: https://atp-public-gateway:8080/api/atp-mia/v1
+  - url: http://localhost:8080
+tags:
+  - name: mia-execution-controller
+    description: MIA Execution Controller
+paths:
+  /rest/flow/execute/compound:
+    post:
+      tags:
+        - mia-execution-controller
+      summary: Execute Compound
+      operationId: executeCompound
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: env
+          in: query
+          description: environmentName
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ExecutionRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ExecutionResponse'
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+      x-codegen-request-body-name: request
+  /rest/flow/execute/current/statement:
+    post:
+      tags:
+        - mia-execution-controller
+      summary: Execute CurrentStatement
+      operationId: executeCurrentStatement
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: env
+          in: query
+          description: environment
+          required: true
+          schema:
+            type: string
+        - name: executableName
+          in: query
+          description: executableName
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: query
+          description: Session ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: flowData
+        content:
+          application/json:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/FlowData'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/SqlResponse'
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+      x-codegen-request-body-name: flowData
+  /rest/flow/execute/process:
+    post:
+      tags:
+        - mia-execution-controller
+      summary: Execute Process
+      operationId: executeProcess
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: env
+          in: query
+          description: environmentName
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ExecutionRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ExecutionResponse'
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+      x-codegen-request-body-name: request
+  /rest/flow/calculateNextBillDate:
+    post:
+      tags:
+        - mia-execution-controller
+      summary: Get Next Bill Date for Given Account Id
+      operationId: getNextBillDate
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: env
+          in: query
+          description: environmentName
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ExecutionRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/pot/save:
+    post:
+      tags:
+        - mia-proof-of-testing-controller
+      summary: generate proof of testing document or archive
+      operationId: saveProofOfTesting
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: env
+          in: query
+          description: env
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: request
+        content:
+          application/json:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ExecutionRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Link'
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+      x-codegen-request-body-name: request
+  /rest/pot/session/start:
+    post:
+      tags:
+        - mia-proof-of-testing-controller
+      summary: startSession
+      operationId: startSession
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: query
+          description: sessionId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: true

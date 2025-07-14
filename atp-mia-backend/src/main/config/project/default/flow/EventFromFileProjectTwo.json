@@ -1,0 +1,23 @@
+{
+  "execType": "Process",
+  "command": {
+    "pathForUpload": ":infinys_root/",
+    "regexpForFileRetrieve": "(?<=.to ).*(?<=.dat_ERR_.{12})",
+    "fileExtension": ".dat",
+    "namesOfFilesForGeneration": [
+      "event_file_sub_${Timestamp(YYYYMMdd_hhmmss)}"
+    ],
+    "ethalonFilesForGeneration": [
+      "eventFromFile_templ_Project_Two.dat"
+    ],
+    "saveGeneratedFilesToParameter": "generatedFiles",
+    "charsetForGeneratedFile": "ASCII",
+    "displayDownloadedFileContent": false,
+    "type": "SSH_GenerateEventFromFile",
+    "system": "Billing System",
+    "values": [
+      "FID -a '-sourceDir \":infinys_root\"'"
+    ]
+  },
+  "name": "EVENTS FROM FILE PROJECT TWO"
+}

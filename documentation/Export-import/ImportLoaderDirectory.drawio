@@ -1,0 +1,126 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" version="25.0.3">
+  <diagram name="Page-1" id="va4k0f_nJbWV34mwGtOb">
+    <mxGraphModel dx="2280" dy="757" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Yy6gV7j6i5Dh0S2EMn8l-1" value="1. Find current directory by Id and sourceId" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="450" width="190" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="Yy6gV7j6i5Dh0S2EMn8l-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Yy6gV7j6i5Dh0S2EMn8l-1" target="Yy6gV7j6i5Dh0S2EMn8l-42" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-70" y="750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Yy6gV7j6i5Dh0S2EMn8l-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Yy6gV7j6i5Dh0S2EMn8l-1" target="Yy6gV7j6i5Dh0S2EMn8l-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Yy6gV7j6i5Dh0S2EMn8l-7" value="If parent present" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="Yy6gV7j6i5Dh0S2EMn8l-6" vertex="1" connectable="0">
+          <mxGeometry x="-0.4182" y="1" relative="1" as="geometry">
+            <mxPoint x="-288" y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Yy6gV7j6i5Dh0S2EMn8l-20" value="else" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="Yy6gV7j6i5Dh0S2EMn8l-6" vertex="1" connectable="0">
+          <mxGeometry x="-0.4588" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Yy6gV7j6i5Dh0S2EMn8l-8" value="1.b Throw exception" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="550" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ftbW19NOlMvbrqb5VDTn-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Yy6gV7j6i5Dh0S2EMn8l-13" target="IDn4wdJRO2b4xpJ31tN9-12" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-190" y="830" />
+              <mxPoint x="-10" y="830" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Yy6gV7j6i5Dh0S2EMn8l-13" value="2.a. Use existing File, update all fields taken from import File. Update gridFS" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-250" y="740" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ftbW19NOlMvbrqb5VDTn-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Yy6gV7j6i5Dh0S2EMn8l-42" target="Yy6gV7j6i5Dh0S2EMn8l-13" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ftbW19NOlMvbrqb5VDTn-5" value="duplicate found" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="ftbW19NOlMvbrqb5VDTn-4" vertex="1" connectable="0">
+          <mxGeometry x="-0.04" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Yy6gV7j6i5Dh0S2EMn8l-42" value="2. Check duplicate id and sourceId directory in the whole project" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-110" y="620" width="200" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="Yy6gV7j6i5Dh0S2EMn8l-47" value="Directory import block scheme" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=24;" parent="1" vertex="1">
+          <mxGeometry x="50" y="20" width="350" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="IDn4wdJRO2b4xpJ31tN9-5" value="AC16" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="340" y="470" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="IDn4wdJRO2b4xpJ31tN9-12" value="end" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+          <mxGeometry x="-70" y="860" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="WRiFMVYrs_YTzSIGAjRq-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="ftbW19NOlMvbrqb5VDTn-1" target="WRiFMVYrs_YTzSIGAjRq-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ftbW19NOlMvbrqb5VDTn-1" value="0. Upload import file to gridFS" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="165" y="80" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ftbW19NOlMvbrqb5VDTn-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ftbW19NOlMvbrqb5VDTn-9" target="IDn4wdJRO2b4xpJ31tN9-12" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="830" />
+              <mxPoint x="-10" y="830" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ftbW19NOlMvbrqb5VDTn-9" value="4. Set link to directory in existing directory&lt;br&gt;5. Add directory to existing directories" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="140" y="750" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="WRiFMVYrs_YTzSIGAjRq-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="WRiFMVYrs_YTzSIGAjRq-2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="60" y="420" />
+              <mxPoint x="225" y="420" />
+            </Array>
+            <mxPoint x="225" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="WRiFMVYrs_YTzSIGAjRq-2" value="3.a. Update existing file name&lt;div&gt;(inside GridFS)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry y="300" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="WRiFMVYrs_YTzSIGAjRq-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Yy6gV7j6i5Dh0S2EMn8l-42" target="ftbW19NOlMvbrqb5VDTn-9" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="100" y="705" as="sourcePoint" />
+            <mxPoint x="210" y="740" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="WRiFMVYrs_YTzSIGAjRq-4" value="else" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="WRiFMVYrs_YTzSIGAjRq-3" vertex="1" connectable="0">
+          <mxGeometry x="-0.4483" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="WRiFMVYrs_YTzSIGAjRq-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="WRiFMVYrs_YTzSIGAjRq-8" target="WRiFMVYrs_YTzSIGAjRq-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="WRiFMVYrs_YTzSIGAjRq-6" value="duplicate found" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="WRiFMVYrs_YTzSIGAjRq-5" vertex="1" connectable="0">
+          <mxGeometry x="-0.2436" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="WRiFMVYrs_YTzSIGAjRq-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="WRiFMVYrs_YTzSIGAjRq-8" target="Yy6gV7j6i5Dh0S2EMn8l-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="345" y="235" />
+              <mxPoint x="345" y="420" />
+              <mxPoint x="225" y="420" />
+            </Array>
+            <mxPoint x="225" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="WRiFMVYrs_YTzSIGAjRq-8" value="3. Check duplicate directory name in same directory" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="125" y="160" width="200" height="150" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

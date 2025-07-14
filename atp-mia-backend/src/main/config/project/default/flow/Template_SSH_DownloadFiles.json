@@ -1,0 +1,18 @@
+{
+  "execType": "Process",
+  "command": {
+    "regexpForFileRetrieve": "-name \"*:accountNumber*.pdf\"",
+    "pathsForDownload": [
+      ":infinys_root/PROJECT_ENGAGEONE/output/periodicbill/ebill",
+      ":infinys_root/PROJECT_ENGAGEONE/output/periodicbill/print"
+    ],
+    "displayDownloadedFileContent": true,
+    "name": "Multiple download",
+    "type": "SSH_DownloadFiles",
+    "system": "Billing System",
+    "values": [
+      "ls -la"
+    ]
+  },
+  "name": "SSH_DownloadFiles_EngageOne"
+}

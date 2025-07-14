@@ -1,0 +1,16 @@
+{
+  "execType": "Process",
+  "command": {
+    "displayDownloadedFileContent": false,
+    "soap": {
+      "endpoint": "soapEndpoint"
+    },
+    "name": "SoapTestData",
+    "type": "SOAP_FROM_TEST_DATA",
+    "system": "Billing System",
+    "values": [
+      "soapExecution"
+    ]
+  },
+  "name": "Soap test data"
+}

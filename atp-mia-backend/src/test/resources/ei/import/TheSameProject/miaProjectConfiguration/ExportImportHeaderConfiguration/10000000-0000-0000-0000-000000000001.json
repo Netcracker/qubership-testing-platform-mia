@@ -1,0 +1,33 @@
+{
+  "id": "2f3a5f92-7f4b-41a2-8fcd-74c7b41f1d93",
+  "name": "HeaderConfiguration",
+  "projectId": "2f3a5f92-7f4b-41a2-8fcd-74c7b41f1d93",
+  "sourceId": "2f3a5f92-7f4b-41a2-8fcd-74c7b41f1d93",
+  "showGenevaDateBlock": true,
+  "showWorkingDirectory": true,
+  "showResetDbCache": false,
+  "showUpdateConfig": true,
+  "showTestData": false,
+  "showTimeShifting": false,
+  "exportToggleDefaultPosition": true,
+  "enableUpdateFlowJsonConfig": true,
+  "workingDirectory": "/tmp/TA/",
+  "switchers": [
+    {
+      "value": false,
+      "actionType": "SQL",
+      "name": "Uncomment/comment Sysdatevalue",
+      "display": "Sysdatevalue Uncomment/comment",
+      "actionTrue": "update gparams set name='SYSdateValue' where name='#SYSdateValue'",
+      "actionFalse": null
+    },
+    {
+      "value": true,
+      "actionType": "SQL",
+      "name": "comment SysdateOverride",
+      "display": "SysdateOverride comment",
+      "actionTrue": null,
+      "actionFalse": "update gparams set name='SYSdateoverride' where name='#SYSdateOverride'"
+    }
+  ]
+}

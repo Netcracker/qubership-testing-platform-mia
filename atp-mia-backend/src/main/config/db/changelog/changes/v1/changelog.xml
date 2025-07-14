@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <include relativeToChangelogFile="true" file="tables/db_column_names.xml"/>
+    <include relativeToChangelogFile="true" file="tables/db_columns.xml"/>
+    <include relativeToChangelogFile="true" file="tables/db_table.xml"/>
+    <include relativeToChangelogFile="true" file="tables/db_table_row.xml"/>
+    <include relativeToChangelogFile="true" file="tables/execution_step.xml"/>
+    <include relativeToChangelogFile="true" file="tables/failed_marker.xml"/>
+    <include relativeToChangelogFile="true" file="tables/link.xml"/>
+    <include relativeToChangelogFile="true" file="tables/marker.xml"/>
+    <include relativeToChangelogFile="true" file="tables/passed_marker.xml"/>
+    <include relativeToChangelogFile="true" file="tables/pot_error.xml"/>
+    <include relativeToChangelogFile="true" file="tables/process_status.xml"/>
+    <include relativeToChangelogFile="true" file="tables/recording_session.xml"/>
+    <include relativeToChangelogFile="true" file="tables/sql_response.xml"/>
+    <include relativeToChangelogFile="true" file="tables/table_marker_column_status.xml"/>
+    <include relativeToChangelogFile="true" file="tables/table_marker_result.xml"/>
+    <include relativeToChangelogFile="true" file="tables/table_marker_row_count.xml"/>
+    <include relativeToChangelogFile="true" file="tables/warn_marker.xml"/>
+    <include relativeToChangelogFile="true" file="constraints/constraints.xml"/>
+
+    <changeSet id="2022.12.21_atpii_36356"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v1/changelog.xml" runOnChange="true">
+        <sqlFile path="updates/2022.12.21_atpii_36356.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="2023.01.06_atpii_36826"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v1/changelog.xml" runOnChange="true">
+        <sqlFile path="updates/2023.01.06_atpii_36826.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="2023.01.16_atpii_36986"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v1/changelog.xml" runOnChange="true">
+        <sqlFile path="updates/2023.01.16_atpii_36986.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+</databaseChangeLog>

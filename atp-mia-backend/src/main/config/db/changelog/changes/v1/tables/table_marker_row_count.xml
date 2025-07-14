@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/table_marker_row_count.xml"
+               author="atp-mia" id="v1-create_'table_marker_row_count_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="table_marker_row_count_temp"/>
+            </not>
+        </preConditions>
+        <createTable tableName="table_marker_row_count_temp">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="table_marker_row_count_pkey"/>
+            </column>
+            <column name="actual_result" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="expected_result" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+            <column name="table_marker_result_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="table_marker_row_count_temp"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/table_marker_row_count.xml"
+               author="atp-mia" id="v1-copy_columns_for_'table_marker_row_count_temp'_table">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="table_marker_row_count"/>
+            <columnExists tableName="table_marker_row_count" columnName="id"/>
+            <columnExists tableName="table_marker_row_count" columnName="actual_result"/>
+            <columnExists tableName="table_marker_row_count" columnName="expected_result"/>
+            <columnExists tableName="table_marker_row_count" columnName="status"/>
+            <columnExists tableName="table_marker_row_count" columnName="table_marker_result_id"/>
+        </preConditions>
+        <sql>
+            INSERT INTO table_marker_row_count_temp(id, actual_result, expected_result, status, table_marker_result_id)
+            SELECT id, actual_result, expected_result, status, table_marker_result_id
+            FROM table_marker_row_count;
+        </sql>
+        <rollback>
+            <sql>
+                DELETE
+                FROM table_marker_row_count_temp;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/table_marker_row_count.xml"
+               author="atp-mia" id="v1-drop_old_table_'table_marker_row_count'">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="table_marker_row_count"/>
+        </preConditions>
+        <dropTable tableName="table_marker_row_count"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v1/tables/table_marker_row_count.xml"
+               author="atp-mia" id="v1-rename_'table_marker_row_count_temp'_table">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="table_marker_row_count"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="table_marker_row_count_temp" newTableName="table_marker_row_count"/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,2042 @@
+openapi: 3.0.3
+info:
+  title: Api Documentation
+  description: Api Documentation
+  version: '1.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: //localhost:8080/
+tags:
+  - name: execution-helper-controller
+    description: Execution Helper Controller
+paths:
+  /rest/config:
+    get:
+      tags:
+        - execution-helper-controller
+      summary: getConfig
+      operationId: getConfig
+      parameters:
+        - name: needReload
+          in: query
+          description: needReload
+          required: true
+          schema:
+            type: boolean
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowConfig'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/configValidate:
+    get:
+      tags:
+        - execution-helper-controller
+      summary: validateConfig
+      operationId: validateConfig
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/downloadConfig/{projectId}:
+    get:
+      tags:
+        - execution-helper-controller
+      summary: downloadConfig
+      operationId: downloadConfig
+      parameters:
+        - name: projectId
+          in: path
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/downloadFile/{projectId}/{logFile}:
+    get:
+      tags:
+        - execution-helper-controller
+      summary: downloadFile
+      operationId: downloadFile
+      parameters:
+        - name: logFile
+          in: path
+          description: logFile
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/downloadFile/{projectId}/uploads/{logFile}:
+    get:
+      tags:
+        - execution-helper-controller
+      summary: downloadFileFromUploads
+      operationId: downloadFileFromUploads
+      parameters:
+        - name: logFile
+          in: path
+          description: logFile
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/downloadOutputAsZip:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: downloadOutputAsZip
+      operationId: downloadOutputAsZip
+      parameters:
+        - name: processName
+          in: query
+          description: processName
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: filePaths
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+      x-codegen-request-body-name: filePaths
+  /rest/flow/calculateNextBillDate:
+    get:
+      tags:
+        - execution-helper-controller
+      summary: getNextBillDate
+      operationId: getNextBillDate
+      parameters:
+        - name: accountNumber
+          in: query
+          description: accountNumber
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/flow/execute/compound:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: executeCompound
+      operationId: executeCompound
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: env
+          in: query
+          description: environmentName
+          required: true
+          schema:
+            type: string
+      #        - name: loggingLevel
+      #          in: query
+      #          description: logging level
+      #          required: false
+      #          schema:
+      #            type: string
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/ExecutionRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExecutionResponse'
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+      x-codegen-request-body-name: request
+  /rest/flow/execute/current/statement:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: executeCurrentStatement
+      operationId: executeCurrentStatement
+      parameters:
+        - name: executableName
+          in: query
+          description: executableName
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: flowData
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowData'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SqlResponse'
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+      x-codegen-request-body-name: flowData
+  /rest/dbSize:
+    get:
+      tags:
+        - execution-helper-controller
+      summary: calculates size of using GridFS storage in bytes
+      operationId: dbSize
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/flow/execute/process:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: executeProcess
+      operationId: executeProcess
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: env
+          in: query
+          description: environmentName
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/ExecutionRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+      x-codegen-request-body-name: request
+  /rest/flow/resetCache:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: resetCache
+      operationId: resetCache
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/getProjectInfo:
+    get:
+      tags:
+        - execution-helper-controller
+      summary: getProjects
+      operationId: getProjects
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectConfig'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/removeProject:
+    delete:
+      tags:
+        - execution-helper-controller
+      summary: removeProject
+      operationId: removeProject
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        204:
+          description: No Content
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+      deprecated: false
+  /rest/timeShifting/check:
+    get:
+      tags:
+        - execution-helper-controller
+      summary: getTimeShifting
+      operationId: getTimeShifting
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: systemId
+          in: query
+          description: systemId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/timeShifting/update:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: updateTimeShifting
+      operationId: updateTimeShifting
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: systemId
+          in: query
+          description: systemId
+          required: true
+          schema:
+            type: string
+        - name: value
+          in: query
+          description: value
+          required: true
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/updateConfiguration:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: updateConfiguration
+      operationId: updateConfiguration
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: configRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateConfigurationRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+      x-codegen-request-body-name: configRequest
+  /rest/updateProjectInfo:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: updateProject
+      operationId: updateProject
+      parameters:
+        - name: configUrl
+          in: query
+          description: configUrl
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: query
+          description: name
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/uploadFile:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: handleFileUpload
+      operationId: handleFileUpload
+      parameters:
+        - name: needDos2Unix
+          in: query
+          description: needDos2Unix
+          required: true
+          schema:
+            type: boolean
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: replaceFile
+          in: query
+          description: replaceFile
+          required: true
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  type: string
+                  description: file
+                  format: binary
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/uploadTestDataFile:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: handleTestDataFileUpload
+      operationId: handleTestDataFileUpload
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  type: string
+                  description: file
+                  format: binary
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/uploadZipConfig/{projectId}:
+    post:
+      tags:
+        - execution-helper-controller
+      summary: uploadZipConfig
+      operationId: uploadZipConfig
+      parameters:
+        - name: projectId
+          in: path
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  description: file
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+components:
+  schemas:
+    Command:
+      title: Command
+      type: object
+      properties:
+        pathForUpload:
+          type: string
+        regexpForFileRetrieve:
+          type: string
+        fileExtension:
+          type: string
+        namesOfFilesForGeneration:
+          type: array
+          items:
+            type: string
+        ethalonFilesForGeneration:
+          type: array
+          items:
+            type: string
+        delayForGeneration:
+          type: string
+        pathsForDownload:
+          type: array
+          items:
+            type: string
+        variablesToExtractFromLog:
+          type: object
+          additionalProperties:
+            type: string
+        marker:
+          $ref: '#/components/schemas/Marker'
+        description:
+          type: string
+        warningDescription:
+          type: string
+        logFileNameFormat:
+          type: string
+        saveGeneratedFilesToParameter:
+          type: string
+        charsetForGeneratedFile:
+          type: string
+        displayDownloadedFileContent:
+          type: boolean
+        filesForUpload:
+          type: array
+          items:
+            type: string
+        atpValues:
+          type: object
+          additionalProperties:
+            type: string
+        fileMarkers:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileMarker'
+        toExecute:
+          type: string
+        testDataParams:
+          $ref: '#/components/schemas/TestDataParams'
+        rest:
+          $ref: '#/components/schemas/Rest'
+        soap:
+          $ref: '#/components/schemas/Soap'
+        name:
+          type: string
+        type:
+          type: string
+        system:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+    CommandOutput:
+      title: CommandOutput
+      type: object
+      properties:
+        internalPathToFile:
+          type: string
+        externalPathToFile:
+          type: string
+        link:
+          $ref: '#/components/schemas/Link'
+        displayed:
+          type: boolean
+        content:
+          type: array
+          items:
+            type: string
+        markedContent:
+          type: array
+          items:
+            $ref: '#/components/schemas/MarkedContent'
+        isSizeExceedLimit:
+          type: boolean
+    CommandPrefix:
+      title: CommandPrefix
+      type: object
+      properties:
+        prefixes:
+          type: object
+          additionalProperties:
+            type: string
+        system:
+          type: string
+    CommandResponse:
+      title: CommandResponse
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/CommandTypesEnum'
+        command:
+          type: string
+        connectionInfo:
+          type: object
+          additionalProperties:
+            type: string
+        commandOutputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommandOutput'
+        sqlResponse:
+          $ref: '#/components/schemas/SqlResponse'
+        htmlPage:
+          $ref: '#/components/schemas/HtmlPage'
+        description:
+          type: array
+          items:
+            type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exception'
+        checkStatusCodeFlag:
+          type: boolean
+        statusCode:
+          type: string
+        expectedCodes:
+          type: array
+          items:
+            type: string
+        postScriptExecutionReport:
+          type: string
+    CommandTypesEnum:
+      type: string
+      enum:
+        - REST
+        - SSH
+        - SQL
+        - NO_SYSTEM_REQUIRED
+    CommonConfiguration:
+      title: CommonConfiguration
+      type: object
+      properties:
+        useVariablesInsideVariable:
+          type: boolean
+        variableFormat:
+          type: string
+        saveFilesToWorkingDir:
+          type: boolean
+        saveSqlTablesToFile:
+          type: boolean
+        commonVariables:
+          type: object
+          additionalProperties:
+            type: string
+        nextBillDateSql:
+          type: string
+          default: "SELECT NEXT_BILL_DTM FROM ACCOUNT WHERE ACCOUNT_NUM =':accountNumber'"
+        resetCacheSql:
+          type: string
+        ethalonFilesPath:
+          type: string
+        externalEnvironmentPrefix:
+          type: string
+        commandShellSeparator:
+          type: string
+        commandShellPrefixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommandPrefix'
+        genevaDateMask:
+          type: string
+        projectDownloadPath:
+          type: string
+        sshRsaFilePath:
+          type: string
+        linesAmount:
+          type: integer
+          format: int32
+    Compound:
+      title: Compound
+      type: object
+      properties:
+        execType:
+          type: string
+        oldNameForEdit:
+          type: string
+        processList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process'
+        name:
+          type: string
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Input'
+        currentStatement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Validation'
+        referToInput:
+          type: string
+    DbTable:
+      title: DbTable
+      type: object
+      properties:
+        columns:
+          type: array
+          items:
+            type: string
+        data:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+    Executable:
+      title: Executable
+      type: object
+      properties:
+        name:
+          type: string
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Input'
+        currentStatement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Validation'
+        referToInput:
+          type: string
+    FileMarker:
+      title: FileMarker
+      type: object
+      properties:
+        description:
+          type: string
+        endPosition:
+          type: integer
+          format: int32
+        expectedValue:
+          type: string
+        startPosition:
+          type: integer
+          format: int32
+        stringNumber:
+          type: integer
+          format: int32
+    FlowConfig:
+      title: FlowConfig
+      type: object
+      properties:
+        validationResult:
+          type: string
+        headerConfiguration:
+          $ref: '#/components/schemas/HeaderConfiguration'
+        commonConfiguration:
+          $ref: '#/components/schemas/CommonConfiguration'
+        potHeaderConfiguration:
+          $ref: '#/components/schemas/PotHeaderConfiguration'
+        defaultSystem:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlowConfigSection'
+    FlowConfigSection:
+      title: FlowConfigSection
+      type: object
+      properties:
+        name:
+          type: string
+        processes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Executable'
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlowConfigSection'
+    HeaderConfiguration:
+      title: HeaderConfiguration
+      type: object
+      properties:
+        showGenevaDateBlock:
+          type: boolean
+        showWorkingDirectory:
+          type: boolean
+        showResetDbCache:
+          type: boolean
+        showUpdateConfig:
+          type: boolean
+        showTestData:
+          type: boolean
+        showTimeShifting:
+          type: boolean
+        exportToggleDefaultPosition:
+          type: boolean
+        enableUpdateFlowJsonConfig:
+          type: boolean
+        workingDirectory:
+          type: string
+        switchers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Switcher'
+        systemSwitchers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Switcher'
+    Input:
+      title: Input
+      type: object
+      properties:
+        label:
+          type: string
+        maxLength:
+          type: integer
+          format: int32
+        mask:
+          type: string
+        maskPattern:
+          type: string
+        required:
+          type: boolean
+        referToInput:
+          type: array
+          items:
+            $ref: '#/components/schemas/Map'
+        name:
+          type: string
+        type:
+          type: string
+        system:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+    Map:
+      title: Map
+      type: object
+      additionalProperties:
+        type: object
+        properties: { }
+    Marker:
+      title: Marker
+      type: object
+      properties:
+        passedMarkerForLog:
+          type: array
+          items:
+            type: string
+        failedMarkersForLog:
+          type: array
+          items:
+            type: string
+        warnMarkersForLog:
+          type: array
+          items:
+            type: string
+        failWhenNoPassedMarkersFound:
+          type: boolean
+    PotHeader:
+      title: PotHeader
+      type: object
+      properties:
+        name:
+          type: string
+        system:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+    PotHeaderConfiguration:
+      title: PotHeaderConfiguration
+      type: object
+      properties:
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PotHeader'
+    Prerequisite:
+      title: Prerequisite
+      type: object
+      properties:
+        referToInputName:
+          type: array
+          items:
+            type: string
+        referToCommandValue:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        type:
+          type: string
+        system:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+    Process:
+      title: Process
+      type: object
+      properties:
+        execType:
+          type: string
+        pathToFile:
+          type: string
+        prerequisites:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prerequisite'
+        command:
+          $ref: '#/components/schemas/Command'
+        validations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Validation'
+        globalVariables:
+          type: object
+          additionalProperties:
+            type: string
+        name:
+          type: string
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Input'
+        currentStatement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Validation'
+        referToInput:
+          type: string
+    Rest:
+      title: Rest
+      type: object
+      properties:
+        restFile:
+          type: string
+        endpoint:
+          type: string
+        method:
+          type: string
+        headers:
+          type: string
+        body:
+          type: string
+        bodyFile:
+          type: string
+        parseResponseAsTable:
+          type: boolean
+        hasFile:
+          type: boolean
+        disableRedirect:
+          type: boolean
+        saveCookie:
+          type: boolean
+        restLoopParameters:
+          $ref: '#/components/schemas/RestLoopParameters'
+        checkStatusCodeFlag:
+          type: boolean
+        checkStatusCode:
+          type: array
+          items:
+            type: string
+        script:
+          type: string
+    RestLoopParameters:
+      title: RestLoopParameters
+      type: object
+      properties:
+        checkTextInBody:
+          type: boolean
+        checkTextInHeaders:
+          type: boolean
+        maxNumberRepeats:
+          type: integer
+          format: int32
+        textToCheck:
+          type: string
+        timeoutRepeats:
+          type: integer
+          format: int32
+    Soap:
+      title: Soap
+      type: object
+      properties:
+        endpoint:
+          type: string
+        request:
+          type: string
+        requestFile:
+          type: string
+    Switcher:
+      title: Switcher
+      type: object
+      properties:
+        actionFalse:
+          type: string
+        actionTrue:
+          type: string
+        actionType:
+          type: string
+        display:
+          type: string
+        name:
+          type: string
+        value:
+          type: boolean
+    TableMarker:
+      title: TableMarker
+      type: object
+      properties:
+        expectedResultForQuery:
+          type: object
+          additionalProperties:
+            type: string
+        tableRowCount:
+          type: string
+    TestDataParams:
+      title: TestDataParams
+      type: object
+      properties:
+        eventTemplate:
+          type: string
+        eventFileTemplate:
+          type: string
+        eventParameterInTemplate:
+          type: string
+        controlFileTemplate:
+          type: string
+        eventFileForEachScenario:
+          type: boolean
+        eventFileForEachDescription:
+          type: boolean
+        columnNameForGeneratedFileName:
+          type: string
+        columnNameForGeneratedFileExtension:
+          type: string
+    Validation:
+      title: Validation
+      type: object
+      properties:
+        tableName:
+          type: string
+        referToCommandExecution:
+          type: array
+          items:
+            type: string
+        tableMarker:
+          $ref: '#/components/schemas/TableMarker'
+        exportVariables:
+          type: object
+          additionalProperties:
+            type: string
+        saveToWordFile:
+          type: boolean
+        saveToZipFile:
+          type: boolean
+        name:
+          type: string
+        type:
+          type: string
+        system:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+    File:
+      title: File
+      type: object
+      properties:
+        absolute:
+          type: boolean
+        absoluteFile:
+          $ref: '#/components/schemas/File'
+        absolutePath:
+          type: string
+        canonicalFile:
+          $ref: '#/components/schemas/File'
+        canonicalPath:
+          type: string
+        directory:
+          type: boolean
+        file:
+          type: boolean
+        freeSpace:
+          type: integer
+          format: int64
+        hidden:
+          type: boolean
+        name:
+          type: string
+        parent:
+          type: string
+        parentFile:
+          $ref: '#/components/schemas/File'
+        path:
+          type: string
+        totalSpace:
+          type: integer
+          format: int64
+        usableSpace:
+          type: integer
+          format: int64
+    InputStream:
+      title: InputStream
+      type: object
+    Resource:
+      title: Resource
+      type: object
+      properties:
+        description:
+          type: string
+        file:
+          $ref: '#/components/schemas/File'
+        filename:
+          type: string
+        inputStream:
+          type: string
+          format: binary
+        open:
+          type: boolean
+        readable:
+          type: boolean
+        uri:
+          $ref: '#/components/schemas/URI'
+        url:
+          $ref: '#/components/schemas/URL'
+    URI:
+      title: URI
+      type: object
+      properties:
+        absolute:
+          type: boolean
+        authority:
+          type: string
+        fragment:
+          type: string
+        host:
+          type: string
+        opaque:
+          type: boolean
+        path:
+          type: string
+        port:
+          type: integer
+          format: int32
+        query:
+          type: string
+        rawAuthority:
+          type: string
+        rawFragment:
+          type: string
+        rawPath:
+          type: string
+        rawQuery:
+          type: string
+        rawSchemeSpecificPart:
+          type: string
+        rawUserInfo:
+          type: string
+        scheme:
+          type: string
+        schemeSpecificPart:
+          type: string
+        userInfo:
+          type: string
+    URL:
+      title: URL
+      type: object
+      properties:
+        authority:
+          type: string
+        content:
+          type: object
+          properties: { }
+        defaultPort:
+          type: integer
+          format: int32
+        file:
+          type: string
+        host:
+          type: string
+        path:
+          type: string
+        port:
+          type: integer
+          format: int32
+        protocol:
+          type: string
+        query:
+          type: string
+        ref:
+          type: string
+        userInfo:
+          type: string
+    Description:
+      title: Description
+      type: object
+      properties:
+        name:
+          type: string
+        eventParams:
+          type: object
+          additionalProperties:
+            type: string
+        validationParams:
+          type: object
+          additionalProperties:
+            type: string
+        validatedParams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidatedParameters'
+        otherParams:
+          type: object
+          additionalProperties:
+            type: string
+        status:
+          type: boolean
+        validated:
+          type: boolean
+        onMainSheet:
+          type: boolean
+    Exception:
+      title: Exception
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/Throwable'
+        localizedMessage:
+          type: string
+        message:
+          type: string
+        stackTrace:
+          type: array
+          items:
+            $ref: '#/components/schemas/StackTraceElement'
+        suppressed:
+          type: array
+          items:
+            $ref: '#/components/schemas/Throwable'
+    ExecutionRequest:
+      title: ExecutionRequest
+      type: object
+      properties:
+        process:
+          type: string
+        compound:
+          $ref: '#/components/schemas/Compound'
+        command:
+          type: string
+        type:
+          type: string
+        flowData:
+          $ref: '#/components/schemas/FlowData'
+        testDataFile:
+          $ref: '#/components/schemas/TestDataFile'
+        sessionId:
+          type: string
+          format: uuid
+        switchers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Switcher'
+        systemSwitchers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Switcher'
+        rest:
+          $ref: '#/components/schemas/Rest'
+    ExecutionResponse:
+      title: ExecutionResponse
+      type: object
+      properties:
+        processName:
+          type: string
+        executedCommand:
+          type: string
+        commandResponse:
+          $ref: '#/components/schemas/CommandResponse'
+        validations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SqlResponse'
+        prerequisites:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommandResponse'
+        processStatus:
+          $ref: '#/components/schemas/ProcessStatus'
+        error:
+          $ref: '#/components/schemas/Exception'
+        globalVariables:
+          type: object
+          additionalProperties:
+            type: string
+    FlowData:
+      title: FlowData
+      type: object
+      properties:
+        projectId:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        commonConfiguration:
+          $ref: '#/components/schemas/CommonConfiguration'
+        testDataWorkbook:
+          $ref: '#/components/schemas/TestDataWorkbook'
+    HtmlPage:
+      title: HtmlPage
+      type: object
+      properties:
+        internalPathToFile:
+          type: string
+        link:
+          $ref: '#/components/schemas/Link'
+        htmlText:
+          type: string
+    Link:
+      title: Link
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+    MainSheet:
+      title: MainSheet
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/MainSheetRecord'
+        scenarios:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scenario'
+    MainSheetRecord:
+      title: MainSheetRecord
+      type: object
+      properties:
+        scenario:
+          type: string
+        description:
+          type: string
+        otherCells:
+          type: object
+          additionalProperties:
+            type: string
+    MarkedContent:
+      title: MarkedContent
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/StatusEnum'
+        text:
+          type: string
+    StatusEnum:
+      type: string
+      enum:
+        - SUCCESS
+        - FAIL
+        - WARNING
+        - UNKNOWN
+    ProcessStatus:
+      title: ProcessStatus
+      type: object
+      properties:
+        marker:
+          $ref: '#/components/schemas/Marker'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+    QueriesSheet:
+      title: QueriesSheet
+      type: object
+      properties:
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Query'
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/QueriesSheetRecord'
+    QueriesSheetRecord:
+      title: QueriesSheetRecord
+      type: object
+      properties:
+        query:
+          type: string
+        toValidate:
+          type: string
+        type:
+          type: string
+        validated:
+          type: string
+    Query:
+      title: Query
+      type: object
+      properties:
+        query:
+          type: string
+        type:
+          $ref: '#/components/schemas/DBTypes'
+        validateValue:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidateValue'
+    DBTypes:
+      type: string
+      enum:
+        - Cassandra
+        - Oracle
+        - Postgresql
+        - Undefined
+    Scenario:
+      title: Scenario
+      type: object
+      properties:
+        name:
+          type: string
+        descriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Description'
+    SqlResponse:
+      title: SqlResponse
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DbTable'
+        tableName:
+          type: string
+        query:
+          type: string
+        description:
+          type: string
+        records:
+          type: integer
+          format: int32
+        tableMarkerResult:
+          $ref: '#/components/schemas/TableMarkerResult'
+        internalPathToFile:
+          type: string
+        link:
+          $ref: '#/components/schemas/Link'
+        saveToWordFile:
+          type: boolean
+        saveToZipFile:
+          type: boolean
+        connectionInfo:
+          type: object
+          additionalProperties:
+            type: string
+    StackTraceElement:
+      title: StackTraceElement
+      type: object
+      properties:
+        className:
+          type: string
+        fileName:
+          type: string
+        lineNumber:
+          type: integer
+          format: int32
+        methodName:
+          type: string
+        nativeMethod:
+          type: boolean
+    TableMarkerColumnStatus:
+      title: TableMarkerColumnStatus
+      type: object
+      properties:
+        actualResult:
+          type: string
+        columnName:
+          type: string
+        expectedResult:
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+    TableMarkerResult:
+      title: TableMarkerResult
+      type: object
+      properties:
+        tableRowCount:
+          $ref: '#/components/schemas/TableMarkerRowCount'
+        columnStatuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/TableMarkerColumnStatus'
+    TableMarkerRowCount:
+      title: TableMarkerRowCount
+      type: object
+      properties:
+        actualResult:
+          type: string
+        expectedResult:
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+    TestDataFile:
+      title: TestDataFile
+      type: object
+      properties:
+        filePath:
+          type: string
+        scenarios:
+          type: array
+          items:
+            type: string
+    TestDataSheet:
+      title: TestDataSheet
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/MainSheetRecord'
+        scenarios:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scenario'
+    TestDataWorkbook:
+      title: TestDataWorkbook
+      type: object
+      properties:
+        excelFile:
+          type: string
+        scenariosToExecute:
+          type: array
+          items:
+            type: string
+        loaded:
+          type: boolean
+        executeSql:
+          type: boolean
+        mainSheet:
+          $ref: '#/components/schemas/MainSheet'
+        testDataSheet:
+          $ref: '#/components/schemas/TestDataSheet'
+        queriesSheet:
+          $ref: '#/components/schemas/QueriesSheet'
+    Throwable:
+      title: Throwable
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/Throwable'
+        localizedMessage:
+          type: string
+        message:
+          type: string
+        stackTrace:
+          type: array
+          items:
+            $ref: '#/components/schemas/StackTraceElement'
+        suppressed:
+          type: array
+          items:
+            $ref: '#/components/schemas/Throwable'
+    ValidateValue:
+      title: ValidateValue
+      type: object
+      properties:
+        validateName:
+          type: string
+        validatedName:
+          type: string
+        value:
+          type: string
+    ValidatedParameters:
+      title: ValidatedParameters
+      type: object
+      properties:
+        key:
+          type: string
+        state:
+          $ref: '#/components/schemas/ValidationStatus'
+        value:
+          type: string
+    ValidationStatus:
+      type: string
+      enum:
+        - Passed
+        - Failed
+        - Skipped
+    ProjectConfig:
+      title: ProjectConfig
+      type: object
+      properties:
+        configUrl:
+          type: string
+        flowConfig:
+          $ref: '#/components/schemas/FlowConfig'
+        flowConfigNull:
+          type: boolean
+        id:
+          type: string
+        loaded:
+          type: boolean
+        name:
+          type: string
+    UpdateConfigurationRequest:
+      title: UpdateConfigurationRequest
+      type: object
+      properties:
+        commitMessagePrefix:
+          type: string
+        commonConfiguration:
+          $ref: '#/components/schemas/CommonConfiguration'
+        compound:
+          $ref: '#/components/schemas/Compound'
+        configurationAction:
+          $ref: '#/components/schemas/ConfigurationActionsEnum'
+        headerConfiguration:
+          $ref: '#/components/schemas/HeaderConfiguration'
+        potHeaderConfiguration:
+          $ref: '#/components/schemas/PotHeaderConfiguration'
+        process:
+          $ref: '#/components/schemas/Process'
+        section:
+          $ref: '#/components/schemas/FlowConfigSectionData'
+        sectionName:
+          type: string
+        updateGit:
+          type: boolean
+    ConfigurationActionsEnum:
+      type: string
+      enum:
+        - Create_compound
+        - Update_compound
+        - Update_config
+        - Create_process
+        - Update_process
+        - Section_action
+        - Update_config_flowjson
+    FlowConfigSectionData:
+      title: FlowConfigSectionData
+      type: object
+      properties:
+        name:
+          type: string
+        newName:
+          type: string
+        sectionAction:
+          $ref: '#/components/schemas/SectionActionsEnum'
+    SectionActionsEnum:
+      type: string
+      enum:
+        - Create_section
+        - Update_section
+        - Move_section
+        - Rearrange_section

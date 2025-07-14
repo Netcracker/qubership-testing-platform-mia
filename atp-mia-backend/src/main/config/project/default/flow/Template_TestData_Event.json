@@ -1,0 +1,31 @@
+{
+  "execType": "Process",
+  "command": {
+    "pathForUpload": ":infinys_root/",
+    "regexpForFileRetrieve": "(?<=.to ).*(?<=.dat_ERR_.{12})",
+    "fileExtension": ".dat",
+    "namesOfFilesForGeneration": [
+      "event_file_sub_${Timestamp(YYYYMMdd_hhmmss_S)}",
+      "control_file_${Timestamp(YYYYMMdd_hhmmss)}"
+    ],
+    "saveGeneratedFilesToParameter": "generatedFiles",
+    "displayDownloadedFileContent": false,
+    "testDataParams": {
+      "eventTemplate": ":EVENT_TEMPLATE",
+      "eventFileTemplate": "event_testData.dat",
+      "eventParameterInTemplate": "EVENT_LINES",
+      "controlFileTemplate": "control_templ.dat",
+      "eventFileForEachScenario": false,
+      "eventFileForEachDescription": false,
+      "columnNameForGeneratedFileName": "EVENT_OUTPUT_FILE_NAME",
+      "columnNameForGeneratedFileExtension": "EVENT_OUTPUT_FILE_EXTENSION"
+    },
+    "name": "TestData_Event",
+    "type": "EVENT_TEST_DATA",
+    "system": "Billing System",
+    "values": [
+      "{ FID -a '-sourceDir \":infinys_root\"' ; EFD ; }"
+    ]
+  },
+  "name": "TestData_Event"
+}

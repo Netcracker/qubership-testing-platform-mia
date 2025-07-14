@@ -1,0 +1,59 @@
+{
+  "execType": "Process",
+  "command": {
+    "pathForUpload": ":infinys_root/",
+    "regexpForFileRetrieve": "(?<=.to ).*(?<=.dat_ERR_.{12})",
+    "fileExtension": ".dat",
+    "namesOfFilesForGeneration": [
+      "event_file_sub_${Timestamp(YYYYMMdd_hhmmss)}",
+      "control_file_${Timestamp(YYYYMMdd_hhmmss)}"
+    ],
+    "ethalonFilesForGeneration": [
+      "eventFromFile_templ_Project_Three.dat",
+      "control_templ.dat"
+    ],
+    "saveGeneratedFilesToParameter": "generatedFiles",
+    "charsetForGeneratedFile": "ASCII",
+    "displayDownloadedFileContent": false,
+    "type": "SSH_GenerateEventFromFile",
+    "system": "Billing System",
+    "values": [
+      "{ FID -a '-sourceDir \":infinys_root\"' ; EFD ; }"
+    ]
+  },
+  "name": "EVENTS FROM FILE PROJECT THREE BASED",
+  "inputs": [
+    {
+      "label": "File for event generation (MANDATORY)",
+      "maxLength": 0,
+      "required": false,
+      "name": "EventGenerationFile",
+      "type": "attachment",
+      "system": "Billing System"
+    },
+    {
+      "label": "Sheet name from file for event generation (OPTIONAL, by default get first sheet)",
+      "maxLength": 0,
+      "required": false,
+      "name": "EventGenerationSheet",
+      "type": "text",
+      "system": "Billing System"
+    },
+    {
+      "label": "Test case for event generation (OPTIONAL, by default get all TCs from sheet)",
+      "maxLength": 0,
+      "required": false,
+      "name": "EventGenerationTestCase",
+      "type": "text",
+      "system": "Billing System"
+    },
+    {
+      "label": "Scenario for event generation (OPTIONAL, by default get all scenarios from test case)",
+      "maxLength": 0,
+      "required": false,
+      "name": "EventGenerationScenario",
+      "type": "text",
+      "system": ""
+    }
+  ]
+}

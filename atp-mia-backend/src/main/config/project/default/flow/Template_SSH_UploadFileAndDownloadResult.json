@@ -1,0 +1,26 @@
+{
+  "execType": "Process",
+  "command": {
+    "pathForUpload": ":infinys_root/",
+    "fileExtension": ".dmp",
+    "namesOfFilesForGeneration": [
+      ":accountNumber_${Random(10000)}",
+      ":customerRef_${Random(10000)}",
+      "configDump_${Random(10000)}"
+    ],
+    "ethalonFilesForGeneration": [
+      "parfile_RB80_acc_data.dat",
+      "parfile_RB80_cust_data.dat",
+      "parfile_RB804_exp_config.dat"
+    ],
+    "delayForGeneration": "5",
+    "displayDownloadedFileContent": false,
+    "name": "Create Billing System dump",
+    "type": "SSH_UploadFileAndDownloadResult",
+    "system": "Billing System",
+    "values": [
+      "exp $DATABASE parfile="
+    ]
+  },
+  "name": "SSH_UploadFileAndDownloadResult_DUMP"
+}

@@ -1,0 +1,29 @@
+openapi: 3.0.1
+info:
+  title: MIA General Controller API
+  description: MIA -> general.
+  version: '2.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: https://atp-public-gateway:8080/api/atp-mia/v1
+  - url: http://localhost:8080
+tags:
+  - name: mia-general-controller
+    description: MIA General Controller
+paths:
+  /version:
+    get:
+      tags:
+        - mia-general-controller
+      summary: version
+      operationId: version
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+      deprecated: false

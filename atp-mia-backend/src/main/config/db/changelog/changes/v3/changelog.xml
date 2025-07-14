@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="v3-2023.06_1_correct_tables_for_pot"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2023.06_1_correct_tables_for_pot.sql"
+                 relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="v3-2023.06_2_project_configuration"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2023.06_2_project_configuration.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="v3-2022.06_3_load_projects_from_json"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <comment>Load projects from projects_config.json to DB</comment>
+        <customChange class="org.qubership.atp.mia.repo.migration.v3.LoadProjectsFromJson"/>
+    </changeSet>
+
+    <changeSet logicalFilePath="classpath:db/changelog/changes/v3/service-entities-migration.xml"
+               id="v3-2023.06_4_send_updated_service_entities_to_kafka" author="atp-mia">
+        <preConditions onFail="CONTINUE">
+            <changeLogPropertyDefined property="service.entities.migration.enabled" value="true"/>
+        </preConditions>
+        <comment>Sending service entities to kafka topic.</comment>
+        <customChange class="org.qubership.atp.mia.repo.migration.v2.ServiceEntitiesMigrationCustomChange">
+            <param name="serviceName" value="${spring.application.name}"/>
+        </customChange>
+    </changeSet>
+
+    <changeSet id="2024.01.09_add_timestamp_latest_load"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.01.09_add_timestamp_latest_load.sql" relativeToChangelogFile="true"
+                 splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="2024.01.15_process_settings_from_jsonb_to_json"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.01.15_process_settings_from_jsonb_to_json.sql" relativeToChangelogFile="true"
+                 splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="2024.01.16_pot_refactor"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.01.16_pot_refactor.sql" relativeToChangelogFile="true"
+                 splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="2024.01.17_indexes_for_configuration"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.01.17_indexes_for_configuration.sql" relativeToChangelogFile="true"
+                 splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="2024.02.05_remove_relation_between_configuration_and_pot"
+               author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.02.05_remove_relation_between_configuration_and_pot.sql" relativeToChangelogFile="true"
+                 splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="2024.02.29_CREATE_SHEDLOCK_TABLE_FOR_LOCK_MANAGER" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="shedlock"/>
+            </not>
+        </preConditions>
+        <createTable tableName="shedlock">
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="lock_until" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locked_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locked_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2024.05.27_size_for_files" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.05.27_size_for_files.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="2024.12.02_sourceId" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.12.02_sourceId.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="2024.11.15_indexes_for_history" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="jv_snapshot"/>
+        </preConditions>
+        <sqlFile path="2024.11.15_indexes_for_history.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+    <changeSet id="2024.11.15_section_configuration_fields_for_history" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.11.15_section_configuration_fields_for_history.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+<!--    <changeSet id="2024.11.15_indexes_for_history" author="atp-mia"-->
+<!--               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">-->
+<!--        <preConditions onFail="CONTINUE">-->
+<!--            <tableExists tableName="jv_snapshot"/>-->
+<!--        </preConditions>-->
+<!--        <sqlFile path="2024.11.15_indexes_for_history.sql" relativeToChangelogFile="true" splitStatements="false"/>-->
+<!--    </changeSet>-->
+
+    <changeSet id="2024.11.21_process_configuration_columns_for_history" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.11.21_process_configuration_columns_for_history.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+<!--    <changeSet id="2024.11.15_section_configuration_fields_for_history" author="atp-mia"-->
+<!--               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">-->
+<!--        <sqlFile path="2024.11.15_section_configuration_fields_for_history.sql" relativeToChangelogFile="true" splitStatements="false"/>-->
+<!--    </changeSet>-->
+    <changeSet id="2024.12.05_project_directory_columns_for_history" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.12.05_project_directory_columns_for_history.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+    <changeSet id="2024.12.03_project_configuration_fields_for_history" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.12.03_project_configuration_fields_for_history.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+    <changeSet id="2024.12.12_project_file_columns_for_history" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.12.12_project_file_columns_for_history.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+    <changeSet id="2024.12.13_compound_configuration_columns_for_history" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <sqlFile path="2024.12.13_compound_configuration_columns_for_history.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+	
+	<changeSet id="v3-2025.01.27_resequence_project_section_places" author="atp-mia"
+				logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+		<comment>Resequence section positions within common parent to eliminate duplicates</comment>
+        <sqlFile path="2025.01.27_resequence_project_section_places.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="v3-2025.04.01_modify_section_compound_PK" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <comment>Modify the primary key for the section compound combination table</comment>
+        <sqlFile path="2025.04.01_modify_section_compound_PK.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="v3-2025.04.01_modify_section_process_PK" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <comment>Modify the primary key for the section process combination table</comment>
+        <sqlFile path="2025.04.01_modify_section_process_PK.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="v3-2025.05.14_create_single_processes_sections" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <comment>Create 'Single Processes' section for applicable projects in batch mode</comment>
+        <sqlFile path="2025.05.14_create_single_processes_sections.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="v3-2025.05.14_assign_unlinked_processes" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <comment>Assign unlinked processes to existing 'Single Processes' sections using batch insert</comment>
+        <sqlFile path="2025.05.14_assign_unlinked_processes.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="v3-2025.06.05_standardize_audit_columns" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <comment>Standardize audit columns and drop unnecessary columns</comment>
+        <sqlFile path="2025.06.05_standardize_audit_columns.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+
+    <changeSet id="v3-2025.06.26_rollback_standardize_audit_columns.sql" author="atp-mia"
+               logicalFilePath="classpath:db/changelog/changes/v3/changelog.xml" runOnChange="true">
+        <comment>Rollback Standardize audit columns and drop unnecessary columns</comment>
+        <sqlFile path="2025.06.26_rollback_standardize_audit_columns.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    </changeSet>
+</databaseChangeLog>

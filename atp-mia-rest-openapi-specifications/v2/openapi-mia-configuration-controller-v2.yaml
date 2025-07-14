@@ -1,0 +1,1228 @@
+openapi: 3.0.3
+info:
+  title: MIA Configuration Api
+  description: MIA -> Add/Update configuration, add/update/remove process, add/update/remove compound, upload/download file configuration
+  version: '2.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: https://atp-public-gateway:8080/api/atp-mia/v1
+  - url: http://localhost:8080
+tags:
+  - name: mia-configuration-controller
+    description: MIA Configuration Controller
+paths:
+  /configuration/{projectId}:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Get mia configuration
+      operationId: getConfiguration
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProjectConfiguration'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    put:
+      tags:
+        - mia-configuration-controller
+      description: Update mia configuration
+      operationId: updateConfiguration
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProjectConfiguration'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProjectConfiguration'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    delete:
+      tags:
+        - mia-configuration-controller
+      description: Delete mia configuration
+      operationId: deleteConfiguration
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: withPOT
+          in: query
+          description: Remove with POT
+          required: true
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: OK
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/hardReload:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Hard reload mia configuration from external resourse and return it
+      operationId: getConfigurationWithHardReload
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProjectConfiguration'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/section:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Get mia sections hierarchy
+      operationId: getSections
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Sections'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    post:
+      tags:
+        - mia-configuration-controller
+      description: Add mia section
+      operationId: addSection
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Section'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Sections'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    put:
+      tags:
+        - mia-configuration-controller
+      description: Update mia section
+      operationId: updateSection
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Section'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Sections'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/section/{sectionId}:
+    delete:
+      tags:
+        - mia-configuration-controller
+      description: Delete mia section
+      operationId: deleteSection
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: sectionId
+          in: path
+          description: Section ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Sections'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/compound:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Get mia all compounds for the project
+      operationId: getCompounds
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/CompoundShort'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    post:
+      tags:
+        - mia-configuration-controller
+      description: Add mia compound
+      operationId: addCompound
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Compound'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Compound'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    put:
+      tags:
+        - mia-configuration-controller
+      description: Update mia compound
+      operationId: updateCompound
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Compound'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Compound'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/compound/{compoundId}:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Get mia compound
+      operationId: getCompound
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: compoundId
+          in: path
+          description: Compound ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Compound'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    delete:
+      tags:
+        - mia-configuration-controller
+      description: Delete mia compound
+      operationId: deleteCompound
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: compoundId
+          in: path
+          description: Compound ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/CompoundShort'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/process:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Get mia all processes for the project
+      operationId: getProcesses
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProcessShort'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    post:
+      tags:
+        - mia-configuration-controller
+      description: Add mia process
+      operationId: addProcess
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Process'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Process'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    put:
+      tags:
+        - mia-configuration-controller
+      description: Update mia process
+      operationId: updateProcess
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Process'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Process'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/process/{processId}:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Get mia process
+      operationId: getProcess
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: processId
+          in: path
+          description: Process ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Process'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    delete:
+      tags:
+        - mia-configuration-controller
+      description: Delete mia process
+      operationId: deleteProcess
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: processId
+          in: path
+          description: Process ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProcessShort'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/uploadZipConfig:
+    post:
+      tags:
+        - mia-configuration-controller
+      description: Upload config as ZIP file
+      operationId: uploadZipConfig
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  description: file
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        201:
+          description: Created
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/downloadZipConfig:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Download config as ZIP file
+      operationId: downloadZipConfig
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/directories:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Get mia list of uuids for all directories
+      operationId: getUuidDirectories
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/directory:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Get mia directories hierarchy
+      operationId: getDirectories
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProjectDirectories'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    post:
+      tags:
+        - mia-configuration-controller
+      description: Add mia directory
+      operationId: addDirectory
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProjectDirectory'
+        required: true
+      responses:
+        200:
+          description: OK
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    put:
+      tags:
+        - mia-configuration-controller
+      description: Update mia directory
+      operationId: updateDirectory
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: request
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProjectDirectory'
+        required: true
+      responses:
+        200:
+          description: OK
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/directory/{directoryId}:
+    patch:
+      tags:
+        - mia-configuration-controller
+      description: Move mia project directory
+      operationId: moveDirectory
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              properties:
+                parentDirectory:
+                  type: string
+                  format: uuid
+        required: true
+      responses:
+        200:
+          description: OK
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    delete:
+      tags:
+        - mia-configuration-controller
+      description: Delete mia directory
+      operationId: deleteDirectory
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: directoryId
+          in: path
+          description: Directory ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/projectFiles:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Get mia list of uuids for all files
+      operationId: getUuidFiles
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/projectFile:
+    post:
+      tags:
+        - mia-configuration-controller
+      description: Add mia project file
+      operationId: addProjectFile
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - projectFile
+                - file
+              type: object
+              properties:
+                projectFile:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProjectFile'
+                file:
+                  type: string
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: OK
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    put:
+      tags:
+        - mia-configuration-controller
+      description: Update mia project file
+      operationId: updateProjectFile
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - projectFile
+              properties:
+                projectFile:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/ProjectFile'
+                file:
+                  type: string
+                  description: file
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: OK
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /configuration/{projectId}/projectFile/{fileId}:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: Get mia project file
+      operationId: getProjectFile
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fileId
+          in: path
+          description: Project file ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    patch:
+      tags:
+        - mia-configuration-controller
+      description: Move mia project file
+      operationId: moveProjectFile
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fileId
+          in: path
+          description: Project file ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              properties:
+                directory:
+                  type: string
+                  format: uuid
+        required: true
+      responses:
+        200:
+          description: OK
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+    delete:
+      tags:
+        - mia-configuration-controller
+      description: Delete mia section
+      operationId: deleteProjectFile
+      parameters:
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fileId
+          in: path
+          description: Project file ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content: { }
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/config:
+    get:
+      tags:
+        - mia-configuration-controller
+      description: |
+        IMPORTANT. IT IS OLD CONFIG!!! USE /configuration/{projectId}, /configuration/{projectId}/section, 
+        /configuration/{projectId}/compound, /configuration/{projectId}/process instead.
+      operationId: getConfig
+      parameters:
+        - name: projectId
+          in: query
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: needReload
+          in: query
+          description: needReload
+          required: true
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/FlowConfig'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: true

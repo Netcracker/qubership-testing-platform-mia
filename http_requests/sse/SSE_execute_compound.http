@@ -1,0 +1,88 @@
+### SSE CONNECT LOCALHOST SSE
+GET http://localhost:8080/sse/connect?projectId={{projectId}}&sseId={{sseId}}
+Content-Type: text/event-stream
+Authorization: {{bearer}}
+
+### EXECUTE COMPOUND LOCALHOST
+POST http://localhost:8087/sse/compound?projectId={{projectId}}&env=some_environment&sseId={{sseId}}
+Authorization: {{bearer}}
+Content-Type: application/json
+
+{
+  "sessionId": "61688251-d9a0-40e5-a177-bdc1e63bf7c0",
+  "process": null,
+  "command": null,
+  "rest": null,
+  "compound": {
+    "name": "Compound",
+    "processList": [
+      {
+        "name": "SSH_BG",
+        "command": {
+          "value": "sleep 35"
+        }
+      },
+      {
+        "name": "SQL_GPARAMS",
+        "command": {
+          "value": "select * from gparams where name like '%SYSdate%'"
+        }
+      },
+      {
+        "name": "SSH_BG",
+        "command": {
+          "value": "sleep 35"
+        }
+      }
+    ]
+  },
+  "flowData": {
+    "parameters": {
+      "workingDirectory": "/tmp/TA/",
+      "exportGenevaDate": true,
+      "defaultSystem": "SomeSytem",
+      "environment": "vamshi environment",
+      "processName": "Compound"
+    }
+  },
+  "switchers": [
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "Uncomment/comment Sysdatevalue",
+      "value": false
+    },
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "comment SysdateOverride",
+      "value": true
+    }
+  ],
+  "systemSwitchers": [
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "fullTraceMode",
+      "value": false
+    },
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "needDos2Unix",
+      "value": false
+    },
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "replaceFileOnUploadAttachment",
+      "value": true
+    },
+    {
+      "actionTrue": "No action set to 'true'",
+      "actionFalse": "No action set to 'false'",
+      "name": "stopOnFail",
+      "value": true
+    }
+  ]
+}

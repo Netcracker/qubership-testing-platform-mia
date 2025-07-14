@@ -1,0 +1,31 @@
+{
+  "id" : "10000000-0000-0000-0000-000000000001",
+  "name" : "CommonConfiguration",
+  "projectId" : "10000000-0000-0000-0000-000000000001",
+  "sourceId" : "10000000-0000-0000-0000-000000000001",
+  "defaultSystem" : "Billing System",
+  "useVariablesInsideVariable" : false,
+  "variableFormat" : ":VARIABLE_NAME",
+  "saveFilesToWorkingDir" : false,
+  "saveSqlTablesToFile" : true,
+  "commonVariables" : { },
+  "nextBillDateSql" : "SELECT NEXT_BILL_DTM FROM ACCOUNT WHERE ACCOUNT_NUM =':accountNumber'",
+  "resetCacheSql" : "{call gnvsessiongparams.clearcache()}",
+  "ethalonFilesPath" : "etalon_files",
+  "externalEnvironmentPrefix" : "",
+  "commandShellSeparator" : "\n",
+  "commandShellPrefixes" : [ {
+    "system" : "Billing System",
+    "prefixes" : {
+      "accountNumber" : "echo \"Something with accountNumber %s\"",
+      "genevaDate" : "echo \"Something with genevaDate %s\"",
+      "infinys_root" : "cd %s\nsource infinys.env",
+      "workingDirectory" : "mkdir -p %s",
+      "exportGenevaDate" : "export GENEVA_FIXEDDATE=\":genevaDate\"",
+      "fullTraceMode" : "export TRACE_LEVEL=FULL\nexport TRACE_ALL=ON"
+    }
+  } ],
+  "genevaDateMask" : "YYYYMMDD HHMMSSSS",
+  "sshRsaFilePath" : null,
+  "linesAmount" : 3
+}

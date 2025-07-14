@@ -1,0 +1,291 @@
+PAAS_PLATFORM: "KUBERNETES"
+ATP_NET: ""
+# Additional Java options
+ADDITIONAL_JAVA_OPTIONS: "-XX:MaxRAMPercentage=75.0 -Xss100m"
+# Placeholder for Public key for ENCRYPT
+ATP_CRYPTO_KEY: ""
+# Placeholder for Private key for ENCRYPT
+ATP_CRYPTO_PRIVATE_KEY: ""
+ATP_INTERNAL_GATEWAY_ENABLED: "false"
+ATP_MIA_PROJECTS_CONFIG: "/atp-mia-config/projects_config.json"
+# MANDATORY IF MIA USED BY CATALOG.
+ATP_MIA_URL: ""# TO_BE_REPLACED
+# Api url for routing by eureka
+ATP_SERVICE_PATH: "/api/atp-mia/v1/**"
+# Register to public gateway in eureka
+ATP_SERVICE_PUBLIC: "true"
+# Url atp-catalogue
+CATALOGUE_URL: ""# TO_BE_REPLACED
+# CPU core limit
+CPU_LIMIT: "2"
+# CPU core request
+CPU_REQUEST: "0.05"
+# Time after which connection will not be reusable
+DB_ALIVE_LENGTH: "300"
+# Time after which connection will close
+DB_CLOSE_DELAY: "300"
+# Time query execution
+DB_EXECUTION_TIMEOUT: "30"
+# SQL Query Execution Records Limit
+DB_EXECUTION_RECORDS_LIMIT: "50"
+# SQL Query Execution Records Limit
+RESPONSE_FILE_SIZE_LIMIT_BYTES: "1000000"
+# Time after which keep alive message will be resent in SSH connection in ms.
+DB_SERVER_KEEP_ALIVE: "30000"
+# address mongo grid DB
+EI_GRIDFS_DB_ADDR: "gridfs.mongocluster.svc"
+# port mongo grid DB
+EI_GRIDFS_DB_PORT: "27017"
+# Name mongo grid DB
+EI_GRIDFS_DB: ""
+# Password mongo grid DB
+EI_GRIDFS_PASSWORD: ""
+# User mongo grid DB
+EI_GRIDFS_USER: ""
+# Rest Execution Timeout in Minutes
+ATP_MIA_REST_EXECUTION_TIMEOUT: "5"
+# Which docker image should be used to deploy
+DOCKER_TAG: "artifactory-service-address/path-to-image"
+# Encyption option. One of - dev (default, encrypt inside app); - secrets (encrypt keys in Openshift secrets); - vault (encrypt keys in Openshift secrets)
+ENCRYPT: "dev"
+# Switching-on of Eureka client
+EUREKA_CLIENT_ENABLED: "true"
+# Property for eureka to prefer ip
+EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+FEIGN_ATP_CATALOGUE_NAME: "ATP-CATALOGUE"
+FEIGN_ATP_CATALOGUE_ROUTE: "api/atp-catalogue/v1"
+FEIGN_ATP_CATALOGUE_URL: "" # TO_BE_REPLACED
+FEIGN_ATP_ENVIRONMENTS_NAME: "ATP-ENVIRONMENTS"
+FEIGN_ATP_ENVIRONMENTS_ROUTE: "api/atp-environments/v1"
+FEIGN_ATP_ENVIRONMENTS_URL: "" # TO_BE_REPLACED
+FEIGN_ATP_USERS_NAME: "ATP-USERS-BACKEND"
+FEIGN_ATP_USERS_ROUTE: "api/atp-users-backend/v1"
+FEIGN_ATP_USERS_URL: "" # TO_BE_REPLACED
+FEIGN_ATP_INTERNAL_GATEWAY_NAME: "atp-internal-gateway"
+FEIGN_ATP_EI_URL: ""
+FEIGN_ATP_EI_NAME: "ATP-EXPORT-IMPORT"
+FEIGN_ATP_EI_ROUTE: "api/atp-export-import/v1"
+# Feign connect timeout
+FEIGN_CONNECT_TIMEOUT: "300000"
+# Feign logger level
+FEIGN_LOGGER_LEVEL: "basic"
+# Feign read timeout
+FEIGN_READ_TIMEOUT: "300000"
+# Path to the volume where log.gc will be stored
+GC_LOGS_PATH: "/atp-mia-storage-dumps/gc.log"
+# Host of graylog
+GRAYLOG_HOST: ""# TO_BE_REPLACED
+# This option define level of logging in graylog
+GRAYLOG_LEVEL: "ERROR"
+# This option turns on or off logging in graylog
+GRAYLOG_ON: "true"
+# Port of graylog
+GRAYLOG_PORT: "12201"
+# This option defines value which comes after .../stream/{GRAYLOG_STREAM}/... in URL part
+GRAYLOG_STREAM: "1"
+# Path to the volume where dumps will be stored
+JMX_ENABLE: "true"
+JMX_PORT: "3000"
+JMX_RMI_PORT: "3001"
+# Use it to debug ssh connection
+JSCH_LOG_LEVEL: "ERROR"
+# Name of the deployed hazelcast cluster to connect to
+HAZELCAST_CLUSTER_NAME: "atp-hc"
+# Whether to cache using hazelcast
+HAZELCAST_ENABLE: "false"
+# Whether hazelcast server is available
+HAZELCAST_SERVER_ENABLED: "false"
+# Hazelcast address
+HAZELCAST_ADDRESS: "atp-hazelcast:5701"
+JAVERS_ENABLED: "true"
+# This option turns on or off kafka enable
+KAFKA_ENABLE: "true"
+KAFKA_SERVERS: "kafka.kafka-cluster.svc:9092"
+KAFKA_CATALOG_GROUP: ""
+KAFKA_CATALOG_TOPIC: ""
+KAFKA_MIA_EXECUTION_FINISH_TOPIC: ""
+KAFKA_MIA_EXECUTION_FINISH_TOPIC_PARTITIONS: "1"
+KAFKA_MIA_EXECUTION_FINISH_TOPIC_REPLICATION_FACTOR: ""
+KAFKA_ITF_IMPORT_GROUP: ""
+KAFKA_ITF_IMPORT_TOPIC: ""
+KAFKA_ITF_IMPORT_END_PARTITIONS: "1"
+KAFKA_ITF_IMPORT_END_TOPIC_REPLICATION_FACTOR: ""
+KAFKA_ITF_IMPORT_LISTENER_DELAY: "180000"
+KAFKA_ITF_IMPORT_END_TOPIC: ""
+KAFKA_ENVIRONMENT_UPDATE_LISTEN_GROUP: ""
+KAFKA_ENVIRONMENT_UPDATE_TOPIC: ""
+KAFKA_HANDLER_BACKOFF_INTERVAL: "1000"
+KAFKA_RETRY_BACKOFF_PERIOD: "1000"
+KAFKA_MIA_ITF_CONSUMER_THREAD: "5"
+KAFKA_SERVICE_ENTITIES_TOPIC: ""
+KAFKA_SERVICE_ENTITIES_TOPIC_PARTITIONS: "1"
+KAFKA_SERVICE_ENTITIES_TOPIC_REPLICATION_FACTOR: ""
+# Url atp-keycloak with auth
+KEYCLOAK_AUTH_URL: ""# TO_BE_REPLACED
+# Keycloak client name
+KEYCLOAK_CLIENT_NAME: "atp-mia"
+# Keycloak enabled
+KEYCLOAK_ENABLED: "true"
+# Keycloak realm
+KEYCLOAK_REALM: ""
+# Keycloak secret
+KEYCLOAK_SECRET: ""
+# Label for project.
+LABEL: "" # TO_BE_REPLACED
+# This option define level of logging in atp.mia module
+MIA_LOG_LEVEL: "INFO"
+# The following 3 parameters related to Lock Manager Settings
+LOCK_DEFAULT_DURATION_SEC: "60"
+LOCK_RETRY_TIMEOUT_SEC: "600"
+LOCK_RETRY_PACE_SEC: "3"
+# Maximum memory.
+MAX_RAM: "2560m"
+# Memory limit
+MEMORY_LIMIT: "3Gi"
+# Memory request
+MEMORY_REQUEST: "384Mi"
+PRE_POST_CPU_REQUEST: "0.05"
+PRE_POST_CPU_LIMIT: "0.5"
+PRE_POST_MEMORY_REQUEST: "50Mi"
+PRE_POST_MEMORY_LIMIT: "500Mi"
+# MIA Database host, credentials and pool settings
+PG_DB_ADDR: "localhost"
+PG_DB_PORT: "5432"
+MIA_DB_NAME: ""
+MIA_USER: ""
+MIA_PASSWORD: ""
+HIKARI_MIN_POOL_SIZE: "10"
+HIKARI_MAX_POOL_SIZE: "100"
+HIKARI_MAX_LIFE_TIME: "1800000"
+# Db name for gridfs db
+MIA_DB: ""
+# DB entities older than this amount will be cleaned
+MIA_DB_CLEAN_PERIOD_DAYS: "3"
+# Size of batch for hibernate transaction
+HIBERNATE_BATCH_SIZE: "20"
+# Enable gridfs/mongo or not
+MIA_DB_ENABLE: "true"
+# Enable gridfs/mongo for ExportImport
+MIA_EI_DB_ENABLE: "true"
+# Password for gridfs db
+MIA_DB_PASSWORD: ""
+# User for gridfs db
+MIA_DB_USER: ""
+# Host or IP of gridfs db
+MONGO_DB_ADDR: "localhost"
+# Port for gridfs db
+MONGO_DB_PORT: "27017"
+# enabling profiler option
+PROFILER_ENABLED: "false"
+# Rest end point for projects
+PROJECT_INFO_ENDPOINT: "/api/v1/users/projects"
+# host of profiler collector
+REMOTE_DUMP_HOST: "esc-collector-service.profiler.svc"
+# port of profiler collector
+REMOTE_DUMP_PORT: "1710"
+# Security Context properties
+# enabled is a flag to enable Security Context
+SECURITY_CONTEXT_ENABLED: false
+# runAsUser is the user ID used to run the container
+# fsGroup is the group ID associated with the container
+podSecurityContext:
+  runAsUser: 1000
+  fsGroup: 1000
+containerSecurityContext: {}
+# Deployment Config/Service name.
+SERVICE_NAME: "atp-mia"
+# Deployment Config/Service type.
+SERVICE_PORT_TYPE: "NodePort"
+# Host of Eureka server
+SERVICE_REGISTRY_URL: "http://atp-registry-service:8080/eureka"
+# Set to ATP2 to enable Prometheus scrapping
+SERVICE_TYPE: ""
+# Spring profile for security
+SPRING_PROFILES: "default"
+# Time after which ssh connection will close
+SSH_CLOSE_DELAY: "300"
+# Vault service URL, required when ENCRYPT = vault
+VAULT_URL: ""
+ZIPKIN_ENABLE: "false"
+ZIPKIN_PROBABILITY: "1.0"
+ZIPKIN_URL: "http://zipkin.zipkin.svc:9411"
+# User for git repository with configuration (x_kube2vcs)
+GIT_EMAIL: "" # TO_BE_REPLACED
+GIT_USER_ID: "2202"
+GIT_URL: "" # TO_BE_REPLACED
+GIT_API_PATH: "api/v4/projects/%s/members/all/%s"
+# locale resolver
+LOCALE_RESOLVER: "en"
+# Macros Values
+FEIGN_ATP_MACROS_ENABLED: "true"
+FEIGN_ATP_MACROS_URL: ""
+FEIGN_ATP_MACROS_NAME: "ATP-MACROS"
+FEIGN_ATP_MACROS_ROUTE: "api/atp-macros/v1"
+## feign client for atp-notification service
+FEIGN_ATP_NOTIFICATION_URL: ""
+FEIGN_ATP_NOTIFICATION_NAME: "ATP-NOTIFICATION"
+FEIGN_ATP_NOTIFICATION_ROUTE: "api/atp-notification/v1"
+# Sizing for logs inside POT document
+MIA_POT_MIN_LOG_LENGTH: "5"
+MIA_POT_MAX_LINES_LOGS: "1000"
+MIA_POT_MAX_TABLE_ROWS: "100"
+# Consul values
+CONSUL_ENABLED: "false"
+CONSUL_URL: ""
+CONSUL_PREFIX: "devci"
+CONSUL_PORT: "8500"
+CONSUL_TOKEN: ""
+# Common logging
+ATP_HTTP_LOGGING: "true"
+ATP_HTTP_LOGGING_HEADERS: "true"
+ATP_HTTP_LOGGING_HEADERS_IGNORE: "Authorization"
+ATP_HTTP_LOGGING_URI_IGNORE: "/rest/deployment/readiness /rest/deployment/liveness /sse/*"
+VAULT_ENABLE: "false"
+VAULT_NAMESPACE: "atp"
+VAULT_ROLE_ID: ""
+VAULT_URI: ""
+NODES_COUNT: "1"
+# Cron jobs for clean
+ATP_MIA_CRON_CLEAN_GRIDFS: "0 30 1 * * *"
+ATP_MIA_CRON_CLEAN_GRIDFS_PROJECT_FILES: "0 30 2 * * *"
+ATP_MIA_CRON_CLEAN_METRIC: "0 0 0 * * *"
+ATP_MIA_CRON_CLEAN_LOGS: "0 0 * * * *"
+ATP_MIA_CRON_CLEAN_POSTGRESQL: "0 0 1 * * *"
+GIT_USER: "user_name"
+GIT_PASS: "password"
+GIT_TOKEN: ""
+SWAGGER_ENABLED: "true"
+# Property that enables or disables migration of service entities in atp-users
+SERVICE_ENTITIES_MIGRATION_ENABLED: "true"
+# insecure Edge Termination Policy
+TERMINATION_POLICY: "Redirect"
+# Audit Logging topic
+AUDIT_LOGGING_ENABLE: "false"
+AUDIT_LOGGING_TOPIC_NAME: ""
+KAFKA_REPORTING_SERVERS: "kafka:9092"
+AUDIT_LOGGING_TOPIC_PARTITIONS: "1"
+AUDIT_LOGGING_TOPIC_REPLICAS: ""
+# Clean logs folder hours
+ATP_CLEAN_LOGS_FOLDER_HOURS: "1"
+#Enabling installation of external link for service
+EXTERNAL_LINK_ENABLED: false
+#  kubernetes.io/hostname: worker1-atp
+#Example for nodeSelector:  "nodeSelector": {"kubernetes.io/hostname": "worker1-someone"}
+nodeSelector: {}
+HEAPDUMP_ENABLED: false
+# SSE
+MIA_SSE_TIMEOUT: "7200000"
+MIA_SSE_PING_TIMEOUT: "30000"
+#Example for extraEnvs: "extraEnvs": [
+#    {
+#      "name": "DISABLE_INSTALL_DEMO_CONFIG",
+#      "value": "true"
+#    },
+#    {
+#      "name": "DISABLE_SECURITY_PLUGIN",
+#      "value": "true"
+#    }
+#  ]
+extraEnvs: []
+keepHookLogs: false
+HELPER_IMAGE: "artifactory-service-address/path-to-image"

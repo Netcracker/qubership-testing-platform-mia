@@ -1,0 +1,172 @@
+openapi: 3.0.3
+info:
+  title: MIA Environment Api
+  description: MIA -> Get project/environment/system details
+  version: '2.0'
+  contact:
+    name: OurCompany
+    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
+servers:
+  - url: https://atp-public-gateway:8080/api/atp-mia/v1
+  - url: http://localhost:8080
+tags:
+  - name: mia-environment-controller
+    description: MIA Environment Controller
+paths:
+  /rest/environments:
+    get:
+      tags:
+        - mia-environment-controller
+      summary: Get mia environment detail
+      operationId: getEnvironments
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/AbstractConfiguratorModel'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/environments/full:
+    get:
+      tags:
+        - mia-environment-controller
+      summary: Get mia full environment details
+      operationId: getEnvironmentsFull
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: environmentId
+          in: query
+          description: environmentId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Environment'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/environments/systems:
+    get:
+      tags:
+        - mia-environment-controller
+      summary: Get mia system enviornment detail
+      operationId: getSystemsForProject
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/SystemEnvironmentsView'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/project:
+    get:
+      tags:
+        - mia-environment-controller
+      summary: Get mia project detail
+      operationId: getProject
+      parameters:
+        - name: projectId
+          in: query
+          description: projectId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'openapi-mia-models-v2.yaml#/components/schemas/Project'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false
+  /rest/projects:
+    get:
+      tags:
+        - mia-environment-controller
+      summary: Get mia all projects details
+      operationId: getProjects
+      responses:
+        200:
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: 'openapi-mia-models-v2.yaml#/components/schemas/AbstractConfiguratorModel'
+        401:
+          description: Unauthorized
+          content: { }
+        403:
+          description: Forbidden
+          content: { }
+        404:
+          description: Not Found
+          content: { }
+      deprecated: false

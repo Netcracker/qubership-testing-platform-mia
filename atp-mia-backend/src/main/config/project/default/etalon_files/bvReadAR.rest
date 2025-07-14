@@ -1,0 +1,21 @@
+PUT
+
+/api/bvtool/project/9d256430-747d-4316-bcf2-03a5cb50010c/api/v1/readAndCompare
+
+content-type:application/json
+
+{
+    "testCases": [
+		{
+			"name": "DHL_TESTCASE",
+			"inputParameters": {
+				"ERFILENAME": ":ER_FILE_NAME",
+				"ARFILENAME": ":EVENT_OUT_FILE_TO_USE_BV:EVENT_OUTPUT_FILE_EXTENSION"
+			}
+		}
+	],
+    "servers": [{
+        "name": "DHLENVIRONMENT/DHLSYS/DHLCONNECTION",
+        "sources": ['AR']
+    }]
+}
