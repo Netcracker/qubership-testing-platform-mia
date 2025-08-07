@@ -356,10 +356,11 @@ public class ProcessService {
     }
 
     /**
-     * Replaces Systems in Command,PreRequisites & Validations of Process, with Custom Input If any.
+     * Replaces Systems in Command, PreRequisites and Validations of Process,
+     * with Custom Input (if any).
      *
      * @param processSettings instance of Process
-     * @return updated Process
+     * @return updated Process.
      */
     public ProcessSettings replaceProcessSystems(ProcessSettings processSettings) {
         processSettings.getCommand().setSystem(miaContext.evaluate(processSettings.getCommand().getSystem()));

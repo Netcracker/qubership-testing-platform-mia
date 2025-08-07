@@ -99,8 +99,7 @@ public class TestDataService {
      * Upload file provided by FE to BE and validate it.
      *
      * @param file file
-     * @return TestDataFile instance with file name and scenarios
-     * @throws FileUploadException in case failing transfer file
+     * @return TestDataFile instance with file name and scenarios.
      */
     public TestDataWorkbook uploadTestDataFileAndValidate(MultipartFile file) {
         String excelFile = miaFileService.uploadFileOnBe(file, false);

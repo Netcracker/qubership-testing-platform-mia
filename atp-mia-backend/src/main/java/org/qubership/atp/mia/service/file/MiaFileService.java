@@ -244,7 +244,8 @@ public class MiaFileService {
     }
 
     /**
-     * Upload file provided by FE to BE along with Dos2Unix conversion when needDos2Unix is true & Os is Linux.
+     * Upload file provided by FE to BE along with Dos2Unix conversion
+     * when needDos2Unix is true and Os is Linux.
      *
      * @param file         file
      * @param needDos2Unix boolean

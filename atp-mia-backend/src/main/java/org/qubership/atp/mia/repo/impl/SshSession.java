@@ -71,8 +71,8 @@ public class SshSession {
     /**
      * Creates details for ssh session, which used when opening {@link Channel} and {@link Session}.
      *
-     * @param server        with credentials.
-     * @param configuration used to get {@link CommonConfiguration#getSshRsaFilePath()}.
+     * @param server        with credentials
+     * @param configuration used to get SshRsaFilePath field of CommonConfiguration.
      */
     public SshSession(Server server, CommonConfiguration configuration) {
         jsch = getJsch(configuration);
@@ -88,7 +88,7 @@ public class SshSession {
      * Sets necessary parameters of ssh connection(like ssh identity).
      * This method is required to use before execution of any ssh command.
      *
-     * @param configuration - CommonConfiguration
+     * @param configuration - CommonConfiguration.
      */
     private JSch getJsch(CommonConfiguration configuration) {
         JSch jsch = new JSch();
@@ -185,7 +185,7 @@ public class SshSession {
     /**
      * Creates jschSession.
      *
-     * @param retryCount pass 1 to make retry amount equal to {@link this#retries}.
+     * @param retryCount pass 1 to make retry amount equal to this.retries.
      */
     public void createSession(int retryCount) {
         if (!isConnected()) {
@@ -303,7 +303,7 @@ public class SshSession {
      * It helps to avoid situations when connection is old, while configuration updated.
      *
      * @param server        server.
-     * @param configuration only check {@link CommonConfiguration#getSshRsaFilePath()}.
+     * @param configuration only check sshRsaFilePath field of CommonConfiguration.
      * @return false if not the same.
      */
     public boolean isSame(Server server, CommonConfiguration configuration) {

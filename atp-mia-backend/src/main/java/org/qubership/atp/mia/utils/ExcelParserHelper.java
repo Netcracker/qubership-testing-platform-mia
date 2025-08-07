@@ -399,8 +399,8 @@ public class ExcelParserHelper {
     /**
      * Gets workbook.
      *
-     * @param path path to excel file
-     * @returnworkbook
+     * @param path path to Excel file
+     * @return new ExcelWorkbook object for path given.
      */
     @Nonnull
     public static ExcelWorkbook getWorkBook(@Nonnull String path) {
