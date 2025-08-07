@@ -12,23 +12,21 @@
 
     <groupId>org.qubership.atp.mia</groupId>
     <artifactId>atp-mia</artifactId>
-    <version>${atp.service.version}</version>
+    <version>2.0.62-SNAPSHOT</version>
 
     <properties>
         <java.version>21</java.version>
-        <atp.service.version>2.0.61</atp.service.version>
-        <toolBuildStatus>BETA-TESTING</toolBuildStatus>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <toolBuildStatus>BETA-TESTING</toolBuildStatus>
 
         <atp.intergration.spring.boot.starter.version>0.2.38</atp.intergration.spring.boot.starter.version>
         <atp.adapter.robot.version>4.5.71</atp.adapter.robot.version>
         <atp.crypt.version>0.0.20</atp.crypt.version>
-        <atp.macros.core.version>1.0.27</atp.macros.core.version>
-        <atp.ei.lib.node.version>0.2.40</atp.ei.lib.node.version>
-        <atp.auth.version>1.2.60</atp.auth.version>
+        <atp.macros.core.version>1.0.31</atp.macros.core.version>
+        <atp.ei.lib.node.version>0.2.43</atp.ei.lib.node.version>
+        <atp.auth.version>1.2.68</atp.auth.version>
         <atp.common.version>0.0.43</atp.common.version>
-        <atp.codechecks.version>1.1</atp.codechecks.version>
 
         <maven-pmd-plugin.version>3.8</maven-pmd-plugin.version>
         <spotbugs-maven-plugin.version>4.7.3.0</spotbugs-maven-plugin.version>
@@ -57,7 +55,6 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <javers.version>6.6.4</javers.version>
         <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
-
     </properties>
 
     <modules>
@@ -67,8 +64,116 @@
         <module>atp-mia-contract-test-pacts</module>
     </modules>
 
-
     <packaging>pom</packaging>
+
+    <name>org.qubership.atp.mia:atp-mia</name>
+    <description>Qubership Testing Platform MIA Service</description>
+    <url>https://github.com/Netcracker/qubership-testing-platform-mia</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Netcracker</name>
+            <email>opensourcegroup@netcracker.com</email>
+            <organization>Netcracker Technology</organization>
+            <organizationUrl>https://www.netcracker.com</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https//github.com/Netcracker/qubership-testing-platform-mia.git</connection>
+        <developerConnection>scm:git:https://github.com/Netcracker/qubership-testing-platform-mia.git</developerConnection>
+        <url>scm:git:https://github.com/Netcracker/qubership-testing-platform-mia.git</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <profiles>
+        <profile>
+            <id>central</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.7.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.7</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.6.3</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <repository>
+                    <id>central</id>
+                    <name>Central Maven Repository</name>
+                </repository>
+            </distributionManagement>
+        </profile>
+
+        <profile>
+            <id>github</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub Packages</name>
+                    <url>https://maven.pkg.github.com/Netcracker/qubership-testing-platform-environments</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
@@ -405,201 +510,90 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.1.1</version>
+            </plugin>
+            <plugin>
                 <artifactId>maven-scm-plugin</artifactId>
                 <version>1.9.5</version>
                 <configuration>
-                    <tag>atp-mia-${atp.service.version}</tag>
+                    <tag>atp-mia-${project.version}</tag>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>replacer</artifactId>
-                <version>1.5.3</version>
-                <executions>
-                    <execution>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                        <configuration>
-                            <basedir>./</basedir>
-                            <includes>
-                                <!--<include>atp-mia-frontend/pom.xml</include>-->
-                                <include>atp-mia-backend/pom.xml</include>
-                                <include>atp-mia-distribution/pom.xml</include>
-                                <include>atp-mia-rest-openapi-specifications/pom.xml</include>
-                                <include>atp-mia-contract-test-pacts/pom.xml</include>
-                            </includes>
-                            <replacements>
-                                <replacement>
-                                    <token>\$\{atp.service.version\}</token>
-                                    <value>${atp.service.version}</value>
-                                </replacement>
-                            </replacements>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.17</version>
-                <configuration>
-                    <configLocation>org/qubership/atp/codechecks/checkstyle.xml</configLocation>
-                    <outputFile>${project.build.directory}/checkstyle/checkstyle-result.xml</outputFile>
-                    <linkXRef>false</linkXRef>
-                    <failsOnError>false</failsOnError>
-                    <failOnViolation>false</failOnViolation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>verify-style</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>7.8.2</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.qubership.atp.codechecks</groupId>
-                        <artifactId>qubership-atp-codechecks</artifactId>
-                        <version>${atp.codechecks.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${maven-pmd-plugin.version}</version>
-                <configuration>
-                    <rulesets>
-                        <ruleset>org/qubership/atp/codechecks/pmd-ruleset.xml</ruleset>
-                    </rulesets>
-                    <printFailingErrors>true</printFailingErrors>
-                    <failOnViolation>false</failOnViolation>
-                    <targetDirectory>${project.build.directory}/pmd</targetDirectory>
-                    <targetJdk>${maven.compiler.target}</targetJdk>
-                    <includeTests>false</includeTests>
-                    <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
-                    <linkXRef>false</linkXRef>
-                    <excludeRoots>
-                        <excludeRoot>${project.build.directory}/generated-sources</excludeRoot>
-                    </excludeRoots>
-                    <format>xml</format>
-                    <minimumTokens>100</minimumTokens>
-                    <language>java</language>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>pmd</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>pmd</goal>
-                            <goal>cpd</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.qubership.atp.codechecks</groupId>
-                        <artifactId>qubership-atp-codechecks</artifactId>
-                        <version>${atp.codechecks.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>${spotbugs-maven-plugin.version}</version>
-                <configuration>
-                    <!--Enables analysis which takes more memory but finds more bugs.
-                        If you run out of memory, changes the value of the effort element to 'Low' -->
-                    <effort>Max</effort>
-                    <!--Build doesn't fail if problems are found -->
-                    <failOnError>false</failOnError>
-                    <!--Reports all bugs (other values are medium and max) -->
-                    <threshold>Low</threshold>
-                    <!--Produces XML report -->
-                    <xmlOutput>true</xmlOutput>
-                    <spotbugsXmlOutput>true</spotbugsXmlOutput>
-                    <!--Configures the directory in which the XML report is created -->
-                    <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs/xml
-                    </spotbugsXmlOutputDirectory>
-                    <includeFilterFile>org/qubership/atp/codechecks/findbugs-filter.xml</includeFilterFile>
-                </configuration>
-                <executions>
-                    <!--Ensures that FindBugs inspects source code when a project is compiled -->
-                    <execution>
-                        <id>analyze-compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.qubership.atp.codechecks</groupId>
-                        <artifactId>qubership-atp-codechecks</artifactId>
-                        <version>${atp.codechecks.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                        <version>9.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm-analysis</artifactId>
-                        <version>9.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm-commons</artifactId>
-                        <version>9.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm-tree</artifactId>
-                        <version>9.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm-util</artifactId>
-                        <version>9.5</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
 
     <repositories>
+        <!-- Maven Central repository for release versions -->
         <repository>
-            <id>central</id>
-            <name>Maven Central</name>
-            <url>https://repo1.maven.org/maven2/</url>
+            <id>oss.sonatype.org</id>
+            <url>https://central.sonatype.com</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <!-- Maven Central repository for SNAPSHOT versions-->
+        <repository>
+            <id>oss.sonatype.org-snapshot</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+        <!-- GitHub packages repository for both release and SNAPSHOT versions -->
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/netcracker/*</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
-    <distributionManagement>
-        <repository>
-            <id>central</id>
-            <name>Maven Central</name>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <pluginRepositories>
         <pluginRepository>
-            <id>central</id>
-            <name>Maven Central</name>
-            <url>https://repo1.maven.org/maven2/</url>
+            <id>oss.sonatype.org</id>
+            <url>https://central.sonatype.com</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+
+        <pluginRepository>
+            <id>oss.sonatype.org-snapshot</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+
+        <pluginRepository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/netcracker/*</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </pluginRepository>
     </pluginRepositories>
 </project>

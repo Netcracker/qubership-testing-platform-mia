@@ -5,11 +5,12 @@
     <parent>
         <groupId>org.qubership.atp.mia</groupId>
         <artifactId>atp-mia</artifactId>
-        <version>${atp.service.version}</version>
+        <version>2.0.62-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>atp-mia-backend</artifactId>
+    <name>atp-mia-backend</name>
 
     <properties>
         <tests.argLine>
@@ -1478,137 +1479,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-pmd-plugin</artifactId>
-                        <version>${maven-pmd-plugin.version}</version>
-                        <configuration>
-                            <rulesets>
-                                <ruleset>org/qubership/atp/codechecks/pmd-ruleset.xml</ruleset>
-                            </rulesets>
-                            <printFailingErrors>true</printFailingErrors>
-                            <failOnViolation>false</failOnViolation>
-                            <targetDirectory>${project.build.directory}/pmd</targetDirectory>
-                            <targetJdk>${maven.compiler.target}</targetJdk>
-                            <includeTests>false</includeTests>
-                            <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
-                            <linkXRef>false</linkXRef>
-                            <excludeRoots>
-                                <excludeRoot>${project.build.directory}/generated-sources</excludeRoot>
-                            </excludeRoots>
-                            <format>xml</format>
-                            <minimumTokens>100</minimumTokens>
-                            <language>java</language>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>pmd</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>pmd</goal>
-                                    <goal>cpd</goal>
-
-                                </goals>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.qubership.atp.codechecks</groupId>
-                                <artifactId>qubership-atp-codechecks</artifactId>
-                                <version>${atp.codechecks.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>2.17</version>
-                        <configuration>
-                            <configLocation>org/qubership/atp/codechecks/checkstyle.xml</configLocation>
-                            <outputFile>${project.build.directory}/checkstyle/checkstyle-result.xml</outputFile>
-                            <linkXRef>false</linkXRef>
-                            <failsOnError>false</failsOnError>
-                            <failOnViolation>false</failOnViolation>
-                            <excludes>**/generated/**/*</excludes>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>verify-style</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.puppycrawl.tools</groupId>
-                                <artifactId>checkstyle</artifactId>
-                                <version>7.8.2</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.qubership.atp.codechecks</groupId>
-                                <artifactId>qubership-atp-codechecks</artifactId>
-                                <version>${atp.codechecks.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.spotbugs</groupId>
-                        <artifactId>spotbugs-maven-plugin</artifactId>
-                        <version>${spotbugs-maven-plugin.version}</version>
-                        <configuration>
-                            <xmlOutput>true</xmlOutput>
-                            <spotbugsXmlOutput>true</spotbugsXmlOutput>
-                            <effort>Max</effort>
-                            <failOnError>false</failOnError>
-                            <threshold>Low</threshold>
-                            <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs/xml
-                            </spotbugsXmlOutputDirectory>
-                            <includeFilterFile>org/qubership/atp/codechecks/findbugs-filter.xml</includeFilterFile>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>analyze-compile</id>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.qubership.atp.codechecks</groupId>
-                                <artifactId>qubership-atp-codechecks</artifactId>
-                                <version>${atp.codechecks.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm</artifactId>
-                                <version>9.5</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm-analysis</artifactId>
-                                <version>9.5</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm-commons</artifactId>
-                                <version>9.5</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm-tree</artifactId>
-                                <version>9.5</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm-util</artifactId>
-                                <version>9.5</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                     <plugin>
                         <!--Transforms xml output of findbugs plugin into readable html -->
