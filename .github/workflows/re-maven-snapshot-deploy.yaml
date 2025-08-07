@@ -43,7 +43,7 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v1.0.4
       - name: "Setup xmlstarlet"
         run: |
           # Skip installing pacakge docs {makes the man-db trigger much faster)
