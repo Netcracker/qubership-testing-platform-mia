@@ -3,7 +3,6 @@ LABEL maintainer="opensourcegroup@netcracker.com"
 LABEL atp.service="atp-mia"
 
 ENV HOME_EX=/mia
-
 WORKDIR $HOME_EX
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.21/community/" >/etc/apk/repositories && \
