@@ -22,7 +22,7 @@ on:
         type: string
         description: "Additional mvn cmd-line params (e.g. '-Dskip.tests=true')"
         required: false
-        default: ""
+        default: "-DskipTests=true"
       artifact-id:
         default: artifact
         required: false

@@ -48,7 +48,7 @@ on:
       mvn-args:
         description: 'Additional maven arguments to pass (e.g. -DskipTests=true -Dmaven.javadoc.skip=true)'
         required: false
-        default: ''
+        default: '-DskipTests=true'
         type: string
       build-docker:
         description: 'Build Docker image'
