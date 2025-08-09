@@ -168,7 +168,7 @@
                 <repository>
                     <id>github</id>
                     <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/Netcracker/qubership-testing-platform-environments</url>
+                    <url>https://maven.pkg.github.com/Netcracker/qubership-testing-platform-mia</url>
                 </repository>
             </distributionManagement>
         </profile>
