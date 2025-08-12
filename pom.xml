@@ -20,7 +20,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <toolBuildStatus>BETA-TESTING</toolBuildStatus>
 
-        <atp.intergration.spring.boot.starter.version>0.2.38</atp.intergration.spring.boot.starter.version>
+        <atp.integration.spring.boot.starter.version>0.2.38</atp.integration.spring.boot.starter.version>
         <atp.adapter.robot.version>4.5.71</atp.adapter.robot.version>
         <atp.crypt.version>0.0.20</atp.crypt.version>
         <atp.macros.core.version>1.0.31</atp.macros.core.version>
@@ -442,7 +442,7 @@
             <dependency>
                 <groupId>org.qubership.atp</groupId>
                 <artifactId>atp-integration-spring-boot-starter</artifactId>
-                <version>${atp.intergration.spring.boot.starter.version}</version>
+                <version>${atp.integration.spring.boot.starter.version}</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>tomcat-embed-core</artifactId>

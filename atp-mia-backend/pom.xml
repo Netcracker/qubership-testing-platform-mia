@@ -468,7 +468,6 @@
         <dependency>
             <groupId>org.qubership.atp</groupId>
             <artifactId>atp-integration-spring-boot-starter</artifactId>
-            <version>${atp.intergration.spring.boot.starter.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>
