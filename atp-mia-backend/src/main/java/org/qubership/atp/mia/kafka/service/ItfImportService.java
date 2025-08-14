@@ -173,6 +173,9 @@ public class ItfImportService {
                 .inSections(Collections.singletonList(
                         sectionConfigurationService.findSectionByPath(UUID.fromString(request.getProjectId()),
                                 request.getMiaPath())))
+                .sections(Collections.singletonList(
+                        sectionConfigurationService.findSectionByPath(UUID.fromString(request.getProjectId()),
+                                request.getMiaPath()).getName()))
                 .processSettings(ProcessSettings.builder()
                         .name(processName)
                         .command(newCommand)

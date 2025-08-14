@@ -30,30 +30,25 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SectionVersioningMapper extends AbstractVersioningMapper<SectionConfiguration, SectionHistoryChangeDto> {
-
-    @Autowired
     public SectionVersioningMapper(ModelMapper mapper) {
         super(SectionConfiguration.class, SectionHistoryChangeDto.class, mapper);
     }
 
     @Override
-    protected HistoryItemTypeDto getEntityTypeEnum() {
+    HistoryItemTypeDto getEntityTypeEnum() {
         return HistoryItemTypeDto.SECTION;
     }
 
     @Override
     public void mapSpecificFields(SectionConfiguration source, SectionHistoryChangeDto destination) {
-        super.mapSpecificFields(source, destination);
-        destination.setName(source.getName());
+        destination.childSections(source.getSections()
+                .stream().map(SectionConfiguration::getName).collect(Collectors.toList()));
+        destination.processes(source.getProcesses()
+                .stream().map(ProcessConfiguration::getName).collect(Collectors.toList()));
+        destination.compounds(source.getCompounds()
+                .stream().map(CompoundConfiguration::getName).collect(Collectors.toList()));
         if (source.getParentSection() != null) {
             destination.parentSection(source.getParentSection().getName());
         }
-        destination.place(source.getPlace());
-        destination.childSections(source.getSections()
-                .stream().map(SectionConfiguration::getName).collect(Collectors.toList()));
-        destination.compounds(source.getCompounds()
-                .stream().map(CompoundConfiguration::getName).collect(Collectors.toList()));
-        destination.processes(source.getProcesses()
-                .stream().map(ProcessConfiguration::getName).collect(Collectors.toList()));
     }
 }

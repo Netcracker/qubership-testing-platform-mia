@@ -492,11 +492,13 @@ public class ConfigurationFileDeserializer {
         if (processConfiguration != null) {
             if (compoundConfiguration != null) {
                 processConfiguration.getInCompounds().add(compoundConfiguration);
+                processConfiguration.getCompounds().add(compoundConfiguration.getName());
                 compoundConfiguration.addProcess(processConfiguration);
             } else if (sectionConfiguration != null
                     && sectionConfiguration.getProcesses().stream()
                     .noneMatch(p -> p.getName().equals(processConfiguration.getName()))) {
                 processConfiguration.getInSections().add(sectionConfiguration);
+                processConfiguration.getSections().add(sectionConfiguration.getName());
                 sectionConfiguration.addProcess(processConfiguration);
             }
         }

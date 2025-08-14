@@ -20,7 +20,6 @@ package org.qubership.atp.mia.service.configuration;
 import static org.qubership.atp.mia.service.configuration.SectionConfigurationService.filterSections;
 
 import java.lang.reflect.Type;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,7 +96,6 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
                     s.getProcesses().add(processConfiguration);
                 });
             }
-            processConfiguration.setModifiedWhen(new Timestamp(System.currentTimeMillis()));
             projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
                     () -> {
                         processConfigurationRepository.save(processConfiguration);
@@ -129,6 +127,8 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
             log.debug("Clearing associations for process '{}'", processConfiguration.getName());
             processConfiguration.setInSections(new ArrayList<>());
             processConfiguration.setInCompounds(new ArrayList<>());
+            processConfiguration.setCompounds(new ArrayList<>());
+            processConfiguration.setSections(new ArrayList<>());
             projectConfiguration.getProcesses().remove(processConfiguration);
             log.debug("Executing database delete for process '{}'", processConfiguration.getName());
             projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
@@ -281,11 +281,11 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
                 processConfiguration.setPathToFile(processDto.getName() + ".json");
             }
             syncProcessSections(projectConfiguration, processConfiguration, processDto);
+            syncProcessCompounds(processConfiguration);
             log.debug("Updating process settings for '{}'", processConfiguration.getName());
             processConfiguration.setProcessSettings(
                     modelMapper.map(processDto.getProcessSettings(), ProcessSettings.class));
             processConfiguration.getProcessSettings().setName(processDto.getName());
-            processConfiguration.setModifiedWhen(new Timestamp(System.currentTimeMillis()));
             projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
                     () -> {
                         processConfigurationRepository.save(processConfiguration);
@@ -320,7 +320,29 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
                 });
                 processConfiguration.setInSections(newSectionConfigurationList);
                 log.debug("Successfully updated sections for process '{}'", processConfiguration.getName());
+                processConfiguration.setSections(
+                        newSectionConfigurationList.stream()
+                                .map(SectionConfiguration::getName)
+                                .collect(Collectors.toList()));
+                log.debug("Updated section names for process '{}'", processConfiguration.getName());
             }
+            if (processConfiguration.getSections() == null || processConfiguration.getSections().isEmpty()) {
+                processConfiguration.setSections(
+                        newSectionConfigurationList.stream()
+                                .map(SectionConfiguration::getName)
+                                .collect(Collectors.toList()));
+                log.debug("Updated section names for process '{}'", processConfiguration.getName());
+            }
+        }
+    }
+
+    private void syncProcessCompounds(ProcessConfiguration processConfiguration) {
+        if (processConfiguration.getCompounds() == null || processConfiguration.getCompounds().isEmpty()) {
+            processConfiguration.setCompounds(
+                    processConfiguration.getInCompounds().stream()
+                            .map(CompoundConfiguration::getName)
+                            .collect(Collectors.toList()));
+            log.debug("Updated compound names for process '{}'", processConfiguration.getName());
         }
     }
 
@@ -334,7 +356,6 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
         log.info("Restoring process configuration '{}'", entity);
         ProcessConfiguration processConfiguration = (ProcessConfiguration) entity;
         ProjectConfiguration projectConfiguration = processConfiguration.getProjectConfiguration();
-        processConfiguration.setModifiedWhen(new Timestamp(System.currentTimeMillis()));
         projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
                 () -> {
                     processConfigurationRepository.save(processConfiguration);

@@ -18,11 +18,14 @@
 package org.qubership.atp.mia.model.configuration;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -39,8 +42,10 @@ import org.hibernate.annotations.TypeDef;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.qubership.atp.mia.model.DateAuditorEntity;
+import org.qubership.atp.mia.model.converters.ListConverter;
 import org.qubership.atp.mia.model.impl.executable.ProcessSettings;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -91,16 +96,36 @@ public class ProcessConfiguration extends DateAuditorEntity {
     @ToString.Exclude
     @Builder.Default
     @LazyCollection(LazyCollectionOption.FALSE)
-    @DiffInclude
+    @DiffIgnore
     private List<CompoundConfiguration> inCompounds = new ArrayList<>();
+
+    /**
+     * For History change usage. DO NOT use in restore!
+     * is using in
+     */
+    @Column(name = "in_compounds", columnDefinition = "TEXT")
+    @Builder.Default
+    @Convert(converter = ListConverter.class)
+    @DiffInclude
+    private List<String> compounds = new ArrayList<>();
 
     @ManyToMany(mappedBy = "processes", targetEntity = SectionConfiguration.class, cascade = CascadeType.MERGE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @Builder.Default
     @LazyCollection(LazyCollectionOption.FALSE)
-    @DiffInclude
+    @DiffIgnore
     private List<SectionConfiguration> inSections = new ArrayList<>();
+
+    /**
+     * For History change usage. DO NOT use in restore!
+     * is using in
+     */
+    @Column(name = "in_sections", columnDefinition = "TEXT")
+    @DiffInclude
+    @Builder.Default
+    @Convert(converter = ListConverter.class)
+    private List<String> sections = new ArrayList<>();
 
     @ManyToOne(targetEntity = ProjectConfiguration.class)
     @JoinColumn(name = "project_id", nullable = false)
@@ -108,4 +133,24 @@ public class ProcessConfiguration extends DateAuditorEntity {
     @ToString.Exclude
     @DiffIgnore
     private ProjectConfiguration projectConfiguration;
+
+    /**
+     * Set all processes.
+     */
+    @JsonSetter
+    public void setInCompounds(final List<CompoundConfiguration> compounds) {
+        this.inCompounds = compounds;
+        this.compounds = compounds != null ? compounds.stream().map(CompoundConfiguration::getName)
+                .collect(Collectors.toCollection(LinkedList::new)) : null;
+    }
+
+    /**
+     * Set all processes.
+     */
+    @JsonSetter
+    public void setInSections(final List<SectionConfiguration> sections) {
+        this.inSections = sections;
+        this.sections = sections != null ? sections.stream().map(SectionConfiguration::getName)
+                .collect(Collectors.toCollection(LinkedList::new)) : null;
+    }
 }

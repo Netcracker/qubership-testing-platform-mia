@@ -24,6 +24,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.javers.core.metamodel.annotation.DiffInclude;
 
 import lombok.Builder;
@@ -44,6 +45,7 @@ public class DateAuditorEntity implements Serializable {
     protected Timestamp createdWhen = new Timestamp(System.currentTimeMillis());
 
     @Column(name = "modified_when")
+    @UpdateTimestamp
     @DiffInclude
     @Builder.Default
     protected Timestamp modifiedWhen = new Timestamp(System.currentTimeMillis());

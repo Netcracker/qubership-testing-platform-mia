@@ -22,7 +22,6 @@ import static org.qubership.atp.mia.service.configuration.ProcessConfigurationSe
 import static org.qubership.atp.mia.utils.Utils.correctPlaceInList;
 
 import java.lang.reflect.Type;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -118,8 +117,6 @@ public class SectionConfigurationService extends AbstractEntityHistoryService<Se
             }
             log.debug("Reordering sections after adding section '{}'", sectionConfiguration.getId());
             List<SectionConfiguration> sectionsToSync = reorderSections(sectionConfiguration, sectionDto.getPlace());
-            sectionConfiguration.setModifiedWhen(new Timestamp(System.currentTimeMillis()));
-            sectionsToSync.forEach(s -> s.setModifiedWhen(new Timestamp(System.currentTimeMillis())));
             projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
                     () -> {
                         sectionConfigurationRepository.save(sectionConfiguration);
@@ -324,7 +321,6 @@ public class SectionConfigurationService extends AbstractEntityHistoryService<Se
                 sectionConfiguration.setProcesses(filterProcesses(projectConfiguration.getProcesses(),
                         sectionDto.getProcesses()));
             }
-            sectionsToSync.forEach(s -> s.setModifiedWhen(new Timestamp(System.currentTimeMillis())));
             projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
                     () -> {
                         sectionConfigurationRepository.saveAll(sectionsToSync);
@@ -420,7 +416,6 @@ public class SectionConfigurationService extends AbstractEntityHistoryService<Se
             }
         }
 
-        sectionConfiguration.setModifiedWhen(new Timestamp(System.currentTimeMillis()));
         projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
                 () -> {
                     sectionConfigurationRepository.save(sectionConfiguration);

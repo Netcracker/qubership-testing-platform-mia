@@ -22,7 +22,6 @@ import static org.qubership.atp.mia.service.configuration.ProcessConfigurationSe
 import static org.qubership.atp.mia.service.configuration.SectionConfigurationService.filterSections;
 
 import java.lang.reflect.Type;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,7 +78,6 @@ public class CompoundConfigurationService extends AbstractEntityHistoryService<C
             projectConfiguration.getCompounds().add(compoundConfiguration);
             log.debug("Updating sections and processes for new compound '{}'", compoundDto.getName());
             syncCompoundSectionsAndProcesses(projectConfiguration, compoundConfiguration, compoundDto);
-            compoundConfiguration.setModifiedWhen(new Timestamp(System.currentTimeMillis()));
             projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
                     () -> {
                         compoundConfigurationRepository.save(compoundConfiguration);
@@ -121,6 +119,7 @@ public class CompoundConfigurationService extends AbstractEntityHistoryService<C
             projectConfiguration.getAllSections().forEach(s -> s.getCompounds().remove(compoundConfiguration));
             projectConfiguration.getProcesses().forEach(p -> {
                 p.getInCompounds().remove(compoundConfiguration);
+                p.getCompounds().remove(compoundConfiguration.getName());
             });
             compoundConfiguration.setInSections(new ArrayList<>());
             compoundConfiguration.setProcesses(new ArrayList<>());
@@ -186,7 +185,6 @@ public class CompoundConfigurationService extends AbstractEntityHistoryService<C
             compoundConfiguration.setName(compoundDto.getName());
             compoundConfiguration.setReferToInput(compoundDto.getReferToInput());
             syncCompoundSectionsAndProcesses(projectConfiguration, compoundConfiguration, compoundDto);
-            compoundConfiguration.setModifiedWhen(new Timestamp(System.currentTimeMillis()));
             projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
                     () -> {
                         compoundConfigurationRepository.save(compoundConfiguration);
@@ -257,7 +255,6 @@ public class CompoundConfigurationService extends AbstractEntityHistoryService<C
         CompoundConfiguration compoundConfiguration = (CompoundConfiguration) entity;
         ProjectConfiguration projectConfiguration = compoundConfiguration.getProjectConfiguration();
         checkProcessesById(projectConfiguration, compoundConfiguration.getProcesses());
-        compoundConfiguration.setModifiedWhen(new Timestamp(System.currentTimeMillis()));
         projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
                 () -> {
                     compoundConfigurationRepository.save(compoundConfiguration);

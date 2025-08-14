@@ -1567,7 +1567,7 @@ components:
         parentSection:
           type: string
         place:
-          type: integer
+          type: number
         childSections:
           type: array
           items:

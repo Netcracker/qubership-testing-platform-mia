@@ -17,15 +17,10 @@
 
 package org.qubership.atp.mia.service.history.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.qubership.atp.mia.controllers.api.dto.HistoryItemTypeDto;
 import org.qubership.atp.mia.controllers.api.dto.ProcessHistoryChangeDto;
-import org.qubership.atp.mia.model.configuration.CompoundConfiguration;
 import org.qubership.atp.mia.model.configuration.ProcessConfiguration;
-import org.qubership.atp.mia.model.configuration.SectionConfiguration;
 import org.qubership.atp.mia.model.converters.ProcessSettingsConverter;
 import org.springframework.stereotype.Component;
 
@@ -51,17 +46,13 @@ public class ProcessVersioningMapper extends AbstractVersioningMapper<ProcessCon
         super.mapSpecificFields(source, destination);
         destination.id(source.getId());
         destination.setName(source.getName());
+        if (source.getCompounds() != null) {
+            destination.setInSections(source.getSections());
+        }
+
+        if (source.getCompounds() != null) {
+            destination.setInCompounds(source.getCompounds());
+        }
         destination.setProcessSettings(processSettingsConverter.convertToDatabaseColumn(source.getProcessSettings()));
-        if (source.getInSections() != null) {
-            List<String> inSectionsNames = source.getInSections()
-                    .stream().map(SectionConfiguration::getName).collect(Collectors.toList());
-            destination.setInSections(inSectionsNames);
-        }
-        if (source.getInCompounds() != null) {
-            List<String> inCompoundsNames = source.getInCompounds()
-                    .stream().map(CompoundConfiguration::getName)
-                    .distinct().collect(Collectors.toList());
-            destination.setInCompounds(inCompoundsNames);
-        }
     }
 }
