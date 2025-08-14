@@ -23,9 +23,9 @@
         <atp.integration.spring.boot.starter.version>0.2.38</atp.integration.spring.boot.starter.version>
         <atp.adapter.robot.version>4.5.71</atp.adapter.robot.version>
         <atp.crypt.version>0.0.20</atp.crypt.version>
-        <atp.macros.core.version>1.0.31</atp.macros.core.version>
-        <atp.ei.lib.node.version>0.2.43</atp.ei.lib.node.version>
-        <atp.auth.version>1.2.68</atp.auth.version>
+        <atp.macros.core.version>1.0.29</atp.macros.core.version>
+        <atp.ei.lib.node.version>0.2.40</atp.ei.lib.node.version>
+        <atp.auth.version>1.2.60</atp.auth.version>
         <atp.common.version>0.0.43</atp.common.version>
 
         <maven-pmd-plugin.version>3.8</maven-pmd-plugin.version>

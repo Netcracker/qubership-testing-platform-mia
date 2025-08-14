@@ -89,6 +89,9 @@ public class MiaCacheServiceHazelCast implements MiaCacheService {
                 hzInstanceClient = HazelcastClient.newHazelcastClient(clientConfig);
                 for (CacheKeys key : CacheKeys.values()) {
                     String name = key.getKey();
+                    if (CacheKeys.AUTH_PROJECTS_KEY.equals(key)) {
+                        continue;
+                    }
                     try {
                         log.debug("Try to create config for map {}", name);
                         hzInstanceClient.getConfig().addMapConfig(
@@ -116,6 +119,9 @@ public class MiaCacheServiceHazelCast implements MiaCacheService {
                     .setReuseAddress(true);
             network.getJoin().getMulticastConfig().setEnabled(true);
             for (CacheKeys key : CacheKeys.values()) {
+                if (CacheKeys.AUTH_PROJECTS_KEY.equals(key)) {
+                    continue;
+                }
                 config.addMapConfig(new MapConfig(key.getKey()).setTimeToLiveSeconds(key.getTtlInSeconds()));
             }
             config.setClusterName(cacheClusterName);
