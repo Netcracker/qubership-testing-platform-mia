@@ -143,10 +143,11 @@ jobs:
           sudo apt-get update && sudo apt-get install -y postgresql-client
           pip3 install cqlsh
 
-      - name: Install mongosh via .deb from MongoDB CDN
+      - name: Install mongosh manually
         run: |
-          curl -L -o mongosh.deb https://downloads.mongodb.com/tools/mongosh/mongodb-mongosh_2.2.3_amd64.deb
-          sudo dpkg -i mongosh.deb || sudo apt-get install -f -y
+          curl -L -o mongosh.tgz https://downloads.mongodb.com/tools/mongosh/mongodb-mongosh_2.2.3_linux_x86_64.tgz
+          tar -xzf mongosh.tgz
+          sudo mv mongodb-mongosh*/bin/mongosh /usr/local/bin/
           mongosh --version
 
       - name: Wait for Postgres to be ready
