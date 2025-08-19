@@ -143,11 +143,10 @@ jobs:
           sudo apt-get update && sudo apt-get install -y postgresql-client
           pip3 install cqlsh
 
-      - name: Install Node.js and mongosh via npm
+      - name: Install mongosh directly from .deb
         run: |
-          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-          sudo npm install -g @mongosh/cli
+          wget https://downloads.mongodb.com/compass/mongosh_1.10.1_amd64.deb
+          sudo dpkg -i mongosh_1.10.1_amd64.deb || sudo apt-get install -f -y
           mongosh --version
 
       - name: Wait for Postgres to be ready
