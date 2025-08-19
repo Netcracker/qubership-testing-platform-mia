@@ -138,17 +138,6 @@ jobs:
           fi
           echo "ADDITIONAL_MVN_ARGS=${ADDITIONAL_MVN_ARGS}" >> $GITHUB_ENV
 
-      - name: Wait for services to be ready
-        run: |
-          echo "Waiting for MongoDB..."
-          until mongosh --eval 'db.runCommand({ ping: 1 })'; do sleep 2; done
-          
-          echo "Waiting for PostgreSQL..."
-          until pg_isready -h localhost -p 5432 -U user; do sleep 2; done
-          
-          echo "Waiting for Cassandra..."
-          until cqlsh -e 'DESCRIBE keyspaces'; do sleep 5; done
-
       - name: Wait for Postgres to be ready
         run: |
           for i in {1..30}; do
@@ -173,6 +162,17 @@ jobs:
               break
             fi
             echo "Waiting for MongoDB..."
+            sleep 5
+          done
+
+      - name: Wait for Cassandra to be ready
+        run: |
+          for i in {1..30}; do
+            if cqlsh -e "DESCRIBE keyspaces" > /dev/null 2>&1; then
+              echo "Cassandra is ready"
+              break
+            fi
+            echo "Waiting for Cassandra..."
             sleep 5
           done
 
