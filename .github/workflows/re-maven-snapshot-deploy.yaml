@@ -56,7 +56,7 @@ jobs:
           --health-timeout=5s
           --health-retries=10
       mongo:
-        image: mongo:4.2
+        image: mongo:3.6.2
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: root
@@ -153,6 +153,11 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y postgresql-client
           PGPASSWORD=postgres psql -h localhost -U postgres -d mia -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
+
+      - name: Install Mongo Shell
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mongodb-org-shell
 
       - name: Wait for MongoDB to be ready
         run: |
