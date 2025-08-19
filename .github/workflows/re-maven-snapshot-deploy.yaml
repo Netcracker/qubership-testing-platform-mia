@@ -169,6 +169,10 @@ jobs:
             sleep 5
           done
 
+      - name: Show MongoDB logs for debugging
+        run: | 
+          docker logs ${{ job.services.mongo.id }}
+
       - name: Wait for Cassandra to be ready
         run: |
           for i in {1..30}; do
