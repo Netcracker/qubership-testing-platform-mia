@@ -33,7 +33,7 @@ jobs:
     uses: ./.github/workflows/re-maven-snapshot-deploy.yaml
     with:
       java-version: "21"
-      additional-mvn-args: "-DskipTests=true"
+      additional-mvn-args: ""
       target-store: "maven-central"
     secrets:
       maven-username: ${{ secrets.MAVEN_USER }}
