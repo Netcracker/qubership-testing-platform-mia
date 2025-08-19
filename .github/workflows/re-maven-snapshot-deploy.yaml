@@ -46,17 +46,20 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRESQL_USER: datasets
-          POSTGRESQL_PASSWORD: datasets
-          POSTGRESQL_DATABASE: datasets
-          POSTGRESQL_ADMIN_PASSWORD: postgres
+          POSTGRESQL_USER: mia
+          POSTGRESQL_PASSWORD: mia
+          POSTGRESQL_DATABASE: mia
+          POSTGRESQL_ADMIN_PASSWORD: mia
         options: >-
-          --health-cmd="pg_isready -U postgres -d datasets"
+          --health-cmd="pg_isready -U postgres -d mia"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
       mongo:
-        image: mongo:3.6.2
+        image: mongo:4.2
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: root
         ports:
           - 27017:27017
         options: >-
@@ -129,7 +132,7 @@ jobs:
       - name: Wait for Postgres to be ready
         run: |
           for i in {1..30}; do
-            if pg_isready -h localhost -U postgres -d datasets; then
+            if pg_isready -h localhost -U postgres -d mia; then
               echo "Postgres is ready"
               break
             fi
@@ -140,7 +143,7 @@ jobs:
       - name: Create uuid-ossp extension
         run: |
           sudo apt-get update && sudo apt-get install -y postgresql-client
-          PGPASSWORD=postgres psql -h localhost -U postgres -d datasets -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
+          PGPASSWORD=postgres psql -h localhost -U postgres -d mia -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
 
       - name: Wait for MongoDB to be ready
         run: |
@@ -152,16 +155,6 @@ jobs:
             echo "Waiting for MongoDB..."
             sleep 5
           done
-
-      - name: Create Mongo user via docker mongo shell
-        run: |
-          docker run --rm --network container:${{ job.services.mongo.id }} mongo:3.6.2 \
-            mongo dsgridfs --host mongo --eval "
-              printjson(db.createUser({
-                user: 'dsuser',
-                pwd: 'dspass',
-                roles: [{ role: 'readWrite', db: 'dsgridfs' }]
-              }))"
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
