@@ -73,9 +73,9 @@ jobs:
           - "9042:9042"
         options: >-
           --health-cmd "cqlsh -e 'describe keyspaces'" 
-          --health-interval 15s 
+          --health-interval 10s 
           --health-timeout 10s 
-          --health-retries 10
+          --health-retries 30
 
     steps:
       - name: "Checkout code"
@@ -164,6 +164,10 @@ jobs:
             echo "Waiting for MongoDB..."
             sleep 5
           done
+          
+      - name: Debug Mongo connection
+        run: |
+          mongo -u mongo_user -p mongo_user --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })'
 
       - name: Wait for Cassandra to be ready
         run: |
@@ -175,6 +179,10 @@ jobs:
             echo "Waiting for Cassandra..."
             sleep 5
           done
+          
+      - name: Show Cassandra logs
+        run: |
+          docker logs $(docker ps -q --filter "ancestor=cassandra:4.1")
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
