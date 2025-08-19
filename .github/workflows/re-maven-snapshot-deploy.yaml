@@ -143,15 +143,12 @@ jobs:
           sudo apt-get update && sudo apt-get install -y postgresql-client
           pip3 install cqlsh
 
-      - name: Install mongosh (MongoDB Shell)
+      - name: Install Node.js and mongosh via npm
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget gnupg
-          wget -qO - https://pgp.mongodb.com/server-6.0.asc | sudo tee /usr/share/keyrings/mongodb-server-6.0.gpg > /dev/null
-          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-          sudo apt-get update
-          sudo apt-get install -y mongodb-mongosh
-
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          sudo npm install -g @mongosh/cli
+          mongosh --version
 
       - name: Wait for Postgres to be ready
         run: |
