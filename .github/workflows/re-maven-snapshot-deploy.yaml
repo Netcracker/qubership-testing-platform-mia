@@ -138,6 +138,15 @@ jobs:
           fi
           echo "ADDITIONAL_MVN_ARGS=${ADDITIONAL_MVN_ARGS}" >> $GITHUB_ENV
 
+      - name: Install DB clients
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          wget -qO - https://pgp.mongodb.com/server-6.0.asc | sudo tee /etc/apt/trusted.gpg.d/mongodb-server-6.0.gpg > /dev/null
+          echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+          sudo apt-get update
+          sudo apt-get install -y mongodb-mongosh
+          pip3 install cqlsh
+
       - name: Wait for Postgres to be ready
         run: |
           for i in {1..30}; do
@@ -151,18 +160,12 @@ jobs:
 
       - name: Create uuid-ossp extension
         run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
           PGPASSWORD=postgres psql -h localhost -U postgres -d mia -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
-
-      - name: Install Mongo Shell
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mongodb-org-shell
 
       - name: Wait for MongoDB to be ready
         run: |
           for i in {1..30}; do
-            if mongo --eval 'db.runCommand({ ping: 1 })' > /dev/null 2>&1; then
+            if mongosh -u root -p root --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' > /dev/null 2>&1; then
               echo "MongoDB is ready"
               break
             fi
@@ -172,7 +175,7 @@ jobs:
           
       - name: Debug Mongo connection
         run: |
-          mongo -u mongo_user -p mongo_user --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })'
+          mongo -u root -p root --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })'
 
       - name: Wait for Cassandra to be ready
         run: |
