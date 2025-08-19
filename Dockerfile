@@ -49,6 +49,8 @@ RUN unzip /tmp/*.zip -d $HOME_EX/ && \
     find $HOME_EX -type f -name '*.sh' -exec chmod a+x {} + && \
     find $HOME_EX -type d -exec chmod 777 {} \;
 
+RUN ls -al
+
 EXPOSE 8080 9000 8000
 
 USER atp
