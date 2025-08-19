@@ -40,6 +40,30 @@ on:
 jobs:
   mvn-deploy:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: centos/postgresql-96-centos7:9.6
+        ports:
+          - 5432:5432
+        env:
+          POSTGRESQL_USER: datasets
+          POSTGRESQL_PASSWORD: datasets
+          POSTGRESQL_DATABASE: datasets
+          POSTGRESQL_ADMIN_PASSWORD: postgres
+        options: >-
+          --health-cmd="pg_isready -U postgres -d datasets"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+      mongo:
+        image: mongo:3.6.2
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'" 
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - name: "Checkout code"
@@ -101,6 +125,43 @@ jobs:
             echo "✅ Additional mvn args provided: ${ADDITIONAL_MVN_ARGS}"
           fi
           echo "ADDITIONAL_MVN_ARGS=${ADDITIONAL_MVN_ARGS}" >> $GITHUB_ENV
+          
+      - name: Wait for Postgres to be ready
+        run: |
+          for i in {1..30}; do
+          if pg_isready -h localhost -U postgres -d datasets; then
+           echo "Postgres is ready"
+           break
+          fi
+          echo "Waiting for Postgres..."
+          sleep 5
+          done
+
+      - name: Create uuid-ossp extension
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          PGPASSWORD=postgres psql -h localhost -U postgres -d datasets -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+
+      - name: Wait for MongoDB to be ready
+        run: |
+          for i in {1..30}; do
+            if mongo --eval 'db.runCommand({ ping: 1 })' > /dev/null 2>&1; then
+              echo "MongoDB is ready"
+              break
+            fi
+            echo "Waiting for MongoDB..."
+            sleep 5
+          done
+
+      - name: Create Mongo user via docker mongo shell
+        run: |
+          docker run --rm --network container:${{ job.services.mongo.id }} mongo:3.6.2 \
+            mongo dsgridfs --host mongo --eval "
+              printjson(db.createUser({
+                user: 'dsuser',
+                pwd: 'dspass',
+                roles: [{ role: 'readWrite', db: 'dsgridfs' }]
+              }))"
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
