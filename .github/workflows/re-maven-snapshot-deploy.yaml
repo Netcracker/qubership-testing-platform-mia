@@ -49,7 +49,7 @@ jobs:
           POSTGRESQL_USER: mia
           POSTGRESQL_PASSWORD: mia
           POSTGRESQL_DATABASE: mia
-          POSTGRESQL_ADMIN_PASSWORD: mia
+          POSTGRESQL_ADMIN_PASSWORD: postgres
         options: >-
           --health-cmd="pg_isready -U postgres -d mia"
           --health-interval=10s
