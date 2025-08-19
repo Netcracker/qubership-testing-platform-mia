@@ -67,6 +67,15 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
+      cassandra:
+        image: cassandra:4.1
+        ports:
+          - "9042:9042"
+        options: >-
+          --health-cmd "cqlsh -e 'describe keyspaces'" 
+          --health-interval 15s 
+          --health-timeout 10s 
+          --health-retries 10
 
     steps:
       - name: "Checkout code"
@@ -128,7 +137,18 @@ jobs:
             echo "✅ Additional mvn args provided: ${ADDITIONAL_MVN_ARGS}"
           fi
           echo "ADDITIONAL_MVN_ARGS=${ADDITIONAL_MVN_ARGS}" >> $GITHUB_ENV
+
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for MongoDB..."
+          until mongosh --eval 'db.runCommand({ ping: 1 })'; do sleep 2; done
           
+          echo "Waiting for PostgreSQL..."
+          until pg_isready -h localhost -p 5432 -U user; do sleep 2; done
+          
+          echo "Waiting for Cassandra..."
+          until cqlsh -e 'DESCRIBE keyspaces'; do sleep 5; done
+
       - name: Wait for Postgres to be ready
         run: |
           for i in {1..30}; do
