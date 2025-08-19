@@ -143,13 +143,6 @@ jobs:
           sudo apt-get update && sudo apt-get install -y postgresql-client
           pip3 install cqlsh
 
-      - name: Install mongosh manually
-        run: |
-          curl -LO https://downloads.mongodb.com/tools/mongosh/mongodb-mongosh_2.2.3_amd64.deb
-          sudo apt-get update
-          sudo apt-get install -y ./mongodb-mongosh_2.2.3_amd64.deb
-          mongosh --version
-
       - name: Wait for Postgres to be ready
         run: |
           for i in {1..30}; do
@@ -165,20 +158,16 @@ jobs:
         run: |
           PGPASSWORD=postgres psql -h localhost -U postgres -d mia -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
 
-      - name: Wait for MongoDB to be ready
+      - name: Wait for MongoDB to be ready using mongosh Docker container
         run: |
           for i in {1..30}; do
-            if mongosh -u root -p root --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' > /dev/null 2>&1; then
-              echo "MongoDB is ready"
+            if docker run --rm --network container:${{ job.services.mongo.id }} mongo:6.0 mongosh -u mongo_user -p mongo_user --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' > /dev/null 2>&1; then
+              echo "✅ MongoDB is ready"
               break
             fi
-            echo "Waiting for MongoDB..."
+            echo "⏳ Waiting for MongoDB... ($i/30)"
             sleep 5
           done
-          
-      - name: Debug Mongo connection
-        run: |
-          mongo -u root -p root --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })'
 
       - name: Wait for Cassandra to be ready
         run: |
