@@ -230,6 +230,10 @@ jobs:
           ss -tnlp | grep ssh
           sudo ssh-keygen -A
           getent passwd root
+          cat /etc/ssh/sshd_config
+          ls -l /etc/ssh/ssh_host_*
+          grep HostKey /etc/ssh/sshd_config
+          ls -l /etc/ssh/ssh_host_sk_ed25519_key*
           sshpass -p test_password ssh root@localhost -p 22 echo "✅ SSH working"
 
       - name: Cache local Maven repository
