@@ -202,11 +202,7 @@ jobs:
 
       - name: Generation keys for SSH
         run: |
-          mkdir -p ~/.ssh
-          ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
-          ssh-keygen -P "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
-          ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
-          ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
+          ls /etc/ssh/ssh_host_*
 
       - name: Check connection
         run: |
