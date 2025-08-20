@@ -1,4 +1,4 @@
-FROM artifactory-service-address/path-to-java-image
+FROM ubuntu:20.04
 
 RUN mkdir /var/run/sshd
 RUN echo 'root:test_password' | chpasswd

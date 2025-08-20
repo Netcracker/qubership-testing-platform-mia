@@ -76,6 +76,17 @@ jobs:
           --health-interval 10s 
           --health-timeout 10s 
           --health-retries 30
+      ssh:
+        image: custom-ssh-image
+        build:
+          context: ./atp-mia-backend/src/test/resources/sshserver/Dockerfile
+        ports:
+          - 2222:22
+        options: >-
+          --health-cmd "exit 0"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 3
 
     steps:
       - name: "Checkout code"
@@ -187,6 +198,21 @@ jobs:
       - name: Show Cassandra logs
         run: |
           docker logs $(docker ps -q --filter "ancestor=cassandra:3.11.6")
+
+      - name: Install SSH Client
+        run: sudo apt-get update && sudo apt-get install -y openssh-client sshpass
+
+      - name: Wait for SSH to be ready
+        run: |
+          for i in {1..10}; do
+            nc -z localhost 2222 && echo "SSH is ready!" && break
+            echo "Wait SSH..."
+            sleep 2
+          done
+
+      - name: Connect via SSH
+        run: |
+          sshpass -p "docker" ssh -o StrictHostKeyChecking=no docker@localhost -p 2222 "echo Hello from SSH container!"
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
