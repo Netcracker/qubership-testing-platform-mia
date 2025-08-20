@@ -205,6 +205,8 @@ jobs:
           sleep 3
           mkdir -p ~/.ssh
           ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
+          sudo service ssh status 
+          ss -tnlp | grep ssh
           sshpass -p test_password ssh root@localhost -p 22 echo "✅ SSH working"
 
       - name: Cache local Maven repository
