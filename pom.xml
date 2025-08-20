@@ -10,7 +10,7 @@
 
     <groupId>org.qubership.atp.mia</groupId>
     <artifactId>atp-mia</artifactId>
-    <version>2.0.63</version>
+    <version>2.0.64-SNAPSHOT</version>
 
     <properties>
         <java.version>21</java.version>
@@ -85,7 +85,7 @@
         <connection>scm:git:https//github.com/Netcracker/qubership-testing-platform-mia.git</connection>
         <developerConnection>scm:git:https://github.com/Netcracker/qubership-testing-platform-mia.git</developerConnection>
         <url>scm:git:https://github.com/Netcracker/qubership-testing-platform-mia.git</url>
-        <tag>v2.0.63</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <profiles>
