@@ -191,51 +191,38 @@ jobs:
       - name: Install OpenSSH
         run: |
           sudo apt-get update
-          sudo apt-get install -y openssh-server
+          sudo apt-get install -y openssh-server sshpass
 
-      - name: Settings for SSH
+      - name: Configure SSH Server
         run: |
           sudo mkdir -p /var/run/sshd
-          echo "root:test_password" | sudo chpasswd
-          sudo sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-          
-          sudo rm -f /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub
-          sudo rm -f /etc/ssh/ssh_host_ecdsa_key /etc/ssh/ssh_host_ecdsa_key.pub
-          sudo rm -f /etc/ssh/ssh_host_ed25519_key /etc/ssh/ssh_host_ed25519_key.pub
-          sudo rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_dsa_key.pub
-          
-          sudo ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
-          sudo ssh-keygen -P "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
-          sudo ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
-          sudo ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
-          
-          echo "NOTVISIBLE=in users profile" >> $GITHUB_ENV
-          echo "VISIBLE=now" >> $GITHUB_ENV
-    
-          sudo service ssh start
 
-      - name: Generation keys for SSH
-        run: |
+          echo "root:test_password" | sudo chpasswd
+
+          sudo sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
+          sudo sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
           sudo sed -i '/^HostKey/d' /etc/ssh/sshd_config
 
-          echo 'HostKey /etc/ssh/ssh_host_rsa_key' | sudo tee -a /etc/ssh/sshd_config
-          echo 'HostKey /etc/ssh/ssh_host_ecdsa_key' | sudo tee -a /etc/ssh/sshd_config
-          echo 'HostKey /etc/ssh/ssh_host_ed25519_key' | sudo tee -a /etc/ssh/sshd_config
+          echo 'HostKey /etc/ssh/ssh_host_rsa_key'       | sudo tee -a /etc/ssh/sshd_config
+          echo 'HostKey /etc/ssh/ssh_host_ecdsa_key'     | sudo tee -a /etc/ssh/sshd_config
+          echo 'HostKey /etc/ssh/ssh_host_ed25519_key'   | sudo tee -a /etc/ssh/sshd_config
 
+          sudo rm -f /etc/ssh/ssh_host_*
+          sudo ssh-keygen -A  # Генерирует все необходимые ключи
+
+          # Запуск SSH
           sudo service ssh restart
 
-      - name: Check connection
+      - name: Verify SSH connection
         run: |
-          sleep 3
+          sleep 2
           mkdir -p ~/.ssh
+      
           ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
-          sudo service ssh status 
-          ss -tnlp | grep ssh
-          cat /etc/ssh/sshd_config
-          ls -l /etc/ssh/ssh_host_*
-          grep HostKey /etc/ssh/sshd_config
-          ls -l /etc/ssh/ssh_host_sk_ed25519_key*
-          sshpass -p test_password ssh root@localhost -p 22 echo "✅ SSH working"
+      
+          sshpass -p test_password ssh -4 -o StrictHostKeyChecking=no root@localhost -p 22 echo "✅ SSH is working"
+
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
