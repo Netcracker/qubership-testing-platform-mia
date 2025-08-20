@@ -209,6 +209,9 @@ jobs:
           sudo ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
           sudo ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
           
+          echo "NOTVISIBLE=in users profile" >> $GITHUB_ENV
+          echo "VISIBLE=now" >> $GITHUB_ENV
+    
           sudo service ssh start
 
       - name: Generation keys for SSH
@@ -217,9 +220,6 @@ jobs:
           sudo sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_ecdsa_key/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/' /etc/ssh/sshd_config
           sudo sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_ed25519_key/HostKey \/etc\/ssh\/ssh_host_ed25519_key/' /etc/ssh/sshd_config
           sudo service ssh restart
-          cat /etc/ssh/sshd_config
-          ls -l /etc/ssh/ssh_host_*
-          cat /etc/ssh/ssh_host_ecdsa_key
 
       - name: Check connection
         run: |
