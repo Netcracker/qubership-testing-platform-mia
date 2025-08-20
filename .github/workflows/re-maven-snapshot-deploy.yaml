@@ -200,6 +200,14 @@ jobs:
           sudo sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
           sudo service ssh start
 
+      - name: Generation keys for SSH
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
+          ssh-keygen -P "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
+          ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
+          ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
+
       - name: Check connection
         run: |
           sleep 3
@@ -207,6 +215,7 @@ jobs:
           ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
           sudo service ssh status 
           ss -tnlp | grep ssh
+          sudo ssh-keygen -A
           getent passwd root
           sshpass -p test_password ssh root@localhost -p 22 echo "✅ SSH working"
 
