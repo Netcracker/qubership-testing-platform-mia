@@ -196,16 +196,14 @@ jobs:
       - name: Settings for SSH
         run: |
           sudo mkdir -p /var/run/sshd
-          
           echo "root:test_password" | sudo chpasswd
-          
           sudo sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-          
           sudo service ssh start
 
       - name: Check connection
         run: |
           sleep 3
+          mkdir -p ~/.ssh
           ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
           sshpass -p password ssh root@localhost -p 22 echo "✅ SSH working"
 
