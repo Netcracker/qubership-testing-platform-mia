@@ -33,7 +33,7 @@ jobs:
     uses: ./.github/workflows/re-maven-snapshot-deploy.yaml
     with:
       java-version: "21"
-      additional-mvn-args: "-Denable-analyzers=true -DJDBC_URL=jdbc:postgresql://localhost:5432/mia -Dpg.jdbc.Dialect=com.querydsl.sql.PostgreSQLTemplates -DSSHSERVER_IP=localhost:33000 -DPOSTGRES_IP=localhost -DMONGO_IP=localhost -DMONGO_DB_ADDR=localhost"
+      additional-mvn-args: "-Denable-analyzers=true -DJDBC_URL=jdbc:postgresql://localhost:5432/mia -Dpg.jdbc.Dialect=com.querydsl.sql.PostgreSQLTemplates -DSSHSERVER_IP=localhost:33000 -DPOSTGRES_IP=localhost -DCASSANDRA_IP=localhost -DMONGO_IP=localhost -DMONGO_DB_ADDR=localhost"
       target-store: "maven-central"
     secrets:
       maven-username: ${{ secrets.MAVEN_USER }}
