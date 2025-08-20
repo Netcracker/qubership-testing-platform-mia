@@ -197,7 +197,6 @@ jobs:
         run: |
           sudo mkdir -p /var/run/sshd
           
-          sudo useradd -m root
           echo "root:test_password" | sudo chpasswd
           
           sudo sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
