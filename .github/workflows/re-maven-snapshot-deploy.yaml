@@ -204,10 +204,10 @@ jobs:
           sudo rm -f /etc/ssh/ssh_host_ed25519_key /etc/ssh/ssh_host_ed25519_key.pub
           sudo rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_dsa_key.pub
           
-          ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
-          ssh-keygen -P "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
-          ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
-          ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
+          sudo ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
+          sudo ssh-keygen -P "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
+          sudo ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
+          sudo ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
           
           sudo service ssh start
 
