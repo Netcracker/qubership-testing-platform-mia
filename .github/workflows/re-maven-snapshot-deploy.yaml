@@ -219,6 +219,10 @@ jobs:
           sudo sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_rsa_key/HostKey \/etc\/ssh\/ssh_host_rsa_key/' /etc/ssh/sshd_config
           sudo sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_ecdsa_key/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/' /etc/ssh/sshd_config
           sudo sed -i 's/^#HostKey \/etc\/ssh\/ssh_host_ed25519_key/HostKey \/etc\/ssh\/ssh_host_ed25519_key/' /etc/ssh/sshd_config
+      
+          sudo sed -i '/HostKey \/etc\/ssh\/ssh_host_sk_ecdsa_key/ s/^/#/' /etc/ssh/sshd_config || echo '#HostKey /etc/ssh/ssh_host_sk_ecdsa_key' | sudo tee -a /etc/ssh/sshd_config
+          sudo sed -i '/HostKey \/etc\/ssh\/ssh_host_sk_ed25519_key/ s/^/#/' /etc/ssh/sshd_config || echo '#HostKey /etc/ssh/ssh_host_sk_ed25519_key' | sudo tee -a /etc/ssh/sshd_config
+      
           sudo service ssh restart
 
       - name: Check connection
@@ -228,8 +232,6 @@ jobs:
           ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
           sudo service ssh status 
           ss -tnlp | grep ssh
-          sudo ssh-keygen -A
-          getent passwd root
           cat /etc/ssh/sshd_config
           ls -l /etc/ssh/ssh_host_*
           grep HostKey /etc/ssh/sshd_config
