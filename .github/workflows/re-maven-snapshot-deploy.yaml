@@ -188,25 +188,27 @@ jobs:
         run: |
           docker logs $(docker ps -q --filter "ancestor=cassandra:3.11.6")
 
-      - name: Build custom SSH image
+      - name: Install OpenSSH
         run: |
-          docker build -t custom-ssh-image ./atp-mia-backend/src/test/resources/sshserver
+          sudo apt-get update
+          sudo apt-get install -y openssh-server
 
-      - name: Run SSH container
+      - name: Settings for SSH
         run: |
-          docker run -d --name ssh-server -p 2222:22 custom-ssh-image
+          sudo mkdir -p /var/run/sshd
+          
+          sudo useradd -m root
+          echo "root:test_password" | sudo chpasswd
+          
+          sudo sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+          
+          sudo service ssh start
 
-      - name: Wait for SSH to be ready
+      - name: Check connection
         run: |
-          for i in {1..10}; do
-            nc -zv localhost 2222 && break
-            echo "Waiting for SSH..." && sleep 2
-          do
-
-      - name: Test SSH connection
-        run: |
-          ssh-keyscan -p 2222 localhost >> ~/.ssh/known_hosts
-          ssh -p 2222 root@localhost echo "SSH is working"
+          sleep 3
+          ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
+          sshpass -p password ssh root@localhost -p 22 echo "✅ SSH working"
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
