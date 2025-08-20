@@ -79,7 +79,7 @@ jobs:
       ssh:
         image: custom-ssh-image
         build:
-          context: ./atp-mia-backend/src/test/resources/sshserver/Dockerfile
+          context: ./atp-mia-backend/src/test/resources/sshserver
         ports:
           - 2222:22
         options: >-
