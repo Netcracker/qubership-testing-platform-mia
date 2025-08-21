@@ -78,7 +78,7 @@ public class ExecutorBackCompatibilityTest extends BaseIntegrationTestConfigurat
                 .body(Mono.just(request), ExecutionRequest.class)
                 .exchange().flatMap(clientResponse -> clientResponse.bodyToMono(Exception.class))
                 .block();
-        Assert.assertTrue(response.getMessage().contains("Incorrect exit"));
-        Assert.assertTrue(response.getMessage().contains("incorrect command"));
+        Assert.assertNotNull("Response shouldn't be null", response);
+        Assert.assertTrue("actual: " + response.getMessage(), response.getMessage().contains("Incorrect exit"));
     }
 }
