@@ -221,9 +221,6 @@ jobs:
           ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
       
           sshpass -p test_password ssh -4 -o StrictHostKeyChecking=no root@localhost -p 22 'echo "✅ SSH is working"'
-          
-          sshpass -p test_password ssh -o StrictHostKeyChecking=no root@localhost 'bash -c "{ ls -la }"'
-
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
