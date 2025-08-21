@@ -209,9 +209,8 @@ jobs:
           echo 'HostKey /etc/ssh/ssh_host_ed25519_key'   | sudo tee -a /etc/ssh/sshd_config
 
           sudo rm -f /etc/ssh/ssh_host_*
-          sudo ssh-keygen -A  # Генерирует все необходимые ключи
+          sudo ssh-keygen -A 
 
-          # Запуск SSH
           sudo service ssh restart
 
       - name: Verify SSH connection
@@ -221,7 +220,8 @@ jobs:
       
           ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
       
-          sshpass -p test_password ssh -4 -o StrictHostKeyChecking=no root@localhost -p 22 echo "✅ SSH is working"
+          sshpass -p test_password ssh -4 -o StrictHostKeyChecking=no root@localhost -p 22 'echo "✅ SSH is working"'
+
 
 
       - name: Cache local Maven repository
