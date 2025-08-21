@@ -222,7 +222,7 @@ jobs:
       
           sshpass -p test_password ssh -4 -o StrictHostKeyChecking=no root@localhost -p 22 'echo "✅ SSH is working"'
           
-          sshpass -p test_password ssh -o StrictHostKeyChecking=no root@localhost 'bash -c "[ -f /etc/passwd ] echo test"'
+          sshpass -p test_password ssh -o StrictHostKeyChecking=no root@localhost 'bash -c "{ ls -la; }"'
 
 
       - name: Cache local Maven repository
