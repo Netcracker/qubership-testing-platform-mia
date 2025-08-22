@@ -162,7 +162,7 @@ jobs:
         run: |
           for i in {1..30}; do
             docker run --rm --network container:${{ job.services.mongo.id }} mongo:4.2 \
-              mongosh -u mongo_user -p mongo_user --authenticationDatabase admin \
+              mongo -u mongo_user -p mongo_user --authenticationDatabase admin \
               --eval 'db.runCommand({ ping: 1 })'
             status=$?
             if [ "$status" -eq 0 ]; then
