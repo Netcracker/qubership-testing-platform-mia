@@ -173,10 +173,6 @@ jobs:
             sleep 5
           done
 
-      - name: Show MongoDB logs for debugging
-        run: | 
-          docker logs ${{ job.services.mongo.id }}
-
       - name: Wait for Cassandra to be ready
         run: |
           for i in {1..30}; do
@@ -195,24 +191,41 @@ jobs:
 
       - name: Configure SSH Server
         run: |
+          set -e
+
           sudo mkdir -p /var/run/sshd
-          echo "root:test_password" | sudo chpasswd
+          echo 'root:test_password' | sudo chpasswd
+
           sudo sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
           sudo sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-          sudo sed -i '/^HostKey/d' /etc/ssh/sshd_config
-          echo 'HostKey /etc/ssh/ssh_host_rsa_key'       | sudo tee -a /etc/ssh/sshd_config
-          echo 'HostKey /etc/ssh/ssh_host_ecdsa_key'     | sudo tee -a /etc/ssh/sshd_config
-          echo 'HostKey /etc/ssh/ssh_host_ed25519_key'   | sudo tee -a /etc/ssh/sshd_config
+
           sudo rm -f /etc/ssh/ssh_host_*
-          sudo ssh-keygen -A 
+          sudo ssh-keygen -A
+
+          {
+            echo 'HostKey /etc/ssh/ssh_host_rsa_key'
+            echo 'HostKey /etc/ssh/ssh_host_ecdsa_key'
+            echo 'HostKey /etc/ssh/ssh_host_ed25519_key'
+          } | sudo tee -a /etc/ssh/sshd_config > /dev/null
 
           sudo service ssh restart
 
       - name: Verify SSH connection
         run: |
-          sleep 2
+          set -e
+
+          for i in {1..10}; do
+            if nc -z localhost 22; then
+              echo "✅ SSH port is open"
+              break
+            fi
+            echo "⏳ Waiting for SSH... ($i/10)"
+            sleep 1
+          done
+
           mkdir -p ~/.ssh
           ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
+
           sshpass -p test_password ssh -4 -o StrictHostKeyChecking=no root@localhost -p 22 'echo "✅ SSH is working"'
 
       - name: Cache local Maven repository
