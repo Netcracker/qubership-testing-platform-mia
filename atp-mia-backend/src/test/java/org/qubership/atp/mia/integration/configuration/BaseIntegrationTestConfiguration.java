@@ -177,7 +177,7 @@ public abstract class BaseIntegrationTestConfiguration extends ConfigTestBean {
      * Create request with default connection timeouts - 60 min.
      */
     protected ExecutionRequest createSshRequest(String process, String command) {
-        int timeout = 60 * 60 * 1000;
+        int timeout = 2 * 60 * 1000;
         return createSshRequest(process, command, getSshTestParams(sshServerHost + ":" + sshPort, timeout, timeout));
     }
 

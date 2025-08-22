@@ -131,6 +131,7 @@ public class SshConnectionManager {
                             int i = 0;
                             while ((line = reader.readLine()) != null) {
                                 log.trace("{}) Line output: {}", ++i, line);
+                                System.out.printf("%d) Line output: %s%n", ++i, line);
                                 //Incorrect exit when command is wrong
                                 if (line.matches("> " + echoStopCode)) {
                                     log.trace("{}) Line has {}: {}", i, "Incorrect command", line);
@@ -139,6 +140,7 @@ public class SshConnectionManager {
                                 //Correct exit
                                 if (line.equals(stopCode)) {
                                     log.trace("{}) Line correct exit: {}", i, line);
+                                    System.out.printf("%d) Line correct exit: %s%n", ++i, line);
                                     break;
                                 }
                                 output.append(line).append("\n");
