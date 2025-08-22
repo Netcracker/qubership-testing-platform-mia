@@ -161,7 +161,7 @@ jobs:
       - name: Wait for MongoDB to be ready using mongosh Docker container
         run: |
           for i in {1..30}; do
-            if docker run --rm --network container:${{ job.services.mongo.id }} mongo:6.0 mongosh -u mongo_user -p mongo_user --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' > /dev/null 2>&1; then
+            if docker run --rm --network container:${{ job.services.mongo.id }} mongo:4.2 mongosh -u mongo_user -p mongo_user --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' > /dev/null 2>&1; then
               echo "✅ MongoDB is ready"
               break
             fi
@@ -196,18 +196,13 @@ jobs:
       - name: Configure SSH Server
         run: |
           sudo mkdir -p /var/run/sshd
-
           echo "root:test_password" | sudo chpasswd
-
           sudo sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
           sudo sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-
           sudo sed -i '/^HostKey/d' /etc/ssh/sshd_config
-
           echo 'HostKey /etc/ssh/ssh_host_rsa_key'       | sudo tee -a /etc/ssh/sshd_config
           echo 'HostKey /etc/ssh/ssh_host_ecdsa_key'     | sudo tee -a /etc/ssh/sshd_config
           echo 'HostKey /etc/ssh/ssh_host_ed25519_key'   | sudo tee -a /etc/ssh/sshd_config
-
           sudo rm -f /etc/ssh/ssh_host_*
           sudo ssh-keygen -A 
 
@@ -217,9 +212,7 @@ jobs:
         run: |
           sleep 2
           mkdir -p ~/.ssh
-      
           ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
-      
           sshpass -p test_password ssh -4 -o StrictHostKeyChecking=no root@localhost -p 22 'echo "✅ SSH is working"'
 
       - name: Cache local Maven repository
