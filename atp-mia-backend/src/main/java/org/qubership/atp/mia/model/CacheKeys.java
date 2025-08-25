@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 
 public enum CacheKeys {
+    AUTH_PROJECTS_KEY(Constants.AUTH_PROJECTS_KEY, 5, TimeUnit.MINUTES, CacheGroups.PROJECTS, true),
+
     PROJECTNAME_KEY(Constants.PROJECTNAME_KEY, 24, TimeUnit.DAYS, CacheGroups.PROJECTS, true),
     CONFIGURATION_KEY(Constants.CONFIGURATION_KEY, 5, TimeUnit.MINUTES, CacheGroups.PROJECTS, true),
     ENVIRONMENTS_KEY(Constants.ENVIRONMENTS_KEY, 1, TimeUnit.HOURS, CacheGroups.ENVIRONMENT, true),
@@ -29,9 +31,7 @@ public enum CacheKeys {
     ENVIRONMENTSFULL_KEY(Constants.ENVIRONMENTSFULL_KEY, 10, TimeUnit.MINUTES, CacheGroups.ENVIRONMENT, true),
     SYSTEM_NAMES(Constants.SYSTEM_NAMES, 20, TimeUnit.MINUTES, CacheGroups.SYSTEMS, false),
     MIA_PROJECTS_KEY(Constants.MIA_PROJECTS_KEY, 2, TimeUnit.HOURS, CacheGroups.ENVIRONMENT, false),
-    AUTH_PROJECTS_KEY(Constants.AUTH_PROJECTS_KEY, 2, TimeUnit.MINUTES, CacheGroups.PROJECTS, true),
     ATP_MACROS_KEY(Constants.ATP_MACROS_KEY, 5, TimeUnit.MINUTES, CacheGroups.MACROS, true);
-
 
     @Getter
     private final String key;
@@ -78,14 +78,15 @@ public enum CacheKeys {
 
     public static class Constants {
 
-        public static final String PROJECTNAME_KEY = "ATP_MIA_PROJECT_NAME";
-        public static final String CONFIGURATION_KEY = "ATP_MIA_CONFIGURATION";
-        public static final String ENVIRONMENTS_KEY = "ATP_MIA_ENVIRONMENTS";
-        public static final String ENVIRONMENTS_BY_NAME_KEY = "ATP_MIA_ENVIRONMENTS_BY_NAME";
-        public static final String ENVIRONMENTSFULL_KEY = "ATP_MIA_ENVIRONMENTSFULL";
-        public static final String SYSTEM_NAMES = "ATP_MIA_SYSTEM_NAMES";
-        public static final String MIA_PROJECTS_KEY = "ATP_MIA_PROJECTS";
-        public static final String AUTH_PROJECTS_KEY = "projects";
-        public static final String ATP_MACROS_KEY = "ATP_MIA_MACROS";
+        public static final String AUTH_PROJECTS_KEY = "auth_projects";
+
+        public static final String PROJECTNAME_KEY = "ATP_MIA_PROJECT_NAME_OS";
+        public static final String CONFIGURATION_KEY = "ATP_MIA_CONFIGURATION_OS";
+        public static final String ENVIRONMENTS_KEY = "ATP_MIA_ENVIRONMENTS_OS";
+        public static final String ENVIRONMENTS_BY_NAME_KEY = "ATP_MIA_ENVIRONMENTS_BY_NAME_OS";
+        public static final String ENVIRONMENTSFULL_KEY = "ATP_MIA_ENVIRONMENTSFULL_OS";
+        public static final String SYSTEM_NAMES = "ATP_MIA_SYSTEM_NAMES_OS";
+        public static final String MIA_PROJECTS_KEY = "ATP_MIA_PROJECTS_OS";
+        public static final String ATP_MACROS_KEY = "ATP_MIA_MACROS_OS";
     }
 }
