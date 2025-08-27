@@ -87,21 +87,24 @@ public class MiaCacheServiceHazelCast implements MiaCacheService {
             try {
                 log.debug("Connect to HAZELCAST as client");
                 hzInstanceClient = HazelcastClient.newHazelcastClient(clientConfig);
+                Config config = hzInstanceClient.getConfig();
                 for (CacheKeys key : CacheKeys.values()) {
                     String name = key.getKey();
-                    if (CacheKeys.AUTH_PROJECTS_KEY.equals(key)) {
-                        continue;
-                    }
                     try {
-                        log.debug("Try to create config for map {}", name);
-                        hzInstanceClient.getConfig().addMapConfig(
-                                new MapConfig(name).setTimeToLiveSeconds(key.getTtlInSeconds()));
+                        log.debug("Try to create map / change config for map {}", name);
+                        MapConfig mapConfig = config.getMapConfigOrNull(name);
+                        if (mapConfig == null) {
+                            config.addMapConfig(new MapConfig(name).setTimeToLiveSeconds(key.getTtlInSeconds()));
+                        } else {
+                            mapConfig.setTimeToLiveSeconds(key.getTtlInSeconds());
+                        }
                     } catch (Exception failedCreate) {
-                        log.warn("Map {} already created. Not possible to change map config: {}", name, failedCreate);
+                        log.warn("Adding of Map {} or changing its config is failed (may be, it already exists): ",
+                                name, failedCreate);
                     }
                 }
             } catch (Exception e) {
-                log.error("HazelCast server is not available!!! {}", e);
+                log.error("HazelCast server is not available!!!", e);
                 serverStarted = false;
             }
         }
@@ -119,9 +122,6 @@ public class MiaCacheServiceHazelCast implements MiaCacheService {
                     .setReuseAddress(true);
             network.getJoin().getMulticastConfig().setEnabled(true);
             for (CacheKeys key : CacheKeys.values()) {
-                if (CacheKeys.AUTH_PROJECTS_KEY.equals(key)) {
-                    continue;
-                }
                 config.addMapConfig(new MapConfig(key.getKey()).setTimeToLiveSeconds(key.getTtlInSeconds()));
             }
             config.setClusterName(cacheClusterName);
