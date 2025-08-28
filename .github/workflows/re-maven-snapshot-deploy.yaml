@@ -22,7 +22,7 @@ on:
         type: string
         description: "Additional mvn cmd-line params (e.g. '-Dskip.tests=true')"
         required: false
-        default: "-DskipTests=true"
+        default: ""
       artifact-id:
         default: artifact
         required: false
@@ -40,6 +40,42 @@ on:
 jobs:
   mvn-deploy:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: centos/postgresql-96-centos7:9.6
+        ports:
+          - 5432:5432
+        env:
+          POSTGRESQL_USER: mia
+          POSTGRESQL_PASSWORD: mia
+          POSTGRESQL_DATABASE: mia
+          POSTGRESQL_ADMIN_PASSWORD: postgres
+        options: >-
+          --health-cmd="pg_isready -U postgres -d mia"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+      mongo:
+        image: mongo:4.2
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: root
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'" 
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+      cassandra:
+        image: cassandra:3.11.6
+        ports:
+          - "9042:9042"
+        options: >-
+          --health-cmd "cqlsh -e 'describe keyspaces'" 
+          --health-interval 10s 
+          --health-timeout 10s 
+          --health-retries 30
 
     steps:
       - name: "Checkout code"
@@ -101,6 +137,96 @@ jobs:
             echo "✅ Additional mvn args provided: ${ADDITIONAL_MVN_ARGS}"
           fi
           echo "ADDITIONAL_MVN_ARGS=${ADDITIONAL_MVN_ARGS}" >> $GITHUB_ENV
+
+      - name: Install DB clients
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          pip3 install cqlsh
+
+      - name: Wait for Postgres to be ready
+        run: |
+          for i in {1..30}; do
+            if pg_isready -h localhost -U postgres -d mia; then
+              echo "Postgres is ready"
+              break
+            fi
+            echo "Waiting for Postgres..."
+            sleep 5
+          done
+
+      - name: Create uuid-ossp extension
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d mia -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
+
+      - name: Wait for MongoDB to be ready using mongosh Docker container
+        run: |
+          for i in {1..30}; do
+            docker run --rm --network container:${{ job.services.mongo.id }} mongo:4.2 \
+              mongo -u root -p root --authenticationDatabase admin \
+              --eval 'db.runCommand({ ping: 1 })'
+            status=$?
+            if [ "$status" -eq 0 ]; then
+              echo "✅ MongoDB is ready"
+              break
+            fi
+            echo "⏳ Waiting for MongoDB... ($i/30), status=$status"
+            sleep 5
+          done
+
+      - name: Wait for Cassandra to be ready
+        run: |
+          for i in {1..30}; do
+            if cqlsh -e "DESCRIBE keyspaces" > /dev/null 2>&1; then
+              echo "Cassandra is ready"
+              break
+            fi
+            echo "Waiting for Cassandra..."
+            sleep 5
+          done
+
+      - name: Install OpenSSH
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssh-server sshpass
+
+      - name: Configure SSH Server
+        run: |
+          set -e
+
+          sudo mkdir -p /var/run/sshd
+          echo 'root:test_password' | sudo chpasswd
+
+          sudo sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
+          sudo sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+          sudo rm -f /etc/ssh/ssh_host_*
+          sudo ssh-keygen -A
+
+          {
+            echo 'HostKey /etc/ssh/ssh_host_rsa_key'
+            echo 'HostKey /etc/ssh/ssh_host_ecdsa_key'
+            echo 'HostKey /etc/ssh/ssh_host_ed25519_key'
+          } | sudo tee -a /etc/ssh/sshd_config > /dev/null
+
+          sudo service ssh restart
+
+      - name: Verify SSH connection
+        run: |
+          set -e
+
+          for i in {1..10}; do
+            if nc -z localhost 22; then
+              echo "✅ SSH port is open"
+              break
+            fi
+            echo "⏳ Waiting for SSH... ($i/10)"
+            sleep 1
+          done
+
+          mkdir -p ~/.ssh
+          ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
+
+          sshpass -p test_password ssh -4 -o StrictHostKeyChecking=no root@localhost -p 22 'echo "✅ SSH is working"'
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
