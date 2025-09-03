@@ -41,14 +41,13 @@ public class Template {
 
     private final MiaContext miaContext;
     private final MiaFileService miaFileService;
-    private final Path pathToEthalonFile;
+    private final Path ethalonFilePath;
     private final String fileExtension;
     private final Charset charset;
-    private final String fileName;
-    private final String generationFileName;
-
+    private final String sanitizedFileName;
+    private final String outputFileName;
     private String content;
-    private Path generationFile;
+    private Path generatedFile;
 
     /**
      * Constructs a Template instance using the provided context and file parameters. This constructor resolves the full
@@ -68,14 +67,14 @@ public class Template {
                 relativeEthalonPath, rawOutputFileName, fileExtension);
         this.miaContext = miaContext;
         this.miaFileService = miaFileService;
-        this.pathToEthalonFile = miaContext.getProjectFilePath().resolve(Paths.get(relativeEthalonPath)).normalize();
-        log.debug("Resolved pathToEthalonFile: {}", this.pathToEthalonFile);
-        this.fileName = sanitizeFileName(rawOutputFileName);
-        log.debug("Sanitized fileName: {}", this.fileName);
-        this.generationFileName = this.fileName + (fileExtension != null ? fileExtension : "");
+        this.ethalonFilePath = miaContext.getProjectFilePath().resolve(Paths.get(relativeEthalonPath)).normalize();
+        log.debug("Resolved ethalonFilePath: {}", this.ethalonFilePath);
+        this.sanitizedFileName = sanitizeFileName(rawOutputFileName);
+        log.debug("Sanitized fileName: {}", this.sanitizedFileName);
+        this.outputFileName = this.sanitizedFileName + (fileExtension != null ? fileExtension : "");
         this.fileExtension = fileExtension;
         this.charset = (charset != null) ? charset : StandardCharsets.UTF_8;
-        log.info("Template successfully initialized for: {}", this.generationFileName);
+        log.info("Template successfully initialized for: {}", this.outputFileName);
     }
 
     /**
@@ -103,12 +102,12 @@ public class Template {
      */
     private String readContent() {
         try {
-            miaFileService.getFile(pathToEthalonFile.toFile());
-            content = new String(Files.readAllBytes(pathToEthalonFile), this.charset);
+            miaFileService.getFile(ethalonFilePath.toFile());
+            content = new String(Files.readAllBytes(ethalonFilePath), this.charset);
             content = miaContext.evaluate(content);
             return content;
         } catch (IOException e) {
-            throw new MatrixEthalonReadFailException(pathToEthalonFile.toString(), e);
+            throw new MatrixEthalonReadFailException(ethalonFilePath.toString(), e);
         }
     }
 
@@ -129,9 +128,9 @@ public class Template {
      */
     public String evaluateContent(Map<String, String> additionalParams) {
         getContent();
-        additionalParams.put("CURRENT_TEMPLATE_FILE_NAME", fileName);
+        additionalParams.put("CURRENT_TEMPLATE_FILE_NAME", sanitizedFileName);
         additionalParams.put("CURRENT_TEMPLATE_FILE_EXTENSION", fileExtension);
-        additionalParams.put("CURRENT_TEMPLATE_FILE_FULL_NAME", generationFileName);
+        additionalParams.put("CURRENT_TEMPLATE_FILE_FULL_NAME", outputFileName);
         content = miaContext.evaluate(content, additionalParams);
         return content;
     }
@@ -171,13 +170,13 @@ public class Template {
     /**
      * Evaluates and generates file.
      *
-     * @return generated file generationFile
+     * @return generated file generatedFile
      */
     public File getFile() {
-        if (generationFile == null) {
+        if (generatedFile == null) {
             evaluateFile();
         }
-        return generationFile.toFile();
+        return generatedFile.toFile();
     }
 
     /**
@@ -185,21 +184,21 @@ public class Template {
      */
     public void writeContent() {
         try {
-            generationFile = miaContext.getLogPath().resolve(generationFileName);
-            log.trace("Write content into {} file:\n{}", generationFile, content);
-            Files.write(generationFile, content.getBytes(charset));
+            generatedFile = miaContext.getLogPath().resolve(outputFileName);
+            log.trace("Write content into {} file:\n{}", generatedFile, content);
+            Files.write(generatedFile, content.getBytes(charset));
         } catch (IOException e) {
-            throw new MatrixEthalonWriteFailException(generationFile, e);
+            throw new MatrixEthalonWriteFailException(generatedFile, e);
         }
     }
 
     /**
      * Gets file name.
      *
-     * @return generationFileName
+     * @return outputFileName
      */
     public String getFileName() {
-        return generationFileName;
+        return outputFileName;
     }
 }
 
