@@ -51,32 +51,41 @@ public class Template {
     private Path generationFile;
 
     /**
-     * File generated on ethalon file basis.
+     * Constructs a Template instance using the provided context and file parameters. This constructor resolves the full
+     * path to the ethalon file using the project base path, sanitizes the output file name to remove any path
+     * components, and builds the final output file name.
      *
-     * @param pathToEthalonFile  name of ethalon file
-     * @param generationFileName name of generated file
-     * @param fileExtension      extension of generated file
+     * @param miaContext          context containing the base project path
+     * @param miaFileService      service used for file operations
+     * @param relativeEthalonPath relative path to the ethalon file (may include subfolders)
+     * @param rawOutputFileName   name of the generated output file (should not include path)
+     * @param fileExtension       extension of the output file (e.g., ".csv")
+     * @param charset             character encoding to use; defaults to UTF-8 if null
      */
-    public Template(MiaContext miaContext, MiaFileService miaFileService, String pathToEthalonFile,
-                    String generationFileName, String fileExtension, Charset charset) {
+    public Template(MiaContext miaContext, MiaFileService miaFileService, String relativeEthalonPath,
+                    String rawOutputFileName, String fileExtension, Charset charset) {
+        log.info("Initializing Template with ethalonPath: {}, outputName: {}, extension: {}",
+                relativeEthalonPath, rawOutputFileName, fileExtension);
         this.miaContext = miaContext;
         this.miaFileService = miaFileService;
-        //this.pathToEthalonFile = miaContext.getProjectFilePath().resolve(pathToEthalonFile).normalize();
-        this.pathToEthalonFile = miaContext.getProjectFilePath().resolve(
-                sanitizePathTraversal(pathToEthalonFile)).normalize();
-        //this.fileName = generationFileName;
-        //this.generationFileName = this.fileName;
-        //this.generationFileName += fileExtension != null ? fileExtension : "";
-        String sanitizedName = sanitizePathTraversal(generationFileName);
-        this.fileName = sanitizedName;
-        this.generationFileName = sanitizedName + (fileExtension != null ? fileExtension : "");
+        this.pathToEthalonFile = miaContext.getProjectFilePath().resolve(Paths.get(relativeEthalonPath)).normalize();
+        log.debug("Resolved pathToEthalonFile: {}", this.pathToEthalonFile);
+        this.fileName = sanitizeFileName(rawOutputFileName);
+        log.debug("Sanitized fileName: {}", this.fileName);
+        this.generationFileName = this.fileName + (fileExtension != null ? fileExtension : "");
         this.fileExtension = fileExtension;
-        this.charset = (charset == null) ? StandardCharsets.UTF_8 : charset;
+        this.charset = (charset != null) ? charset : StandardCharsets.UTF_8;
+        log.info("Template successfully initialized for: {}", this.generationFileName);
     }
 
-    private static String sanitizePathTraversal(String fileName) {
-        Path p = Paths.get(fileName);
-        return p.getFileName().toString();
+    /**
+     * Sanitizes a file name by removing any path components.
+     *
+     * @param input raw file name input, possibly including path
+     * @return sanitized file name with only the base name
+     */
+    private static String sanitizeFileName(String input) {
+        return Paths.get(input).getFileName().toString();
     }
 
     /**
