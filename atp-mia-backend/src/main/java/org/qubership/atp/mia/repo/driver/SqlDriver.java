@@ -176,7 +176,6 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
     @Override
     public DbAnswer executeStoredProcedure(Server server, String query) {
         int timeout = getExecutionTimeout(executionTimeout, server);
-        //String safeQuery = esapiEncoder.encodeForSQL(new OracleCodec(), query);
         try {
             Connection connection = pool.get(server);
             try (CallableStatement statement = connection.prepareCall(query)) {
@@ -187,7 +186,16 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
                             return statement.execute();
                         })
                         .get(timeout, TimeUnit.MILLISECONDS);
-                return new DbAnswer(status, statement);
+                DbTable dbTable = null;
+                int updateCount = -1;
+                if (status) {
+                    try (ResultSet rs = statement.getResultSet()) {
+                        dbTable = SqlUtils.resultSetToDbTable(rs);
+                    }
+                } else {
+                    updateCount = statement.getUpdateCount();
+                }
+                return new DbAnswer(status, dbTable, updateCount);
             } catch (TimeoutException e) {
                 throw new SqlTimeoutException(timeout, "milliseconds", query);
             } catch (Exception e) {

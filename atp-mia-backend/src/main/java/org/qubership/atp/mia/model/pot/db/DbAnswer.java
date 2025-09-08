@@ -34,22 +34,51 @@ public class DbAnswer {
     private final boolean status;
     private ResultSet resultSet;
     @Getter
-    private int updateCount;
+    private final DbTable dbTable;
+    @Getter
+    private final int updateCount;
 
     /**
-     * Creates answer containing {@link CallableStatement} result. Allows to close statement and don't hang connection.
+     * Creates a result wrapper for operations that return tabular data.
      *
-     * @param status    of {@link CallableStatement#execute()}
-     * @param statement {@link CallableStatement} itself.
-     * @throws SQLException if error occur during {@link CallableStatement#getResultSet()}
-     *                      or {@link CallableStatement#getUpdateCount()}.
+     * @param status      true if the operation returned a result set
+     * @param dbTable     parsed result set
+     * @param updateCount number of affected rows (or -1 if not applicable)
      */
+    public DbAnswer(boolean status, DbTable dbTable, int updateCount) {
+        this.status = status;
+        this.dbTable = dbTable;
+        this.updateCount = updateCount;
+    }
+
+    /**
+     * Creates a result wrapper for update-only operations.
+     *
+     * @param status      true if the operation succeeded
+     * @param updateCount number of affected rows
+     */
+    public DbAnswer(boolean status, int updateCount) {
+        this.status = status;
+        this.dbTable = null;
+        this.updateCount = updateCount;
+    }
+
+    /**
+     * Legacy constructor for JDBC stored procedures.
+     *
+     * @param status    true if the procedure returned a result set
+     * @param statement the CallableStatement used
+     * @throws SQLException if result extraction fails
+     * @deprecated Use {@link #DbAnswer(boolean, DbTable, int)} instead
+     */
+    @Deprecated
     public DbAnswer(boolean status, CallableStatement statement) throws SQLException {
         this.status = status;
+        this.dbTable = null;
         try {
             if (status) {
                 resultSet = statement.getResultSet();
-                // TODO: statement.getMoreResults();
+                updateCount = -1;
             } else {
                 updateCount = statement.getUpdateCount();
             }
@@ -60,26 +89,23 @@ public class DbAnswer {
     }
 
     /**
-     * Constructor.
-     */
-    public DbAnswer(boolean status, int updateCount) {
-        this.status = status;
-        this.updateCount = updateCount;
-    }
-
-    /**
-     * UpdateSqlResponse.
+     * Populates a SqlResponse with either result data or update count.
      *
-     * @param response of Type SqlResponse
+     * @param response the response to update
      */
     public void updateSqlResponse(SqlResponse response) {
-        if (status && resultSet != null) {
-            try {
-                DbTable dbTable = SqlUtils.resultSetToDbTable(resultSet);
+        if (status) {
+            if (dbTable != null) {
                 response.setData(dbTable);
                 response.setRecords(dbTable.getData().size());
-            } catch (SQLException e) {
-                throw new SqlUpdateQueryFailException(e);
+            } else if (resultSet != null) {
+                try {
+                    DbTable table = SqlUtils.resultSetToDbTable(resultSet);
+                    response.setData(table);
+                    response.setRecords(table.getData().size());
+                } catch (SQLException e) {
+                    throw new SqlUpdateQueryFailException(e);
+                }
             }
         } else {
             response.setDescription("Affected rows: " + updateCount);
