@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
 import javax.annotation.Nonnull;
@@ -83,14 +84,15 @@ public class SqlExecutionHelperService {
      * Store result of SQL query to CSV file.
      */
     private static void storeTableToCsv(SqlResponse sqlResponse, File targetFile) {
-        String safeFileName = sanitizePathTraversal(targetFile.getName());
-        Path safeDir = targetFile.getParentFile() != null
-                ? targetFile.getParentFile().toPath().toAbsolutePath().normalize()
-                : Paths.get(".").toAbsolutePath().normalize();
-        Path safePath = safeDir.resolve(safeFileName).normalize();
+        log.info("Initiating CSV export to: {}", targetFile.getAbsolutePath());
+        Path safeDir = Optional.ofNullable(targetFile.getParentFile())
+                .map(File::toPath)
+                .orElse(Paths.get("."))
+                .toAbsolutePath()
+                .normalize();
+        Path safePath = safeDir.resolve(targetFile.getName()).normalize();
         FileUtils.createFolder(safePath.toFile());
-        /*FileUtils.createFolder(targetFile);
-        try (FileOutputStream stream = new FileOutputStream(targetFile)) {*/
+        log.debug("Resolved safe path for CSV: {}", safePath);
         try (FileOutputStream stream = new FileOutputStream(safePath.toFile())) {
             if (sqlResponse.getData() != null) {
                 Collection<String> columns = sqlResponse.getData().getColumns();
@@ -114,6 +116,7 @@ public class SqlExecutionHelperService {
             } else {
                 writeLine(Collections.singleton(""), stream, true);
             }
+            log.info("CSV export completed: {}", safePath.toFile());
         } catch (FileNotFoundException e) {
             throw new StoreCsvFileNotFoundException(targetFile.toPath());
         } catch (IOException e) {
@@ -121,14 +124,6 @@ public class SqlExecutionHelperService {
         } catch (Exception e) {
             throw new StoreCsvExceptionDuringSave(targetFile.toPath(), e);
         }
-    }
-
-    private static String sanitizePathTraversal(String fileName) {
-        String sanitized = Paths.get(fileName).getFileName().toString();
-        if (!sanitized.matches("[a-zA-Z0-9._-]+")) {
-            throw new IllegalArgumentException("Invalid file name: " + fileName);
-        }
-        return sanitized;
     }
 
     private static void writeLine(Collection<String> columns, FileOutputStream stream, boolean replace) {
