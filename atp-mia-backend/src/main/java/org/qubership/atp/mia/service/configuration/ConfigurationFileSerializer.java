@@ -100,13 +100,13 @@ public class ConfigurationFileSerializer {
      * @param config ProjectConfiguration.
      * @throws MiaException Exception.
      */
-    public void serialize(ProjectConfiguration config, Path projectConfigurationPath, boolean isEthalonFiles)
+    public void serialize(ProjectConfiguration config, Path projectConfigurationPath, boolean isEtalonFiles)
             throws MiaException {
         try {
             log.info("Serialize configuration for project with ID #{} into folder {}",
                     config.getProjectId(), projectConfigurationPath);
             gitService.downloadGitRepo(config.getGitUrl(), projectConfigurationPath);
-            if (isEthalonFiles) {
+            if (isEtalonFiles) {
                 serializeEtalonFiles(config, projectConfigurationPath);
             } else {
                 serializeGeneralConfiguration(config, projectConfigurationPath);
@@ -128,9 +128,9 @@ public class ConfigurationFileSerializer {
     /**
      * Serialize configuration to path.
      *
-     * @param config                   ProjectConfiguration
+     * @param config ProjectConfiguration
      * @param projectConfigurationPath path
-     * @throws MiaException if any problem
+     * @throws MiaException if any problem.
      */
     public void serializeToPath(ProjectConfiguration config, Path projectConfigurationPath)
             throws MiaException {
@@ -187,7 +187,6 @@ public class ConfigurationFileSerializer {
         if (!CollectionUtils.isEmpty(executableDtoList)) {
             flowConfigSection.processes(executableDtoList);
         }
-
         return flowConfigSection;
     }
 
@@ -196,26 +195,28 @@ public class ConfigurationFileSerializer {
      *
      * @param config                   Project Configuration Object.
      * @param projectConfigurationPath project configuration git path.
-     * @throws IOException Exception.
      */
-    private void serializeEtalonFiles(ProjectConfiguration config, Path projectConfigurationPath) throws IOException {
-        log.info("Serializing ethalon files for project: {}", config.getProjectId());
-        Path ethalonFilesPath = projectConfigurationPath.resolve(config.getCommonConfiguration().getEthalonFilesPath());
+    private void serializeEtalonFiles(ProjectConfiguration config, Path projectConfigurationPath) {
+        log.info("Serializing of etalon files is started for project: {}, configuration path: {}",
+                config.getProjectId(), projectConfigurationPath);
+        Path etalonFilesPath = projectConfigurationPath.resolve(config.getCommonConfiguration().getEthalonFilesPath());
         try {
-            FileUtils.deleteDirectory(ethalonFilesPath.toFile());
+            FileUtils.deleteDirectory(etalonFilesPath.toFile());
         } catch (IOException e) {
-            log.warn("Could not delete existing ethalon directory: {}", ethalonFilesPath);
+            log.warn("Could not delete existing etalon directory: {}. Reason: {}", etalonFilesPath, e.getMessage());
         }
-        ethalonFilesPath.toFile().mkdirs();
-        // Create required directories under the ethalon path
+        etalonFilesPath.toFile().mkdirs();
+
+        // Create required directories under the etalon path
         config.getAllDirectories().forEach(d -> {
-            File dirFile = ethalonFilesPath.resolve(d.getPathDirectory()).toFile();
+            File dirFile = etalonFilesPath.resolve(d.getPathDirectory()).toFile();
             if (dirFile.exists() && dirFile.isFile()) {
                 dirFile.delete();
             }
             dirFile.mkdirs();
         });
-        // Copy project files to the ethalon directory
+
+        // Copy project files to the etalon directory
         for (ProjectFile f : config.getFiles()) {
             Path filePath = f.getPathFile();
             File sourceFile = PROJECT_FOLDER
@@ -225,16 +226,17 @@ public class ConfigurationFileSerializer {
                     .toFile();
 
             try (InputStream is = Files.newInputStream(miaFileService.getFile(sourceFile).toPath())) {
-                File targetFile = ethalonFilesPath.resolve(filePath).toFile();
+                File targetFile = etalonFilesPath.resolve(filePath).toFile();
                 if (targetFile.exists()) {
                     targetFile.delete();
                 }
                 Files.copy(is, targetFile.toPath());
             } catch (IOException e) {
-                log.error("Failed to copy file: {} to ethalon path", sourceFile.getAbsolutePath(), e);
+                log.error("Failed to copy file: {} to etalon path", sourceFile.getAbsolutePath(), e);
             }
         }
-        log.info("Completed ethalon file serialization for project: {}", config.getProjectId());
+        log.info("Serializing of etalon files is completed for project: {}, configuration path: {}",
+                config.getProjectId(), projectConfigurationPath);
     }
 
     private void serializeGeneralConfiguration(ProjectConfiguration config, Path projectConfigurationPath)
