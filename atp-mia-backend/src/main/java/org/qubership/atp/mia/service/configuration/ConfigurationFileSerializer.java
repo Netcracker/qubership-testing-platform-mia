@@ -21,7 +21,6 @@ import static org.qubership.atp.mia.model.file.FileMetaData.PROJECT_FOLDER;
 import static org.qubership.atp.mia.utils.FileUtils.deleteFolder;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -200,15 +199,15 @@ public class ConfigurationFileSerializer {
      * @throws IOException Exception.
      */
     private void serializeEtalonFiles(ProjectConfiguration config, Path projectConfigurationPath) throws IOException {
-        Path ethalonFilesPath =
-                projectConfigurationPath.resolve(config.getCommonConfiguration().getEthalonFilesPath());
+        log.info("Serializing ethalon files for project: {}", config.getProjectId());
+        Path ethalonFilesPath = projectConfigurationPath.resolve(config.getCommonConfiguration().getEthalonFilesPath());
         try {
             FileUtils.deleteDirectory(ethalonFilesPath.toFile());
         } catch (IOException e) {
-            //no need
+            log.warn("Could not delete existing ethalon directory: {}", ethalonFilesPath);
         }
         ethalonFilesPath.toFile().mkdirs();
-        //Update directories first
+        // Create required directories under the ethalon path
         config.getAllDirectories().forEach(d -> {
             File dirFile = ethalonFilesPath.resolve(d.getPathDirectory()).toFile();
             if (dirFile.exists() && dirFile.isFile()) {
@@ -216,28 +215,26 @@ public class ConfigurationFileSerializer {
             }
             dirFile.mkdirs();
         });
-        //Update files
+        // Copy project files to the ethalon directory
         for (ProjectFile f : config.getFiles()) {
             Path filePath = f.getPathFile();
-            File localFile = PROJECT_FOLDER
+            File sourceFile = PROJECT_FOLDER
                     .resolve(config.getProjectId().toString())
                     .resolve(ProjectFileType.MIA_FILE_TYPE_PROJECT.toString())
                     .resolve(filePath)
                     .toFile();
-            try (InputStream is = new FileInputStream(miaFileService.getFile(localFile))) {
-                Path targetPath = ethalonFilesPath.resolve(filePath).toAbsolutePath().normalize();
-                //Path traversal protection
-                if (!targetPath.startsWith(ethalonFilesPath)) {
-                    throw new SecurityException("Invalid file path (path traversal attempt): " + filePath);
+
+            try (InputStream is = Files.newInputStream(miaFileService.getFile(sourceFile).toPath())) {
+                File targetFile = ethalonFilesPath.resolve(filePath).toFile();
+                if (targetFile.exists()) {
+                    targetFile.delete();
                 }
-                //File gitFile = ethalonFilesPath.resolve(filePath).toFile();
-                File gitFile = targetPath.toFile();
-                if (gitFile.exists()) {
-                    gitFile.delete();
-                }
-                Files.copy(is, gitFile.toPath());
+                Files.copy(is, targetFile.toPath());
+            } catch (IOException e) {
+                log.error("Failed to copy file: {} to ethalon path", sourceFile.getAbsolutePath(), e);
             }
         }
+        log.info("Completed ethalon file serialization for project: {}", config.getProjectId());
     }
 
     private void serializeGeneralConfiguration(ProjectConfiguration config, Path projectConfigurationPath)
