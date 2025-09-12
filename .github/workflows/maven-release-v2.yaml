@@ -404,22 +404,6 @@ jobs:
           echo "components=${components}" >> $GITHUB_OUTPUT
           echo "platforms=${platforms}" >> $GITHUB_OUTPUT
 
-  test-atrifact:
-    needs: [deploy]
-    runs-on: ubuntu-latest
-    if: ${{ needs.deploy.result == 'success' }}
-    steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ""
-          path: build-context
-      - name: List contents of build-context
-        run: |
-          echo "Listing build-context recursively:"
-          pwd
-          ls -R build-context
-
   docker-build:
     permissions:
       contents: write
@@ -433,7 +417,7 @@ jobs:
     steps:
       - name: "Docker Build"
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@main
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@v1.0.5
         with:
           ref: v${{ needs.deploy.outputs.release-version }}
           download-artifact: true
