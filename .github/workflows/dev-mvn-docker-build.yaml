@@ -46,7 +46,7 @@ jobs:
       gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
 
   test-atrifact:
-    needs: [ deploy ]
+    needs: mvn-snapshot-deploy
     runs-on: ubuntu-latest
     if: ${{ needs.deploy.result == 'success' }}
     steps:
