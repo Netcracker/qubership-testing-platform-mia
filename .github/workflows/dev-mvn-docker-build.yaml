@@ -58,7 +58,7 @@ jobs:
         run: |
           echo "Listing build-context recursively:"
           pwd
-          ls -R qubership-testing-platform-mia/qubership-testing-platform-mia
+          ls -R 
 
   build-and-push:
     runs-on: ubuntu-latest
