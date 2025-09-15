@@ -45,6 +45,22 @@ jobs:
       gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
       gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
 
+  test-atrifact:
+    needs: [ deploy ]
+    runs-on: ubuntu-latest
+    if: ${{ needs.deploy.result == 'success' }}
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ""
+          path: build-context
+      - name: List contents of build-context
+        run: |
+          echo "Listing build-context recursively:"
+          pwd
+          ls -R build-context
+
   build-and-push:
     runs-on: ubuntu-latest
     needs: mvn-snapshot-deploy
