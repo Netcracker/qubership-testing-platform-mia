@@ -48,7 +48,6 @@ jobs:
   test-atrifact:
     needs: mvn-snapshot-deploy
     runs-on: ubuntu-latest
-    if: ${{ needs.deploy.result == 'success' }}
     steps:
       - name: Download Artifact
         uses: actions/download-artifact@v4
