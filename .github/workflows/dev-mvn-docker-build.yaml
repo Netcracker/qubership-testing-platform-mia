@@ -70,6 +70,7 @@ jobs:
           download-artifact: true
           custom-image-name: qubership-testing-platform-mia
           download-artifact-path: build-context
+          download-artifact-merge-multiple: 'true'
           component: '[{"name": "qubership-testing-platform-mia", "file": "./Dockerfile", "context": "."}]'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
