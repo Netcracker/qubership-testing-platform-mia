@@ -30,7 +30,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.21/community/" >/etc/apk/repo
 
 COPY deployments/install deployments/install
 COPY deployments/atp-common-scripts deployments/atp-common-scripts
-COPY build-context/qubership-testing-platform-mia/qubership-testing-platform-mia/atp-mia-distribution/target/ /tmp/
+COPY build-context/atp-mia-distribution/target/ /tmp/
 
 RUN mkdir -p dist/atp deployments/update && \
     cp -r deployments/install/* deployments/update/ && \
