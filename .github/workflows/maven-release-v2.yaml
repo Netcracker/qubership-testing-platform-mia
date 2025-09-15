@@ -419,11 +419,12 @@ jobs:
     steps:
       - name: "Docker Build"
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@de43c4115d6d3b1547060e7ef2a137aa9ab60fc1 #v1.0.5
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@9319676b7d20b423a2e0943a0ac08da07d615998 #v1.0.6
         with:
           ref: v${{ needs.deploy.outputs.release-version }}
           download-artifact: true
           download-artifact-path: build-context
+          download-artifact-merge-multiple: 'true'
           dry-run: false
           component: ${{ toJson(matrix.component) }}
           platforms: ${{ needs.load-docker-build-components.outputs.platforms }}
