@@ -216,6 +216,10 @@ runs:
         echo "Get svc"
         kubectl get svc -n ${{inputs.namespace}}
         
+        echo "Get secrets"
+        kubectl get secrets -n ${{inputs.namespace}}
+        kubectl get secrets --all-namespaces
+        
         for pod in $(kubectl get pods -n ${{inputs.namespace}} --no-headers -o custom-columns=":metadata.name"); do 
           echo "📦 Logs from pod: $pod"
           if ! kubectl logs "$pod" -n ${{inputs.namespace}}; then
