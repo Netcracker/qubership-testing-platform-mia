@@ -1,0 +1,69 @@
+name: Run MIA Pipeline
+
+#on:
+#  pull_request:
+#    types: [opened, synchronize, reopened]
+#    branches: [main]
+
+on:
+  workflow_dispatch:
+    inputs:
+      docker_tag:
+        required: false
+        type: string
+        description: 'Docker Image for rollout'
+      pipeline_branch:
+        description: 'Test pipeline branch name'
+        type: string
+        required: true
+        default: 'main'
+
+env:
+  RUN_TESTS: disable
+
+jobs:
+  Clean_Install_MIA:
+    runs-on: ubuntu-latest
+    name: Clean Install
+    steps:
+      - name: Get current workflow branch
+        id: get_branch
+        run: |
+      - name: Checkout pipeline
+        uses: actions/checkout@v4
+        with:
+          ref: 'main'
+          repository: 'Netcracker/qubership-test-pipelines'
+          path: 'qubership-test-pipelines'
+      - name: Create cluster
+        uses: ./qubership-test-pipelines/actions/shared/create_cluster
+
+      - name: Checkout pipeline
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.pipeline_branch }}
+          repository: 'Netcracker/qubership-testing-platform-mia'
+          path: 'qubership-testing-platform-mia'
+
+      - name: Clean Install MIA
+        uses: ./qubership-testing-platform-mia/.github/actions/shared/helm_deploy
+        with:
+          path_to_template: './qubership-testing-platform-mia/.github/deploy_templates/values-dev.yaml'
+          service_branch: ${{ inputs.pipeline_branch }}
+          service_name: 'atp-mia'
+          repository_name: 'qubership-testing-platform-mia'
+          path_to_chart: 'deployments/charts/atp-mia'
+          namespace: 'mia'
+          docker_tag: ${{ inputs.docker_tag }}
+
+      - name: Verify MIA installation
+        uses: ./qubership-testing-platform-mia/.github/actions/shared/verify_installation
+        with:
+          namespace: 'mia'
+          max_attempts: 40
+          timeout: '45s'
+          service_branch: ${{ inputs.pipeline_branch }}
+
+      - name: Run tests
+        if: env.RUN_TESTS == 'enable'
+        uses: ./qubership-testing-platform-mia/.github/actions/shared/running_tests
