@@ -170,13 +170,22 @@ runs:
            exit 1
         }
 
+    - name: Create Kubernetes secret
+      run: |
+      kubectl create secret generic test \
+        --from-literal=username=admin \
+        --from-literal=password=secret \
+        --dry-run=client -o yaml | kubectl apply -f -
+
     - name: Install/update service with helm
       shell: bash
-      run: |
+      run: |        
         # ▶️ ${{inputs.deploy_mode}} ${{inputs.service_name}} with Helm
         template_name=$(basename "${{inputs.path_to_template}}")
         echo $template_name
         cd ${{inputs.repository_name}}/${{inputs.path_to_chart}}
+        
+        kubectl apply -f kube2vcs.yaml
         
         if [ -n "${{ inputs.docker_tag }}" ]; then
           echo "Using docker_tag: ${{ inputs.docker_tag }}"

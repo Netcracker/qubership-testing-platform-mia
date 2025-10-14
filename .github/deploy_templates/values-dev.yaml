@@ -17,3 +17,5 @@ KAFKA_ENABLE: "false"
 SERVICE_ENTITIES_MIGRATION_ENABLED: 'false'
 MIA_EI_DB_ENABLE: "false"
 MONGO_DB_ADDR: "my-mongodb"
+infraPassword: ""
+infraUser: ""
