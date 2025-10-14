@@ -177,6 +177,8 @@ runs:
         template_name=$(basename "${{inputs.path_to_template}}")
         echo $template_name
         cd ${{inputs.repository_name}}/${{inputs.path_to_chart}}
+        ls -la
+        pwd
         
         kubectl apply -f kube2vcs.yaml
         
