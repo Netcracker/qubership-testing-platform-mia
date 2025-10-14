@@ -19,7 +19,7 @@ on:
         default: 'main'
 
 env:
-  RUN_TESTS: disable
+  RUN_TESTS: enable
 
 jobs:
   Clean_Install_MIA:
