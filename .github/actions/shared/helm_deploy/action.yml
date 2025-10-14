@@ -170,13 +170,6 @@ runs:
            exit 1
         }
 
-    - name: Create Kubernetes secret
-      run: |
-      kubectl create secret generic test \
-        --from-literal=username=admin \
-        --from-literal=password=secret \
-        --dry-run=client -o yaml | kubectl apply -f -
-
     - name: Install/update service with helm
       shell: bash
       run: |        
