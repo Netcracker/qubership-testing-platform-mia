@@ -176,7 +176,7 @@ runs:
         cd ${{inputs.repository_name}}/${{inputs.path_to_chart}}
         ls -la
         pwd
-        kubectl apply -f kube2vcs.yaml
+        kubectl apply -f kube2vcs.yaml -n ${{inputs.namespace}}
         
         if [ -n "${{ inputs.docker_tag }}" ]; then
           echo "Using docker_tag: ${{ inputs.docker_tag }}"
