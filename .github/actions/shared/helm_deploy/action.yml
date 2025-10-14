@@ -172,22 +172,18 @@ runs:
 
     - name: Install/update service with helm
       shell: bash
-      run: |        
-        # ▶️ ${{inputs.deploy_mode}} ${{inputs.service_name}} with Helm
-        template_name=$(basename "${{inputs.path_to_template}}")
-        echo $template_name
+      run: |
         cd ${{inputs.repository_name}}/${{inputs.path_to_chart}}
         ls -la
         pwd
-        
         kubectl apply -f kube2vcs.yaml
         
         if [ -n "${{ inputs.docker_tag }}" ]; then
           echo "Using docker_tag: ${{ inputs.docker_tag }}"
-          helm ${{inputs.deploy_mode}} ${{inputs.service_name}} . -f $template_name -n ${{inputs.namespace}} --set-string DOCKER_TAG=${{ inputs.docker_tag }}
+          helm ${{inputs.deploy_mode}} ${{inputs.service_name}} . -f values-dev.yaml -n ${{inputs.namespace}} --set-string DOCKER_TAG=${{ inputs.docker_tag }}
         else
          echo "No docker_tag provided. Using value from values-dev.yaml"
-         helm ${{inputs.deploy_mode}} ${{inputs.service_name}} . -f $template_name -n ${{inputs.namespace}}
+         helm ${{inputs.deploy_mode}} ${{inputs.service_name}} . -f values-dev.yaml -n ${{inputs.namespace}}
         fi 
 
         pod=$(kubectl get pods -n ${{inputs.namespace}} -o name | grep -vE 'postgres|mongodb|kafka|predeploy' | head -n 1 | cut -d/ -f2)

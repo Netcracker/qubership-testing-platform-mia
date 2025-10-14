@@ -48,7 +48,7 @@ jobs:
       - name: Clean Install MIA
         uses: ./qubership-testing-platform-mia/.github/actions/shared/helm_deploy
         with:
-          path_to_template: './qubership-testing-platform-mia/.github/deploy_templates/values-dev.yaml'
+          path_to_template: './qubership-testing-platform-mia/.github/deploy_templates/'
           service_branch: ${{ inputs.pipeline_branch }}
           service_name: 'atp-mia'
           repository_name: 'qubership-testing-platform-mia'
