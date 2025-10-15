@@ -1,5 +1,5 @@
 # Which docker image should be used to deploy
-DOCKER_TAG: "ghcr.io/netcracker/qubership-testing-platform-tdm:test_pipeline-20251010114904"
+DOCKER_TAG: "ghcr.io/netcracker/qubership-testing-platform-mia:2.0.71"
 # This option turns on or off logging in graylog
 GRAYLOG_ON: "false"
 # IP of db
@@ -17,3 +17,5 @@ KAFKA_ENABLE: "false"
 SERVICE_ENTITIES_MIGRATION_ENABLED: 'false'
 MIA_EI_DB_ENABLE: "false"
 MONGO_DB_ADDR: "my-mongodb"
+infraPassword: ""
+infraUser: ""
