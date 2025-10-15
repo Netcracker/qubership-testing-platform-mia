@@ -186,59 +186,12 @@ runs:
          helm ${{inputs.deploy_mode}} ${{inputs.service_name}} . -f values-dev.yaml -n ${{inputs.namespace}}
         fi 
 
-        pod=$(kubectl get pods -n ${{inputs.namespace}} -o name | grep -vE 'postgres|mongodb|kafka|predeploy' | head -n 1 | cut -d/ -f2)
+        pod=$(kubectl get pods -n ${{inputs.namespace}} -o name | grep -vE 'postgres|mongodb|predeploy' | head -n 1 | cut -d/ -f2)
         kubectl wait pod "$pod" -n ${{inputs.namespace}} \
            --for=condition=Ready \
            --timeout=600s || {
            echo "❌ Pod $pod did not become ready in time"
         }
-
-    - name: Debug
-      shell: bash
-      if: always()
-      run: |
-        echo "Get pods $pod"
-        kubectl get pods -n ${{inputs.namespace}}
-        
-        echo "Get logs for predeploy-install"
-        kubectl logs $(kubectl get pods -n ${{inputs.namespace}} \
-          --selector=job-name=${{inputs.service_name}}-predeploy-install \
-          -o jsonpath='{.items[0].metadata.name}') -n ${{inputs.namespace}}
-        echo "End logs"
-        
-        echo "Describe pod"
-        kubectl describe pod $(kubectl get pods -n ${{inputs.namespace}} --no-headers | awk 'NR==1 {print $1}') -n ${{inputs.namespace}}
-        echo "End describe"
-        
-        kubectl get pods -n ${{inputs.namespace}}
-        echo "⏳ Waiting for pod $pod to be Ready and streaming logs..."
-        
-        echo "Get svc"
-        kubectl get svc -n ${{inputs.namespace}}
-        
-        echo "Get secrets"
-        kubectl get secrets -n ${{inputs.namespace}}
-        kubectl get secrets --all-namespaces
-        
-        for pod in $(kubectl get pods -n ${{inputs.namespace}} --no-headers -o custom-columns=":metadata.name"); do 
-          echo "📦 Logs from pod: $pod"
-          if ! kubectl logs "$pod" -n ${{inputs.namespace}}; then
-            echo "⚠️ Could not fetch current logs for $pod"
-          fi
-        
-          restart_count=$(kubectl get pod "$pod" -n ${{inputs.namespace}} -o jsonpath="{.status.containerStatuses[0].restartCount}")
-        
-          if [[ "$restart_count" -gt 0 ]]; then
-            echo "🔁 Previous logs (before restart) for pod: $pod"
-            if ! kubectl logs "$pod" -n ${{inputs.namespace}} --previous; then
-              echo "⚠️ Could not fetch previous logs for $pod"
-            fi
-          fi
-        
-        done
-        
-        echo " Get pods $pod"
-        kubectl get pods -n ${{inputs.namespace}}
 
     - name: Get docker images
       shell: bash
