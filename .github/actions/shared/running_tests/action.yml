@@ -31,5 +31,5 @@ runs:
     - name: Run Newman
       uses: matt-ball/newman-action@v2.0.0
       with:
-        collection: ./qubership-testing-platform-tdm/.github/actions/tests/collection.json
-        environment: ./qubership-testing-platform-tdm/.github/actions/tests/environment.json
+        collection: ./qubership-testing-platform-mia/.github/actions/tests/collection.json
+        environment: ./qubership-testing-platform-mia/.github/actions/tests/environment.json
