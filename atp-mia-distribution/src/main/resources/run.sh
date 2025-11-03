@@ -46,6 +46,21 @@ JAVA_OPTIONS="${JAVA_OPTIONS} -Dspring.config.location=${SPRING_CONFIG_LOCATION}
 JAVA_OPTIONS="${JAVA_OPTIONS} -Dspring.cloud.bootstrap.location=./config/bootstrap.properties"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Dspring.datasource.url=jdbc:postgresql://${PG_DB_ADDR:?}:${PG_DB_PORT:?}/${MIA_DB_NAME:?}"
 
+# ---
+# ./assets/env-variables.json preparation and putting into a file
+# which stores variables from deployment.yaml
+# for standalone MIA (in case of Catalogue this file is defined on catalogue-fe side)
+# ---
+# /assets/env-variables.json preparation and putting into a file
+# which stores variables from deployment.yaml
+mkdir -p "${FE_VARIABLES_FILE_PATH}"
+cat >"${HOME_EX}/${FE_VARIABLES_FILE_PATH}/${FE_VARIABLES_FILE_NAME}" <<EOF
+{
+  "test": "test",
+  "WS_EVENT_SOURCE_HEARTBEAT_TIMEOUT": "${WS_EVENT_SOURCE_HEARTBEAT_TIMEOUT:-45000}"
+}
+EOF
+
 # find and add heap dump path if omitted when HeapDumpOnOutOfMemoryError is ON
 if echo "${JAVA_OPTIONS}" | grep -qF '+HeapDumpOnOutOfMemoryError' ; then
   if ! echo "${JAVA_OPTIONS}" | grep -qF 'HeapDumpPath=' ; then

@@ -27,3 +27,21 @@ paths:
               schema:
                 type: string
       deprecated: false
+  /assets/env-variables.json:
+    get:
+      tags:
+        - mia-general-controller
+      summary: provides variables for frontend from env-variables.json
+      operationId: fe-variables
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+                example:
+                  WS_EVENT_SOURCE_HEARTBEAT_TIMEOUT: "45000"
+      deprecated: false

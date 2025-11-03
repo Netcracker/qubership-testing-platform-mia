@@ -1,0 +1,4 @@
+{
+  "WS_EVENT_SOURCE_HEARTBEAT_TIMEOUT": "45000",
+  "be_test": "be_test"
+}
