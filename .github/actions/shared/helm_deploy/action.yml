@@ -105,8 +105,6 @@ runs:
         echo ${{inputs.path_to_template}}
         cp -r ${{inputs.path_to_template}}* ${{inputs.repository_name}}/${{inputs.path_to_chart}}
         ls -la
-    #    ls -la
-    #    cp ${{inputs.path_to_template}} ${{inputs.repository_name}}/${{inputs.path_to_chart}}
 
     - name: Replace slash in service branch
       id: replace_slash
