@@ -125,7 +125,7 @@ runs:
         restart_count=$(kubectl get pod "$pod" -n ${{inputs.namespace}} -o jsonpath="{.status.containerStatuses[0].restartCount}")
         if [[ "$restart_count" -gt 0 ]]; then
           echo "🔁 Previous logs (before restart) for pod: $pod"
-          kubectl get pods -n ${{inputs.namespace}}
+          kubectl get pod "$pod" -n ${{inputs.namespace}} -o yaml >> $file_name
           if ! kubectl logs "$pod" -n ${{inputs.namespace}} --previous; then
             echo "⚠️ Could not fetch previous logs for $pod"
           fi
