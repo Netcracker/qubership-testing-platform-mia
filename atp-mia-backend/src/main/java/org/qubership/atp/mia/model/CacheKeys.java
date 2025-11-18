@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 
 public enum CacheKeys {
-    AUTH_PROJECTS_KEY(Constants.AUTH_PROJECTS_KEY, 5, TimeUnit.MINUTES, CacheGroups.PROJECTS, true),
+    AUTH_PROJECTS_KEY(Constants.AUTH_PROJECTS_KEY, 2, TimeUnit.MINUTES, CacheGroups.PROJECTS, true),
 
     PROJECTNAME_KEY(Constants.PROJECTNAME_KEY, 24, TimeUnit.DAYS, CacheGroups.PROJECTS, true),
     CONFIGURATION_KEY(Constants.CONFIGURATION_KEY, 5, TimeUnit.MINUTES, CacheGroups.PROJECTS, true),
