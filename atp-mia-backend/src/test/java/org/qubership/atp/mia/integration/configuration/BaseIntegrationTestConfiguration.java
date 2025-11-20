@@ -157,7 +157,7 @@ public abstract class BaseIntegrationTestConfiguration extends ConfigTestBean {
         //System.out.println("SSH server will have host:[" + sshServerHost + "], port[" + sshPort + "]");
         SshSession session = new SshSession(
                 new Server(Connection.builder().parameters(getSshTestParams(sshServerHost + ":" + sshPort)).build(), "ssh"),
-                miaContext.getConfig().getCommonConfiguration());
+                miaContext.getCommonConfiguration());
         return new SshConnectionManager(session, "", miaContext);
     }
 

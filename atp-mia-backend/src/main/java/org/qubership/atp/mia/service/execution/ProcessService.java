@@ -71,6 +71,8 @@ import org.qubership.atp.mia.model.pot.db.table.TableMarkerResult;
 import org.qubership.atp.mia.repo.ContextRepository;
 import org.qubership.atp.mia.repo.impl.ProcessStatusRepository;
 import org.qubership.atp.mia.service.MiaContext;
+import org.qubership.atp.mia.service.configuration.snapshot.CommonConfigurationSnapshot;
+import org.qubership.atp.mia.service.configuration.snapshot.HeaderConfigurationSnapshot;
 import org.qubership.atp.mia.service.SseEmitterService;
 import org.qubership.atp.mia.service.file.GridFsService;
 import org.qubership.atp.mia.service.file.MiaFileService;
@@ -154,6 +156,7 @@ public class ProcessService {
     public ExecutionResponse executeProcess(ExecutionRequest request, UUID sseId) {
         final long startDate = System.currentTimeMillis();
         ProjectConfiguration config = miaContext.getConfig();
+        CommonConfigurationSnapshot commonConfiguration = miaContext.getCommonConfiguration();
         metricsService.processExecutionWasStarted();
         miaContext.replaceSpacesInAccountNumber();
         ProcessConfiguration process = config.getProcessByName(request.getProcess());
@@ -161,11 +164,12 @@ public class ProcessService {
         log.info("Execute process {}", process.getName());
         List<Switcher> switchersListFromBe = null;
         List<Switcher> switchersListFromFe = null;
-        if (config.getHeaderConfiguration() != null) {
-            List<Switcher> userSwitchersBe = config.getHeaderConfiguration().getSwitchers() != null
-                    ? config.getHeaderConfiguration().getSwitchers()
+        HeaderConfigurationSnapshot headerConfiguration = miaContext.getHeaderConfiguration();
+        if (headerConfiguration != null) {
+            List<Switcher> userSwitchersBe = headerConfiguration.getSwitchers() != null
+                    ? new ArrayList<>(headerConfiguration.getSwitchers())
                     : new ArrayList<>();
-            List<Switcher> systemSwitchersBe = config.getHeaderConfiguration().getSystemSwitchers();
+            List<Switcher> systemSwitchersBe = headerConfiguration.getSystemSwitchers();
             List<Switcher> systemSwitchersBeClone =
                     systemSwitchersBe.stream().map(sbe -> sbe.clone()).collect(Collectors.toList());
             switchersListFromBe = Stream.of(userSwitchersBe, systemSwitchersBeClone)
@@ -199,7 +203,8 @@ public class ProcessService {
         } else {
             configCommand.setToExecute(configCommand.getValue());
         }
-        final ExecutionResponse response = executeProcess(replaceProcessSystems(processSettings), switchersListFromBe);
+        final ExecutionResponse response =
+                executeProcess(replaceProcessSystems(processSettings), switchersListFromBe, commonConfiguration);
         response.setEntityId(process.getId());
         response.setEntityUrl(HttpUtils.getMiaEntityUrl(
                 miaEntityUrlFormat,
@@ -212,7 +217,8 @@ public class ProcessService {
         return response;
     }
 
-    private ExecutionResponse executeProcess(ProcessSettings processSettings, List<Switcher> switchersListFromBe) {
+    private ExecutionResponse executeProcess(ProcessSettings processSettings, List<Switcher> switchersListFromBe,
+                                             CommonConfigurationSnapshot commonConfiguration) {
         ExecutionResponse executionResponse = new ExecutionResponse();
         executionResponse.setProcessName(processSettings.getName());
         executionResponse.setProcessStatus(new ProcessStatus());
@@ -223,13 +229,13 @@ public class ProcessService {
                     if (switcher.isValue() && switcher.getActionTrue() != null) {
                         processSettings.addPrerequisites(
                                 new Prerequisite(switcher.getActionType(),
-                                        miaContext.getConfig().getCommonConfiguration().getDefaultSystem(),
+                                        commonConfiguration.getDefaultSystem(),
                                         switcher.getActionTrue()));
                     }
                     if (!switcher.isValue() && switcher.getActionFalse() != null) {
                         processSettings.addPrerequisites(
                                 new Prerequisite(switcher.getActionType(),
-                                        miaContext.getConfig().getCommonConfiguration().getDefaultSystem(),
+                                        commonConfiguration.getDefaultSystem(),
                                         switcher.getActionFalse()));
                     }
                 }
@@ -253,7 +259,7 @@ public class ProcessService {
         }
         //Execute command
         if (Strings.isNullOrEmpty(command.getSystem())) {
-            command.setSystem(miaContext.getConfig().getCommonConfiguration().getDefaultSystem());
+            command.setSystem(commonConfiguration.getDefaultSystem());
         }
         try {
             miaContext.getFlowData().getSystem(command.getSystem());
@@ -594,7 +600,7 @@ public class ProcessService {
         sshPrerequisitesToExecute.forEach(prerequisite -> {
             String currentCommandValue = command.getToExecute();
             command.setToExecute(prerequisite
-                    + miaContext.getConfig().getCommonConfiguration().getCommandShellSeparator() + currentCommandValue);
+                    + miaContext.getCommonConfiguration().getCommandShellSeparator() + currentCommandValue);
         });
         return responses;
     }

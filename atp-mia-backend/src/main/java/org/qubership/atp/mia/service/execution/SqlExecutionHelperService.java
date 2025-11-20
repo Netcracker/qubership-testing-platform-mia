@@ -49,7 +49,6 @@ import org.qubership.atp.mia.exceptions.businesslogic.sql.StoreCsvExceptionDurin
 import org.qubership.atp.mia.exceptions.businesslogic.sql.StoreCsvFileNotFoundException;
 import org.qubership.atp.mia.exceptions.businesslogic.sql.StoreCsvIoExceptionDuringClose;
 import org.qubership.atp.mia.model.Constants;
-import org.qubership.atp.mia.model.configuration.CommonConfiguration;
 import org.qubership.atp.mia.model.environment.Server;
 import org.qubership.atp.mia.model.impl.CommandResponse;
 import org.qubership.atp.mia.model.impl.executable.Command;
@@ -59,6 +58,7 @@ import org.qubership.atp.mia.model.pot.db.SqlResponse;
 import org.qubership.atp.mia.model.pot.db.table.DbTable;
 import org.qubership.atp.mia.repo.driver.QueryDriver;
 import org.qubership.atp.mia.service.MiaContext;
+import org.qubership.atp.mia.service.configuration.snapshot.CommonConfigurationSnapshot;
 import org.qubership.atp.mia.service.file.MiaFileService;
 import org.qubership.atp.mia.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -338,8 +338,8 @@ public class SqlExecutionHelperService {
      */
     @AtpJaegerLog()
     public String getNextBillDate() {
-        String nextBillDateSql = miaContext.getConfig().getCommonConfiguration().getNextBillDateSql();
-        String system = miaContext.getConfig().getCommonConfiguration().getDefaultSystem();
+        String nextBillDateSql = miaContext.getCommonConfiguration().getNextBillDateSql();
+        String system = miaContext.getCommonConfiguration().getDefaultSystem();
         String accountNumberTrim =
                 miaContext.getFlowData().getCustom(Constants.CustomParameters.ACCOUNT_NUMBER, miaContext)
                         .trim().replaceAll(" ", "_");
@@ -360,7 +360,7 @@ public class SqlExecutionHelperService {
      */
     @AtpJaegerLog()
     public boolean resetDbCache() {
-        final CommonConfiguration commonConfig = miaContext.getConfig().getCommonConfiguration();
+        final CommonConfigurationSnapshot commonConfig = miaContext.getCommonConfiguration();
         String system = commonConfig.getDefaultSystem();
         log.trace("Performing of resetCache for {} system", system);
         Server server = miaContext.getFlowData().getSystem(system).getServer(DB);
@@ -372,7 +372,7 @@ public class SqlExecutionHelperService {
      * Save sql result to file.
      */
     public void saveSqlTableToFile(List<SqlResponse> sqlResponses) {
-        if (miaContext.getConfig().getCommonConfiguration().isSaveSqlTablesToFile()) {
+        if (miaContext.getCommonConfiguration().isSaveSqlTablesToFile()) {
             for (SqlResponse sqlResponse : sqlResponses) {
                 String fileName = miaContext.createTableFileName(sqlResponse.getTableName());
                 final Holder<File> file = new Holder<>(miaContext.getLogPath().resolve(fileName).toFile());

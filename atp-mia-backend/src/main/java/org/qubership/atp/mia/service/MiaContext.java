@@ -64,6 +64,11 @@ import org.qubership.atp.mia.model.pot.Link;
 import org.qubership.atp.mia.repo.ContextRepository;
 import org.qubership.atp.mia.service.configuration.EnvironmentsService;
 import org.qubership.atp.mia.service.configuration.ProjectConfigurationService;
+import org.qubership.atp.mia.service.configuration.snapshot.CommandPrefixSnapshot;
+import org.qubership.atp.mia.service.configuration.snapshot.CommonConfigurationSnapshot;
+import org.qubership.atp.mia.service.configuration.snapshot.HeaderConfigurationSnapshot;
+import org.qubership.atp.mia.service.configuration.snapshot.PotHeaderConfigurationSnapshot;
+import org.qubership.atp.mia.service.configuration.snapshot.ProjectGeneralConfigurationSnapshot;
 import org.qubership.atp.mia.utils.AtpMacrosUtils;
 import org.qubership.atp.mia.utils.CryptoUtils;
 import org.qubership.atp.mia.utils.EnvironmentVariableUtils;
@@ -188,7 +193,7 @@ public class MiaContext {
      */
     public String evaluate(String text, Map<String, String> additionalParameters) {
         if (!Strings.isNullOrEmpty(text)) {
-            final String variableFormat = getConfig().getCommonConfiguration().getVariableFormat();
+            final String variableFormat = getCommonConfiguration().getVariableFormat();
             final VariableFormat varFormat = new VariableFormat(variableFormat);
             Map<String, String> parameters = new HashMap<>(getFlowData().getParameters());
             parameters.putAll(additionalParameters);
@@ -225,11 +230,27 @@ public class MiaContext {
         return projectConfigurationService.getConfigByProjectId(getProjectId());
     }
 
+    private ProjectGeneralConfigurationSnapshot getGeneralConfigurationSnapshot() {
+        return projectConfigurationService.getGeneralConfigurationSnapshot(getProjectId());
+    }
+
+    public CommonConfigurationSnapshot getCommonConfiguration() {
+        return getGeneralConfigurationSnapshot().getCommonConfiguration();
+    }
+
+    public HeaderConfigurationSnapshot getHeaderConfiguration() {
+        return getGeneralConfigurationSnapshot().getHeaderConfiguration();
+    }
+
+    public PotHeaderConfigurationSnapshot getPotHeaderConfiguration() {
+        return getGeneralConfigurationSnapshot().getPotHeaderConfiguration();
+    }
+
     /**
      * Gets externalPrefix from properties file and update it with values from {@code FlowData}.
      */
     public String getExternalPrefix() {
-        final String prefix = getConfig().getCommonConfiguration().getExternalEnvironmentPrefix();
+        final String prefix = getCommonConfiguration().getExternalEnvironmentPrefix();
         return Strings.isNullOrEmpty(prefix) ? "" : evaluate(prefix);
     }
 
@@ -307,11 +328,11 @@ public class MiaContext {
      * @return list of prefixes from application.properties
      */
     public LinkedHashMap<String, String> getShellPrefixes(String system) {
-        final Optional<CommandPrefix> commandPrefix =
-                getConfig().getCommonConfiguration().getCommandShellPrefixes().stream()
+        final Optional<CommandPrefixSnapshot> commandPrefix =
+                getCommonConfiguration().getCommandShellPrefixes().stream()
                         .filter(p -> p.getSystem().equals(system)).findFirst();
         if (commandPrefix.isPresent()) {
-            return commandPrefix.get().getPrefixes();
+            return new LinkedHashMap<>(commandPrefix.get().getPrefixes());
         }
         return new LinkedHashMap<>();
     }
@@ -454,7 +475,7 @@ public class MiaContext {
      * Add CommonParameters to FlowData from configuration.
      */
     private void addCommonParametersFromConfig() {
-        projectConfigurationService.getConfigByProjectId(getProjectId()).getCommonConfiguration()
+        getCommonConfiguration()
                 .getCommonVariables().forEach((k, v) -> getFlowData().addParameter(k, evaluate(v)));
     }
 

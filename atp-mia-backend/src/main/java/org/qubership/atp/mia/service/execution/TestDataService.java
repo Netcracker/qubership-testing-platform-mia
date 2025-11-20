@@ -173,7 +173,7 @@ public class TestDataService {
         eventFiles.forEach(template -> {
             final String paramInTemplate = command.getTestDataParams().getEventParameterInTemplate();
             final VariableFormat varFormat =
-                    new VariableFormat(miaContext.getConfig().getCommonConfiguration().getVariableFormat());
+                    new VariableFormat(miaContext.getCommonConfiguration().getVariableFormat());
             final String neededParamInTemplate = varFormat.getVariableAccordingFormat(paramInTemplate);
             template.replaceContent(neededParamInTemplate, "");
             template.writeContent();

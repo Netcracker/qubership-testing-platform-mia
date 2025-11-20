@@ -66,7 +66,6 @@ import org.qubership.atp.mia.exceptions.proofoftesting.PotStepListEmptyException
 import org.qubership.atp.mia.exceptions.proofoftesting.PotTemplateCanNotBeClosedException;
 import org.qubership.atp.mia.exceptions.proofoftesting.PotTemplateNotFoundOnPathException;
 import org.qubership.atp.mia.exceptions.proofoftesting.PotWriteFailedException;
-import org.qubership.atp.mia.model.configuration.PotHeaderConfiguration;
 import org.qubership.atp.mia.model.environment.Server;
 import org.qubership.atp.mia.model.environment.System;
 import org.qubership.atp.mia.model.exception.ErrorCodes;
@@ -629,11 +628,10 @@ public class ProofOfTestingRepository {
     }
 
     private void printHeaders(XWPFDocument document, PotSession session) {
-        PotHeaderConfiguration potHeaderConfiguration = miaContext.getConfig().getPotHeaderConfiguration();
-        if (potHeaderConfiguration.getHeaders().size() == 0
-                || !potHeaderConfiguration.getHeaders().stream().anyMatch(header ->
-                header.getName().equalsIgnoreCase("Environment"))) {
-            potHeaderConfiguration.getHeaders().add(0, new PotHeader(
+        List<PotHeader> headers = new ArrayList<>(miaContext.getPotHeaderConfiguration().getHeaders());
+        if (headers.isEmpty()
+                || headers.stream().noneMatch(header -> header.getName().equalsIgnoreCase("Environment"))) {
+            headers.add(0, new PotHeader(
                     "Environment", PotHeaderType.INPUT.toString(), null,
                     session.getPotExecutionSteps().stream()
                             .map(PotExecutionStep::getEnvironmentName)
@@ -644,7 +642,7 @@ public class ProofOfTestingRepository {
         XWPFRun run = getRunForFirstHeaderCell(row.createCell());
         run.setText("Test line");
         createRunForEmptyHeaderCell(row.createCell());
-        for (PotHeader header : potHeaderConfiguration.getHeaders()) {
+        for (PotHeader header : headers) {
             printHeader(table, header);
         }
         table.removeRow(0);
