@@ -27,6 +27,7 @@ import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -107,7 +108,7 @@ public class HeaderConfiguration implements Serializable {
     @Builder.Default
     @DiffIgnore
     private List<Switcher> systemSwitchers = HeaderConfiguration.defaultSystemSwitchers();
-    @OneToOne(targetEntity = ProjectConfiguration.class, cascade = CascadeType.MERGE)
+    @OneToOne(targetEntity = ProjectConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

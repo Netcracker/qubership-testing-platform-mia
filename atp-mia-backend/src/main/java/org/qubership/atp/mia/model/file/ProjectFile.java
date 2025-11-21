@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -75,13 +76,13 @@ public class ProjectFile extends DateAuditorEntity {
     @EqualsAndHashCode.Exclude
     @DiffInclude
     private Long size;
-    @ManyToOne(targetEntity = ProjectDirectory.class)
+    @ManyToOne(targetEntity = ProjectDirectory.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "directory_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffInclude
     private ProjectDirectory directory;
-    @ManyToOne(targetEntity = ProjectConfiguration.class)
+    @ManyToOne(targetEntity = ProjectConfiguration.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

@@ -27,6 +27,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,8 +36,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.javers.core.metamodel.annotation.DiffIgnore;
@@ -91,11 +91,12 @@ public class ProcessConfiguration extends DateAuditorEntity {
     @DiffInclude
     private ProcessSettings processSettings;
 
-    @ManyToMany(mappedBy = "processes", targetEntity = CompoundConfiguration.class, cascade = CascadeType.MERGE)
+    @ManyToMany(mappedBy = "processes", targetEntity = CompoundConfiguration.class, cascade = CascadeType.MERGE,
+            fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     @DiffIgnore
     private List<CompoundConfiguration> inCompounds = new ArrayList<>();
 
@@ -109,11 +110,12 @@ public class ProcessConfiguration extends DateAuditorEntity {
     @DiffInclude
     private List<String> compounds = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "processes", targetEntity = SectionConfiguration.class, cascade = CascadeType.MERGE)
+    @ManyToMany(mappedBy = "processes", targetEntity = SectionConfiguration.class, cascade = CascadeType.MERGE,
+            fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     @DiffIgnore
     private List<SectionConfiguration> inSections = new ArrayList<>();
 
@@ -127,7 +129,7 @@ public class ProcessConfiguration extends DateAuditorEntity {
     @Convert(converter = ListConverter.class)
     private List<String> sections = new ArrayList<>();
 
-    @ManyToOne(targetEntity = ProjectConfiguration.class)
+    @ManyToOne(targetEntity = ProjectConfiguration.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

@@ -25,6 +25,7 @@ import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -63,7 +64,7 @@ public class PotHeaderConfiguration implements Serializable {
     @Type(type = "jsonb")
     @DiffInclude
     private List<PotHeader> headers = new ArrayList<>();
-    @OneToOne(targetEntity = ProjectConfiguration.class, cascade = CascadeType.MERGE)
+    @OneToOne(targetEntity = ProjectConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

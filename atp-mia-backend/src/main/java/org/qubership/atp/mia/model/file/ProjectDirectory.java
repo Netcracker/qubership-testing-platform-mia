@@ -26,6 +26,7 @@ import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,8 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.javers.core.metamodel.annotation.DiffIgnore;
@@ -74,22 +74,23 @@ public class ProjectDirectory extends DateAuditorEntity {
     @DiffInclude
     private String name;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffInclude
     private ProjectDirectory parentDirectory;
 
-    @OneToMany(mappedBy = "parentDirectory", targetEntity = ProjectDirectory.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parentDirectory", targetEntity = ProjectDirectory.class, cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     @DiffInclude
     private List<ProjectDirectory> directories = new ArrayList<>();
 
-    @ManyToOne(targetEntity = ProjectConfiguration.class)
+    @ManyToOne(targetEntity = ProjectConfiguration.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
@@ -97,11 +98,11 @@ public class ProjectDirectory extends DateAuditorEntity {
     private ProjectConfiguration projectConfiguration;
 
     @OneToMany(mappedBy = "directory", targetEntity = ProjectFile.class, cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     @DiffInclude
     private List<ProjectFile> files = new ArrayList<>();
 
