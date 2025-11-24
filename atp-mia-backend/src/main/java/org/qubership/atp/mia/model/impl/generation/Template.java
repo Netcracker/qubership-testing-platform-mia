@@ -28,7 +28,6 @@ import java.util.Map;
 
 import org.qubership.atp.mia.exceptions.testdata.MatrixEthalonReadFailException;
 import org.qubership.atp.mia.exceptions.testdata.MatrixEthalonWriteFailException;
-import org.qubership.atp.mia.model.configuration.CommonConfiguration;
 import org.qubership.atp.mia.model.impl.VariableFormat;
 import org.qubership.atp.mia.model.impl.executable.Command;
 import org.qubership.atp.mia.service.MiaContext;
@@ -156,13 +155,13 @@ public class Template {
      * Main purpose is to use in TestData operation for new line generation in control file.
      *
      * @param command    which contains EventParameter and EventTemplate.
-     * @param commonConf to get Variable format.
+     * @param variableFormat format used for placeholders.
      * @param params     for EventTemplate evaluation.
      */
-    public void evaluateTemplate(Command command, CommonConfiguration commonConf, Map<String, String> params) {
+    public void evaluateTemplate(Command command, String variableFormat, Map<String, String> params) {
         final String paramInTemplate = command.getTestDataParams().getEventParameterInTemplate();
         final String eventTemplate = miaContext.evaluate(command.getTestDataParams().getEventTemplate(), params);
-        final VariableFormat varFormat = new VariableFormat(commonConf.getVariableFormat());
+        final VariableFormat varFormat = new VariableFormat(variableFormat);
         final String neededParamInTemplate = varFormat.getVariableAccordingFormat(paramInTemplate);
         replaceContent(neededParamInTemplate, eventTemplate + "\n" + neededParamInTemplate);
     }

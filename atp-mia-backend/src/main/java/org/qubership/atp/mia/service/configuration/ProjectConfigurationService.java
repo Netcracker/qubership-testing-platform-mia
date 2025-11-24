@@ -41,19 +41,24 @@ import org.qubership.atp.mia.exceptions.configuration.UpdateConfigurationExcepti
 import org.qubership.atp.mia.exceptions.fileservice.ArchiveFileNotFoundException;
 import org.qubership.atp.mia.exceptions.fileservice.ArchiveIoExceptionDuringClose;
 import org.qubership.atp.mia.exceptions.history.MiaHistoryRevisionRestoreException;
+import org.hibernate.Hibernate;
 import org.qubership.atp.mia.model.CacheKeys;
 import org.qubership.atp.mia.model.DateAuditorEntity;
 import org.qubership.atp.mia.model.configuration.ProjectConfiguration;
+import org.qubership.atp.mia.model.configuration.SectionConfiguration;
 import org.qubership.atp.mia.model.file.FileMetaData;
+import org.qubership.atp.mia.model.file.ProjectDirectory;
 import org.qubership.atp.mia.model.file.ProjectFileType;
 import org.qubership.atp.mia.repo.configuration.ProjectConfigurationRepository;
 import org.qubership.atp.mia.repo.db.RecordingSessionRepository;
+import org.qubership.atp.mia.service.configuration.snapshot.ProjectGeneralConfigurationSnapshot;
 import org.qubership.atp.mia.service.file.MiaFileService;
 import org.qubership.atp.mia.service.git.GitService;
 import org.qubership.atp.mia.service.history.impl.AbstractEntityHistoryService;
 import org.qubership.atp.mia.utils.FileUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.Resource;
@@ -132,11 +137,24 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
     }
 
     /**
+     * Find project configuration with all associations initialized.
+     *
+     * @param projectId project ID
+     * @return optional of {@link ProjectConfiguration}
+     */
+    @Transactional(readOnly = true)
+    public Optional<ProjectConfiguration> findDetailedByProjectId(UUID projectId) {
+        return projectConfigurationRepository.findDetailedByProjectId(projectId)
+                .map(this::materializeFullConfiguration);
+    }
+
+    /**
      * Get configuration by project ID.
      *
      * @param projectId project ID
      * @return ProjectConfiguration instance
      */
+    @Transactional(readOnly = true)
     @Cacheable(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId", condition = "#projectId != null")
     public ProjectConfiguration getConfigByProjectId(UUID projectId) {
         return getConfiguration(projectId);
@@ -149,25 +167,27 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * @return ProjectConfiguration instance
      */
     public ProjectConfiguration getConfiguration(UUID projectId) {
-        return findByProjectId(projectId).orElseGet(() -> {
-            Path pathForConfiguration = getProjectPathWithType(projectId,
-                    ProjectFileType.MIA_FILE_TYPE_CONFIGURATION, null)
-                    .resolve(String.valueOf(System.currentTimeMillis()));
-            Path pathForDefaultConfiguration = miaConfigPath.resolve("project").resolve("default");
-            try {
-                pathForConfiguration.toFile().mkdirs();
-                FileUtils.copyFolder(pathForDefaultConfiguration, pathForConfiguration);
-                ProjectConfiguration defaultProjectConfiguration = loadConfigurationFromFile(
-                        ProjectConfiguration.builder().projectId(projectId).build(), pathForConfiguration, false);
-                log.info("DEFAULT configuration parsed successfully. Save it!");
-                return projectConfigurationRepository.save(defaultProjectConfiguration);
-            } catch (Exception e) {
-                throw new DeserializeJsonConfigFailedException("Failed copy files for DEFAULT project to "
-                        + pathForConfiguration, e.getMessage());
-            } finally {
-                FileUtils.deleteFolder(pathForConfiguration.toFile(), true);
-            }
-        });
+        return findDetailedByProjectId(projectId)
+                .orElseGet(() -> materializeFullConfiguration(createDefaultConfiguration(projectId)));
+    }
+
+    private ProjectConfiguration getGeneralConfiguration(UUID projectId) {
+        return projectConfigurationRepository.findGeneralByProjectId(projectId)
+                .map(this::materializeGeneralConfiguration)
+                .orElseGet(() -> materializeGeneralConfiguration(getConfiguration(projectId)));
+    }
+
+    /**
+     * Returns cached lightweight snapshot with common/header/pot configuration.
+     *
+     * @param projectId project identifier
+     * @return {@link ProjectGeneralConfigurationSnapshot}
+     */
+    @Transactional(readOnly = true)
+    @Cacheable(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId",
+            condition = "#projectId != null")
+    public ProjectGeneralConfigurationSnapshot getGeneralConfigurationSnapshot(UUID projectId) {
+        return ProjectGeneralConfigurationSnapshot.from(getGeneralConfiguration(projectId));
     }
 
     /**
@@ -202,8 +222,12 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * @return ProjectConfiguration instance
      */
     @Transactional
-    @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
-            condition = "#projectConfiguration.projectId != null")
+    @Caching(evict = {
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null")
+    })
     public ProjectConfiguration hardReloadConfiguration(ProjectConfiguration projectConfiguration) {
         return hardReloadConfiguration(projectConfiguration, false);
     }
@@ -214,8 +238,12 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * @param projectConfiguration projectConfiguration
      * @return projectConfiguration
      */
-    @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
-            condition = "#projectConfiguration.projectId != null")
+    @Caching(evict = {
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null")
+    })
     public ProjectConfiguration hardReloadConfiguration(ProjectConfiguration projectConfiguration,
                                                         boolean isMigration) {
         try {
@@ -236,7 +264,12 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * @return true if success, otherwise throws exception.
      */
     @Transactional
-    @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId", condition = "#projectId != null")
+    @Caching(evict = {
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId",
+                    condition = "#projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId",
+                    condition = "#projectId != null")
+    })
     public ProjectConfiguration loadConfigFromZip(UUID projectId, MultipartFile file) {
         File archivePath = null;
         try {
@@ -322,7 +355,12 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * @param projectId project ID
      */
     @Transactional
-    @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId", condition = "#projectId != null")
+    @Caching(evict = {
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId",
+                    condition = "#projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId",
+                    condition = "#projectId != null")
+    })
     public void removeProject(UUID projectId, Boolean withPot) {
         projectConfigurationRepository.deleteByProjectId(projectId);
         if (withPot != null && withPot) {
@@ -334,7 +372,10 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
     /**
      * Synchronize project DB and GIT.
      */
-    @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId")
+    @Caching(evict = {
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId"),
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId")
+    })
     @Transactional
     public void synchronizeConfiguration(UUID projectId,
                                          Supplier<ProjectConfiguration> saveConfiguration,
@@ -370,8 +411,12 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * @return {@link ProjectConfigurationDto}
      */
     @Transactional
-    @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
-            condition = "#projectConfiguration.projectId != null")
+    @Caching(evict = {
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null")
+    })
     public ProjectConfigurationDto updateConfiguration(ProjectConfiguration projectConfiguration,
                                                        ProjectConfigurationDto projectConfigurationDto) {
         log.info("Update project configuration: '{}'", projectConfigurationDto);
@@ -436,6 +481,81 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
                 },
                 isEthalonFiles
         );
+    }
+
+    private ProjectConfiguration createDefaultConfiguration(UUID projectId) {
+        Path pathForConfiguration = getProjectPathWithType(projectId, ProjectFileType.MIA_FILE_TYPE_CONFIGURATION, null)
+                .resolve(String.valueOf(System.currentTimeMillis()));
+        Path pathForDefaultConfiguration = miaConfigPath.resolve("project").resolve("default");
+        try {
+            pathForConfiguration.toFile().mkdirs();
+            FileUtils.copyFolder(pathForDefaultConfiguration, pathForConfiguration);
+            ProjectConfiguration defaultProjectConfiguration = loadConfigurationFromFile(
+                    ProjectConfiguration.builder().projectId(projectId).build(), pathForConfiguration, false);
+            log.info("DEFAULT configuration parsed successfully. Save it!");
+            return projectConfigurationRepository.save(defaultProjectConfiguration);
+        } catch (Exception e) {
+            throw new DeserializeJsonConfigFailedException("Failed copy files for DEFAULT project to "
+                    + pathForConfiguration, e.getMessage());
+        } finally {
+            FileUtils.deleteFolder(pathForConfiguration.toFile(), true);
+        }
+    }
+
+    private ProjectConfiguration materializeGeneralConfiguration(ProjectConfiguration configuration) {
+        if (configuration == null) {
+            return null;
+        }
+        Hibernate.initialize(configuration.getCommonConfiguration());
+        if (configuration.getCommonConfiguration() != null) {
+            Hibernate.initialize(configuration.getCommonConfiguration().getCommandShellPrefixes());
+        }
+        Hibernate.initialize(configuration.getHeaderConfiguration());
+        Hibernate.initialize(configuration.getPotHeaderConfiguration());
+        return configuration;
+    }
+
+    private ProjectConfiguration materializeFullConfiguration(ProjectConfiguration configuration) {
+        if (configuration == null) {
+            return null;
+        }
+        materializeGeneralConfiguration(configuration);
+        Hibernate.initialize(configuration.getSections());
+        configuration.getSections().forEach(this::initializeSectionTree);
+        Hibernate.initialize(configuration.getProcesses());
+        configuration.getProcesses().forEach(process -> {
+            Hibernate.initialize(process.getInCompounds());
+            Hibernate.initialize(process.getInSections());
+        });
+        Hibernate.initialize(configuration.getCompounds());
+        configuration.getCompounds().forEach(compound -> {
+            Hibernate.initialize(compound.getProcesses());
+            Hibernate.initialize(compound.getInSections());
+        });
+        Hibernate.initialize(configuration.getDirectories());
+        configuration.getDirectories().forEach(this::initializeDirectoryTree);
+        Hibernate.initialize(configuration.getFiles());
+        configuration.getFiles().forEach(file -> Hibernate.initialize(file.getDirectory()));
+        return configuration;
+    }
+
+    private void initializeSectionTree(SectionConfiguration section) {
+        if (section == null) {
+            return;
+        }
+        Hibernate.initialize(section.getCompounds());
+        Hibernate.initialize(section.getProcesses());
+        Hibernate.initialize(section.getSections());
+        section.getSections().forEach(this::initializeSectionTree);
+    }
+
+    private void initializeDirectoryTree(ProjectDirectory directory) {
+        if (directory == null) {
+            return;
+        }
+        Hibernate.initialize(directory.getFiles());
+        Hibernate.initialize(directory.getDirectories());
+        directory.getDirectories().forEach(this::initializeDirectoryTree);
     }
 
     private ProjectConfiguration loadConfigurationFromFile(ProjectConfiguration projectConfiguration,

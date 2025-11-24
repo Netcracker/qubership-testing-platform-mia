@@ -129,7 +129,7 @@ public class MiaFileService {
             throw new WrongFilePathException(file);
         }
         Path filePathToGet;
-        String ethalonFilesPath = miaContext.getConfig().getCommonConfiguration().getEthalonFilesPath();
+        String ethalonFilesPath = miaContext.getCommonConfiguration().getEthalonFilesPath();
         if (file.contains(ethalonFilesPath)) {
             filePathToGet = miaContext.getProjectPathWithType(ProjectFileType.MIA_FILE_TYPE_PROJECT, null)
                     .resolve("." + file.split(ethalonFilesPath)[1]);

@@ -83,7 +83,7 @@ public class ProcessStatusRepository {
      * Update process status according to log and markers.
      */
     public void parseLogStatus(ExecutionResponse executionResponse) {
-        parseLogStatus(executionResponse, miaContext.getConfig().getCommonConfiguration().getLinesAmount());
+        parseLogStatus(executionResponse, miaContext.getCommonConfiguration().getLinesAmount());
     }
 
     /**

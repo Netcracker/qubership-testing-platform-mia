@@ -33,7 +33,7 @@ import org.qubership.atp.mia.exceptions.businesslogic.ssh.SshChannelsBusyExcepti
 import org.qubership.atp.mia.exceptions.businesslogic.ssh.SshCreateSessionException;
 import org.qubership.atp.mia.exceptions.businesslogic.ssh.SshCreateSessionFailException;
 import org.qubership.atp.mia.exceptions.businesslogic.ssh.SshRsaAddFailedException;
-import org.qubership.atp.mia.model.configuration.CommonConfiguration;
+import org.qubership.atp.mia.service.configuration.snapshot.CommonConfigurationSnapshot;
 import org.qubership.atp.mia.model.environment.ConnectionProps;
 import org.qubership.atp.mia.model.environment.Server;
 import org.qubership.atp.mia.repo.impl.pool.ssh.ChannelType;
@@ -74,7 +74,7 @@ public class SshSession {
      * @param server        with credentials
      * @param configuration used to get SshRsaFilePath field of CommonConfiguration.
      */
-    public SshSession(Server server, CommonConfiguration configuration) {
+    public SshSession(Server server, CommonConfigurationSnapshot configuration) {
         jsch = getJsch(configuration);
         properties = ConnectionProps.forSsh(server);
         channelsCounter = new AtomicInteger();
@@ -90,7 +90,7 @@ public class SshSession {
      *
      * @param configuration - CommonConfiguration.
      */
-    private JSch getJsch(CommonConfiguration configuration) {
+    private JSch getJsch(CommonConfigurationSnapshot configuration) {
         JSch jsch = new JSch();
         if (configuration != null && !Strings.isNullOrEmpty(configuration.getSshRsaFilePath())) {
             rsaFilePath = configuration.getSshRsaFilePath();
@@ -306,7 +306,7 @@ public class SshSession {
      * @param configuration only check sshRsaFilePath field of CommonConfiguration.
      * @return false if not the same.
      */
-    public boolean isSame(Server server, CommonConfiguration configuration) {
+    public boolean isSame(Server server, CommonConfigurationSnapshot configuration) {
         boolean propEq = Objects.equals(ConnectionProps.forSsh(server), properties);
         boolean rsaEq;
         if (configuration == null) {

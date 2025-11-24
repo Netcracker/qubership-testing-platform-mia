@@ -25,11 +25,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.qubership.atp.mia.model.configuration.CommonConfiguration;
 import org.qubership.atp.mia.model.environment.Server;
 import org.qubership.atp.mia.repo.impl.SshConnectionManager;
 import org.qubership.atp.mia.repo.impl.SshSession;
 import org.qubership.atp.mia.service.MiaContext;
+import org.qubership.atp.mia.service.configuration.snapshot.CommonConfigurationSnapshot;
 import org.qubership.atp.mia.utils.Utils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -72,7 +72,7 @@ public class SshSessionPool implements ConnectionPool {
     /**
      * For opening new Ssh connection.
      */
-    private SshSession createSession(Server server, CommonConfiguration config) {
+    private SshSession createSession(Server server, CommonConfigurationSnapshot config) {
         log.debug("Connection is not present in cache. Initiating a new manager for server: {}", server.toString());
         return new SshSession(server, config);
     }
@@ -85,7 +85,7 @@ public class SshSessionPool implements ConnectionPool {
      * @param server        - with ssh server credentials.
      * @param configuration - configuration to configure keystore.
      */
-    public void addTimeShiftSession(Server server, CommonConfiguration configuration) {
+    public void addTimeShiftSession(Server server, CommonConfigurationSnapshot configuration) {
         if (!timeShiftStorage.containsKey(server)) {
             timeShiftStorage.put(server, createSession(server, configuration));
             log.debug("Added timeshift session for server: {}", server);
@@ -133,7 +133,7 @@ public class SshSessionPool implements ConnectionPool {
 
     private SshSession getCommonSession(Server server) {
         log.trace("Trying to get session. Count of connections in storage: [{}]", connectionCache.size());
-        CommonConfiguration commonConfiguration = miaContext.getConfig().getCommonConfiguration();
+        CommonConfigurationSnapshot commonConfiguration = miaContext.getCommonConfiguration();
         SshSession session = connectionCache.get(server);
         if (session == null || !session.isSame(server, commonConfiguration)) {
             session = createSession(server, commonConfiguration);
@@ -148,7 +148,7 @@ public class SshSessionPool implements ConnectionPool {
             SshSession conn = timeShiftStorage.get(server);
             if (conn == null) {
                 log.error("Connection to timeShift is null, but should be open! Reopening...");
-                conn = createSession(server, miaContext.getConfig().getCommonConfiguration());
+                conn = createSession(server, miaContext.getCommonConfiguration());
             } else {
                 log.debug("Found cached and open timeShift session for server: [{}]", server);
             }

@@ -31,13 +31,13 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.javers.core.metamodel.annotation.DiffInclude;
@@ -86,48 +86,48 @@ public class ProjectConfiguration extends DateAuditorEntity {
     private LocalDateTime lastLoadedWhen;
 
     @OneToOne(mappedBy = "projectConfiguration", targetEntity = CommonConfiguration.class, cascade = CascadeType.MERGE,
-            orphanRemoval = true)
+            orphanRemoval = true, fetch = FetchType.LAZY)
     @DiffInclude
     private CommonConfiguration commonConfiguration;
 
     @OneToOne(mappedBy = "projectConfiguration", targetEntity = HeaderConfiguration.class, cascade = CascadeType.MERGE,
-            orphanRemoval = true)
+            orphanRemoval = true, fetch = FetchType.LAZY)
     @DiffInclude
     private HeaderConfiguration headerConfiguration;
 
     @OneToOne(mappedBy = "projectConfiguration", targetEntity = PotHeaderConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @DiffInclude
     private PotHeaderConfiguration potHeaderConfiguration;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = SectionConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     private List<SectionConfiguration> sections;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProcessConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     private List<ProcessConfiguration> processes;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = CompoundConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     private List<CompoundConfiguration> compounds;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProjectDirectory.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     private List<ProjectDirectory> directories;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProjectFile.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     private List<ProjectFile> files;
 
     /**

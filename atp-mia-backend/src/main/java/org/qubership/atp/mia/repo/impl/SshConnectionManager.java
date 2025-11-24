@@ -87,7 +87,7 @@ public class SshConnectionManager {
         sshSession = session;
         properties = session.getProperties();
         externalPrefix = extPrefix;
-        saveFilesToWorkingDir = miaContext.getConfig().getCommonConfiguration().isSaveFilesToWorkingDir();
+        saveFilesToWorkingDir = miaContext.getCommonConfiguration().isSaveFilesToWorkingDir();
         managerInstanceNumber = "ssh_conn_manager_N_" + (instancesCounter.incrementAndGet());
         log.trace("Ssh manager №{} created and has environment properties: {}.", managerInstanceNumber,
                 properties.fullInfo());

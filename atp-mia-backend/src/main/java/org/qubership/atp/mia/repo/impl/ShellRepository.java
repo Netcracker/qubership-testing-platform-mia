@@ -112,7 +112,7 @@ public class ShellRepository {
 
     private String updateCommand(String logFileName, String commandValue, String system) {
         final StringJoiner command =
-                new StringJoiner(miaContext.getConfig().getCommonConfiguration().getCommandShellSeparator());
+                new StringJoiner(miaContext.getCommonConfiguration().getCommandShellSeparator());
         final Map<String, String> params = miaContext.getFlowData().getParameters();
         checkExportGenevaDateIsValid(params);
         miaContext.getShellPrefixes(system).forEach((k, prefixValue) -> {

@@ -88,7 +88,7 @@ public class CompoundService {
                     sseEmitterService.updateResponseAndSendToEmitter(response, sseId, true, 0);
                     return responses;
                 }
-                List<Switcher> systemSwitchersBe = config.getHeaderConfiguration().getSystemSwitchers();
+                List<Switcher> systemSwitchersBe = miaContext.getHeaderConfiguration().getSystemSwitchers();
                 processService.getActualStateOfSwitchers(systemSwitchersBe, request.getSystemSwitchers());
                 boolean stopOnFail = Utils.getSystemSwitcherByName(Constants.SystemSwitcherNames.stopOnFail,
                         systemSwitchersBe).isValue();
