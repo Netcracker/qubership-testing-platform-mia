@@ -82,15 +82,15 @@ public enum CacheKeys {
 
         public static final String AUTH_PROJECTS_KEY = "auth_projects";
 
-        public static final String PROJECTNAME_KEY = "ATP_MIA_PROJECT_NAME";
-        public static final String CONFIGURATION_KEY = "ATP_MIA_CONFIGURATION";
-        public static final String GENERAL_CONFIGURATION_KEY = "ATP_MIA_GENERAL_CONFIGURATION";
-        public static final String ENVIRONMENTS_KEY = "ATP_MIA_ENVIRONMENTS";
-        public static final String ENVIRONMENTS_BY_NAME_KEY = "ATP_MIA_ENVIRONMENTS_BY_NAME";
-        public static final String ENVIRONMENTSFULL_KEY = "ATP_MIA_ENVIRONMENTSFULL";
-        public static final String SYSTEM_NAMES = "ATP_MIA_SYSTEM_NAMES";
-        public static final String MIA_PROJECTS_KEY = "ATP_MIA_PROJECTS";
-        public static final String ATP_MACROS_KEY = "ATP_MIA_MACROS";
+        public static final String PROJECTNAME_KEY = "ATP_MIA_PROJECT_NAME_OS";
+        public static final String CONFIGURATION_KEY = "ATP_MIA_CONFIGURATION_OS";
+        public static final String GENERAL_CONFIGURATION_KEY = "ATP_MIA_GENERAL_CONFIGURATION_OS";
+        public static final String ENVIRONMENTS_KEY = "ATP_MIA_ENVIRONMENTS_OS";
+        public static final String ENVIRONMENTS_BY_NAME_KEY = "ATP_MIA_ENVIRONMENTS_BY_NAME_OS";
+        public static final String ENVIRONMENTSFULL_KEY = "ATP_MIA_ENVIRONMENTSFULL_OS";
+        public static final String SYSTEM_NAMES = "ATP_MIA_SYSTEM_NAMES_OS";
+        public static final String MIA_PROJECTS_KEY = "ATP_MIA_PROJECTS_OS";
+        public static final String ATP_MACROS_KEY = "ATP_MIA_MACROS_OS";
 
     }
 }
