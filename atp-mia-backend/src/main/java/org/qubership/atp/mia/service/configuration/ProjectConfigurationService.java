@@ -155,7 +155,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * @return ProjectConfiguration instance
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = CacheKeys.Constants.CONFIGURATION_KEY_OS, key = "#projectId", condition = "#projectId != null")
+    @Cacheable(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId", condition = "#projectId != null")
     public ProjectConfiguration getConfigByProjectId(UUID projectId) {
         return getConfiguration(projectId);
     }
@@ -184,7 +184,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * @return {@link ProjectGeneralConfigurationSnapshot}
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY_OS, key = "#projectId",
+    @Cacheable(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId",
             condition = "#projectId != null")
     public ProjectGeneralConfigurationSnapshot getGeneralConfigurationSnapshot(UUID projectId) {
         return ProjectGeneralConfigurationSnapshot.from(getGeneralConfiguration(projectId));
@@ -223,9 +223,9 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      */
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY_OS, key = "#projectConfiguration.projectId",
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
                     condition = "#projectConfiguration.projectId != null"),
-            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY_OS, key = "#projectConfiguration.projectId",
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
                     condition = "#projectConfiguration.projectId != null")
     })
     public ProjectConfiguration hardReloadConfiguration(ProjectConfiguration projectConfiguration) {
@@ -239,9 +239,9 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * @return projectConfiguration
      */
     @Caching(evict = {
-            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY_OS, key = "#projectConfiguration.projectId",
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
                     condition = "#projectConfiguration.projectId != null"),
-            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY_OS, key = "#projectConfiguration.projectId",
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
                     condition = "#projectConfiguration.projectId != null")
     })
     public ProjectConfiguration hardReloadConfiguration(ProjectConfiguration projectConfiguration,
@@ -265,9 +265,9 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      */
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY_OS, key = "#projectId",
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId",
                     condition = "#projectId != null"),
-            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY_OS, key = "#projectId",
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId",
                     condition = "#projectId != null")
     })
     public ProjectConfiguration loadConfigFromZip(UUID projectId, MultipartFile file) {
@@ -356,9 +356,9 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      */
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY_OS, key = "#projectId",
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId",
                     condition = "#projectId != null"),
-            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY_OS, key = "#projectId",
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId",
                     condition = "#projectId != null")
     })
     public void removeProject(UUID projectId, Boolean withPot) {
@@ -373,8 +373,8 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * Synchronize project DB and GIT.
      */
     @Caching(evict = {
-            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY_OS, key = "#projectId"),
-            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY_OS, key = "#projectId")
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId"),
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId")
     })
     @Transactional
     public void synchronizeConfiguration(UUID projectId,
@@ -412,9 +412,9 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      */
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY_OS, key = "#projectConfiguration.projectId",
+            @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
                     condition = "#projectConfiguration.projectId != null"),
-            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY_OS, key = "#projectConfiguration.projectId",
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
                     condition = "#projectConfiguration.projectId != null")
     })
     public ProjectConfigurationDto updateConfiguration(ProjectConfiguration projectConfiguration,

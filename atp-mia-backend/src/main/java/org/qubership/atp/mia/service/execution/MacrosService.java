@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MacrosService {
 
-    @Cacheable(value = CacheKeys.Constants.ATP_MACROS_KEY_OS, key = "#projectId", condition = "#projectId!=null",
+    @Cacheable(value = CacheKeys.Constants.ATP_MACROS_KEY, key = "#projectId", condition = "#projectId!=null",
             sync = true)
     public List<Macros> getMacros(UUID projectId, MacrosRepository macrosRepository) {
         return macrosRepository.findByProjectId(projectId);

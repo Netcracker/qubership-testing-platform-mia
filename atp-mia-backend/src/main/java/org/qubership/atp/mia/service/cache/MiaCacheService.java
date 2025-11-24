@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import org.qubership.atp.mia.model.CacheKeys;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -74,7 +76,7 @@ public interface MiaCacheService {
      * @param projectId projectId
      */
     default void clearConfigurationCache(UUID projectId) {
-        Cache cache = cacheManager().getCache(CacheKeys.Constants.CONFIGURATION_KEY_OS);
+        Cache cache = cacheManager().getCache(CacheKeys.Constants.CONFIGURATION_KEY);
         if (cache != null) {
             cache.evictIfPresent(projectId);
         }
