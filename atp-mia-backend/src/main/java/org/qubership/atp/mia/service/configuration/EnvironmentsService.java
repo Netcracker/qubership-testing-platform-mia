@@ -60,7 +60,7 @@ public class EnvironmentsService {
      * @param name      Environment name
      * @return {@link Environment}
      */
-    @Cacheable(value = CacheKeys.Constants.ENVIRONMENTS_BY_NAME_KEY, key = "#projectId.toString() + \"_\" + #name",
+    @Cacheable(value = CacheKeys.Constants.ENVIRONMENTS_BY_NAME_KEY_OS, key = "#projectId.toString() + \"_\" + #name",
             condition = "#projectId!=null", sync = true)
     public Environment getEnvByName(UUID projectId, String name) {
         EnvironmentsWithFilterRequestDto requestDto = new EnvironmentsWithFilterRequestDto()
@@ -80,7 +80,7 @@ public class EnvironmentsService {
     /**
      * Get list environments by ID.
      */
-    @Cacheable(value = CacheKeys.Constants.ENVIRONMENTS_KEY, key = "#projectId", condition = "#projectId!=null")
+    @Cacheable(value = CacheKeys.Constants.ENVIRONMENTS_KEY_OS, key = "#projectId", condition = "#projectId!=null")
     public List<AbstractConfiguratorModel> getEnvironmentsByProject(UUID projectId) {
         return responseEntityConverter.convertList(
                 projectsFeignClient.getEnvironmentsShort(projectId).getBody(),
@@ -94,7 +94,7 @@ public class EnvironmentsService {
      * @param projectId ID of project
      * @return Environment or RuntimeException if environment not found
      */
-    @Cacheable(value = CacheKeys.Constants.ENVIRONMENTSFULL_KEY,
+    @Cacheable(value = CacheKeys.Constants.ENVIRONMENTSFULL_KEY_OS,
             key = "#projectId + \"_\" + #id", condition = "#id!=null")
     public Environment getEnvironmentsFull(UUID id, UUID projectId) {
         try {
@@ -121,7 +121,7 @@ public class EnvironmentsService {
     /**
      * Get projects.
      */
-    @Cacheable(value = CacheKeys.Constants.MIA_PROJECTS_KEY, sync = true)
+    @Cacheable(value = CacheKeys.Constants.MIA_PROJECTS_KEY_OS, sync = true)
     public List<AbstractConfiguratorModel> getProjects() {
         try {
             final List<AbstractConfiguratorModel> projects = responseEntityConverter
@@ -139,7 +139,7 @@ public class EnvironmentsService {
      * @param projectId of project.
      * @return list of systems for selected project.
      */
-    @Cacheable(value = CacheKeys.Constants.SYSTEM_NAMES, key = "#projectId", condition = "#projectId!=null",
+    @Cacheable(value = CacheKeys.Constants.SYSTEM_NAMES_OS, key = "#projectId", condition = "#projectId!=null",
             sync = true)
     public List<SystemEnvironmentsViewDto> getSystemsForProject(UUID projectId) {
         return projectsFeignClient.getAllShortSystemsOnProject(projectId).getBody();

@@ -17,7 +17,7 @@
 
 package org.qubership.atp.mia.kafka.listeners;
 
-import static org.qubership.atp.mia.model.CacheKeys.Constants.PROJECTNAME_KEY;
+import static org.qubership.atp.mia.model.CacheKeys.Constants.PROJECTNAME_KEY_OS;
 
 import org.qubership.atp.mia.kafka.configuration.KafkaConfiguration;
 import org.qubership.atp.mia.kafka.model.notification.ProjectEvent;
@@ -46,7 +46,7 @@ public class ProjectEventKafkaListener {
      * @param projectEvent vent of project
      */
     @Caching(put = {
-            @CachePut(value = PROJECTNAME_KEY, key = "#projectEvent.projectId",
+            @CachePut(value = PROJECTNAME_KEY_OS, key = "#projectEvent.projectId",
                     condition = "#projectEvent!=null&&#projectEvent.projectId!=null")
     })
     @KafkaListener(id = "${kafka.catalog.notification.group}",
