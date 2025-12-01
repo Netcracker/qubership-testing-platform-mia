@@ -48,7 +48,7 @@ public class CandidatesService {
     public List<ExportCandidateDto> getCandidates(UUID projectId) {
         List<ExportCandidateDto> candidates = new ArrayList<>();
         Optional<ProjectConfiguration> projectConfigurationOptional =
-                projectConfigurationService.findByProjectId(projectId);
+                projectConfigurationService.findDetailedByProjectId(projectId);
         if (!projectConfigurationOptional.isPresent()) {
             throw new ProjectNotFoundException(projectId);
         }

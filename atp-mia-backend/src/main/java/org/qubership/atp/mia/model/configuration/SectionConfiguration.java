@@ -30,6 +30,7 @@ import java.util.stream.IntStream;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,10 +45,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.javers.core.metamodel.annotation.DiffIgnore;
@@ -93,33 +93,33 @@ public class SectionConfiguration extends DateAuditorEntity {
     @DiffInclude
     private int place = 0;
 
-    @ManyToOne(targetEntity = SectionConfiguration.class, cascade = CascadeType.MERGE)
+    @ManyToOne(targetEntity = SectionConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffInclude
     private SectionConfiguration parentSection;
 
-    @OneToMany(mappedBy = "parentSection", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parentSection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderColumn(name = "place", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @EqualsAndHashCode.Exclude
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     @DiffInclude
     private List<SectionConfiguration> sections;
 
-    @ManyToMany(targetEntity = CompoundConfiguration.class, cascade = CascadeType.MERGE)
+    @ManyToMany(targetEntity = CompoundConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "project_section_compound_configuration",
             joinColumns = @JoinColumn(name = "section_id"),
             inverseJoinColumns = {@JoinColumn(name = "compound_id")})
     @OrderColumn(name = "place")
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     @DiffInclude
     private List<CompoundConfiguration> compounds = new ArrayList<>();
 
-    @ManyToMany(targetEntity = ProcessConfiguration.class, cascade = CascadeType.MERGE)
+    @ManyToMany(targetEntity = ProcessConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "project_section_process_configuration",
             joinColumns = @JoinColumn(name = "section_id"),
             inverseJoinColumns = {@JoinColumn(name = "process_id")})
@@ -127,11 +127,11 @@ public class SectionConfiguration extends DateAuditorEntity {
     @Fetch(FetchMode.SUBSELECT)
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     @DiffInclude
     private List<ProcessConfiguration> processes = new ArrayList<>();
 
-    @ManyToOne(targetEntity = ProjectConfiguration.class)
+    @ManyToOne(targetEntity = ProjectConfiguration.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

@@ -26,6 +26,19 @@ public enum CacheKeys {
 
     PROJECTNAME_KEY(Constants.PROJECTNAME_KEY, 24, TimeUnit.DAYS, CacheGroups.PROJECTS, true),
     CONFIGURATION_KEY(Constants.CONFIGURATION_KEY, 5, TimeUnit.MINUTES, CacheGroups.PROJECTS, true),
+    GENERAL_CONFIGURATION_KEY(Constants.GENERAL_CONFIGURATION_KEY, 5, TimeUnit.MINUTES, CacheGroups.CONFIGURATION,
+            true),
+    
+    // Lazy loading cache keys for processes and compounds
+    PROCESSES_LIST_KEY(Constants.PROCESSES_LIST_KEY, 1, TimeUnit.HOURS, CacheGroups.CONFIGURATION, true),
+    COMPOUNDS_LIST_KEY(Constants.COMPOUNDS_LIST_KEY, 1, TimeUnit.HOURS, CacheGroups.CONFIGURATION, true),
+    PROCESS_BY_NAME_KEY(Constants.PROCESS_BY_NAME_KEY, 1, TimeUnit.HOURS, CacheGroups.CONFIGURATION, true),
+    COMPOUND_BY_NAME_KEY(Constants.COMPOUND_BY_NAME_KEY, 1, TimeUnit.HOURS, CacheGroups.CONFIGURATION, true),
+    PROCESS_BY_ID_KEY(Constants.PROCESS_BY_ID_KEY, 1, TimeUnit.HOURS, CacheGroups.CONFIGURATION, true),
+    COMPOUND_BY_ID_KEY(Constants.COMPOUND_BY_ID_KEY, 1, TimeUnit.HOURS, CacheGroups.CONFIGURATION, true),
+    PROCESS_IDS_KEY(Constants.PROCESS_IDS_KEY, 2, TimeUnit.HOURS, CacheGroups.CONFIGURATION, true),
+    COMPOUND_IDS_KEY(Constants.COMPOUND_IDS_KEY, 2, TimeUnit.HOURS, CacheGroups.CONFIGURATION, true),
+    
     ENVIRONMENTS_KEY(Constants.ENVIRONMENTS_KEY, 1, TimeUnit.HOURS, CacheGroups.ENVIRONMENT, true),
     ENVIRONMENTS_BY_NAME_KEY(Constants.ENVIRONMENTS_BY_NAME_KEY, 1, TimeUnit.HOURS, CacheGroups.ENVIRONMENT, true),
     ENVIRONMENTSFULL_KEY(Constants.ENVIRONMENTSFULL_KEY, 10, TimeUnit.MINUTES, CacheGroups.ENVIRONMENT, true),
@@ -82,11 +95,24 @@ public enum CacheKeys {
 
         public static final String PROJECTNAME_KEY = "ATP_MIA_PROJECT_NAME_OS";
         public static final String CONFIGURATION_KEY = "ATP_MIA_CONFIGURATION_OS";
+        public static final String GENERAL_CONFIGURATION_KEY = "ATP_MIA_GENERAL_CONFIGURATION_OS";
+        
+        // Lazy loading cache keys
+        public static final String PROCESSES_LIST_KEY = "ATP_MIA_PROCESSES_LIST_OS";
+        public static final String COMPOUNDS_LIST_KEY = "ATP_MIA_COMPOUNDS_LIST_OS";
+        public static final String PROCESS_BY_NAME_KEY = "ATP_MIA_PROCESS_BY_NAME_OS";
+        public static final String COMPOUND_BY_NAME_KEY = "ATP_MIA_COMPOUND_BY_NAME_OS";
+        public static final String PROCESS_BY_ID_KEY = "ATP_MIA_PROCESS_BY_ID_OS";
+        public static final String COMPOUND_BY_ID_KEY = "ATP_MIA_COMPOUND_BY_ID_OS";
+        public static final String PROCESS_IDS_KEY = "ATP_MIA_PROCESS_IDS_OS";
+        public static final String COMPOUND_IDS_KEY = "ATP_MIA_COMPOUND_IDS_OS";
+        
         public static final String ENVIRONMENTS_KEY = "ATP_MIA_ENVIRONMENTS_OS";
         public static final String ENVIRONMENTS_BY_NAME_KEY = "ATP_MIA_ENVIRONMENTS_BY_NAME_OS";
         public static final String ENVIRONMENTSFULL_KEY = "ATP_MIA_ENVIRONMENTSFULL_OS";
         public static final String SYSTEM_NAMES = "ATP_MIA_SYSTEM_NAMES_OS";
         public static final String MIA_PROJECTS_KEY = "ATP_MIA_PROJECTS_OS";
         public static final String ATP_MACROS_KEY = "ATP_MIA_MACROS_OS";
+
     }
 }

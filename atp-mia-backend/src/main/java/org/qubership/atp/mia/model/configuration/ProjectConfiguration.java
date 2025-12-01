@@ -31,13 +31,13 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.javers.core.metamodel.annotation.DiffInclude;
@@ -47,6 +47,9 @@ import org.qubership.atp.mia.model.DateAuditorEntity;
 import org.qubership.atp.mia.model.exception.MiaException;
 import org.qubership.atp.mia.model.file.ProjectDirectory;
 import org.qubership.atp.mia.model.file.ProjectFile;
+import org.qubership.atp.mia.service.configuration.LazyConfigurationLoader;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -86,49 +89,69 @@ public class ProjectConfiguration extends DateAuditorEntity {
     private LocalDateTime lastLoadedWhen;
 
     @OneToOne(mappedBy = "projectConfiguration", targetEntity = CommonConfiguration.class, cascade = CascadeType.MERGE,
-            orphanRemoval = true)
+            orphanRemoval = true, fetch = FetchType.LAZY)
     @DiffInclude
     private CommonConfiguration commonConfiguration;
 
     @OneToOne(mappedBy = "projectConfiguration", targetEntity = HeaderConfiguration.class, cascade = CascadeType.MERGE,
-            orphanRemoval = true)
+            orphanRemoval = true, fetch = FetchType.LAZY)
     @DiffInclude
     private HeaderConfiguration headerConfiguration;
 
     @OneToOne(mappedBy = "projectConfiguration", targetEntity = PotHeaderConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @DiffInclude
     private PotHeaderConfiguration potHeaderConfiguration;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = SectionConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     private List<SectionConfiguration> sections;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProcessConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
+    @JsonIgnore  // Не отдавать в JSON напрямую, использовать DTO
     private List<ProcessConfiguration> processes;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = CompoundConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
+    @JsonIgnore  // Не отдавать в JSON напрямую, использовать DTO
     private List<CompoundConfiguration> compounds;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProjectDirectory.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     private List<ProjectDirectory> directories;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProjectFile.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 50)
     private List<ProjectFile> files;
+
+    /**
+     * Сервис для ленивой загрузки процессов и компаундов.
+     * Инжектируется через BeanPostProcessor после создания/десериализации.
+     * Не сохраняется в БД (transient) и не сериализуется в JSON.
+     */
+    @JsonIgnore
+    private transient LazyConfigurationLoader lazyLoader;
+
+    /**
+     * Установить LazyConfigurationLoader для ленивой загрузки коллекций.
+     * Вызывается автоматически после создания/десериализации entity.
+     * 
+     * @param lazyLoader сервис для загрузки
+     */
+    public void setLazyLoader(LazyConfigurationLoader lazyLoader) {
+        this.lazyLoader = lazyLoader;
+    }
 
     /**
      * Gets root sections.
@@ -185,23 +208,37 @@ public class ProjectConfiguration extends DateAuditorEntity {
     }
 
     /**
-     * Gets compound by name.
+     * Gets compound by name с использованием оптимизированного запроса.
+     * Если доступен LazyConfigurationLoader, использует прямой запрос в БД,
+     * иначе ищет в загруженной коллекции.
      *
      * @param compoundName compound name
      * @return Compound
      */
     public Optional<CompoundConfiguration> getCompoundByNameSafe(String compoundName) {
-        return compounds.stream().filter(p -> p.getName().equals(compoundName)).findAny();
+        if (lazyLoader != null && projectId != null) {
+            // Оптимизированный запрос напрямую, без загрузки всего списка
+            log.debug("Lazy loading compound '{}' for project {}", compoundName, projectId);
+            return lazyLoader.loadCompoundByName(projectId, compoundName);
+        }
+        // Fallback: ищем в уже загруженной коллекции
+        return getCompounds().stream().filter(p -> p.getName().equals(compoundName)).findAny();
     }
 
     /**
-     * Getter for compounds.
+     * Getter for compounds с ленивой загрузкой.
+     * Если компаунды еще не загружены, загружает их через LazyConfigurationLoader.
      *
      * @return compounds
      */
     public List<CompoundConfiguration> getCompounds() {
         if (compounds == null) {
-            compounds = new ArrayList<>();
+            if (lazyLoader != null && projectId != null) {
+                log.debug("Lazy loading compounds for project {}", projectId);
+                compounds = lazyLoader.loadCompounds(projectId);
+            } else {
+                compounds = new ArrayList<>();
+            }
         }
         return compounds;
     }
@@ -267,23 +304,37 @@ public class ProjectConfiguration extends DateAuditorEntity {
     }
 
     /**
-     * Gets process by name.
+     * Gets process by name с использованием оптимизированного запроса.
+     * Если доступен LazyConfigurationLoader, использует прямой запрос в БД,
+     * иначе ищет в загруженной коллекции.
      *
      * @param processName process name
      * @return Process
      */
     public Optional<ProcessConfiguration> getProcessByNameSafe(String processName) {
-        return processes.stream().filter(p -> p.getName().equals(processName)).findAny();
+        if (lazyLoader != null && projectId != null) {
+            // Оптимизированный запрос напрямую, без загрузки всего списка
+            log.debug("Lazy loading process '{}' for project {}", processName, projectId);
+            return lazyLoader.loadProcessByName(projectId, processName);
+        }
+        // Fallback: ищем в уже загруженной коллекции
+        return getProcesses().stream().filter(p -> p.getName().equals(processName)).findAny();
     }
 
     /**
-     * Getter for processes.
+     * Getter for processes с ленивой загрузкой.
+     * Если процессы еще не загружены, загружает их через LazyConfigurationLoader.
      *
      * @return processes
      */
     public List<ProcessConfiguration> getProcesses() {
         if (processes == null) {
-            processes = new ArrayList<>();
+            if (lazyLoader != null && projectId != null) {
+                log.debug("Lazy loading processes for project {}", projectId);
+                processes = lazyLoader.loadProcesses(projectId);
+            } else {
+                processes = new ArrayList<>();
+            }
         }
         return processes;
     }

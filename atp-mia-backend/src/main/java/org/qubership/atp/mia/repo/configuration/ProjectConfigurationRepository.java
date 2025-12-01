@@ -17,10 +17,12 @@
 
 package org.qubership.atp.mia.repo.configuration;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.javers.spring.annotation.JaversSpringDataAuditable;
 import org.qubership.atp.mia.model.configuration.ProjectConfiguration;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -31,6 +33,22 @@ import org.springframework.stereotype.Repository;
 public interface ProjectConfigurationRepository extends CrudRepository<ProjectConfiguration, UUID> {
 
     void deleteByProjectId(UUID projectId);
+
+    @EntityGraph(attributePaths = {
+            "commonConfiguration",
+            "commonConfiguration.commandShellPrefixes",
+            "headerConfiguration",
+            "potHeaderConfiguration"
+    })
+    Optional<ProjectConfiguration> findDetailedByProjectId(UUID projectId);
+
+    @EntityGraph(attributePaths = {
+            "commonConfiguration",
+            "commonConfiguration.commandShellPrefixes",
+            "headerConfiguration",
+            "potHeaderConfiguration"
+    })
+    Optional<ProjectConfiguration> findGeneralByProjectId(UUID projectId);
 
     @Modifying
     @Query(value = "SET session_replication_role = 'replica'", nativeQuery = true)

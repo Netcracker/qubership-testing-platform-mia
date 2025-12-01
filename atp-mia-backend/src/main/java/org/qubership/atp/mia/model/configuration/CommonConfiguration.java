@@ -26,14 +26,14 @@ import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
@@ -110,10 +110,10 @@ public class CommonConfiguration implements Serializable {
     @DiffInclude
     private String commandShellSeparator = "\n";
     @OneToMany(mappedBy = "commonConfiguration", targetEntity = CommandPrefix.class, cascade = CascadeType.MERGE,
-            orphanRemoval = true)
+            orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @BatchSize(size = 25)
     @DiffInclude
     private List<CommandPrefix> commandShellPrefixes = new ArrayList<>();
     @Column(name = "geneva_date_mask")
@@ -127,7 +127,7 @@ public class CommonConfiguration implements Serializable {
     @Builder.Default
     @DiffInclude
     private int linesAmount = 3;
-    @OneToOne(targetEntity = ProjectConfiguration.class, cascade = CascadeType.MERGE)
+    @OneToOne(targetEntity = ProjectConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

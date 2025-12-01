@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -64,7 +65,7 @@ public class CommandPrefix implements Serializable {
     @Type(type = "jsonb")
     private LinkedHashMap<String, String> prefixes;
 
-    @ManyToOne(targetEntity = CommonConfiguration.class, optional = false)
+    @ManyToOne(targetEntity = CommonConfiguration.class, optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", insertable = false, updatable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

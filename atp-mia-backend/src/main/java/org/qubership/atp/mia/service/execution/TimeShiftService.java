@@ -73,7 +73,7 @@ public class TimeShiftService {
             Server server = miaContext.getFlowData()
                     .getSystem(system.get().getName()).getServer(Server.ConnectionType.SSH);
             if (value) {
-                sshSessionPool.addTimeShiftSession(server, miaContext.getConfig().getCommonConfiguration());
+                sshSessionPool.addTimeShiftSession(server, miaContext.getCommonConfiguration());
             } else {
                 sshSessionPool.removeTimeShiftSession(server);
             }

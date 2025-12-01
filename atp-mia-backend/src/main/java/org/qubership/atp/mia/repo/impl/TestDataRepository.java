@@ -54,6 +54,7 @@ import org.qubership.atp.mia.model.impl.testdata.parsed.ValidateValue;
 import org.qubership.atp.mia.model.impl.testdata.parsed.ValidatedParameters;
 import org.qubership.atp.mia.repo.ContextRepository;
 import org.qubership.atp.mia.service.MiaContext;
+import org.qubership.atp.mia.service.configuration.snapshot.CommonConfigurationSnapshot;
 import org.qubership.atp.mia.service.execution.RestExecutionHelperService;
 import org.qubership.atp.mia.service.execution.SoapExecutionHelperService;
 import org.qubership.atp.mia.service.execution.SqlExecutionHelperService;
@@ -105,8 +106,8 @@ public class TestDataRepository {
         String fileName = null;
         final Map<String, String> params = getParametersFromDescriptions(descrM, descrS);
         params.putAll(contextRepository.getContext().getParameters());
-        final CommonConfiguration cConf = miaContext.getConfig().getCommonConfiguration();
-        if (command.getTestDataParams().isEventFileForEachDescription() || templates.size() == 0) {
+        final CommonConfigurationSnapshot cConf = miaContext.getCommonConfiguration();
+        if (command.getTestDataParams().isEventFileForEachDescription() || templates.isEmpty()) {
             final String ethalonFile = miaContext.evaluate(command.getTestDataParams().getEventFileTemplate(), params);
             final String toGeneration = miaContext.evaluate(command.getNamesOfFilesForGeneration().get(0), params);
             fileName = toGeneration;
@@ -117,7 +118,7 @@ public class TestDataRepository {
                 getTestDataWorkbook());
         descrM.addOtherParam(command.getTestDataParams().getColumnNameForGeneratedFileExtension(),
                 command.getFileExtension(), getTestDataWorkbook());
-        templates.getLast().evaluateTemplate(command, cConf, params);
+        templates.getLast().evaluateTemplate(command, cConf.getVariableFormat(), params);
     }
 
     /**
