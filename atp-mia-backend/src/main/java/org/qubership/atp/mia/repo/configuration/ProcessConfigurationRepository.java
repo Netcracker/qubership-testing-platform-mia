@@ -33,48 +33,48 @@ import org.springframework.stereotype.Repository;
 public interface ProcessConfigurationRepository extends CrudRepository<ProcessConfiguration, UUID> {
 
     /**
-     * Найти все процессы для проекта
+     * Find all processes for a project
      * 
-     * @param projectId ID проекта
-     * @return список процессов
+     * @param projectId project ID
+     * @return list of processes
      */
     @Query("SELECT p FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId")
     List<ProcessConfiguration> findByProjectId(@Param("projectId") UUID projectId);
 
     /**
-     * Найти процесс по имени для проекта
+     * Find process by name for a project
      * 
-     * @param projectId ID проекта
-     * @param name имя процесса
-     * @return Optional с процессом
+     * @param projectId project ID
+     * @param name process name
+     * @return Optional with process
      */
     @Query("SELECT p FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId AND p.name = :name")
     Optional<ProcessConfiguration> findByProjectIdAndName(@Param("projectId") UUID projectId, @Param("name") String name);
 
     /**
-     * Найти процесс по ID для проекта (с проверкой принадлежности)
+     * Find process by ID for a project (with ownership check)
      * 
-     * @param projectId ID проекта
-     * @param processId ID процесса
-     * @return Optional с процессом
+     * @param projectId project ID
+     * @param processId process ID
+     * @return Optional with process
      */
     @Query("SELECT p FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId AND p.id = :processId")
     Optional<ProcessConfiguration> findByProjectIdAndId(@Param("projectId") UUID projectId, @Param("processId") UUID processId);
 
     /**
-     * Получить список ID всех процессов проекта (легковесный запрос)
+     * Get list of all process IDs for a project (lightweight query)
      * 
-     * @param projectId ID проекта
-     * @return список ID
+     * @param projectId project ID
+     * @return list of IDs
      */
     @Query("SELECT p.id FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId")
     List<UUID> findIdsByProjectId(@Param("projectId") UUID projectId);
 
     /**
-     * Получить список имен всех процессов проекта (легковесный запрос)
+     * Get list of all process names for a project (lightweight query)
      * 
-     * @param projectId ID проекта
-     * @return список имен
+     * @param projectId project ID
+     * @return list of names
      */
     @Query("SELECT p.name FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId")
     List<String> findNamesByProjectId(@Param("projectId") UUID projectId);

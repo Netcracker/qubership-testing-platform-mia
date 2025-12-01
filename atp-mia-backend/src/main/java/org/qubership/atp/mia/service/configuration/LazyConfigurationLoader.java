@@ -34,8 +34,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Сервис для ленивой загрузки процессов и компаундов.
- * Использует кэширование для минимизации обращений к БД.
+ * Service for lazy loading of processes and compounds.
+ * Uses caching to minimize database queries.
  */
 @Service
 @Slf4j
@@ -46,10 +46,10 @@ public class LazyConfigurationLoader {
     private final CompoundConfigurationRepository compoundRepository;
     
     /**
-     * Загрузить все процессы для проекта с кэшированием
+     * Load all processes for a project with caching
      * 
-     * @param projectId ID проекта
-     * @return список процессов
+     * @param projectId project ID
+     * @return list of processes
      */
     @Cacheable(value = CacheKeys.Constants.PROCESSES_LIST_KEY, key = "#projectId", 
                condition = "#projectId != null")
@@ -60,10 +60,10 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Загрузить все компаунды для проекта с кэшированием
+     * Load all compounds for a project with caching
      * 
-     * @param projectId ID проекта
-     * @return список компаундов
+     * @param projectId project ID
+     * @return list of compounds
      */
     @Cacheable(value = CacheKeys.Constants.COMPOUNDS_LIST_KEY, key = "#projectId",
                condition = "#projectId != null")
@@ -74,11 +74,11 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Загрузить процесс по имени с кэшированием
+     * Load process by name with caching
      * 
-     * @param projectId ID проекта
-     * @param processName имя процесса
-     * @return Optional с процессом
+     * @param projectId project ID
+     * @param processName process name
+     * @return Optional with process
      */
     @Cacheable(value = CacheKeys.Constants.PROCESS_BY_NAME_KEY, 
                key = "#projectId + '_' + #processName",
@@ -90,11 +90,11 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Загрузить компаунд по имени с кэшированием
+     * Load compound by name with caching
      * 
-     * @param projectId ID проекта
-     * @param compoundName имя компаунда
-     * @return Optional с компаундом
+     * @param projectId project ID
+     * @param compoundName compound name
+     * @return Optional with compound
      */
     @Cacheable(value = CacheKeys.Constants.COMPOUND_BY_NAME_KEY,
                key = "#projectId + '_' + #compoundName",
@@ -106,11 +106,11 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Загрузить процесс по ID с кэшированием
+     * Load process by ID with caching
      * 
-     * @param projectId ID проекта
-     * @param processId ID процесса
-     * @return Optional с процессом
+     * @param projectId project ID
+     * @param processId process ID
+     * @return Optional with process
      */
     @Cacheable(value = CacheKeys.Constants.PROCESS_BY_ID_KEY,
                key = "#projectId + '_' + #processId",
@@ -122,11 +122,11 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Загрузить компаунд по ID с кэшированием
+     * Load compound by ID with caching
      * 
-     * @param projectId ID проекта
-     * @param compoundId ID компаунда
-     * @return Optional с компаундом
+     * @param projectId project ID
+     * @param compoundId compound ID
+     * @return Optional with compound
      */
     @Cacheable(value = CacheKeys.Constants.COMPOUND_BY_ID_KEY,
                key = "#projectId + '_' + #compoundId",
@@ -138,10 +138,10 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Получить только ID процессов (легковесный запрос, без полной загрузки entity)
+     * Get only process IDs (lightweight query, without full entity loading)
      * 
-     * @param projectId ID проекта
-     * @return список ID
+     * @param projectId project ID
+     * @return list of IDs
      */
     @Cacheable(value = CacheKeys.Constants.PROCESS_IDS_KEY, key = "#projectId",
                condition = "#projectId != null")
@@ -152,10 +152,10 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Получить только ID компаундов (легковесный запрос, без полной загрузки entity)
+     * Get only compound IDs (lightweight query, without full entity loading)
      * 
-     * @param projectId ID проекта
-     * @return список ID
+     * @param projectId project ID
+     * @return list of IDs
      */
     @Cacheable(value = CacheKeys.Constants.COMPOUND_IDS_KEY, key = "#projectId",
                condition = "#projectId != null")

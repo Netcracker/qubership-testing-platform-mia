@@ -113,14 +113,14 @@ public class ProjectConfiguration extends DateAuditorEntity {
             cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @BatchSize(size = 50)
-    @JsonIgnore  // Не отдавать в JSON напрямую, использовать DTO
+    @JsonIgnore  // Do not return directly in JSON, use DTOs
     private List<ProcessConfiguration> processes;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = CompoundConfiguration.class,
             cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @BatchSize(size = 50)
-    @JsonIgnore  // Не отдавать в JSON напрямую, использовать DTO
+    @JsonIgnore  // Do not return directly in JSON, use DTOs
     private List<CompoundConfiguration> compounds;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProjectDirectory.class,
@@ -136,18 +136,18 @@ public class ProjectConfiguration extends DateAuditorEntity {
     private List<ProjectFile> files;
 
     /**
-     * Сервис для ленивой загрузки процессов и компаундов.
-     * Инжектируется через BeanPostProcessor после создания/десериализации.
-     * Не сохраняется в БД (transient) и не сериализуется в JSON.
+     * Service for lazy loading of processes and compounds.
+     * Injected via BeanPostProcessor after entity creation/deserialization.
+     * Not persisted to DB (transient) and not serialized to JSON.
      */
     @JsonIgnore
     private transient LazyConfigurationLoader lazyLoader;
 
     /**
-     * Установить LazyConfigurationLoader для ленивой загрузки коллекций.
-     * Вызывается автоматически после создания/десериализации entity.
+     * Set LazyConfigurationLoader for lazy loading of collections.
+     * Called automatically after entity creation/deserialization.
      * 
-     * @param lazyLoader сервис для загрузки
+     * @param lazyLoader service for loading
      */
     public void setLazyLoader(LazyConfigurationLoader lazyLoader) {
         this.lazyLoader = lazyLoader;
@@ -208,26 +208,26 @@ public class ProjectConfiguration extends DateAuditorEntity {
     }
 
     /**
-     * Gets compound by name с использованием оптимизированного запроса.
-     * Если доступен LazyConfigurationLoader, использует прямой запрос в БД,
-     * иначе ищет в загруженной коллекции.
+     * Gets compound by name using optimized query.
+     * If LazyConfigurationLoader is available, uses direct DB query,
+     * otherwise searches in loaded collection.
      *
      * @param compoundName compound name
      * @return Compound
      */
     public Optional<CompoundConfiguration> getCompoundByNameSafe(String compoundName) {
         if (lazyLoader != null && projectId != null) {
-            // Оптимизированный запрос напрямую, без загрузки всего списка
+            // Optimized direct query without loading entire list
             log.debug("Lazy loading compound '{}' for project {}", compoundName, projectId);
             return lazyLoader.loadCompoundByName(projectId, compoundName);
         }
-        // Fallback: ищем в уже загруженной коллекции
+        // Fallback: search in already loaded collection
         return getCompounds().stream().filter(p -> p.getName().equals(compoundName)).findAny();
     }
 
     /**
-     * Getter for compounds с ленивой загрузкой.
-     * Если компаунды еще не загружены, загружает их через LazyConfigurationLoader.
+     * Getter for compounds with lazy loading.
+     * If compounds are not yet loaded, loads them via LazyConfigurationLoader.
      *
      * @return compounds
      */
@@ -304,26 +304,26 @@ public class ProjectConfiguration extends DateAuditorEntity {
     }
 
     /**
-     * Gets process by name с использованием оптимизированного запроса.
-     * Если доступен LazyConfigurationLoader, использует прямой запрос в БД,
-     * иначе ищет в загруженной коллекции.
+     * Gets process by name using optimized query.
+     * If LazyConfigurationLoader is available, uses direct DB query,
+     * otherwise searches in loaded collection.
      *
      * @param processName process name
      * @return Process
      */
     public Optional<ProcessConfiguration> getProcessByNameSafe(String processName) {
         if (lazyLoader != null && projectId != null) {
-            // Оптимизированный запрос напрямую, без загрузки всего списка
+            // Optimized direct query without loading entire list
             log.debug("Lazy loading process '{}' for project {}", processName, projectId);
             return lazyLoader.loadProcessByName(projectId, processName);
         }
-        // Fallback: ищем в уже загруженной коллекции
+        // Fallback: search in already loaded collection
         return getProcesses().stream().filter(p -> p.getName().equals(processName)).findAny();
     }
 
     /**
-     * Getter for processes с ленивой загрузкой.
-     * Если процессы еще не загружены, загружает их через LazyConfigurationLoader.
+     * Getter for processes with lazy loading.
+     * If processes are not yet loaded, loads them via LazyConfigurationLoader.
      *
      * @return processes
      */

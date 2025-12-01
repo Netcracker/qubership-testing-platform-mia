@@ -33,48 +33,48 @@ import org.springframework.stereotype.Repository;
 public interface CompoundConfigurationRepository extends CrudRepository<CompoundConfiguration, UUID> {
 
     /**
-     * Найти все компаунды для проекта
+     * Find all compounds for a project
      * 
-     * @param projectId ID проекта
-     * @return список компаундов
+     * @param projectId project ID
+     * @return list of compounds
      */
     @Query("SELECT c FROM CompoundConfiguration c WHERE c.projectConfiguration.projectId = :projectId")
     List<CompoundConfiguration> findByProjectId(@Param("projectId") UUID projectId);
 
     /**
-     * Найти компаунд по имени для проекта
+     * Find compound by name for a project
      * 
-     * @param projectId ID проекта
-     * @param name имя компаунда
-     * @return Optional с компаундом
+     * @param projectId project ID
+     * @param name compound name
+     * @return Optional with compound
      */
     @Query("SELECT c FROM CompoundConfiguration c WHERE c.projectConfiguration.projectId = :projectId AND c.name = :name")
     Optional<CompoundConfiguration> findByProjectIdAndName(@Param("projectId") UUID projectId, @Param("name") String name);
 
     /**
-     * Найти компаунд по ID для проекта (с проверкой принадлежности)
+     * Find compound by ID for a project (with ownership check)
      * 
-     * @param projectId ID проекта
-     * @param compoundId ID компаунда
-     * @return Optional с компаундом
+     * @param projectId project ID
+     * @param compoundId compound ID
+     * @return Optional with compound
      */
     @Query("SELECT c FROM CompoundConfiguration c WHERE c.projectConfiguration.projectId = :projectId AND c.id = :compoundId")
     Optional<CompoundConfiguration> findByProjectIdAndId(@Param("projectId") UUID projectId, @Param("compoundId") UUID compoundId);
 
     /**
-     * Получить список ID всех компаундов проекта (легковесный запрос)
+     * Get list of all compound IDs for a project (lightweight query)
      * 
-     * @param projectId ID проекта
-     * @return список ID
+     * @param projectId project ID
+     * @return list of IDs
      */
     @Query("SELECT c.id FROM CompoundConfiguration c WHERE c.projectConfiguration.projectId = :projectId")
     List<UUID> findIdsByProjectId(@Param("projectId") UUID projectId);
 
     /**
-     * Получить список имен всех компаундов проекта (легковесный запрос)
+     * Get list of all compound names for a project (lightweight query)
      * 
-     * @param projectId ID проекта
-     * @return список имен
+     * @param projectId project ID
+     * @return list of names
      */
     @Query("SELECT c.name FROM CompoundConfiguration c WHERE c.projectConfiguration.projectId = :projectId")
     List<String> findNamesByProjectId(@Param("projectId") UUID projectId);

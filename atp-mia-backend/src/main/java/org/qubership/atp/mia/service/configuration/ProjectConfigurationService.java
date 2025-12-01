@@ -598,11 +598,11 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
         Hibernate.initialize(configuration.getSections());
         configuration.getSections().forEach(this::initializeSectionTree);
         
-        // ВАЖНО: НЕ инициализируем processes и compounds здесь!
-        // Они будут загружаться по требованию через LazyConfigurationLoader
-        // Это критично для избежания OOM при больших конфигурациях
-        // Hibernate.initialize(configuration.getProcesses()); // УБРАНО - lazy loading!
-        // Hibernate.initialize(configuration.getCompounds()); // УБРАНО - lazy loading!
+        // IMPORTANT: DO NOT initialize processes and compounds here!
+        // They will be loaded on demand via LazyConfigurationLoader
+        // This is critical to avoid OOM with large configurations
+        // Hibernate.initialize(configuration.getProcesses()); // REMOVED - lazy loading!
+        // Hibernate.initialize(configuration.getCompounds()); // REMOVED - lazy loading!
         
         Hibernate.initialize(configuration.getDirectories());
         configuration.getDirectories().forEach(this::initializeDirectoryTree);
@@ -615,9 +615,9 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
         if (section == null) {
             return;
         }
-        // НЕ инициализируем compounds и processes - они будут загружены по требованию
-        // Hibernate.initialize(section.getCompounds()); // УБРАНО - lazy loading!
-        // Hibernate.initialize(section.getProcesses()); // УБРАНО - lazy loading!
+        // DO NOT initialize compounds and processes - they will be loaded on demand
+        // Hibernate.initialize(section.getCompounds()); // REMOVED - lazy loading!
+        // Hibernate.initialize(section.getProcesses()); // REMOVED - lazy loading!
         Hibernate.initialize(section.getSections());
         section.getSections().forEach(this::initializeSectionTree);
     }

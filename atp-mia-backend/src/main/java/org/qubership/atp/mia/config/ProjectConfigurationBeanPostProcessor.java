@@ -27,11 +27,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Post-processor для внедрения LazyConfigurationLoader в ProjectConfiguration 
- * после создания или десериализации из кэша.
+ * Post-processor for injecting LazyConfigurationLoader into ProjectConfiguration 
+ * after creation or deserialization from cache.
  * 
- * Этот компонент автоматически инжектирует LazyConfigurationLoader во все экземпляры
- * ProjectConfiguration, чтобы они могли выполнять ленивую загрузку процессов и компаундов.
+ * This component automatically injects LazyConfigurationLoader into all instances
+ * of ProjectConfiguration so they can perform lazy loading of processes and compounds.
  */
 @Component
 @RequiredArgsConstructor
@@ -41,12 +41,12 @@ public class ProjectConfigurationBeanPostProcessor implements BeanPostProcessor 
     private final LazyConfigurationLoader lazyConfigurationLoader;
     
     /**
-     * Инжектирует LazyConfigurationLoader в ProjectConfiguration после его создания.
+     * Injects LazyConfigurationLoader into ProjectConfiguration after its creation.
      * 
-     * @param bean создаваемый bean
-     * @param beanName имя bean
-     * @return bean с внедренным LazyConfigurationLoader (если это ProjectConfiguration)
-     * @throws BeansException в случае ошибки
+     * @param bean the bean being created
+     * @param beanName the bean name
+     * @return bean with injected LazyConfigurationLoader (if it's a ProjectConfiguration)
+     * @throws BeansException in case of errors
      */
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
