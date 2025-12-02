@@ -226,7 +226,20 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
             @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
                     condition = "#projectConfiguration.projectId != null"),
             @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
-                    condition = "#projectConfiguration.projectId != null")
+                    condition = "#projectConfiguration.projectId != null"),
+            // Evict lazy loading caches
+            @CacheEvict(value = CacheKeys.Constants.PROCESSES_LIST_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUNDS_LIST_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_IDS_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_IDS_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_ID_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_ID_KEY, allEntries = true)
     })
     public ProjectConfiguration hardReloadConfiguration(ProjectConfiguration projectConfiguration) {
         return hardReloadConfiguration(projectConfiguration, false);
@@ -242,7 +255,20 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
             @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
                     condition = "#projectConfiguration.projectId != null"),
             @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
-                    condition = "#projectConfiguration.projectId != null")
+                    condition = "#projectConfiguration.projectId != null"),
+            // Evict lazy loading caches
+            @CacheEvict(value = CacheKeys.Constants.PROCESSES_LIST_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUNDS_LIST_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_IDS_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_IDS_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_ID_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_ID_KEY, allEntries = true)
     })
     public ProjectConfiguration hardReloadConfiguration(ProjectConfiguration projectConfiguration,
                                                         boolean isMigration) {
@@ -268,7 +294,20 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
             @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId",
                     condition = "#projectId != null"),
             @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId",
-                    condition = "#projectId != null")
+                    condition = "#projectId != null"),
+            // Evict lazy loading caches
+            @CacheEvict(value = CacheKeys.Constants.PROCESSES_LIST_KEY, key = "#projectId",
+                    condition = "#projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUNDS_LIST_KEY, key = "#projectId",
+                    condition = "#projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_IDS_KEY, key = "#projectId",
+                    condition = "#projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_IDS_KEY, key = "#projectId",
+                    condition = "#projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_ID_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_ID_KEY, allEntries = true)
     })
     public ProjectConfiguration loadConfigFromZip(UUID projectId, MultipartFile file) {
         File archivePath = null;
@@ -359,7 +398,20 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
             @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId",
                     condition = "#projectId != null"),
             @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId",
-                    condition = "#projectId != null")
+                    condition = "#projectId != null"),
+            // Evict lazy loading caches
+            @CacheEvict(value = CacheKeys.Constants.PROCESSES_LIST_KEY, key = "#projectId",
+                    condition = "#projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUNDS_LIST_KEY, key = "#projectId",
+                    condition = "#projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_IDS_KEY, key = "#projectId",
+                    condition = "#projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_IDS_KEY, key = "#projectId",
+                    condition = "#projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_ID_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_ID_KEY, allEntries = true)
     })
     public void removeProject(UUID projectId, Boolean withPot) {
         projectConfigurationRepository.deleteByProjectId(projectId);
@@ -374,7 +426,17 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      */
     @Caching(evict = {
             @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId"),
-            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId")
+            @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectId"),
+            // Evict lazy loading caches
+            @CacheEvict(value = CacheKeys.Constants.PROCESSES_LIST_KEY, key = "#projectId"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUNDS_LIST_KEY, key = "#projectId"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_IDS_KEY, key = "#projectId"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_IDS_KEY, key = "#projectId"),
+            // Evict all process/compound by name/id caches (allEntries = true)
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_ID_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_ID_KEY, allEntries = true)
     })
     @Transactional
     public void synchronizeConfiguration(UUID projectId,
@@ -415,7 +477,20 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
             @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
                     condition = "#projectConfiguration.projectId != null"),
             @CacheEvict(value = CacheKeys.Constants.GENERAL_CONFIGURATION_KEY, key = "#projectConfiguration.projectId",
-                    condition = "#projectConfiguration.projectId != null")
+                    condition = "#projectConfiguration.projectId != null"),
+            // Evict lazy loading caches
+            @CacheEvict(value = CacheKeys.Constants.PROCESSES_LIST_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUNDS_LIST_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_IDS_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_IDS_KEY, key = "#projectConfiguration.projectId",
+                    condition = "#projectConfiguration.projectId != null"),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_NAME_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.PROCESS_BY_ID_KEY, allEntries = true),
+            @CacheEvict(value = CacheKeys.Constants.COMPOUND_BY_ID_KEY, allEntries = true)
     })
     public ProjectConfigurationDto updateConfiguration(ProjectConfiguration projectConfiguration,
                                                        ProjectConfigurationDto projectConfigurationDto) {
@@ -522,16 +597,13 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
         materializeGeneralConfiguration(configuration);
         Hibernate.initialize(configuration.getSections());
         configuration.getSections().forEach(this::initializeSectionTree);
-        Hibernate.initialize(configuration.getProcesses());
-        configuration.getProcesses().forEach(process -> {
-            Hibernate.initialize(process.getInCompounds());
-            Hibernate.initialize(process.getInSections());
-        });
-        Hibernate.initialize(configuration.getCompounds());
-        configuration.getCompounds().forEach(compound -> {
-            Hibernate.initialize(compound.getProcesses());
-            Hibernate.initialize(compound.getInSections());
-        });
+        
+        // IMPORTANT: DO NOT initialize processes and compounds here!
+        // They will be loaded on demand via LazyConfigurationLoader
+        // This is critical to avoid OOM with large configurations
+        // Hibernate.initialize(configuration.getProcesses()); // REMOVED - lazy loading!
+        // Hibernate.initialize(configuration.getCompounds()); // REMOVED - lazy loading!
+        
         Hibernate.initialize(configuration.getDirectories());
         configuration.getDirectories().forEach(this::initializeDirectoryTree);
         Hibernate.initialize(configuration.getFiles());
@@ -543,8 +615,9 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
         if (section == null) {
             return;
         }
-        Hibernate.initialize(section.getCompounds());
-        Hibernate.initialize(section.getProcesses());
+        // DO NOT initialize compounds and processes - they will be loaded on demand
+        // Hibernate.initialize(section.getCompounds()); // REMOVED - lazy loading!
+        // Hibernate.initialize(section.getProcesses()); // REMOVED - lazy loading!
         Hibernate.initialize(section.getSections());
         section.getSections().forEach(this::initializeSectionTree);
     }

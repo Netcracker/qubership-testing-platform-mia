@@ -17,15 +17,65 @@
 
 package org.qubership.atp.mia.repo.configuration;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.javers.spring.annotation.JaversSpringDataAuditable;
 import org.qubership.atp.mia.model.configuration.ProcessConfiguration;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @JaversSpringDataAuditable
 public interface ProcessConfigurationRepository extends CrudRepository<ProcessConfiguration, UUID> {
 
+    /**
+     * Find all processes for a project
+     * 
+     * @param projectId project ID
+     * @return list of processes
+     */
+    @Query("SELECT p FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId")
+    List<ProcessConfiguration> findByProjectId(@Param("projectId") UUID projectId);
+
+    /**
+     * Find process by name for a project
+     * 
+     * @param projectId project ID
+     * @param name process name
+     * @return Optional with process
+     */
+    @Query("SELECT p FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId AND p.name = :name")
+    Optional<ProcessConfiguration> findByProjectIdAndName(@Param("projectId") UUID projectId, @Param("name") String name);
+
+    /**
+     * Find process by ID for a project (with ownership check)
+     * 
+     * @param projectId project ID
+     * @param processId process ID
+     * @return Optional with process
+     */
+    @Query("SELECT p FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId AND p.id = :processId")
+    Optional<ProcessConfiguration> findByProjectIdAndId(@Param("projectId") UUID projectId, @Param("processId") UUID processId);
+
+    /**
+     * Get list of all process IDs for a project (lightweight query)
+     * 
+     * @param projectId project ID
+     * @return list of IDs
+     */
+    @Query("SELECT p.id FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId")
+    List<UUID> findIdsByProjectId(@Param("projectId") UUID projectId);
+
+    /**
+     * Get list of all process names for a project (lightweight query)
+     * 
+     * @param projectId project ID
+     * @return list of names
+     */
+    @Query("SELECT p.name FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId")
+    List<String> findNamesByProjectId(@Param("projectId") UUID projectId);
 }
