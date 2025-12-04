@@ -78,4 +78,28 @@ public interface ProcessConfigurationRepository extends CrudRepository<ProcessCo
      */
     @Query("SELECT p.name FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId")
     List<String> findNamesByProjectId(@Param("projectId") UUID projectId);
+
+    /**
+     * Get list of process ID and name pairs for a project (lightweight query for refs).
+     * Returns Object[] where [0] = UUID id, [1] = String name
+     * 
+     * @param projectId project ID
+     * @return list of Object arrays with ID and name
+     */
+    @Query("SELECT p.id, p.name FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId")
+    List<Object[]> findIdAndNameByProjectId(@Param("projectId") UUID projectId);
+
+    /**
+     * Get list of process ID and name pairs for a section (lightweight query for refs).
+     * Queries the join table to find processes linked to a section.
+     * Returns Object[] where [0] = UUID id, [1] = String name
+     * 
+     * @param sectionId section ID
+     * @return list of Object arrays with ID and name
+     */
+    @Query(value = "SELECT p.id, p.name FROM process_configuration p " +
+                   "INNER JOIN project_section_process_configuration sp ON p.id = sp.process_id " +
+                   "WHERE sp.section_id = :sectionId ORDER BY sp.place", 
+           nativeQuery = true)
+    List<Object[]> findIdAndNameBySectionId(@Param("sectionId") UUID sectionId);
 }

@@ -78,4 +78,28 @@ public interface CompoundConfigurationRepository extends CrudRepository<Compound
      */
     @Query("SELECT c.name FROM CompoundConfiguration c WHERE c.projectConfiguration.projectId = :projectId")
     List<String> findNamesByProjectId(@Param("projectId") UUID projectId);
+
+    /**
+     * Get list of compound ID and name pairs for a project (lightweight query for refs).
+     * Returns Object[] where [0] = UUID id, [1] = String name
+     * 
+     * @param projectId project ID
+     * @return list of Object arrays with ID and name
+     */
+    @Query("SELECT c.id, c.name FROM CompoundConfiguration c WHERE c.projectConfiguration.projectId = :projectId")
+    List<Object[]> findIdAndNameByProjectId(@Param("projectId") UUID projectId);
+
+    /**
+     * Get list of compound ID and name pairs for a section (lightweight query for refs).
+     * Queries the join table to find compounds linked to a section.
+     * Returns Object[] where [0] = UUID id, [1] = String name
+     * 
+     * @param sectionId section ID
+     * @return list of Object arrays with ID and name
+     */
+    @Query(value = "SELECT c.id, c.name FROM compound_configuration c " +
+                   "INNER JOIN project_section_compound_configuration sc ON c.id = sc.compound_id " +
+                   "WHERE sc.section_id = :sectionId ORDER BY sc.place",
+           nativeQuery = true)
+    List<Object[]> findIdAndNameBySectionId(@Param("sectionId") UUID sectionId);
 }

@@ -86,6 +86,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
     private final RecordingSessionRepository recordingSessionRepository;
     private final ProjectConfigurationService self; // For caching
     private final ServletContext servletContext;
+    private final LazyConfigurationLoader lazyConfigurationLoader;
 
     /**
      * archive configuration to Zip file.
@@ -595,6 +596,8 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
             return null;
         }
         materializeGeneralConfiguration(configuration);
+        
+        // Initialize sections (without processes/compounds inside them)
         Hibernate.initialize(configuration.getSections());
         configuration.getSections().forEach(this::initializeSectionTree);
         
@@ -604,10 +607,27 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
         // Hibernate.initialize(configuration.getProcesses()); // REMOVED - lazy loading!
         // Hibernate.initialize(configuration.getCompounds()); // REMOVED - lazy loading!
         
+        // Populate lightweight refs for caching (ID + name only)
+        UUID projectId = configuration.getProjectId();
+        if (projectId != null) {
+            // Load refs directly (lightweight query)
+            configuration.getProcessRefs().clear();
+            configuration.getProcessRefs().addAll(lazyConfigurationLoader.loadProcessRefs(projectId));
+            configuration.getCompoundRefs().clear();
+            configuration.getCompoundRefs().addAll(lazyConfigurationLoader.loadCompoundRefs(projectId));
+            
+            // Populate refs for sections as well
+            populateSectionRefs(configuration);
+        }
+        
         Hibernate.initialize(configuration.getDirectories());
         configuration.getDirectories().forEach(this::initializeDirectoryTree);
         Hibernate.initialize(configuration.getFiles());
         configuration.getFiles().forEach(file -> Hibernate.initialize(file.getDirectory()));
+        
+        // Set lazy loader for on-demand loading
+        configuration.setLazyLoader(lazyConfigurationLoader);
+        
         return configuration;
     }
 
@@ -620,6 +640,22 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
         // Hibernate.initialize(section.getProcesses()); // REMOVED - lazy loading!
         Hibernate.initialize(section.getSections());
         section.getSections().forEach(this::initializeSectionTree);
+    }
+    
+    /**
+     * Populate refs for all sections in configuration.
+     * Uses lightweight queries to load only ID + name for each section's processes/compounds.
+     */
+    private void populateSectionRefs(ProjectConfiguration configuration) {
+        configuration.getAllSections().forEach(section -> {
+            if (section != null && section.getId() != null) {
+                // Load refs for this section
+                section.getProcessRefs().clear();
+                section.getProcessRefs().addAll(lazyConfigurationLoader.loadSectionProcessRefs(section.getId()));
+                section.getCompoundRefs().clear();
+                section.getCompoundRefs().addAll(lazyConfigurationLoader.loadSectionCompoundRefs(section.getId()));
+            }
+        });
     }
 
     private void initializeDirectoryTree(ProjectDirectory directory) {

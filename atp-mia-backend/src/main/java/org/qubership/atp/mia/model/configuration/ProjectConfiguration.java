@@ -36,6 +36,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
@@ -109,19 +110,49 @@ public class ProjectConfiguration extends DateAuditorEntity {
     @BatchSize(size = 50)
     private List<SectionConfiguration> sections;
 
+    /**
+     * Lightweight references to processes (ID + name only).
+     * Serialized to Hazelcast cache for quick lookups.
+     * Not persisted to DB (@Transient).
+     */
+    @Transient
+    @JsonIgnore
+    @lombok.Builder.Default
+    private List<ConfigurationReference> processRefs = new ArrayList<>();
+
+    /**
+     * Lightweight references to compounds (ID + name only).
+     * Serialized to Hazelcast cache for quick lookups.
+     * Not persisted to DB (@Transient).
+     */
+    @Transient
+    @JsonIgnore
+    @lombok.Builder.Default
+    private List<ConfigurationReference> compoundRefs = new ArrayList<>();
+
+    /**
+     * Full process configurations.
+     * Persisted to DB via JPA cascade.
+     * NOT serialized to Hazelcast cache (transient keyword).
+     */
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProcessConfiguration.class,
             cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @BatchSize(size = 50)
     @JsonIgnore  // Do not return directly in JSON, use DTOs
-    private List<ProcessConfiguration> processes;
+    private transient List<ProcessConfiguration> processes;
 
+    /**
+     * Full compound configurations.
+     * Persisted to DB via JPA cascade.
+     * NOT serialized to Hazelcast cache (transient keyword).
+     */
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = CompoundConfiguration.class,
             cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @BatchSize(size = 50)
     @JsonIgnore  // Do not return directly in JSON, use DTOs
-    private List<CompoundConfiguration> compounds;
+    private transient List<CompoundConfiguration> compounds;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProjectDirectory.class,
             cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -209,31 +240,48 @@ public class ProjectConfiguration extends DateAuditorEntity {
 
     /**
      * Gets compound by name using optimized query.
-     * If LazyConfigurationLoader is available, uses direct DB query,
-     * otherwise searches in loaded collection.
+     * First checks in refs for existence, then loads via LazyConfigurationLoader.
      *
      * @param compoundName compound name
-     * @return Compound
+     * @return Optional with compound
      */
     public Optional<CompoundConfiguration> getCompoundByNameSafe(String compoundName) {
+        // First check in refs if compound exists
+        Optional<ConfigurationReference> ref = compoundRefs.stream()
+                .filter(r -> r.getName().equals(compoundName))
+                .findFirst();
+        
+        if (ref.isPresent() && lazyLoader != null && projectId != null) {
+            // Load full object by ID from ref
+            log.debug("Loading compound '{}' by ID {} for project {}", compoundName, ref.get().getId(), projectId);
+            return lazyLoader.loadCompoundById(projectId, ref.get().getId());
+        }
+        
+        // Fallback: direct query by name
         if (lazyLoader != null && projectId != null) {
-            // Optimized direct query without loading entire list
             log.debug("Lazy loading compound '{}' for project {}", compoundName, projectId);
             return lazyLoader.loadCompoundByName(projectId, compoundName);
         }
-        // Fallback: search in already loaded collection
+        
+        // Last resort: search in already loaded collection
         return getCompounds().stream().filter(p -> p.getName().equals(compoundName)).findAny();
     }
 
     /**
-     * Getter for compounds with lazy loading.
-     * If compounds are not yet loaded, loads them via LazyConfigurationLoader.
+     * Getter for compounds.
+     * If compounds is null (after deserialization from cache), converts refs to lightweight objects.
+     * This ensures API returns the same structure with id and name populated.
      *
-     * @return compounds
+     * @return compounds (lightweight if from cache, full if loaded from DB)
      */
     public List<CompoundConfiguration> getCompounds() {
         if (compounds == null) {
-            if (lazyLoader != null && projectId != null) {
+            // After deserialization from cache, convert refs to lightweight objects
+            if (!compoundRefs.isEmpty()) {
+                log.debug("Converting compoundRefs to lightweight CompoundConfiguration objects");
+                compounds = ConfigurationReference.toCompoundConfigurations(compoundRefs);
+            } else if (lazyLoader != null && projectId != null) {
+                // If refs are empty but lazyLoader available, load from DB
                 log.debug("Lazy loading compounds for project {}", projectId);
                 compounds = lazyLoader.loadCompounds(projectId);
             } else {
@@ -305,31 +353,48 @@ public class ProjectConfiguration extends DateAuditorEntity {
 
     /**
      * Gets process by name using optimized query.
-     * If LazyConfigurationLoader is available, uses direct DB query,
-     * otherwise searches in loaded collection.
+     * First checks in refs for existence, then loads via LazyConfigurationLoader.
      *
      * @param processName process name
-     * @return Process
+     * @return Optional with process
      */
     public Optional<ProcessConfiguration> getProcessByNameSafe(String processName) {
+        // First check in refs if process exists
+        Optional<ConfigurationReference> ref = processRefs.stream()
+                .filter(r -> r.getName().equals(processName))
+                .findFirst();
+        
+        if (ref.isPresent() && lazyLoader != null && projectId != null) {
+            // Load full object by ID from ref
+            log.debug("Loading process '{}' by ID {} for project {}", processName, ref.get().getId(), projectId);
+            return lazyLoader.loadProcessById(projectId, ref.get().getId());
+        }
+        
+        // Fallback: direct query by name
         if (lazyLoader != null && projectId != null) {
-            // Optimized direct query without loading entire list
             log.debug("Lazy loading process '{}' for project {}", processName, projectId);
             return lazyLoader.loadProcessByName(projectId, processName);
         }
-        // Fallback: search in already loaded collection
+        
+        // Last resort: search in already loaded collection
         return getProcesses().stream().filter(p -> p.getName().equals(processName)).findAny();
     }
 
     /**
-     * Getter for processes with lazy loading.
-     * If processes are not yet loaded, loads them via LazyConfigurationLoader.
+     * Getter for processes.
+     * If processes is null (after deserialization from cache), converts refs to lightweight objects.
+     * This ensures API returns the same structure with id and name populated.
      *
-     * @return processes
+     * @return processes (lightweight if from cache, full if loaded from DB)
      */
     public List<ProcessConfiguration> getProcesses() {
         if (processes == null) {
-            if (lazyLoader != null && projectId != null) {
+            // After deserialization from cache, convert refs to lightweight objects
+            if (!processRefs.isEmpty()) {
+                log.debug("Converting processRefs to lightweight ProcessConfiguration objects");
+                processes = ConfigurationReference.toProcessConfigurations(processRefs);
+            } else if (lazyLoader != null && projectId != null) {
+                // If refs are empty but lazyLoader available, load from DB
                 log.debug("Lazy loading processes for project {}", projectId);
                 processes = lazyLoader.loadProcesses(projectId);
             } else {
@@ -401,5 +466,105 @@ public class ProjectConfiguration extends DateAuditorEntity {
         if (sections != null) {
             sections.remove(section);
         }
+    }
+
+    /**
+     * Get list of process names (lightweight, from refs).
+     * Does not load full process objects.
+     *
+     * @return list of process names
+     */
+    public List<String> getProcessNames() {
+        return processRefs.stream()
+                .map(ConfigurationReference::getName)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get list of compound names (lightweight, from refs).
+     * Does not load full compound objects.
+     *
+     * @return list of compound names
+     */
+    public List<String> getCompoundNames() {
+        return compoundRefs.stream()
+                .map(ConfigurationReference::getName)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get list of process IDs (lightweight, from refs).
+     * Does not load full process objects.
+     *
+     * @return list of process IDs
+     */
+    public List<UUID> getProcessIds() {
+        return processRefs.stream()
+                .map(ConfigurationReference::getId)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get list of compound IDs (lightweight, from refs).
+     * Does not load full compound objects.
+     *
+     * @return list of compound IDs
+     */
+    public List<UUID> getCompoundIds() {
+        return compoundRefs.stream()
+                .map(ConfigurationReference::getId)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Populate process refs from loaded processes.
+     * Should be called after loading configuration from DB.
+     *
+     * @param processes list of processes
+     */
+    public void populateProcessRefs(List<ProcessConfiguration> processes) {
+        if (processes != null) {
+            this.processRefs = processes.stream()
+                    .map(ConfigurationReference::fromProcess)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * Populate compound refs from loaded compounds.
+     * Should be called after loading configuration from DB.
+     *
+     * @param compounds list of compounds
+     */
+    public void populateCompoundRefs(List<CompoundConfiguration> compounds) {
+        if (compounds != null) {
+            this.compoundRefs = compounds.stream()
+                    .map(ConfigurationReference::fromCompound)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * Get process refs (lightweight references).
+     *
+     * @return list of process references
+     */
+    public List<ConfigurationReference> getProcessRefs() {
+        if (processRefs == null) {
+            processRefs = new ArrayList<>();
+        }
+        return processRefs;
+    }
+
+    /**
+     * Get compound refs (lightweight references).
+     *
+     * @return list of compound references
+     */
+    public List<ConfigurationReference> getCompoundRefs() {
+        if (compoundRefs == null) {
+            compoundRefs = new ArrayList<>();
+        }
+        return compoundRefs;
     }
 }
