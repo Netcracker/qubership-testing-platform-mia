@@ -132,7 +132,7 @@ public class CommonConfiguration implements Serializable {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffIgnore
-    private ProjectConfiguration projectConfiguration;
+    private transient ProjectConfiguration projectConfiguration;
 
     /**
      * Correct set ethalon files.

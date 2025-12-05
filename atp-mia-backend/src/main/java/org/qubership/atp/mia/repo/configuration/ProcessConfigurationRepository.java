@@ -109,4 +109,14 @@ public interface ProcessConfigurationRepository extends CrudRepository<ProcessCo
             + "WHERE sp.section_id = :sectionId ORDER BY sp.place", 
            nativeQuery = true)
     List<Object[]> findIdAndNameBySectionId(@Param("sectionId") UUID sectionId);
+
+    /**
+     * Get full process configurations for a section.
+     *
+     * @param sectionId section ID
+     * @return list of full process configurations
+     */
+    @Query("SELECT p FROM ProcessConfiguration p "
+            + "JOIN p.inSections s WHERE s.id = :sectionId ORDER BY p.name")
+    List<ProcessConfiguration> findBySectionId(@Param("sectionId") UUID sectionId);
 }

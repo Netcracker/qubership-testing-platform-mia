@@ -151,13 +151,24 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
 
     /**
      * Get configuration by project ID.
+     * Returns cached configuration with restored back-references.
      *
      * @param projectId project ID
      * @return ProjectConfiguration instance
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId", condition = "#projectId != null")
     public ProjectConfiguration getConfigByProjectId(UUID projectId) {
+        ProjectConfiguration config = getConfigByProjectIdCached(projectId);
+        // Restore back-references that were lost during cache serialization (transient fields)
+        restoreBackReferences(config);
+        return config;
+    }
+
+    /**
+     * Internal cached method. Back-references may be null after deserialization.
+     */
+    @Cacheable(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId", condition = "#projectId != null")
+    protected ProjectConfiguration getConfigByProjectIdCached(UUID projectId) {
         return getConfiguration(projectId);
     }
 
@@ -640,6 +651,83 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
         // Hibernate.initialize(section.getProcesses()); // REMOVED - lazy loading!
         Hibernate.initialize(section.getSections());
         section.getSections().forEach(this::initializeSectionTree);
+    }
+
+    /**
+     * Restore back-references that are marked as transient (lost during cache serialization).
+     * This ensures the object graph is fully navigable after deserialization from cache.
+     */
+    private void restoreBackReferences(ProjectConfiguration config) {
+        if (config == null) {
+            return;
+        }
+        // Restore lazy loader
+        config.setLazyLoader(lazyConfigurationLoader);
+        
+        // Restore projectConfiguration references on child entities
+        if (config.getCommonConfiguration() != null) {
+            config.getCommonConfiguration().setProjectConfiguration(config);
+        }
+        if (config.getHeaderConfiguration() != null) {
+            config.getHeaderConfiguration().setProjectConfiguration(config);
+        }
+        if (config.getPotHeaderConfiguration() != null) {
+            config.getPotHeaderConfiguration().setProjectConfiguration(config);
+        }
+        
+        // Restore section back-references
+        if (config.getSections() != null) {
+            config.getSections().forEach(section -> restoreSectionBackReferences(section, config, null));
+        }
+        
+        // Restore directory back-references
+        if (config.getDirectories() != null) {
+            config.getDirectories().forEach(dir -> restoreDirectoryBackReferences(dir, config, null));
+        }
+        
+        // Restore file back-references
+        if (config.getFiles() != null) {
+            config.getFiles().forEach(file -> {
+                file.setProjectConfiguration(config);
+            });
+        }
+    }
+
+    private void restoreSectionBackReferences(SectionConfiguration section, 
+                                               ProjectConfiguration projectConfig,
+                                               SectionConfiguration parentSection) {
+        if (section == null) {
+            return;
+        }
+        section.setProjectConfiguration(projectConfig);
+        section.setParentSection(parentSection);
+        section.setLazyLoader(lazyConfigurationLoader);
+        
+        if (section.getSections() != null) {
+            section.getSections().forEach(child -> 
+                restoreSectionBackReferences(child, projectConfig, section));
+        }
+    }
+
+    private void restoreDirectoryBackReferences(ProjectDirectory directory,
+                                                 ProjectConfiguration projectConfig,
+                                                 ProjectDirectory parentDirectory) {
+        if (directory == null) {
+            return;
+        }
+        directory.setProjectConfiguration(projectConfig);
+        directory.setParentDirectory(parentDirectory);
+        
+        if (directory.getDirectories() != null) {
+            directory.getDirectories().forEach(child -> 
+                restoreDirectoryBackReferences(child, projectConfig, directory));
+        }
+        if (directory.getFiles() != null) {
+            directory.getFiles().forEach(file -> {
+                file.setProjectConfiguration(projectConfig);
+                file.setDirectory(directory);
+            });
+        }
     }
     
     /**

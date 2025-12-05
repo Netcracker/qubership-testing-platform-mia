@@ -34,11 +34,24 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.qubership.atp.mia.model.configuration.CommonConfiguration;
 import org.qubership.atp.mia.model.configuration.CompoundConfiguration;
 import org.qubership.atp.mia.model.configuration.ConfigurationReference;
+import org.qubership.atp.mia.model.configuration.HeaderConfiguration;
+import org.qubership.atp.mia.model.configuration.PotHeaderConfiguration;
 import org.qubership.atp.mia.model.configuration.ProcessConfiguration;
 import org.qubership.atp.mia.model.configuration.ProjectConfiguration;
 import org.qubership.atp.mia.model.configuration.SectionConfiguration;
+import org.qubership.atp.mia.model.file.ProjectDirectory;
+import org.qubership.atp.mia.model.file.ProjectFile;
+import org.qubership.atp.mia.model.impl.executable.ProcessSettings;
+import org.qubership.atp.mia.model.impl.executable.Command;
+import org.qubership.atp.mia.model.impl.executable.Input;
+import org.qubership.atp.mia.model.impl.executable.Validation;
+import org.qubership.atp.mia.model.impl.executable.Prerequisite;
+
+import java.util.Arrays;
+import java.util.HashMap;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
@@ -426,6 +439,844 @@ public class HazelcastSerializationTest {
                 .name(name)
                 .sourceId(UUID.randomUUID())
                 .build();
+    }
+
+    // ==================== BACK-REFERENCE RESTORATION TESTS ====================
+
+    @Test
+    @DisplayName("Test back-references are null after deserialization (transient fields)")
+    void testBackReferencesNullAfterDeserialization() throws Exception {
+        // Given: Create configuration with all child objects and back-references set
+        ProjectConfiguration config = createConfigurationWithBackReferences();
+        
+        log("=== BEFORE SERIALIZATION ===");
+        verifyBackReferencesSet(config, "before serialization");
+        
+        // When: Serialize and deserialize (simulating Hazelcast cache)
+        byte[] serialized = serializeObject(config);
+        ProjectConfiguration deserialized = deserializeObject(serialized);
+        
+        log("=== AFTER DESERIALIZATION ===");
+        
+        // Then: Back-references should be NULL (they are transient)
+        assertNotNull(deserialized, "Deserialized config should not be null");
+        assertNotNull(deserialized.getSections(), "Sections should be deserialized");
+        assertFalse(deserialized.getSections().isEmpty(), "Sections should not be empty");
+        
+        // Verify CommonConfiguration back-reference is null
+        assertNotNull(deserialized.getCommonConfiguration(), "CommonConfiguration should be deserialized");
+        assertNull(getBackReference(deserialized.getCommonConfiguration(), "projectConfiguration"),
+                "CommonConfiguration.projectConfiguration should be null after deserialization");
+        
+        // Verify HeaderConfiguration back-reference is null
+        assertNotNull(deserialized.getHeaderConfiguration(), "HeaderConfiguration should be deserialized");
+        assertNull(getBackReference(deserialized.getHeaderConfiguration(), "projectConfiguration"),
+                "HeaderConfiguration.projectConfiguration should be null after deserialization");
+        
+        // Verify Section back-references are null
+        SectionConfiguration section = deserialized.getSections().get(0);
+        assertNull(getBackReference(section, "projectConfiguration"),
+                "SectionConfiguration.projectConfiguration should be null after deserialization");
+        assertNull(getBackReference(section, "parentSection"),
+                "SectionConfiguration.parentSection should be null (root section)");
+        
+        // Verify nested section parent is null
+        if (!section.getSections().isEmpty()) {
+            SectionConfiguration childSection = section.getSections().get(0);
+            assertNull(getBackReference(childSection, "parentSection"),
+                    "Child section parentSection should be null after deserialization");
+        }
+        
+        // Verify lazyLoader is null
+        assertNull(getBackReference(deserialized, "lazyLoader"),
+                "ProjectConfiguration.lazyLoader should be null after deserialization");
+        assertNull(getBackReference(section, "lazyLoader"),
+                "SectionConfiguration.lazyLoader should be null after deserialization");
+        
+        log("All back-references are correctly null after deserialization (transient)");
+    }
+
+    @Test
+    @DisplayName("Test back-references are restored after calling restoreBackReferences simulation")
+    void testBackReferencesRestoredCorrectly() throws Exception {
+        // Given: Create configuration, serialize, deserialize
+        ProjectConfiguration config = createConfigurationWithBackReferences();
+        byte[] serialized = serializeObject(config);
+        ProjectConfiguration deserialized = deserializeObject(serialized);
+        
+        log("=== SIMULATING restoreBackReferences ===");
+        
+        // When: Simulate restoreBackReferences logic
+        simulateRestoreBackReferences(deserialized);
+        
+        // Then: All back-references should be restored
+        log("=== AFTER RESTORATION ===");
+        
+        // Verify CommonConfiguration back-reference
+        assertNotNull(deserialized.getCommonConfiguration().getProjectConfiguration(),
+                "CommonConfiguration.projectConfiguration should be restored");
+        assertEquals(deserialized, deserialized.getCommonConfiguration().getProjectConfiguration(),
+                "CommonConfiguration should reference parent ProjectConfiguration");
+        
+        // Verify HeaderConfiguration back-reference
+        assertNotNull(deserialized.getHeaderConfiguration().getProjectConfiguration(),
+                "HeaderConfiguration.projectConfiguration should be restored");
+        assertEquals(deserialized, deserialized.getHeaderConfiguration().getProjectConfiguration(),
+                "HeaderConfiguration should reference parent ProjectConfiguration");
+        
+        // Verify Section back-references
+        SectionConfiguration section = deserialized.getSections().get(0);
+        assertNotNull(section.getProjectConfiguration(),
+                "Section.projectConfiguration should be restored");
+        assertEquals(deserialized, section.getProjectConfiguration(),
+                "Section should reference parent ProjectConfiguration");
+        
+        // Verify nested section parent is restored
+        if (!section.getSections().isEmpty()) {
+            SectionConfiguration childSection = section.getSections().get(0);
+            assertNotNull(childSection.getParentSection(),
+                    "Child section parentSection should be restored");
+            assertEquals(section, childSection.getParentSection(),
+                    "Child section should reference parent section");
+            assertNotNull(childSection.getProjectConfiguration(),
+                    "Child section projectConfiguration should be restored");
+        }
+        
+        // Verify directory back-references
+        if (!deserialized.getDirectories().isEmpty()) {
+            ProjectDirectory dir = deserialized.getDirectories().get(0);
+            assertNotNull(dir.getProjectConfiguration(),
+                    "Directory.projectConfiguration should be restored");
+            assertEquals(deserialized, dir.getProjectConfiguration(),
+                    "Directory should reference parent ProjectConfiguration");
+        }
+        
+        log("All back-references successfully restored!");
+        verifyBackReferencesSet(deserialized, "after restoration");
+    }
+
+    /**
+     * Create a full configuration with all child objects and back-references.
+     */
+    private ProjectConfiguration createConfigurationWithBackReferences() {
+        UUID projectId = UUID.randomUUID();
+        
+        // Create CommonConfiguration
+        CommonConfiguration commonConfig = CommonConfiguration.builder()
+                .projectId(projectId)
+                .build();
+        
+        // Create HeaderConfiguration
+        HeaderConfiguration headerConfig = HeaderConfiguration.builder()
+                .projectId(projectId)
+                .build();
+        
+        // Create PotHeaderConfiguration
+        PotHeaderConfiguration potHeaderConfig = PotHeaderConfiguration.builder()
+                .projectId(projectId)
+                .build();
+        
+        // Create nested sections
+        SectionConfiguration childSection = SectionConfiguration.builder()
+                .id(UUID.randomUUID())
+                .name("ChildSection")
+                .place(0)
+                .sections(new ArrayList<>())
+                .build();
+        
+        SectionConfiguration parentSection = SectionConfiguration.builder()
+                .id(UUID.randomUUID())
+                .name("ParentSection")
+                .place(0)
+                .sections(new ArrayList<>())
+                .build();
+        parentSection.getSections().add(childSection);
+        
+        // Create directory
+        ProjectDirectory directory = ProjectDirectory.builder()
+                .id(UUID.randomUUID())
+                .name("TestDir")
+                .directories(new ArrayList<>())
+                .files(new ArrayList<>())
+                .build();
+        
+        // Create file
+        ProjectFile file = ProjectFile.builder()
+                .id(UUID.randomUUID())
+                .name("TestFile")
+                .build();
+        
+        List<SectionConfiguration> sections = new ArrayList<>();
+        sections.add(parentSection);
+        
+        List<ProjectDirectory> directories = new ArrayList<>();
+        directories.add(directory);
+        
+        List<ProjectFile> files = new ArrayList<>();
+        files.add(file);
+        
+        // Build project configuration
+        ProjectConfiguration config = ProjectConfiguration.builder()
+                .projectId(projectId)
+                .projectName("BackRefTest Project")
+                .commonConfiguration(commonConfig)
+                .headerConfiguration(headerConfig)
+                .potHeaderConfiguration(potHeaderConfig)
+                .sections(sections)
+                .directories(directories)
+                .files(files)
+                .build();
+        
+        // Set all back-references (simulating what Hibernate would do)
+        commonConfig.setProjectConfiguration(config);
+        headerConfig.setProjectConfiguration(config);
+        potHeaderConfig.setProjectConfiguration(config);
+        parentSection.setProjectConfiguration(config);
+        childSection.setProjectConfiguration(config);
+        childSection.setParentSection(parentSection);
+        directory.setProjectConfiguration(config);
+        file.setProjectConfiguration(config);
+        
+        return config;
+    }
+
+    /**
+     * Simulate the restoreBackReferences logic from ProjectConfigurationService.
+     */
+    private void simulateRestoreBackReferences(ProjectConfiguration config) {
+        if (config == null) {
+            return;
+        }
+        
+        // Restore back-references on child configurations
+        if (config.getCommonConfiguration() != null) {
+            config.getCommonConfiguration().setProjectConfiguration(config);
+        }
+        if (config.getHeaderConfiguration() != null) {
+            config.getHeaderConfiguration().setProjectConfiguration(config);
+        }
+        if (config.getPotHeaderConfiguration() != null) {
+            config.getPotHeaderConfiguration().setProjectConfiguration(config);
+        }
+        
+        // Restore section back-references
+        if (config.getSections() != null) {
+            for (SectionConfiguration section : config.getSections()) {
+                restoreSectionBackRefs(section, config, null);
+            }
+        }
+        
+        // Restore directory back-references
+        if (config.getDirectories() != null) {
+            for (ProjectDirectory dir : config.getDirectories()) {
+                restoreDirectoryBackRefs(dir, config, null);
+            }
+        }
+        
+        // Restore file back-references
+        if (config.getFiles() != null) {
+            for (ProjectFile file : config.getFiles()) {
+                file.setProjectConfiguration(config);
+            }
+        }
+    }
+
+    private void restoreSectionBackRefs(SectionConfiguration section, 
+                                         ProjectConfiguration projectConfig,
+                                         SectionConfiguration parentSection) {
+        if (section == null) {
+            return;
+        }
+        section.setProjectConfiguration(projectConfig);
+        section.setParentSection(parentSection);
+        
+        if (section.getSections() != null) {
+            for (SectionConfiguration child : section.getSections()) {
+                restoreSectionBackRefs(child, projectConfig, section);
+            }
+        }
+    }
+
+    private void restoreDirectoryBackRefs(ProjectDirectory directory,
+                                           ProjectConfiguration projectConfig,
+                                           ProjectDirectory parentDirectory) {
+        if (directory == null) {
+            return;
+        }
+        directory.setProjectConfiguration(projectConfig);
+        directory.setParentDirectory(parentDirectory);
+        
+        if (directory.getDirectories() != null) {
+            for (ProjectDirectory child : directory.getDirectories()) {
+                restoreDirectoryBackRefs(child, projectConfig, directory);
+            }
+        }
+        if (directory.getFiles() != null) {
+            for (ProjectFile file : directory.getFiles()) {
+                file.setProjectConfiguration(projectConfig);
+                file.setDirectory(directory);
+            }
+        }
+    }
+
+    /**
+     * Get back-reference field value via reflection.
+     */
+    private Object getBackReference(Object obj, String fieldName) {
+        try {
+            java.lang.reflect.Field field = findField(obj.getClass(), fieldName);
+            if (field != null) {
+                field.setAccessible(true);
+                return field.get(obj);
+            }
+        } catch (Exception e) {
+            log("Could not get field {} via reflection: {}", fieldName, e.getMessage());
+        }
+        return null;
+    }
+
+    private java.lang.reflect.Field findField(Class<?> clazz, String fieldName) {
+        while (clazz != null) {
+            try {
+                return clazz.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Verify that back-references are set (for logging).
+     */
+    private void verifyBackReferencesSet(ProjectConfiguration config, String phase) {
+        log("Verifying back-references {}:", phase);
+        
+        if (config.getCommonConfiguration() != null) {
+            Object ref = getBackReference(config.getCommonConfiguration(), "projectConfiguration");
+            log("  CommonConfiguration.projectConfiguration: {}", ref != null ? "SET" : "NULL");
+        }
+        if (config.getHeaderConfiguration() != null) {
+            Object ref = getBackReference(config.getHeaderConfiguration(), "projectConfiguration");
+            log("  HeaderConfiguration.projectConfiguration: {}", ref != null ? "SET" : "NULL");
+        }
+        if (!config.getSections().isEmpty()) {
+            SectionConfiguration section = config.getSections().get(0);
+            Object ref = getBackReference(section, "projectConfiguration");
+            log("  Section.projectConfiguration: {}", ref != null ? "SET" : "NULL");
+            
+            if (!section.getSections().isEmpty()) {
+                SectionConfiguration child = section.getSections().get(0);
+                Object parentRef = getBackReference(child, "parentSection");
+                log("  ChildSection.parentSection: {}", parentRef != null ? "SET" : "NULL");
+            }
+        }
+    }
+
+    /**
+     * Serialize object to byte array.
+     */
+    private byte[] serializeObject(Object obj) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(obj);
+        oos.close();
+        return baos.toByteArray();
+    }
+
+    /**
+     * Deserialize object from byte array.
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T deserializeObject(byte[] data) throws Exception {
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        T result = (T) ois.readObject();
+        ois.close();
+        return result;
+    }
+
+    // ==================== COMPREHENSIVE FIELD VERIFICATION TESTS ====================
+
+    @Test
+    @DisplayName("Test ProcessConfiguration all fields preserved after serialization")
+    void testProcessConfigurationFieldsPreserved() throws Exception {
+        log("=== TEST: ProcessConfiguration Fields Preservation ===");
+        
+        // Given: Create a ProcessConfiguration with ALL fields populated
+        ProcessConfiguration original = createFullProcessConfiguration();
+        
+        log("ORIGINAL ProcessConfiguration:");
+        logProcessConfigurationFields(original);
+        
+        // When: Serialize and deserialize
+        byte[] serialized = serializeObject(original);
+        ProcessConfiguration restored = deserializeObject(serialized);
+        
+        log("RESTORED ProcessConfiguration:");
+        logProcessConfigurationFields(restored);
+        
+        // Then: Verify all fields match
+        log("=== VERIFICATION ===");
+        
+        // Basic fields
+        assertEquals(original.getId(), restored.getId(), "ID should match");
+        assertEquals(original.getSourceId(), restored.getSourceId(), "SourceId should match");
+        assertEquals(original.getName(), restored.getName(), "Name should match");
+        assertEquals(original.getPathToFile(), restored.getPathToFile(), "PathToFile should match");
+        
+        // ProcessSettings (important - JSON field)
+        assertNotNull(restored.getProcessSettings(), "ProcessSettings should not be null");
+        ProcessSettings origSettings = original.getProcessSettings();
+        ProcessSettings restoredSettings = restored.getProcessSettings();
+        
+        assertEquals(origSettings.getName(), restoredSettings.getName(), 
+                "ProcessSettings.name should match");
+        assertEquals(origSettings.getReferToInput(), restoredSettings.getReferToInput(), 
+                "ProcessSettings.referToInput should match");
+        
+        // ProcessSettings.command
+        assertNotNull(restoredSettings.getCommand(), "Command should not be null");
+        assertEquals(origSettings.getCommand().getName(), restoredSettings.getCommand().getName(),
+                "Command.name should match");
+        assertEquals(origSettings.getCommand().getValue(), restoredSettings.getCommand().getValue(),
+                "Command.value should match");
+        
+        // ProcessSettings.inputs
+        assertNotNull(restoredSettings.getInputs(), "Inputs should not be null");
+        assertEquals(origSettings.getInputs().size(), restoredSettings.getInputs().size(),
+                "Inputs size should match");
+        for (int i = 0; i < origSettings.getInputs().size(); i++) {
+            assertEquals(origSettings.getInputs().get(i).getName(), 
+                    restoredSettings.getInputs().get(i).getName(),
+                    "Input[" + i + "].name should match");
+            assertEquals(origSettings.getInputs().get(i).getValue(), 
+                    restoredSettings.getInputs().get(i).getValue(),
+                    "Input[" + i + "].value should match");
+            assertEquals(origSettings.getInputs().get(i).getLabel(), 
+                    restoredSettings.getInputs().get(i).getLabel(),
+                    "Input[" + i + "].label should match");
+        }
+        
+        // ProcessSettings.validations
+        assertNotNull(restoredSettings.getValidations(), "Validations should not be null");
+        assertEquals(origSettings.getValidations().size(), restoredSettings.getValidations().size(),
+                "Validations size should match");
+        
+        // ProcessSettings.prerequisites
+        assertNotNull(restoredSettings.getPrerequisites(), "Prerequisites should not be null");
+        assertEquals(origSettings.getPrerequisites().size(), restoredSettings.getPrerequisites().size(),
+                "Prerequisites size should match");
+        
+        // ProcessSettings.globalVariables
+        assertNotNull(restoredSettings.getGlobalVariables(), "GlobalVariables should not be null");
+        assertEquals(origSettings.getGlobalVariables(), restoredSettings.getGlobalVariables(),
+                "GlobalVariables should match");
+        
+        // String lists (compounds, sections names)
+        assertEquals(original.getCompounds(), restored.getCompounds(), 
+                "Compounds list should match");
+        assertEquals(original.getSections(), restored.getSections(), 
+                "Sections list should match");
+        
+        // Back-reference should be null (transient)
+        assertNull(getBackReference(restored, "projectConfiguration"),
+                "projectConfiguration should be null (transient)");
+        
+        log("✓ All ProcessConfiguration fields verified successfully!");
+    }
+
+    @Test
+    @DisplayName("Test CompoundConfiguration all fields preserved after serialization")
+    void testCompoundConfigurationFieldsPreserved() throws Exception {
+        log("=== TEST: CompoundConfiguration Fields Preservation ===");
+        
+        // Given: Create a CompoundConfiguration with ALL fields populated
+        CompoundConfiguration original = createFullCompoundConfiguration();
+        
+        log("ORIGINAL CompoundConfiguration:");
+        logCompoundConfigurationFields(original);
+        
+        // When: Serialize and deserialize
+        byte[] serialized = serializeObject(original);
+        CompoundConfiguration restored = deserializeObject(serialized);
+        
+        log("RESTORED CompoundConfiguration:");
+        logCompoundConfigurationFields(restored);
+        
+        // Then: Verify all fields match
+        log("=== VERIFICATION ===");
+        
+        assertEquals(original.getId(), restored.getId(), "ID should match");
+        assertEquals(original.getSourceId(), restored.getSourceId(), "SourceId should match");
+        assertEquals(original.getName(), restored.getName(), "Name should match");
+        assertEquals(original.getReferToInput(), restored.getReferToInput(), "ReferToInput should match");
+        
+        // Back-reference should be null (transient)
+        assertNull(getBackReference(restored, "projectConfiguration"),
+                "projectConfiguration should be null (transient)");
+        
+        log("✓ All CompoundConfiguration fields verified successfully!");
+    }
+
+    @Test
+    @DisplayName("Test SectionConfiguration all fields preserved after serialization")
+    void testSectionConfigurationFieldsPreserved() throws Exception {
+        log("=== TEST: SectionConfiguration Fields Preservation ===");
+        
+        // Given: Create nested sections
+        SectionConfiguration childSection = SectionConfiguration.builder()
+                .id(UUID.randomUUID())
+                .name("ChildSection")
+                .place(0)
+                .sections(new ArrayList<>())
+                .build();
+        childSection.getProcessRefs().add(new ConfigurationReference(UUID.randomUUID(), "ChildProcess1"));
+        childSection.getCompoundRefs().add(new ConfigurationReference(UUID.randomUUID(), "ChildCompound1"));
+        
+        SectionConfiguration original = SectionConfiguration.builder()
+                .id(UUID.randomUUID())
+                .sourceId(UUID.randomUUID())
+                .name("ParentSection")
+                .place(1)
+                .sections(new ArrayList<>())
+                .build();
+        original.getSections().add(childSection);
+        original.getProcessRefs().add(new ConfigurationReference(UUID.randomUUID(), "Process1"));
+        original.getProcessRefs().add(new ConfigurationReference(UUID.randomUUID(), "Process2"));
+        original.getCompoundRefs().add(new ConfigurationReference(UUID.randomUUID(), "Compound1"));
+        
+        // Set back-references (will be null after deserialization)
+        childSection.setParentSection(original);
+        
+        log("ORIGINAL SectionConfiguration:");
+        logSectionConfigurationFields(original);
+        
+        // When: Serialize and deserialize
+        byte[] serialized = serializeObject(original);
+        SectionConfiguration restored = deserializeObject(serialized);
+        
+        log("RESTORED SectionConfiguration:");
+        logSectionConfigurationFields(restored);
+        
+        // Then: Verify all fields match
+        log("=== VERIFICATION ===");
+        
+        assertEquals(original.getId(), restored.getId(), "ID should match");
+        assertEquals(original.getSourceId(), restored.getSourceId(), "SourceId should match");
+        assertEquals(original.getName(), restored.getName(), "Name should match");
+        assertEquals(original.getPlace(), restored.getPlace(), "Place should match");
+        
+        // ProcessRefs should be preserved
+        assertEquals(original.getProcessRefs().size(), restored.getProcessRefs().size(),
+                "ProcessRefs size should match");
+        for (int i = 0; i < original.getProcessRefs().size(); i++) {
+            assertEquals(original.getProcessRefs().get(i).getId(), 
+                    restored.getProcessRefs().get(i).getId(),
+                    "ProcessRefs[" + i + "].id should match");
+            assertEquals(original.getProcessRefs().get(i).getName(), 
+                    restored.getProcessRefs().get(i).getName(),
+                    "ProcessRefs[" + i + "].name should match");
+        }
+        
+        // CompoundRefs should be preserved
+        assertEquals(original.getCompoundRefs().size(), restored.getCompoundRefs().size(),
+                "CompoundRefs size should match");
+        
+        // Nested sections should be preserved
+        assertEquals(original.getSections().size(), restored.getSections().size(),
+                "Nested sections size should match");
+        SectionConfiguration restoredChild = restored.getSections().get(0);
+        assertEquals(childSection.getId(), restoredChild.getId(), "Child section ID should match");
+        assertEquals(childSection.getName(), restoredChild.getName(), "Child section name should match");
+        
+        // Back-references should be null (transient)
+        assertNull(getBackReference(restored, "projectConfiguration"),
+                "projectConfiguration should be null (transient)");
+        assertNull(getBackReference(restored, "parentSection"),
+                "parentSection should be null (root section)");
+        assertNull(getBackReference(restoredChild, "parentSection"),
+                "Child parentSection should be null after deserialization (transient)");
+        
+        log("✓ All SectionConfiguration fields verified successfully!");
+    }
+
+    @Test
+    @DisplayName("Test full ProjectConfiguration with all nested objects preserved")
+    void testFullProjectConfigurationPreserved() throws Exception {
+        log("=== TEST: Full ProjectConfiguration Preservation ===");
+        
+        // Given: Create a complete ProjectConfiguration
+        ProjectConfiguration original = createCompleteProjectConfiguration();
+        
+        log("ORIGINAL ProjectConfiguration:");
+        log("  ProjectId: {}", original.getProjectId());
+        log("  ProjectName: {}", original.getProjectName());
+        log("  Sections count: {}", original.getSections().size());
+        log("  ProcessRefs count: {}", original.getProcessRefs().size());
+        log("  CompoundRefs count: {}", original.getCompoundRefs().size());
+        
+        // When: Serialize and deserialize
+        byte[] serialized = serializeObject(original);
+        log("Serialized size: {} bytes", serialized.length);
+        
+        ProjectConfiguration restored = deserializeObject(serialized);
+        
+        log("RESTORED ProjectConfiguration:");
+        log("  ProjectId: {}", restored.getProjectId());
+        log("  ProjectName: {}", restored.getProjectName());
+        log("  Sections count: {}", restored.getSections() != null ? restored.getSections().size() : "null");
+        log("  ProcessRefs count: {}", restored.getProcessRefs().size());
+        log("  CompoundRefs count: {}", restored.getCompoundRefs().size());
+        
+        // Then: Verify all fields match
+        log("=== VERIFICATION ===");
+        
+        // Basic fields
+        assertEquals(original.getProjectId(), restored.getProjectId(), "ProjectId should match");
+        assertEquals(original.getProjectName(), restored.getProjectName(), "ProjectName should match");
+        
+        // Refs should be preserved
+        assertEquals(original.getProcessRefs().size(), restored.getProcessRefs().size(),
+                "ProcessRefs size should match");
+        assertEquals(original.getCompoundRefs().size(), restored.getCompoundRefs().size(),
+                "CompoundRefs size should match");
+        
+        // Verify each ref
+        for (int i = 0; i < original.getProcessRefs().size(); i++) {
+            ConfigurationReference origRef = original.getProcessRefs().get(i);
+            ConfigurationReference restoredRef = restored.getProcessRefs().get(i);
+            assertEquals(origRef.getId(), restoredRef.getId(), "ProcessRef[" + i + "].id should match");
+            assertEquals(origRef.getName(), restoredRef.getName(), "ProcessRef[" + i + "].name should match");
+        }
+        
+        // Sections should be preserved
+        assertNotNull(restored.getSections(), "Sections should not be null");
+        assertEquals(original.getSections().size(), restored.getSections().size(),
+                "Sections size should match");
+        
+        // Verify section fields
+        for (int i = 0; i < original.getSections().size(); i++) {
+            SectionConfiguration origSection = original.getSections().get(i);
+            SectionConfiguration restoredSection = restored.getSections().get(i);
+            assertEquals(origSection.getId(), restoredSection.getId(), 
+                    "Section[" + i + "].id should match");
+            assertEquals(origSection.getName(), restoredSection.getName(), 
+                    "Section[" + i + "].name should match");
+            assertEquals(origSection.getProcessRefs().size(), restoredSection.getProcessRefs().size(),
+                    "Section[" + i + "].processRefs size should match");
+        }
+        
+        // CommonConfiguration should be preserved
+        assertNotNull(restored.getCommonConfiguration(), "CommonConfiguration should not be null");
+        assertEquals(original.getCommonConfiguration().getProjectId(), 
+                restored.getCommonConfiguration().getProjectId(),
+                "CommonConfiguration.projectId should match");
+        
+        // HeaderConfiguration should be preserved
+        assertNotNull(restored.getHeaderConfiguration(), "HeaderConfiguration should not be null");
+        
+        // Transient fields should be null
+        assertNull(getBackReference(restored, "lazyLoader"), "lazyLoader should be null (transient)");
+        assertNull(getBackReference(restored, "processes"), "processes should be null (transient)");
+        assertNull(getBackReference(restored, "compounds"), "compounds should be null (transient)");
+        
+        log("✓ Full ProjectConfiguration verified successfully!");
+    }
+
+    // ==================== HELPER METHODS FOR COMPREHENSIVE TESTS ====================
+
+    /**
+     * Create a ProcessConfiguration with all fields populated.
+     */
+    private ProcessConfiguration createFullProcessConfiguration() {
+        UUID processId = UUID.randomUUID();
+        
+        // Create Command
+        Command command = Command.builder()
+                .name("REST_COMMAND")
+                .value("POST /api/v1/test")
+                .build();
+        
+        // Create Inputs (label is @Nonnull required field)
+        List<Input> inputs = new ArrayList<>();
+        Input input1 = Input.builder().name("input1").value("value1").label("Label1").build();
+        Input input2 = Input.builder().name("input2").value("value2").label("Label2").build();
+        inputs.add(input1);
+        inputs.add(input2);
+        
+        // Create Validations
+        List<Validation> validations = new ArrayList<>();
+        Validation validation = Validation.builder()
+                .name("StatusValidation")
+                .value("200")
+                .build();
+        validations.add(validation);
+        
+        // Create Prerequisites
+        List<Prerequisite> prerequisites = new ArrayList<>();
+        Prerequisite prereq = Prerequisite.builder()
+                .name("AuthPrerequisite")
+                .value("token123")
+                .build();
+        prerequisites.add(prereq);
+        
+        // Create GlobalVariables
+        HashMap<String, String> globalVars = new HashMap<>();
+        globalVars.put("ENV", "TEST");
+        globalVars.put("VERSION", "1.0");
+        
+        // Create ProcessSettings
+        ProcessSettings processSettings = ProcessSettings.builder()
+                .name("TestProcessSettings")
+                .command(command)
+                .inputs(inputs)
+                .validations(validations)
+                .prerequisites(prerequisites)
+                .globalVariables(globalVars)
+                .referToInput("input1")
+                .build();
+        
+        // Create ProcessConfiguration
+        ProcessConfiguration process = ProcessConfiguration.builder()
+                .id(processId)
+                .sourceId(UUID.randomUUID())
+                .name("FullTestProcess")
+                .pathToFile("/path/to/process.json")
+                .processSettings(processSettings)
+                .build();
+        
+        // Set string lists
+        process.setCompounds(Arrays.asList("Compound1", "Compound2"));
+        process.setSections(Arrays.asList("Section1", "Section2"));
+        
+        return process;
+    }
+
+    /**
+     * Create a CompoundConfiguration with all fields populated.
+     */
+    private CompoundConfiguration createFullCompoundConfiguration() {
+        return CompoundConfiguration.builder()
+                .id(UUID.randomUUID())
+                .sourceId(UUID.randomUUID())
+                .name("FullTestCompound")
+                .referToInput("mainInput")
+                .build();
+    }
+
+    /**
+     * Create a complete ProjectConfiguration with all nested objects.
+     */
+    private ProjectConfiguration createCompleteProjectConfiguration() {
+        UUID projectId = UUID.randomUUID();
+        
+        // Create sections with refs
+        SectionConfiguration section1 = SectionConfiguration.builder()
+                .id(UUID.randomUUID())
+                .name("Section1")
+                .place(0)
+                .sections(new ArrayList<>())
+                .build();
+        section1.getProcessRefs().add(new ConfigurationReference(UUID.randomUUID(), "Proc1"));
+        section1.getProcessRefs().add(new ConfigurationReference(UUID.randomUUID(), "Proc2"));
+        section1.getCompoundRefs().add(new ConfigurationReference(UUID.randomUUID(), "Comp1"));
+        
+        SectionConfiguration section2 = SectionConfiguration.builder()
+                .id(UUID.randomUUID())
+                .name("Section2")
+                .place(1)
+                .sections(new ArrayList<>())
+                .build();
+        section2.getProcessRefs().add(new ConfigurationReference(UUID.randomUUID(), "Proc3"));
+        
+        List<SectionConfiguration> sections = new ArrayList<>();
+        sections.add(section1);
+        sections.add(section2);
+        
+        // Create configurations
+        CommonConfiguration commonConfig = CommonConfiguration.builder()
+                .projectId(projectId)
+                .build();
+        
+        HeaderConfiguration headerConfig = HeaderConfiguration.builder()
+                .projectId(projectId)
+                .build();
+        
+        PotHeaderConfiguration potHeaderConfig = PotHeaderConfiguration.builder()
+                .projectId(projectId)
+                .build();
+        
+        // Create project refs
+        List<ConfigurationReference> processRefs = new ArrayList<>();
+        processRefs.add(new ConfigurationReference(UUID.randomUUID(), "GlobalProcess1"));
+        processRefs.add(new ConfigurationReference(UUID.randomUUID(), "GlobalProcess2"));
+        processRefs.add(new ConfigurationReference(UUID.randomUUID(), "GlobalProcess3"));
+        
+        List<ConfigurationReference> compoundRefs = new ArrayList<>();
+        compoundRefs.add(new ConfigurationReference(UUID.randomUUID(), "GlobalCompound1"));
+        compoundRefs.add(new ConfigurationReference(UUID.randomUUID(), "GlobalCompound2"));
+        
+        // Build complete configuration
+        ProjectConfiguration config = ProjectConfiguration.builder()
+                .projectId(projectId)
+                .projectName("CompleteTestProject")
+                .sections(sections)
+                .commonConfiguration(commonConfig)
+                .headerConfiguration(headerConfig)
+                .potHeaderConfiguration(potHeaderConfig)
+                .directories(new ArrayList<>())
+                .files(new ArrayList<>())
+                .build();
+        
+        config.getProcessRefs().addAll(processRefs);
+        config.getCompoundRefs().addAll(compoundRefs);
+        
+        // Set back-references (these will be null after deserialization)
+        commonConfig.setProjectConfiguration(config);
+        headerConfig.setProjectConfiguration(config);
+        potHeaderConfig.setProjectConfiguration(config);
+        section1.setProjectConfiguration(config);
+        section2.setProjectConfiguration(config);
+        
+        return config;
+    }
+
+    private void logProcessConfigurationFields(ProcessConfiguration p) {
+        log("  ID: {}", p.getId());
+        log("  SourceId: {}", p.getSourceId());
+        log("  Name: {}", p.getName());
+        log("  PathToFile: {}", p.getPathToFile());
+        if (p.getProcessSettings() != null) {
+            log("  ProcessSettings.name: {}", p.getProcessSettings().getName());
+            log("  ProcessSettings.command: {}", 
+                    p.getProcessSettings().getCommand() != null ? p.getProcessSettings().getCommand().getName() : "null");
+            log("  ProcessSettings.inputs: {}", 
+                    p.getProcessSettings().getInputs() != null ? p.getProcessSettings().getInputs().size() : "null");
+            log("  ProcessSettings.validations: {}", 
+                    p.getProcessSettings().getValidations() != null ? p.getProcessSettings().getValidations().size() : "null");
+            log("  ProcessSettings.globalVariables: {}", 
+                    p.getProcessSettings().getGlobalVariables());
+        }
+        log("  Compounds: {}", p.getCompounds());
+        log("  Sections: {}", p.getSections());
+    }
+
+    private void logCompoundConfigurationFields(CompoundConfiguration c) {
+        log("  ID: {}", c.getId());
+        log("  SourceId: {}", c.getSourceId());
+        log("  Name: {}", c.getName());
+        log("  ReferToInput: {}", c.getReferToInput());
+    }
+
+    private void logSectionConfigurationFields(SectionConfiguration s) {
+        log("  ID: {}", s.getId());
+        log("  SourceId: {}", s.getSourceId());
+        log("  Name: {}", s.getName());
+        log("  Place: {}", s.getPlace());
+        log("  ProcessRefs: {}", s.getProcessRefs().size());
+        log("  CompoundRefs: {}", s.getCompoundRefs().size());
+        log("  NestedSections: {}", s.getSections() != null ? s.getSections().size() : "null");
     }
 }
 

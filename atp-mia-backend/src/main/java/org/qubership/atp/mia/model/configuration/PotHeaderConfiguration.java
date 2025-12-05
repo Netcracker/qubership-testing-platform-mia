@@ -69,5 +69,5 @@ public class PotHeaderConfiguration implements Serializable {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffIgnore
-    private ProjectConfiguration projectConfiguration;
+    private transient ProjectConfiguration projectConfiguration;
 }

@@ -109,4 +109,14 @@ public interface CompoundConfigurationRepository extends CrudRepository<Compound
             + "WHERE sc.section_id = :sectionId ORDER BY sc.place",
            nativeQuery = true)
     List<Object[]> findIdAndNameBySectionId(@Param("sectionId") UUID sectionId);
+
+    /**
+     * Get full compound configurations for a section.
+     *
+     * @param sectionId section ID
+     * @return list of full compound configurations
+     */
+    @Query("SELECT c FROM CompoundConfiguration c "
+            + "JOIN c.inSections s WHERE s.id = :sectionId ORDER BY c.name")
+    List<CompoundConfiguration> findBySectionId(@Param("sectionId") UUID sectionId);
 }
