@@ -33,8 +33,8 @@ import org.springframework.stereotype.Repository;
 public interface CompoundConfigurationRepository extends CrudRepository<CompoundConfiguration, UUID> {
 
     /**
-     * Find all compounds for a project
-     * 
+     * Find all compounds for a project.
+     *
      * @param projectId project ID
      * @return list of compounds
      */
@@ -42,28 +42,34 @@ public interface CompoundConfigurationRepository extends CrudRepository<Compound
     List<CompoundConfiguration> findByProjectId(@Param("projectId") UUID projectId);
 
     /**
-     * Find compound by name for a project
-     * 
+     * Find compound by name for a project.
+     *
      * @param projectId project ID
      * @param name compound name
      * @return Optional with compound
      */
-    @Query("SELECT c FROM CompoundConfiguration c WHERE c.projectConfiguration.projectId = :projectId AND c.name = :name")
-    Optional<CompoundConfiguration> findByProjectIdAndName(@Param("projectId") UUID projectId, @Param("name") String name);
+    @Query("SELECT c FROM CompoundConfiguration c "
+            + "WHERE c.projectConfiguration.projectId = :projectId AND c.name = :name")
+    Optional<CompoundConfiguration> findByProjectIdAndName(
+            @Param("projectId") UUID projectId, 
+            @Param("name") String name);
 
     /**
-     * Find compound by ID for a project (with ownership check)
-     * 
+     * Find compound by ID for a project (with ownership check).
+     *
      * @param projectId project ID
      * @param compoundId compound ID
      * @return Optional with compound
      */
-    @Query("SELECT c FROM CompoundConfiguration c WHERE c.projectConfiguration.projectId = :projectId AND c.id = :compoundId")
-    Optional<CompoundConfiguration> findByProjectIdAndId(@Param("projectId") UUID projectId, @Param("compoundId") UUID compoundId);
+    @Query("SELECT c FROM CompoundConfiguration c "
+            + "WHERE c.projectConfiguration.projectId = :projectId AND c.id = :compoundId")
+    Optional<CompoundConfiguration> findByProjectIdAndId(
+            @Param("projectId") UUID projectId, 
+            @Param("compoundId") UUID compoundId);
 
     /**
-     * Get list of all compound IDs for a project (lightweight query)
-     * 
+     * Get list of all compound IDs for a project (lightweight query).
+     *
      * @param projectId project ID
      * @return list of IDs
      */
@@ -71,11 +77,36 @@ public interface CompoundConfigurationRepository extends CrudRepository<Compound
     List<UUID> findIdsByProjectId(@Param("projectId") UUID projectId);
 
     /**
-     * Get list of all compound names for a project (lightweight query)
-     * 
+     * Get list of all compound names for a project (lightweight query).
+     *
      * @param projectId project ID
      * @return list of names
      */
     @Query("SELECT c.name FROM CompoundConfiguration c WHERE c.projectConfiguration.projectId = :projectId")
     List<String> findNamesByProjectId(@Param("projectId") UUID projectId);
+
+    /**
+     * Get list of compound ID and name pairs for a project (lightweight query for refs).
+     * Returns Object[] where [0] = UUID id, [1] = String name.
+     *
+     * @param projectId project ID
+     * @return list of Object arrays with ID and name
+     */
+    @Query("SELECT c.id, c.name FROM CompoundConfiguration c "
+            + "WHERE c.projectConfiguration.projectId = :projectId")
+    List<Object[]> findIdAndNameByProjectId(@Param("projectId") UUID projectId);
+
+    /**
+     * Get list of compound ID and name pairs for a section (lightweight query for refs).
+     * Queries the join table to find compounds linked to a section.
+     * Returns Object[] where [0] = UUID id, [1] = String name.
+     *
+     * @param sectionId section ID
+     * @return list of Object arrays with ID and name
+     */
+    @Query(value = "SELECT c.id, c.name FROM compound_configuration c "
+            + "INNER JOIN project_section_compound_configuration sc ON c.id = sc.compound_id "
+            + "WHERE sc.section_id = :sectionId ORDER BY sc.place",
+           nativeQuery = true)
+    List<Object[]> findIdAndNameBySectionId(@Param("sectionId") UUID sectionId);
 }

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.persistence.CascadeType;
@@ -44,7 +45,9 @@ import javax.persistence.PostRemove;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -108,17 +111,46 @@ public class SectionConfiguration extends DateAuditorEntity {
     @DiffInclude
     private List<SectionConfiguration> sections;
 
+    /**
+     * Lightweight references to compounds (ID + name only).
+     * Serialized to Hazelcast cache for quick lookups.
+     * Not persisted to DB (@Transient).
+     */
+    @Transient
+    @JsonIgnore
+    @Builder.Default
+    private List<ConfigurationReference> compoundRefs = new ArrayList<>();
+
+    /**
+     * Lightweight references to processes (ID + name only).
+     * Serialized to Hazelcast cache for quick lookups.
+     * Not persisted to DB (@Transient).
+     */
+    @Transient
+    @JsonIgnore
+    @Builder.Default
+    private List<ConfigurationReference> processRefs = new ArrayList<>();
+
+    /**
+     * Full compound configurations.
+     * Persisted to DB via JPA cascade.
+     * NOT serialized to Hazelcast cache (transient keyword).
+     */
     @ManyToMany(targetEntity = CompoundConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "project_section_compound_configuration",
             joinColumns = @JoinColumn(name = "section_id"),
             inverseJoinColumns = {@JoinColumn(name = "compound_id")})
     @OrderColumn(name = "place")
     @EqualsAndHashCode.Exclude
-    @Builder.Default
     @BatchSize(size = 50)
     @DiffInclude
-    private List<CompoundConfiguration> compounds = new ArrayList<>();
+    private transient List<CompoundConfiguration> compounds;
 
+    /**
+     * Full process configurations.
+     * Persisted to DB via JPA cascade.
+     * NOT serialized to Hazelcast cache (transient keyword).
+     */
     @ManyToMany(targetEntity = ProcessConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "project_section_process_configuration",
             joinColumns = @JoinColumn(name = "section_id"),
@@ -126,10 +158,9 @@ public class SectionConfiguration extends DateAuditorEntity {
     @OrderColumn(name = "place")
     @Fetch(FetchMode.SUBSELECT)
     @EqualsAndHashCode.Exclude
-    @Builder.Default
     @BatchSize(size = 50)
     @DiffInclude
-    private List<ProcessConfiguration> processes = new ArrayList<>();
+    private transient List<ProcessConfiguration> processes;
 
     @ManyToOne(targetEntity = ProjectConfiguration.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
@@ -238,5 +269,109 @@ public class SectionConfiguration extends DateAuditorEntity {
                     .forEach(s -> orderedSections.add(correctPlaceInList(orderedSections, s.place), s));
             IntStream.range(0, orderedSections.size()).forEach(place -> orderedSections.get(place).setPlace(place));
         }
+    }
+
+    /**
+     * Get list of process names (lightweight, from refs).
+     *
+     * @return list of process names
+     */
+    public List<String> getProcessNames() {
+        return getProcessRefs().stream()
+                .map(ConfigurationReference::getName)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get list of compound names (lightweight, from refs).
+     *
+     * @return list of compound names
+     */
+    public List<String> getCompoundNames() {
+        return getCompoundRefs().stream()
+                .map(ConfigurationReference::getName)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get process refs (lightweight references).
+     *
+     * @return list of process references
+     */
+    public List<ConfigurationReference> getProcessRefs() {
+        if (processRefs == null) {
+            processRefs = new ArrayList<>();
+        }
+        return processRefs;
+    }
+
+    /**
+     * Get compound refs (lightweight references).
+     *
+     * @return list of compound references
+     */
+    public List<ConfigurationReference> getCompoundRefs() {
+        if (compoundRefs == null) {
+            compoundRefs = new ArrayList<>();
+        }
+        return compoundRefs;
+    }
+
+    /**
+     * Populate process refs from loaded processes.
+     *
+     * @param processes list of processes
+     */
+    public void populateProcessRefs(List<ProcessConfiguration> processes) {
+        if (processes != null) {
+            this.processRefs = processes.stream()
+                    .map(ConfigurationReference::fromProcess)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * Populate compound refs from loaded compounds.
+     *
+     * @param compounds list of compounds
+     */
+    public void populateCompoundRefs(List<CompoundConfiguration> compounds) {
+        if (compounds != null) {
+            this.compoundRefs = compounds.stream()
+                    .map(ConfigurationReference::fromCompound)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * Getter for compounds.
+     * If compounds is null (after deserialization from cache), converts refs to lightweight objects.
+     * This ensures API returns the same structure with id and name populated.
+     *
+     * @return list of compounds (lightweight if from cache)
+     */
+    public List<CompoundConfiguration> getCompounds() {
+        if (compounds == null) {
+            compounds = !compoundRefs.isEmpty() 
+                    ? ConfigurationReference.toCompoundConfigurations(compoundRefs)
+                    : new ArrayList<>();
+        }
+        return compounds;
+    }
+
+    /**
+     * Getter for processes.
+     * If processes is null (after deserialization from cache), converts refs to lightweight objects.
+     * This ensures API returns the same structure with id and name populated.
+     *
+     * @return list of processes (lightweight if from cache)
+     */
+    public List<ProcessConfiguration> getProcesses() {
+        if (processes == null) {
+            processes = !processRefs.isEmpty()
+                    ? ConfigurationReference.toProcessConfigurations(processRefs)
+                    : new ArrayList<>();
+        }
+        return processes;
     }
 }

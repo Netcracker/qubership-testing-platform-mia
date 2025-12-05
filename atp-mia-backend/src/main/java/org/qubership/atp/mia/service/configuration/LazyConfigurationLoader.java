@@ -20,9 +20,11 @@ package org.qubership.atp.mia.service.configuration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.qubership.atp.mia.model.CacheKeys;
 import org.qubership.atp.mia.model.configuration.CompoundConfiguration;
+import org.qubership.atp.mia.model.configuration.ConfigurationReference;
 import org.qubership.atp.mia.model.configuration.ProcessConfiguration;
 import org.qubership.atp.mia.repo.configuration.CompoundConfigurationRepository;
 import org.qubership.atp.mia.repo.configuration.ProcessConfigurationRepository;
@@ -46,8 +48,8 @@ public class LazyConfigurationLoader {
     private final CompoundConfigurationRepository compoundRepository;
     
     /**
-     * Load all processes for a project with caching
-     * 
+     * Load all processes for a project with caching.
+     *
      * @param projectId project ID
      * @return list of processes
      */
@@ -60,8 +62,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Load all compounds for a project with caching
-     * 
+     * Load all compounds for a project with caching.
+     *
      * @param projectId project ID
      * @return list of compounds
      */
@@ -74,8 +76,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Load process by name with caching
-     * 
+     * Load process by name with caching.
+     *
      * @param projectId project ID
      * @param processName process name
      * @return Optional with process
@@ -90,8 +92,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Load compound by name with caching
-     * 
+     * Load compound by name with caching.
+     *
      * @param projectId project ID
      * @param compoundName compound name
      * @return Optional with compound
@@ -106,8 +108,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Load process by ID with caching
-     * 
+     * Load process by ID with caching.
+     *
      * @param projectId project ID
      * @param processId process ID
      * @return Optional with process
@@ -122,8 +124,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Load compound by ID with caching
-     * 
+     * Load compound by ID with caching.
+     *
      * @param projectId project ID
      * @param compoundId compound ID
      * @return Optional with compound
@@ -138,8 +140,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Get only process IDs (lightweight query, without full entity loading)
-     * 
+     * Get only process IDs (lightweight query, without full entity loading).
+     *
      * @param projectId project ID
      * @return list of IDs
      */
@@ -152,8 +154,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Get only compound IDs (lightweight query, without full entity loading)
-     * 
+     * Get only compound IDs (lightweight query, without full entity loading).
+     *
      * @param projectId project ID
      * @return list of IDs
      */
@@ -163,6 +165,66 @@ public class LazyConfigurationLoader {
     public List<UUID> loadCompoundIds(UUID projectId) {
         log.debug("Loading compound IDs for project {} from database", projectId);
         return compoundRepository.findIdsByProjectId(projectId);
+    }
+    
+    /**
+     * Load process references (ID + name only) for a project.
+     * Lightweight version that doesn't load full entities.
+     *
+     * @param projectId project ID
+     * @return list of configuration references
+     */
+    @Transactional(readOnly = true)
+    public List<ConfigurationReference> loadProcessRefs(UUID projectId) {
+        log.debug("Loading process refs for project {} from database", projectId);
+        return processRepository.findIdAndNameByProjectId(projectId).stream()
+                .map(arr -> new ConfigurationReference((UUID) arr[0], (String) arr[1]))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Load compound references (ID + name only) for a project.
+     * Lightweight version that doesn't load full entities.
+     *
+     * @param projectId project ID
+     * @return list of configuration references
+     */
+    @Transactional(readOnly = true)
+    public List<ConfigurationReference> loadCompoundRefs(UUID projectId) {
+        log.debug("Loading compound refs for project {} from database", projectId);
+        return compoundRepository.findIdAndNameByProjectId(projectId).stream()
+                .map(arr -> new ConfigurationReference((UUID) arr[0], (String) arr[1]))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Load process references (ID + name only) for a section.
+     * Lightweight version that doesn't load full entities.
+     *
+     * @param sectionId section ID
+     * @return list of configuration references
+     */
+    @Transactional(readOnly = true)
+    public List<ConfigurationReference> loadSectionProcessRefs(UUID sectionId) {
+        log.debug("Loading process refs for section {} from database", sectionId);
+        return processRepository.findIdAndNameBySectionId(sectionId).stream()
+                .map(arr -> new ConfigurationReference((UUID) arr[0], (String) arr[1]))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Load compound references (ID + name only) for a section.
+     * Lightweight version that doesn't load full entities.
+     *
+     * @param sectionId section ID
+     * @return list of configuration references
+     */
+    @Transactional(readOnly = true)
+    public List<ConfigurationReference> loadSectionCompoundRefs(UUID sectionId) {
+        log.debug("Loading compound refs for section {} from database", sectionId);
+        return compoundRepository.findIdAndNameBySectionId(sectionId).stream()
+                .map(arr -> new ConfigurationReference((UUID) arr[0], (String) arr[1]))
+                .collect(Collectors.toList());
     }
 }
 

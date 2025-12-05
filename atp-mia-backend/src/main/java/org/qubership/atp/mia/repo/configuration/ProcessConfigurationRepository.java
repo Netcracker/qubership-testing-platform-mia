@@ -33,8 +33,8 @@ import org.springframework.stereotype.Repository;
 public interface ProcessConfigurationRepository extends CrudRepository<ProcessConfiguration, UUID> {
 
     /**
-     * Find all processes for a project
-     * 
+     * Find all processes for a project.
+     *
      * @param projectId project ID
      * @return list of processes
      */
@@ -42,28 +42,34 @@ public interface ProcessConfigurationRepository extends CrudRepository<ProcessCo
     List<ProcessConfiguration> findByProjectId(@Param("projectId") UUID projectId);
 
     /**
-     * Find process by name for a project
-     * 
+     * Find process by name for a project.
+     *
      * @param projectId project ID
      * @param name process name
      * @return Optional with process
      */
-    @Query("SELECT p FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId AND p.name = :name")
-    Optional<ProcessConfiguration> findByProjectIdAndName(@Param("projectId") UUID projectId, @Param("name") String name);
+    @Query("SELECT p FROM ProcessConfiguration p "
+            + "WHERE p.projectConfiguration.projectId = :projectId AND p.name = :name")
+    Optional<ProcessConfiguration> findByProjectIdAndName(
+            @Param("projectId") UUID projectId, 
+            @Param("name") String name);
 
     /**
-     * Find process by ID for a project (with ownership check)
-     * 
+     * Find process by ID for a project (with ownership check).
+     *
      * @param projectId project ID
      * @param processId process ID
      * @return Optional with process
      */
-    @Query("SELECT p FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId AND p.id = :processId")
-    Optional<ProcessConfiguration> findByProjectIdAndId(@Param("projectId") UUID projectId, @Param("processId") UUID processId);
+    @Query("SELECT p FROM ProcessConfiguration p "
+            + "WHERE p.projectConfiguration.projectId = :projectId AND p.id = :processId")
+    Optional<ProcessConfiguration> findByProjectIdAndId(
+            @Param("projectId") UUID projectId, 
+            @Param("processId") UUID processId);
 
     /**
-     * Get list of all process IDs for a project (lightweight query)
-     * 
+     * Get list of all process IDs for a project (lightweight query).
+     *
      * @param projectId project ID
      * @return list of IDs
      */
@@ -71,11 +77,36 @@ public interface ProcessConfigurationRepository extends CrudRepository<ProcessCo
     List<UUID> findIdsByProjectId(@Param("projectId") UUID projectId);
 
     /**
-     * Get list of all process names for a project (lightweight query)
-     * 
+     * Get list of all process names for a project (lightweight query).
+     *
      * @param projectId project ID
      * @return list of names
      */
     @Query("SELECT p.name FROM ProcessConfiguration p WHERE p.projectConfiguration.projectId = :projectId")
     List<String> findNamesByProjectId(@Param("projectId") UUID projectId);
+
+    /**
+     * Get list of process ID and name pairs for a project (lightweight query for refs).
+     * Returns Object[] where [0] = UUID id, [1] = String name.
+     *
+     * @param projectId project ID
+     * @return list of Object arrays with ID and name
+     */
+    @Query("SELECT p.id, p.name FROM ProcessConfiguration p "
+            + "WHERE p.projectConfiguration.projectId = :projectId")
+    List<Object[]> findIdAndNameByProjectId(@Param("projectId") UUID projectId);
+
+    /**
+     * Get list of process ID and name pairs for a section (lightweight query for refs).
+     * Queries the join table to find processes linked to a section.
+     * Returns Object[] where [0] = UUID id, [1] = String name.
+     *
+     * @param sectionId section ID
+     * @return list of Object arrays with ID and name
+     */
+    @Query(value = "SELECT p.id, p.name FROM process_configuration p "
+            + "INNER JOIN project_section_process_configuration sp ON p.id = sp.process_id "
+            + "WHERE sp.section_id = :sectionId ORDER BY sp.place", 
+           nativeQuery = true)
+    List<Object[]> findIdAndNameBySectionId(@Param("sectionId") UUID sectionId);
 }
