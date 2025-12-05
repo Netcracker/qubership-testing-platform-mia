@@ -139,6 +139,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      */
     @Cacheable(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId", condition = "#projectId != null")
     public ProjectConfiguration getConfigByProjectId(UUID projectId) {
+        log.info("ATP_MIA_CONFIGURATION_OS Cache Not found");
         return getConfiguration(projectId);
     }
 

@@ -62,6 +62,7 @@ public class RecordingSessionsService {
                 new PotSession(sessionId, miaContext.getConfig(), atpUserService.getAtpUser()));
         recordingSessionRepository
                 .save(recordingSession.addExecutionStep(generateExecutionStepFromExecutionResponse(executionResponse)));
+        log.info("Save execution step for session ID Ended");
         return recordingSession;
     }
 
