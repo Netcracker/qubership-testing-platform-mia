@@ -152,8 +152,10 @@ public class ProcessService {
      */
     @AtpJaegerLog(spanTags = @AtpSpanTag(key = "process.name", value = "#request.process"))
     public ExecutionResponse executeProcess(ExecutionRequest request, UUID sseId) {
+        log.info("Execution starts in method executeProcess");
         final long startDate = System.currentTimeMillis();
         ProjectConfiguration config = miaContext.getConfig();
+        log.info("miaContext.getConfig() is done");
         metricsService.processExecutionWasStarted();
         miaContext.replaceSpacesInAccountNumber();
         ProcessConfiguration process = config.getProcessByName(request.getProcess());
@@ -184,7 +186,9 @@ public class ProcessService {
                     .collect(Collectors.toList());
         }
         getActualStateOfSwitchers(switchersListFromBe, switchersListFromFe);
+        log.info("getActualStateOfSwitchers Ended. ProcessSettings clone start");
         ProcessSettings processSettings = (ProcessSettings) SerializationUtils.clone(process.getProcessSettings());
+        log.info("ProcessSettings clone ended");
         Command configCommand = processSettings.getCommand();
         if (request.getCommand() != null && !request.getCommand().isEmpty()) {
             final String labelOrCommand = request.getCommand();
@@ -205,6 +209,7 @@ public class ProcessService {
                 miaEntityUrlFormat,
                 miaContext.getProjectId(),
                 process.getId()));
+        log.info("call addExecutionStep method");
         recordingSessionsService.addExecutionStep(response);
         gridFsService.saveLogResponseAfterExecution(response);
         response.setDuration(Utils.calculateDuration(startDate));
@@ -213,6 +218,7 @@ public class ProcessService {
     }
 
     private ExecutionResponse executeProcess(ProcessSettings processSettings, List<Switcher> switchersListFromBe) {
+        log.info("method executeProcess Started");
         ExecutionResponse executionResponse = new ExecutionResponse();
         executionResponse.setProcessName(processSettings.getName());
         executionResponse.setProcessStatus(new ProcessStatus());
@@ -221,23 +227,29 @@ public class ProcessService {
             switchersListFromBe.forEach(switcher -> {
                 if (switcher.getActionType() != null && switcher.getActionType().equals("SQL")) {
                     if (switcher.isValue() && switcher.getActionTrue() != null) {
+                        log.info("processSettings.addPrerequisites start .");
                         processSettings.addPrerequisites(
                                 new Prerequisite(switcher.getActionType(),
                                         miaContext.getConfig().getCommonConfiguration().getDefaultSystem(),
                                         switcher.getActionTrue()));
+                        log.info("processSettings.addPrerequisites Done .");
                     }
                     if (!switcher.isValue() && switcher.getActionFalse() != null) {
+                        log.info("processSettings.addPrerequisites end !");
                         processSettings.addPrerequisites(
                                 new Prerequisite(switcher.getActionType(),
                                         miaContext.getConfig().getCommonConfiguration().getDefaultSystem(),
                                         switcher.getActionFalse()));
+                        log.info("processSettings.addPrerequisites Done ! ");
                     }
                 }
             });
         }
+        log.info("Before executionResponse.setPrerequisites");
         if (processSettings.getPrerequisites() != null) {
             executionResponse.setPrerequisites(executePrerequisites(processSettings.getPrerequisites(), command));
         }
+        log.info("After executionResponse.setPrerequisites");
         if (switchersListFromBe != null) {
             switchersListFromBe.forEach(switcher -> {
                 if (switcher.getActionType() != null && switcher.getActionType().equals("SSH")
@@ -252,9 +264,11 @@ public class ProcessService {
             });
         }
         //Execute command
+        log.info("Before  command.setSystem");
         if (Strings.isNullOrEmpty(command.getSystem())) {
             command.setSystem(miaContext.getConfig().getCommonConfiguration().getDefaultSystem());
         }
+        log.info("After  command.setSystem");
         try {
             miaContext.getFlowData().getSystem(command.getSystem());
         } catch (Exception e) {
@@ -288,12 +302,15 @@ public class ProcessService {
                 addValidationStatusAndSaveVariables(executionResponse, validations);
             }
         }
+        log.info("Before Get global variables");
         //Get global variables
         if (processSettings.getGlobalVariables() != null) {
             HashMap<String, String> globalVariables = new HashMap<>();
             processSettings.getGlobalVariables().forEach((globalVariableKey, globalVariableValue) -> {
                 if (globalVariableValue != null) {
+                    log.info("Call miaContext.evaluate for globalVariableKey='{}' and globalVariableValue='{}'", globalVariableKey, globalVariableValue);
                     String value = miaContext.evaluate(globalVariableValue);
+                    log.info("call to miaContext.evaluate Ended");
                     if (value != null) {
                         globalVariables.put(globalVariableKey, value);
                         log.info("Parameter '{}' saved as '{}' to globalVariables", value, globalVariableKey);
@@ -302,6 +319,7 @@ public class ProcessService {
             });
             executionResponse.setGlobalVariables(globalVariables);
         }
+        log.info("method executeProcess has Ended");
         return executionResponse;
     }
 
@@ -363,6 +381,7 @@ public class ProcessService {
      * @return updated Process.
      */
     public ProcessSettings replaceProcessSystems(ProcessSettings processSettings) {
+        log.info("replaceProcessSystems started");
         processSettings.getCommand().setSystem(miaContext.evaluate(processSettings.getCommand().getSystem()));
         if (processSettings.getPrerequisites() != null) {
             processSettings.getPrerequisites().stream().forEach(prerequisite -> {
@@ -374,6 +393,7 @@ public class ProcessService {
                 validation.setSystem(miaContext.evaluate(validation.getSystem()));
             });
         }
+        log.info("replaceProcessSystems ended");
         return processSettings;
     }
 
@@ -572,6 +592,7 @@ public class ProcessService {
         List<CommandResponse> responses = new ArrayList<>();
         List<String> sshPrerequisitesToExecute = new ArrayList<>();
         for (Prerequisite prerequisite : prerequisites) {
+            log.debug("check if skipPrerequisite");
             if (skipPrerequisite(prerequisite, command)) {
                 log.debug("Prerequisite " + prerequisite + " has been skipped");
                 continue;
@@ -579,8 +600,10 @@ public class ProcessService {
             log.debug("Execute prerequisite: " + prerequisite);
             String type = prerequisite.getType();
             if (SQL.toString().equals(type)) {
+                log.info("sqlService.executeCommand for prerequisite");
                 final List<CommandResponse> prerequisiteResponses = sqlService.executeCommand(prerequisite.getValue(),
                         prerequisite.getSystem());
+                log.info("sqlService.executeCommand response for prerequisite");
                 responses.addAll(prerequisiteResponses);
                 saveSqlPrerequisiteResponseToFlowData(prerequisite, prerequisiteResponses);
             } else if (CommandType.SSH.toString().equals(type)) {
@@ -591,11 +614,13 @@ public class ProcessService {
                 throw new PrerequisiteTypeUnsupportedException(type);
             }
         }
+        log.debug("Before sshPrerequisitesToExecute: " );
         sshPrerequisitesToExecute.forEach(prerequisite -> {
             String currentCommandValue = command.getToExecute();
             command.setToExecute(prerequisite
                     + miaContext.getConfig().getCommonConfiguration().getCommandShellSeparator() + currentCommandValue);
         });
+        log.debug("After sshPrerequisitesToExecute: " );
         return responses;
     }
 
@@ -710,6 +735,7 @@ public class ProcessService {
      * @param responses    responses
      */
     private void saveSqlPrerequisiteResponseToFlowData(Prerequisite prerequisite, List<CommandResponse> responses) {
+        log.info("saveSqlPrerequisiteResponseToFlowData starts");
         if (prerequisite.getName() != null) {
             Optional<CommandResponse> prerequisiteQuery = responses.stream().filter(this::filterQueryType).findFirst();
             if (prerequisiteQuery.isPresent()) {
@@ -730,6 +756,7 @@ public class ProcessService {
                 throw new PrerequisiteQueryNotValidException(Constants.sqlOperators);
             }
         }
+        log.info("saveSqlPrerequisiteResponseToFlowData Ends");
     }
 
     /**
