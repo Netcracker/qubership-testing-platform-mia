@@ -17,21 +17,15 @@
 
 package org.qubership.atp.mia.service.history.impl;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.javers.core.Javers;
-import org.javers.repository.jql.JqlQuery;
-import org.javers.repository.jql.QueryBuilder;
-import org.javers.shadow.Shadow;
 import org.qubership.atp.mia.controllers.api.dto.HistoryItemTypeDto;
 import org.qubership.atp.mia.exceptions.configuration.ProcessNotFoundException;
 import org.qubership.atp.mia.exceptions.history.MiaCompoundHistoryRevisionRestoreException;
-import org.qubership.atp.mia.exceptions.history.MiaHistoryRevisionRestoreException;
 import org.qubership.atp.mia.model.configuration.CompoundConfiguration;
 import org.qubership.atp.mia.service.history.EntityHistoryService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -80,29 +74,8 @@ public class CompoundConfigurationRestoreHistoryService extends AbstractRestoreH
 
     @Override
     public Object restoreToRevision(UUID id, long revisionId) {
-        JqlQuery query = QueryBuilder.byInstanceId(id, getEntityClass())
-                .withVersion(revisionId)
-                .withScopeDeepPlus()
-                .build();
-
-        CompoundConfiguration actualObject = getObject(id);
-
-        validateReferenceExistsService.validateEntity(actualObject);
-
-        List<Shadow<CompoundConfiguration>> shadows = javers.findShadows(query);
-
-        if (CollectionUtils.isEmpty(shadows)) {
-            log.error("No shadows found for entity '{}' with revision='{}' and uuid='{}'",
-                    getItemType(), revisionId, id);
-
-            throw new MiaHistoryRevisionRestoreException();
-        }
-        Shadow<CompoundConfiguration> objectShadow = shadows.iterator().next();
-        Object restoredObject;
-        restoredObject = restoreValues(objectShadow, actualObject);
-
         try {
-            return saveRestoredObject((CompoundConfiguration) restoredObject);
+            return super.restoreToRevision(id, revisionId);
         } catch (ProcessNotFoundException ex) {
             throw new MiaCompoundHistoryRevisionRestoreException(revisionId);
         }
