@@ -226,6 +226,30 @@ public class LazyConfigurationLoader {
                 .map(arr -> new ConfigurationReference((UUID) arr[0], (String) arr[1]))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Load full process configurations for a section.
+     *
+     * @param sectionId section ID
+     * @return list of full process configurations
+     */
+    @Transactional(readOnly = true)
+    public List<ProcessConfiguration> loadSectionProcesses(UUID sectionId) {
+        log.debug("Loading full processes for section {} from database", sectionId);
+        return processRepository.findBySectionId(sectionId);
+    }
+
+    /**
+     * Load full compound configurations for a section.
+     *
+     * @param sectionId section ID
+     * @return list of full compound configurations
+     */
+    @Transactional(readOnly = true)
+    public List<CompoundConfiguration> loadSectionCompounds(UUID sectionId) {
+        log.debug("Loading full compounds for section {} from database", sectionId);
+        return compoundRepository.findBySectionId(sectionId);
+    }
 }
 
 

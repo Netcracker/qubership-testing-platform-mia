@@ -79,7 +79,7 @@ public class ProjectDirectory extends DateAuditorEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffInclude
-    private ProjectDirectory parentDirectory;
+    private transient ProjectDirectory parentDirectory;
 
     @OneToMany(mappedBy = "parentDirectory", targetEntity = ProjectDirectory.class, cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
@@ -95,7 +95,7 @@ public class ProjectDirectory extends DateAuditorEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffIgnore
-    private ProjectConfiguration projectConfiguration;
+    private transient ProjectConfiguration projectConfiguration;
 
     @OneToMany(mappedBy = "directory", targetEntity = ProjectFile.class, cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)

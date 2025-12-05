@@ -56,6 +56,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.qubership.atp.mia.model.DateAuditorEntity;
+import org.qubership.atp.mia.service.configuration.LazyConfigurationLoader;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -101,7 +102,7 @@ public class SectionConfiguration extends DateAuditorEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffInclude
-    private SectionConfiguration parentSection;
+    private transient SectionConfiguration parentSection;
 
     @OneToMany(mappedBy = "parentSection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderColumn(name = "place", nullable = false)
@@ -167,7 +168,24 @@ public class SectionConfiguration extends DateAuditorEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffIgnore
-    private ProjectConfiguration projectConfiguration;
+    private transient ProjectConfiguration projectConfiguration;
+
+    /**
+     * Lazy loader for loading full process/compound data on demand.
+     * Transient - not serialized to cache, restored after deserialization.
+     */
+    @Transient
+    @JsonIgnore
+    private transient LazyConfigurationLoader lazyLoader;
+
+    /**
+     * Set lazy loader for on-demand loading.
+     *
+     * @param lazyLoader the loader
+     */
+    public void setLazyLoader(LazyConfigurationLoader lazyLoader) {
+        this.lazyLoader = lazyLoader;
+    }
 
     /**
      * Add compound.
@@ -373,5 +391,31 @@ public class SectionConfiguration extends DateAuditorEntity {
                     : new ArrayList<>();
         }
         return processes;
+    }
+
+    /**
+     * Get full process configurations with all details.
+     * Loads from DB via lazyLoader if available.
+     *
+     * @return full process configurations
+     */
+    public List<ProcessConfiguration> getFullProcesses() {
+        if (lazyLoader != null && id != null) {
+            return lazyLoader.loadSectionProcesses(id);
+        }
+        return getProcesses();
+    }
+
+    /**
+     * Get full compound configurations with all details.
+     * Loads from DB via lazyLoader if available.
+     *
+     * @return full compound configurations
+     */
+    public List<CompoundConfiguration> getFullCompounds() {
+        if (lazyLoader != null && id != null) {
+            return lazyLoader.loadSectionCompounds(id);
+        }
+        return getCompounds();
     }
 }
