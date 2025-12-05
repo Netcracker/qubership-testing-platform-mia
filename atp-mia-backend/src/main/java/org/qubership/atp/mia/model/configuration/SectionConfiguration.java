@@ -25,9 +25,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.IntStream;
-
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -49,7 +48,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;

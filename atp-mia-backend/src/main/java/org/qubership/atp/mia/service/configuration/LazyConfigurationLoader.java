@@ -48,8 +48,8 @@ public class LazyConfigurationLoader {
     private final CompoundConfigurationRepository compoundRepository;
     
     /**
-     * Load all processes for a project with caching
-     * 
+     * Load all processes for a project with caching.
+     *
      * @param projectId project ID
      * @return list of processes
      */
@@ -62,8 +62,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Load all compounds for a project with caching
-     * 
+     * Load all compounds for a project with caching.
+     *
      * @param projectId project ID
      * @return list of compounds
      */
@@ -76,8 +76,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Load process by name with caching
-     * 
+     * Load process by name with caching.
+     *
      * @param projectId project ID
      * @param processName process name
      * @return Optional with process
@@ -92,8 +92,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Load compound by name with caching
-     * 
+     * Load compound by name with caching.
+     *
      * @param projectId project ID
      * @param compoundName compound name
      * @return Optional with compound
@@ -108,8 +108,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Load process by ID with caching
-     * 
+     * Load process by ID with caching.
+     *
      * @param projectId project ID
      * @param processId process ID
      * @return Optional with process
@@ -124,8 +124,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Load compound by ID with caching
-     * 
+     * Load compound by ID with caching.
+     *
      * @param projectId project ID
      * @param compoundId compound ID
      * @return Optional with compound
@@ -140,8 +140,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Get only process IDs (lightweight query, without full entity loading)
-     * 
+     * Get only process IDs (lightweight query, without full entity loading).
+     *
      * @param projectId project ID
      * @return list of IDs
      */
@@ -154,8 +154,8 @@ public class LazyConfigurationLoader {
     }
     
     /**
-     * Get only compound IDs (lightweight query, without full entity loading)
-     * 
+     * Get only compound IDs (lightweight query, without full entity loading).
+     *
      * @param projectId project ID
      * @return list of IDs
      */
@@ -170,7 +170,7 @@ public class LazyConfigurationLoader {
     /**
      * Load process references (ID + name only) for a project.
      * Lightweight version that doesn't load full entities.
-     * 
+     *
      * @param projectId project ID
      * @return list of configuration references
      */
@@ -185,7 +185,7 @@ public class LazyConfigurationLoader {
     /**
      * Load compound references (ID + name only) for a project.
      * Lightweight version that doesn't load full entities.
-     * 
+     *
      * @param projectId project ID
      * @return list of configuration references
      */
@@ -200,7 +200,7 @@ public class LazyConfigurationLoader {
     /**
      * Load process references (ID + name only) for a section.
      * Lightweight version that doesn't load full entities.
-     * 
+     *
      * @param sectionId section ID
      * @return list of configuration references
      */
@@ -215,7 +215,7 @@ public class LazyConfigurationLoader {
     /**
      * Load compound references (ID + name only) for a section.
      * Lightweight version that doesn't load full entities.
-     * 
+     *
      * @param sectionId section ID
      * @return list of configuration references
      */

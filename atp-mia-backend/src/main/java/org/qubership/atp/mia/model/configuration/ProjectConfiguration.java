@@ -51,7 +51,6 @@ import org.qubership.atp.mia.model.file.ProjectFile;
 import org.qubership.atp.mia.service.configuration.LazyConfigurationLoader;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -177,7 +176,7 @@ public class ProjectConfiguration extends DateAuditorEntity {
     /**
      * Set LazyConfigurationLoader for lazy loading of collections.
      * Called automatically after entity creation/deserialization.
-     * 
+     *
      * @param lazyLoader service for loading
      */
     public void setLazyLoader(LazyConfigurationLoader lazyLoader) {

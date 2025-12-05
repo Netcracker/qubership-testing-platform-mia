@@ -18,14 +18,13 @@
 package org.qubership.atp.mia.model.configuration;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Lightweight reference to Process or Compound configuration.
@@ -44,7 +43,7 @@ public class ConfigurationReference implements Serializable {
     
     /**
      * Create reference from ProcessConfiguration.
-     * 
+     *
      * @param process process configuration
      * @return configuration reference
      */
@@ -57,7 +56,7 @@ public class ConfigurationReference implements Serializable {
     
     /**
      * Create reference from CompoundConfiguration.
-     * 
+     *
      * @param compound compound configuration
      * @return configuration reference
      */
@@ -70,7 +69,7 @@ public class ConfigurationReference implements Serializable {
     
     /**
      * Convert list of refs to lightweight ProcessConfiguration objects.
-     * 
+     *
      * @param refs list of references
      * @return list of lightweight ProcessConfiguration with only id and name
      */
@@ -85,7 +84,7 @@ public class ConfigurationReference implements Serializable {
     
     /**
      * Convert list of refs to lightweight CompoundConfiguration objects.
-     * 
+     *
      * @param refs list of references
      * @return list of lightweight CompoundConfiguration with only id and name
      */
@@ -98,4 +97,3 @@ public class ConfigurationReference implements Serializable {
                 .collect(Collectors.toList());
     }
 }
-
