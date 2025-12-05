@@ -161,35 +161,50 @@ public class SqlExecutionHelperService {
     @AtpJaegerLog()
     public List<CommandResponse> executeCommand(String query, String system, Map<String, String> additionalParams,
                                                 boolean toLimitRecords) {
+        log.info("Execution for executeCommand method ");
         List<CommandResponse> responses = new ArrayList<>();
         Server server = miaContext.getFlowData().getSystem(system).getServer(DB);
         miaContext.getFlowData().addParameters(server.getProperties());
         query = miaContext.evaluate(query);
+        log.info("query evaluate done !! ");
         if (query.toLowerCase().endsWith(".sql")) {
+            log.info("FileUtils.readFile starts");
             final String content = FileUtils.readFile(miaFileService.getFile(query).toPath());
+            log.info("FileUtils.readFile end");
             final String sqlToExecute = miaContext.evaluate(miaContext.evaluate(content), additionalParams);
+            log.info("sqlToExecute to execute:{}", sqlToExecute);
             if (sqlToExecute.toLowerCase().startsWith("declare") || sqlToExecute.toLowerCase().startsWith("begin")
                     || sqlToExecute.toLowerCase().startsWith("do")) {
+                log.info("Start executing stored procedure");
                 SqlResponse sqlResponse = new SqlResponse(server);
                 sqlResponse.setQuery(sqlToExecute);
                 driverFactory.getDriver(server).executeStoredProcedure(server, sqlToExecute);
+                log.info("executed StoredProcedure");
                 final String status = "SUCCESS";
                 final DbTable dbTable = new DbTable(Collections.singletonList("STORE PROCEDURE STATUS"),
                         Collections.singletonList(Collections.singletonList(status)));
                 sqlResponse.setData(dbTable);
                 sqlResponse.setRecords(1);
                 responses.add(new CommandResponse(sqlResponse));
+                log.info("Ended  executing stored procedure");
+                log.info("saveSqlTableToFile call..");
                 saveSqlTableToFile(Collections.singletonList(sqlResponse));
+                log.info("saveSqlTableToFile call Ended...");
             } else {
+                log.info("handleSingleQuery start: {}", query);
                 for (SqlResponse sqlResponse : handleSingleQuery(sqlToExecute, server, toLimitRecords)) {
                     responses.add(new CommandResponse(sqlResponse));
                 }
+                log.info("handleSingleQuery end: {}", query);
             }
         } else {
+            log.info("Start executing direct query: {}", query);
             for (SqlResponse sqlResponse : handleSingleQuery(query, server, toLimitRecords)) {
                 responses.add(new CommandResponse(sqlResponse));
             }
+            log.info("End executing direct query: {}", query);
         }
+        log.info("Execution for executeCommand method Ended ");
         return responses;
     }
 
@@ -209,6 +224,7 @@ public class SqlExecutionHelperService {
      */
     @AtpJaegerLog()
     public List<SqlResponse> executeValidations(List<Validation> validations, Command command) {
+        log.info("executeValidations start");
         List<SqlResponse> response = new ArrayList<>();
         CountDownLatch latch = new CountDownLatch(validations.size());
         for (Validation validation : validations) {
@@ -248,9 +264,10 @@ public class SqlExecutionHelperService {
             }
             if (queries.size() > 0) {
                 for (String query : queries) {
-                    log.debug("Execute validation query: " + query);
+                    log.debug("Execute validation query start ,query: " + query);
                     response.add(executeQuery(server, query, tableName,
                             validation.isSaveToWordFile(), validation.isSaveToZipFile()));
+                    log.debug("Execute validation query " );
                 }
             } else {
                 String warnMessage = String.format("No queries were found in the file %s for validation", value);
@@ -258,11 +275,14 @@ public class SqlExecutionHelperService {
                 log.warn(warnMessage);
             }
         }
+        log.info("call saveSqlTableToFile Before");
         saveSqlTableToFile(response);
+        log.info("call saveSqlTableToFile After");
         response.stream()
                 .map(SqlResponse::getLink)
                 .filter(Objects::nonNull)
                 .forEach(link -> link.setPath(fileDownloadPrefix + link.getPath()));
+        log.info("executeValidations end");
         return response;
     }
 
@@ -288,6 +308,7 @@ public class SqlExecutionHelperService {
      */
     @AtpJaegerLog()
     public List<SqlResponse> handleSingleQuery(String query, Server server, boolean toLimitRecords) {
+        log.info("handleSingleQuery Method call ");
         query = miaContext.evaluate(query);
         List<String> queries = new ArrayList<>();
         List<SqlResponse> responses = new ArrayList<>();
@@ -296,7 +317,9 @@ public class SqlExecutionHelperService {
         } else {
             queries.add(query);
         }
+        log.info("driverFactory.getDriver start");
         QueryDriver<?> driver = driverFactory.getDriver(server);
+        log.info("driverFactory.getDriver End");
         for (String queryFromList : queries) {
             queryFromList = queryFromList.trim();
             SqlResponse response = new SqlResponse(server);
@@ -305,6 +328,7 @@ public class SqlExecutionHelperService {
             if (queryFromList.toLowerCase().startsWith("select")) {
                 DbTable dbTable = driver.executeQuery(server, queryFromList, toLimitRecords
                         ? dbExecutionRecordsLimit : 0);
+                log.debug("Query executed...");
                 if (toLimitRecords && dbTable.getActualDataSizeBeforeLimit() > dbExecutionRecordsLimit) {
                     response.setLimitRecordsMessage("The number of returned rows exceeds the maximum "
                             + "allowed number of " + dbExecutionRecordsLimit + " rows");
@@ -319,17 +343,25 @@ public class SqlExecutionHelperService {
                     || queryFromList.toLowerCase().startsWith("drop")
                     || queryFromList.toLowerCase().startsWith("create")
                     || queryFromList.toLowerCase().startsWith("delete")) {
+                log.info("driver.executeUpdate start");
                 int affected = driver.executeUpdate(server, queryFromList);
+                log.info("driver.executeUpdate end");
                 response.setDescription("Affected rows: " + affected);
             } else if (queryFromList.toLowerCase().startsWith("with")) {
+                log.info("driver.executeStoredProcedure start");
                 DbAnswer res = driver.executeStoredProcedure(server, queryFromList);
+                log.info("driver.executeStoredProcedure end");
                 res.updateSqlResponse(response);
             } else {
                 throw new SqlCommandUnsupportedException(queryFromList);
             }
+            log.info("query execution done");
             responses.add(response);
         }
+        log.info("call saveSqlTableToFile...");
         saveSqlTableToFile(responses);
+        log.info("call saveSqlTableToFile End");
+        log.info("handleSingleQuery Method call Ended");
         return responses;
     }
 

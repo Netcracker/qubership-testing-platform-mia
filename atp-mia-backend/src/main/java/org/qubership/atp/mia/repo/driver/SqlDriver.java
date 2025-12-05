@@ -118,7 +118,9 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
     public DbTable executeQuery(Server server, String query, int limitRecords) {
         int timeout = getExecutionTimeout(executionTimeout, server);
         try {
+            log.info("Before pool.get(server)");
             Connection connection = pool.get(server);
+            log.info("After pool.get(server)");
             try (PreparedStatement statement = connection.prepareStatement(query,
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY)) {
@@ -138,6 +140,7 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
                 }
                 DbTable dbTable = SqlUtils.resultSetToDbTable(rs, limitRecords);
                 dbTable.setActualDataSizeBeforeLimit(actualRecordsSize);
+                log.info("dbTable return");
                 return dbTable;
             } catch (TimeoutException e) {
                 throw new SqlTimeoutException(timeout, "milliseconds", query);

@@ -52,6 +52,7 @@ public class AtpMacrosUtils {
      * Replaces ATP macros with its values in a given string.
      */
     public static String evaluateWithAtpMacros(String texToEvaluate, UUID projectId) {
+        log.info("evaluateWithAtpMacros start");
         if (macrosEnableStatic) {
             List<Macros> macros = macrosServiceStatic.getMacros(projectId, macrosRepositoryStatic);
             Optional<Macros> macro = macros
@@ -62,6 +63,7 @@ public class AtpMacrosUtils {
                 return macrosRepositoryStatic.evaluate(texToEvaluate);
             }
         }
+        log.info("evaluateWithAtpMacros ends");
         return texToEvaluate;
     }
 

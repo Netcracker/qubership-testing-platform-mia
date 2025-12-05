@@ -187,14 +187,18 @@ public class MiaContext {
      * Evaluate or replace macros in string.
      */
     public String evaluate(String text, Map<String, String> additionalParameters) {
+        log.info("evaluate method start!");
         if (!Strings.isNullOrEmpty(text)) {
+            log.info("Before getting variableFormat");
             final String variableFormat = getConfig().getCommonConfiguration().getVariableFormat();
+            log.info("After getting variableFormat");
             final VariableFormat varFormat = new VariableFormat(variableFormat);
             Map<String, String> parameters = new HashMap<>(getFlowData().getParameters());
             parameters.putAll(additionalParameters);
             //evaluate inside and after that evaluate macros
             return evaluateWithMacroses(evaluateInside(text, varFormat, parameters));
         }
+        log.info("evaluate method Ended!");
         return text;
     }
 
@@ -222,6 +226,7 @@ public class MiaContext {
      * @return ProjectConfiguration
      */
     public ProjectConfiguration getConfig() {
+        log.info("projectConfigurationService.getConfigByProjectId call start");
         return projectConfigurationService.getConfigByProjectId(getProjectId());
     }
 
@@ -459,6 +464,7 @@ public class MiaContext {
     }
 
     private String evaluateInside(String text, VariableFormat varFormat, Map<String, String> additionalParameters) {
+        log.info("evaluateInside Starts");
         Set<LinkedHashSet<String>> avoidInfinityLoops = new HashSet<>();
         String extractMatches = varFormat.getMatches().toString();
 
@@ -505,6 +511,7 @@ public class MiaContext {
             }
             text = newText;
         }
+        log.info("evaluateInside Ended");
         return text;
     }
 
@@ -512,6 +519,7 @@ public class MiaContext {
      * Evaluates text with using of macroses.
      */
     public String evaluateWithMacroses(String text) {
+        log.info("evaluateWithMacroses  method started.");
         boolean contains = text.contains("${");
         if (contains) {
             if (text.contains("${ENV") && text.contains("}") && text.indexOf("${Gen") < text.lastIndexOf("}")) {
@@ -562,6 +570,7 @@ public class MiaContext {
                 || text.matches("(?s).*\\#\\w+\\(.*\\)")) {
             return AtpMacrosUtils.evaluateWithAtpMacros(text, getFlowData().getProjectId());
         }
+        log.info("evaluateWithMacroses  method ended.");
         return text;
     }
 
