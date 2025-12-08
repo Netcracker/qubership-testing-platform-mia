@@ -87,7 +87,7 @@ public class ProjectFile extends DateAuditorEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffIgnore
-    private ProjectConfiguration projectConfiguration;
+    private transient ProjectConfiguration projectConfiguration;
 
     /**
      * Get path for project file.

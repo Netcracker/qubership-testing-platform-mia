@@ -267,9 +267,8 @@ public class ProjectConfiguration extends DateAuditorEntity {
     }
 
     /**
-     * Getter for compounds.
-     * If compounds is null (after deserialization from cache), converts refs to lightweight objects.
-     * This ensures API returns the same structure with id and name populated.
+     * Getter for compounds - returns lightweight objects for API responses.
+     * Use getFullCompounds() when full compound data is needed.
      *
      * @return compounds (lightweight if from cache, full if loaded from DB)
      */
@@ -288,6 +287,19 @@ public class ProjectConfiguration extends DateAuditorEntity {
             }
         }
         return compounds;
+    }
+
+    /**
+     * Get full compound configurations with all details.
+     * Always loads from DB via lazyLoader if available.
+     *
+     * @return full compound configurations
+     */
+    public List<CompoundConfiguration> getFullCompounds() {
+        if (lazyLoader != null && projectId != null) {
+            return lazyLoader.loadCompounds(projectId);
+        }
+        return getCompounds();
     }
 
     /**
@@ -380,9 +392,8 @@ public class ProjectConfiguration extends DateAuditorEntity {
     }
 
     /**
-     * Getter for processes.
-     * If processes is null (after deserialization from cache), converts refs to lightweight objects.
-     * This ensures API returns the same structure with id and name populated.
+     * Getter for processes - returns lightweight objects for API responses.
+     * Use getFullProcesses() when full process data is needed.
      *
      * @return processes (lightweight if from cache, full if loaded from DB)
      */
@@ -401,6 +412,20 @@ public class ProjectConfiguration extends DateAuditorEntity {
             }
         }
         return processes;
+    }
+
+    /**
+     * Get full process configurations with all details (processSettings, etc).
+     * Always loads from DB via lazyLoader if available.
+     * Use this when you need full process data, not just id/name.
+     *
+     * @return full process configurations
+     */
+    public List<ProcessConfiguration> getFullProcesses() {
+        if (lazyLoader != null && projectId != null) {
+            return lazyLoader.loadProcesses(projectId);
+        }
+        return getProcesses();
     }
 
     /**

@@ -161,8 +161,10 @@ public class ConfigurationFileSerializer {
         }
 
         List<ExecutableDto> executableDtoList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(section.getCompounds())) {
-            for (CompoundConfiguration c : section.getCompounds()) {
+        // Use getFullCompounds to get full data including referToInput and processes
+        List<CompoundConfiguration> fullCompounds = section.getFullCompounds();
+        if (!CollectionUtils.isEmpty(fullCompounds)) {
+            for (CompoundConfiguration c : fullCompounds) {
                 ExecutableDto executableDto = new ExecutableDto()
                         .id(c.getId())
                         .name(c.getName())
@@ -178,8 +180,10 @@ public class ConfigurationFileSerializer {
             }
         }
 
-        if (!CollectionUtils.isEmpty(section.getProcesses())) {
-            section.getProcesses().stream()
+        // Use getFullProcesses to get full data including processSettings
+        List<ProcessConfiguration> fullProcesses = section.getFullProcesses();
+        if (!CollectionUtils.isEmpty(fullProcesses)) {
+            fullProcesses.stream()
                     .filter(Objects::nonNull)
                     .forEach(p -> executableDtoList.add(makeOldProcess(p, isForFile)));
         }
