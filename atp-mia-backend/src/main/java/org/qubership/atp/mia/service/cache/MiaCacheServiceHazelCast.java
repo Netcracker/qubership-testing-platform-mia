@@ -17,6 +17,8 @@
 
 package org.qubership.atp.mia.service.cache;
 
+import static org.qubership.atp.mia.model.CacheKeys.Constants.CONFIGURATION_KEY;
+
 import java.util.UUID;
 
 import org.qubership.atp.mia.model.CacheKeys;
@@ -27,7 +29,9 @@ import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientConnectionStrategyConfig;
 import com.hazelcast.config.Config;
+import com.hazelcast.config.InMemoryFormat;
 import com.hazelcast.config.MapConfig;
+import com.hazelcast.config.NearCacheConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
@@ -81,6 +85,7 @@ public class MiaCacheServiceHazelCast implements MiaCacheService {
             clientConfig.getNetworkConfig().addAddress(hazelcastServerAddress + ":" + hazelcastServerPort);
             clientConfig.getConnectionStrategyConfig()
                     .setReconnectMode(ClientConnectionStrategyConfig.ReconnectMode.ASYNC);
+            addNearCacheForProjectConfig(clientConfig);
             if (!serverStarted) {
                 startCacheServer();
             }
@@ -110,6 +115,17 @@ public class MiaCacheServiceHazelCast implements MiaCacheService {
         }
         return hzInstanceClient;
     }
+
+    public void addNearCacheForProjectConfig(ClientConfig clientConfig) {
+        NearCacheConfig nearCacheConfig = clientConfig.getNearCacheConfig(CONFIGURATION_KEY);
+        if (nearCacheConfig == null) {
+            nearCacheConfig = new NearCacheConfig(CONFIGURATION_KEY)
+                    .setInMemoryFormat(InMemoryFormat.OBJECT);
+            log.info("Hazelcast Near Cache config for ATP_MIA_CONFIGURATION_OS is created");
+        }
+        clientConfig.addNearCacheConfig(nearCacheConfig);
+    }
+
 
     private void startCacheServer() {
         if (hazelcastServerEnable) {
