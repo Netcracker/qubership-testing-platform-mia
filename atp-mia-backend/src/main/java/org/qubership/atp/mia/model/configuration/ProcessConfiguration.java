@@ -98,7 +98,7 @@ public class ProcessConfiguration extends DateAuditorEntity {
     @Builder.Default
     @BatchSize(size = 50)
     @DiffIgnore
-    private List<CompoundConfiguration> inCompounds = new ArrayList<>();
+    private transient List<CompoundConfiguration> inCompounds = new ArrayList<>();
 
     /**
      * For History change usage. DO NOT use in restore!
@@ -117,7 +117,7 @@ public class ProcessConfiguration extends DateAuditorEntity {
     @Builder.Default
     @BatchSize(size = 50)
     @DiffIgnore
-    private List<SectionConfiguration> inSections = new ArrayList<>();
+    private transient List<SectionConfiguration> inSections = new ArrayList<>();
 
     /**
      * For History change usage. DO NOT use in restore!
@@ -134,7 +134,7 @@ public class ProcessConfiguration extends DateAuditorEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffIgnore
-    private ProjectConfiguration projectConfiguration;
+    private transient ProjectConfiguration projectConfiguration;
 
     /**
      * Set all processes.

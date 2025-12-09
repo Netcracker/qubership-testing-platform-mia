@@ -85,7 +85,7 @@ CompoundConfiguration extends DateAuditorEntity {
     @OrderColumn(name = "place")
     @BatchSize(size = 50)
     @DiffInclude
-    private List<ProcessConfiguration> processes = new ArrayList<>();
+    private transient List<ProcessConfiguration> processes = new ArrayList<>();
 
     @ManyToMany(mappedBy = "compounds", targetEntity = SectionConfiguration.class, cascade = CascadeType.MERGE,
             fetch = FetchType.LAZY)
@@ -93,14 +93,14 @@ CompoundConfiguration extends DateAuditorEntity {
     @ToString.Exclude
     @BatchSize(size = 50)
     @DiffInclude
-    private List<SectionConfiguration> inSections = new ArrayList<>();
+    private transient List<SectionConfiguration> inSections = new ArrayList<>();
 
     @ManyToOne(targetEntity = ProjectConfiguration.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @DiffIgnore
-    private ProjectConfiguration projectConfiguration;
+    private transient ProjectConfiguration projectConfiguration;
 
     /**
      * Add process.
