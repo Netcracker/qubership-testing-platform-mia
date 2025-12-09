@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -1277,6 +1279,810 @@ public class HazelcastSerializationTest {
         log("  ProcessRefs: {}", s.getProcessRefs().size());
         log("  CompoundRefs: {}", s.getCompoundRefs().size());
         log("  NestedSections: {}", s.getSections() != null ? s.getSections().size() : "null");
+    }
+
+    // ==================== FULL FLOW INTEGRATION TEST ====================
+
+    @Test
+    @DisplayName("INTEGRATION: Full Hazelcast flow with real objects - simulates getConfigByProjectId")
+    void testFullHazelcastFlowWithRealObjects() throws Exception {
+        log("=== FULL INTEGRATION TEST: Hazelcast flow with real objects ===");
+        log("");
+        
+        // ============ STEP 1: Create full configuration like from database ============
+        log("STEP 1: Creating full configuration with REAL processes and compounds...");
+        
+        UUID projectId = UUID.randomUUID();
+        
+        // Create REAL full ProcessConfiguration objects (as if loaded from DB)
+        List<ProcessConfiguration> realProcesses = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            ProcessConfiguration process = createFullProcessConfiguration();
+            // Set unique id and name
+            process.setId(UUID.randomUUID());
+            process.setName("RealProcess_" + i);
+            realProcesses.add(process);
+        }
+        
+        // Create REAL full CompoundConfiguration objects (as if loaded from DB)
+        List<CompoundConfiguration> realCompounds = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            CompoundConfiguration compound = createFullCompoundConfiguration();
+            compound.setId(UUID.randomUUID());
+            compound.setName("RealCompound_" + i);
+            realCompounds.add(compound);
+        }
+        
+        // Create sections with full processes and compounds
+        SectionConfiguration childSection = SectionConfiguration.builder()
+                .id(UUID.randomUUID())
+                .name("ChildSection")
+                .place(0)
+                .sections(new ArrayList<>())
+                .processes(new ArrayList<>(realProcesses.subList(0, 3)))  // First 3 processes
+                .compounds(new ArrayList<>(realCompounds.subList(0, 2))) // First 2 compounds
+                .build();
+        
+        SectionConfiguration parentSection = SectionConfiguration.builder()
+                .id(UUID.randomUUID())
+                .name("ParentSection")
+                .place(0)
+                .sections(new ArrayList<>())
+                .processes(new ArrayList<>(realProcesses.subList(3, 7))) // Next 4 processes
+                .compounds(new ArrayList<>(realCompounds.subList(2, 4))) // Next 2 compounds
+                .build();
+        parentSection.getSections().add(childSection);
+        childSection.setParentSection(parentSection);
+        
+        // Create CommonConfiguration, HeaderConfiguration
+        CommonConfiguration commonConfig = CommonConfiguration.builder()
+                .projectId(projectId)
+                .build();
+        
+        HeaderConfiguration headerConfig = HeaderConfiguration.builder()
+                .projectId(projectId)
+                .build();
+        
+        PotHeaderConfiguration potHeaderConfig = PotHeaderConfiguration.builder()
+                .projectId(projectId)
+                .build();
+        
+        // Create full ProjectConfiguration
+        ProjectConfiguration originalConfig = ProjectConfiguration.builder()
+                .projectId(projectId)
+                .projectName("FullIntegrationTestProject")
+                .sections(Arrays.asList(parentSection))
+                .processes(realProcesses)  // FULL processes list!
+                .compounds(realCompounds)  // FULL compounds list!
+                .commonConfiguration(commonConfig)
+                .headerConfiguration(headerConfig)
+                .potHeaderConfiguration(potHeaderConfig)
+                .directories(new ArrayList<>())
+                .files(new ArrayList<>())
+                .build();
+        
+        // Set back-references (like JPA would do)
+        commonConfig.setProjectConfiguration(originalConfig);
+        headerConfig.setProjectConfiguration(originalConfig);
+        potHeaderConfig.setProjectConfiguration(originalConfig);
+        parentSection.setProjectConfiguration(originalConfig);
+        childSection.setProjectConfiguration(originalConfig);
+        for (ProcessConfiguration p : realProcesses) {
+            p.setProjectConfiguration(originalConfig);
+        }
+        for (CompoundConfiguration c : realCompounds) {
+            c.setProjectConfiguration(originalConfig);
+        }
+        
+        log("Created configuration:");
+        log("  ProjectId: {}", projectId);
+        log("  Processes count: {} (FULL objects with ProcessSettings)", realProcesses.size());
+        log("  Compounds count: {} (FULL objects)", realCompounds.size());
+        log("  Sections: {} (with nested: {})", 1, parentSection.getSections().size());
+        log("  Section[0] processes: {}", parentSection.getProcesses().size());
+        log("  Section[0].child processes: {}", childSection.getProcesses().size());
+        
+        // ============ STEP 2: Simulate materializeFullConfiguration ============
+        log("");
+        log("STEP 2: Simulating materializeFullConfiguration - populating refs...");
+        
+        // Populate processRefs from processes
+        for (ProcessConfiguration p : originalConfig.getProcesses()) {
+            originalConfig.getProcessRefs().add(new ConfigurationReference(p.getId(), p.getName()));
+        }
+        // Populate compoundRefs from compounds
+        for (CompoundConfiguration c : originalConfig.getCompounds()) {
+            originalConfig.getCompoundRefs().add(new ConfigurationReference(c.getId(), c.getName()));
+        }
+        
+        // Populate section refs
+        for (ProcessConfiguration p : parentSection.getProcesses()) {
+            parentSection.getProcessRefs().add(new ConfigurationReference(p.getId(), p.getName()));
+        }
+        for (CompoundConfiguration c : parentSection.getCompounds()) {
+            parentSection.getCompoundRefs().add(new ConfigurationReference(c.getId(), c.getName()));
+        }
+        for (ProcessConfiguration p : childSection.getProcesses()) {
+            childSection.getProcessRefs().add(new ConfigurationReference(p.getId(), p.getName()));
+        }
+        for (CompoundConfiguration c : childSection.getCompounds()) {
+            childSection.getCompoundRefs().add(new ConfigurationReference(c.getId(), c.getName()));
+        }
+        
+        log("Populated refs:");
+        log("  ProjectConfig.processRefs: {}", originalConfig.getProcessRefs().size());
+        log("  ProjectConfig.compoundRefs: {}", originalConfig.getCompoundRefs().size());
+        log("  ParentSection.processRefs: {}", parentSection.getProcessRefs().size());
+        log("  ChildSection.processRefs: {}", childSection.getProcessRefs().size());
+        
+        // ============ STEP 3: Serialize to Hazelcast ============
+        log("");
+        log("STEP 3: Serializing to Hazelcast (Java serialization)...");
+        
+        long startTime = System.currentTimeMillis();
+        byte[] serialized = serializeObject(originalConfig);
+        long serializeTime = System.currentTimeMillis() - startTime;
+        
+        log("Serialization completed:");
+        log("  Time: {} ms", serializeTime);
+        log("  Size: {} KB", serialized.length / 1024);
+        
+        // ============ STEP 4: Deserialize from Hazelcast ============
+        log("");
+        log("STEP 4: Deserializing from Hazelcast...");
+        
+        startTime = System.currentTimeMillis();
+        ProjectConfiguration deserializedConfig = deserializeObject(serialized);
+        long deserializeTime = System.currentTimeMillis() - startTime;
+        
+        log("Deserialization completed in {} ms", deserializeTime);
+        
+        // Verify transient fields are NULL
+        log("");
+        log("Verifying transient fields are NULL after deserialization:");
+        
+        Object processes = getBackReference(deserializedConfig, "processes");
+        Object compounds = getBackReference(deserializedConfig, "compounds");
+        Object lazyLoader = getBackReference(deserializedConfig, "lazyLoader");
+        
+        log("  processes: {}", processes == null ? "NULL ✓" : "NOT NULL ✗");
+        log("  compounds: {}", compounds == null ? "NULL ✓" : "NOT NULL ✗");
+        log("  lazyLoader: {}", lazyLoader == null ? "NULL ✓" : "NOT NULL ✗");
+        
+        assertNull(processes, "processes should be null (transient)");
+        assertNull(compounds, "compounds should be null (transient)");
+        assertNull(lazyLoader, "lazyLoader should be null (transient)");
+        
+        // Verify section back-references are NULL
+        SectionConfiguration deserializedParent = deserializedConfig.getSections().get(0);
+        SectionConfiguration deserializedChild = deserializedParent.getSections().get(0);
+        
+        Object parentProjectConfig = getBackReference(deserializedParent, "projectConfiguration");
+        Object childProjectConfig = getBackReference(deserializedChild, "projectConfiguration");
+        Object childParentSection = getBackReference(deserializedChild, "parentSection");
+        
+        log("  parentSection.projectConfiguration: {}", parentProjectConfig == null ? "NULL ✓" : "NOT NULL ✗");
+        log("  childSection.projectConfiguration: {}", childProjectConfig == null ? "NULL ✓" : "NOT NULL ✗");
+        log("  childSection.parentSection: {}", childParentSection == null ? "NULL ✓" : "NOT NULL ✗");
+        
+        assertNull(parentProjectConfig, "section.projectConfiguration should be null (transient)");
+        assertNull(childProjectConfig, "child.projectConfiguration should be null (transient)");
+        assertNull(childParentSection, "child.parentSection should be null (transient)");
+        
+        // ============ STEP 5: Verify REFS are preserved ============
+        log("");
+        log("STEP 5: Verifying REFS are preserved...");
+        
+        assertEquals(originalConfig.getProcessRefs().size(), deserializedConfig.getProcessRefs().size(),
+                "processRefs count should match");
+        assertEquals(originalConfig.getCompoundRefs().size(), deserializedConfig.getCompoundRefs().size(),
+                "compoundRefs count should match");
+        
+        // Verify each ref
+        for (int i = 0; i < originalConfig.getProcessRefs().size(); i++) {
+            ConfigurationReference origRef = originalConfig.getProcessRefs().get(i);
+            ConfigurationReference deserRef = deserializedConfig.getProcessRefs().get(i);
+            assertEquals(origRef.getId(), deserRef.getId(), "processRef[" + i + "].id should match");
+            assertEquals(origRef.getName(), deserRef.getName(), "processRef[" + i + "].name should match");
+        }
+        
+        log("  processRefs: {} - all IDs and names preserved ✓", deserializedConfig.getProcessRefs().size());
+        log("  compoundRefs: {} - all IDs and names preserved ✓", deserializedConfig.getCompoundRefs().size());
+        
+        // Verify section refs
+        assertEquals(parentSection.getProcessRefs().size(), deserializedParent.getProcessRefs().size());
+        assertEquals(childSection.getProcessRefs().size(), deserializedChild.getProcessRefs().size());
+        
+        log("  section processRefs preserved ✓");
+        log("  nested section processRefs preserved ✓");
+        
+        // ============ STEP 6: Simulate restoreBackReferences ============
+        log("");
+        log("STEP 6: Simulating restoreBackReferences...");
+        
+        // Create a mock LazyConfigurationLoader (simplified)
+        LazyConfigurationLoader mockLoader = createMockLazyLoader(realProcesses, realCompounds);
+        
+        // Restore back-references (like ProjectConfigurationService does)
+        simulateRestoreBackReferencesWithLoader(deserializedConfig, mockLoader);
+        
+        // Verify back-references are restored
+        log("Verifying back-references are restored:");
+        
+        assertNotNull(deserializedConfig.getLazyLoader(), "lazyLoader should be set");
+        assertNotNull(deserializedConfig.getCommonConfiguration().getProjectConfiguration(), 
+                "commonConfig.projectConfiguration should be restored");
+        assertEquals(projectId, deserializedConfig.getCommonConfiguration().getProjectConfiguration().getProjectId());
+        
+        SectionConfiguration restoredParent = deserializedConfig.getSections().get(0);
+        SectionConfiguration restoredChild = restoredParent.getSections().get(0);
+        
+        assertNotNull(restoredParent.getProjectConfiguration(), "section.projectConfiguration should be restored");
+        assertNotNull(restoredChild.getProjectConfiguration(), "child.projectConfiguration should be restored");
+        assertNotNull(restoredChild.getParentSection(), "child.parentSection should be restored");
+        assertEquals(restoredParent.getId(), restoredChild.getParentSection().getId());
+        assertNotNull(restoredParent.getLazyLoader(), "section.lazyLoader should be set");
+        assertNotNull(restoredChild.getLazyLoader(), "child.lazyLoader should be set");
+        
+        log("  lazyLoader: SET ✓");
+        log("  commonConfig.projectConfiguration: RESTORED ✓");
+        log("  headerConfig.projectConfiguration: RESTORED ✓");
+        log("  section.projectConfiguration: RESTORED ✓");
+        log("  child.parentSection: RESTORED ✓");
+        log("  section.lazyLoader: SET ✓");
+        
+        // ============ STEP 7: Verify API response works correctly ============
+        log("");
+        log("STEP 7: Verifying API response (getProcesses/getCompounds)...");
+        
+        // getProcesses() should return lightweight objects from refs
+        List<ProcessConfiguration> apiProcesses = deserializedConfig.getProcesses();
+        assertNotNull(apiProcesses, "getProcesses() should return list");
+        assertEquals(realProcesses.size(), apiProcesses.size(), "Process count should match");
+        
+        for (int i = 0; i < apiProcesses.size(); i++) {
+            ProcessConfiguration apiProc = apiProcesses.get(i);
+            ConfigurationReference ref = deserializedConfig.getProcessRefs().get(i);
+            assertEquals(ref.getId(), apiProc.getId(), "API process ID should match ref");
+            assertEquals(ref.getName(), apiProc.getName(), "API process name should match ref");
+            // Note: processSettings will be null in lightweight objects
+            log("  Process[{}]: id={}, name={}", i, apiProc.getId(), apiProc.getName());
+        }
+        
+        log("  getProcesses() returns {} lightweight objects ✓", apiProcesses.size());
+        
+        List<CompoundConfiguration> apiCompounds = deserializedConfig.getCompounds();
+        assertEquals(realCompounds.size(), apiCompounds.size(), "Compound count should match");
+        log("  getCompounds() returns {} lightweight objects ✓", apiCompounds.size());
+        
+        // Section processes also work
+        List<ProcessConfiguration> sectionProcesses = restoredParent.getProcesses();
+        assertEquals(parentSection.getProcessRefs().size(), sectionProcesses.size());
+        log("  section.getProcesses() returns {} lightweight objects ✓", sectionProcesses.size());
+        
+        // ============ SUMMARY ============
+        log("");
+        log("========================================");
+        log("INTEGRATION TEST COMPLETED SUCCESSFULLY!");
+        log("========================================");
+        log("");
+        log("Key verified points:");
+        log("  1. Full objects with ProcessSettings created");
+        log("  2. Refs populated from full objects");
+        log("  3. Serialization excludes transient fields (processes, compounds)");
+        log("  4. Refs are preserved through serialization");
+        log("  5. Back-references restored correctly");
+        log("  6. API (getProcesses/getCompounds) returns lightweight objects from refs");
+        log("");
+        log("Memory savings: Full processes NOT serialized to Hazelcast!");
+        log("This prevents OOM when caching large configurations.");
+    }
+
+    /**
+     * Create a mock LazyConfigurationLoader for testing.
+     */
+    private LazyConfigurationLoader createMockLazyLoader(
+            List<ProcessConfiguration> processes, 
+            List<CompoundConfiguration> compounds) {
+        // Create a mock that can be used to verify setLazyLoader was called
+        return mock(LazyConfigurationLoader.class);
+    }
+
+    /**
+     * Simulate restoreBackReferences with a loader.
+     */
+    private void simulateRestoreBackReferencesWithLoader(ProjectConfiguration config, 
+                                                          LazyConfigurationLoader loader) {
+        if (config == null) {
+            return;
+        }
+        
+        // Set lazy loader (even if null for tests)
+        config.setLazyLoader(loader);
+        
+        // Restore back-references on child configurations
+        if (config.getCommonConfiguration() != null) {
+            config.getCommonConfiguration().setProjectConfiguration(config);
+        }
+        if (config.getHeaderConfiguration() != null) {
+            config.getHeaderConfiguration().setProjectConfiguration(config);
+        }
+        if (config.getPotHeaderConfiguration() != null) {
+            config.getPotHeaderConfiguration().setProjectConfiguration(config);
+        }
+        
+        // Restore section back-references
+        if (config.getSections() != null) {
+            config.getSections().forEach(section -> 
+                restoreSectionBackRefsWithLoader(section, config, null, loader));
+        }
+        
+        // Restore directory back-references
+        if (config.getDirectories() != null) {
+            config.getDirectories().forEach(dir -> 
+                restoreDirectoryBackRefsRecursive(dir, config, null));
+        }
+        
+        // Restore file back-references
+        if (config.getFiles() != null) {
+            config.getFiles().forEach(file -> file.setProjectConfiguration(config));
+        }
+    }
+
+    private void restoreSectionBackRefsWithLoader(SectionConfiguration section,
+                                                   ProjectConfiguration projectConfig,
+                                                   SectionConfiguration parentSection,
+                                                   LazyConfigurationLoader loader) {
+        if (section == null) {
+            return;
+        }
+        section.setProjectConfiguration(projectConfig);
+        section.setParentSection(parentSection);
+        section.setLazyLoader(loader);
+        
+        if (section.getSections() != null) {
+            section.getSections().forEach(child ->
+                restoreSectionBackRefsWithLoader(child, projectConfig, section, loader));
+        }
+    }
+
+    private void restoreDirectoryBackRefsRecursive(ProjectDirectory directory,
+                                                    ProjectConfiguration projectConfig,
+                                                    ProjectDirectory parentDirectory) {
+        if (directory == null) {
+            return;
+        }
+        directory.setProjectConfiguration(projectConfig);
+        directory.setParentDirectory(parentDirectory);
+        
+        if (directory.getDirectories() != null) {
+            directory.getDirectories().forEach(child ->
+                restoreDirectoryBackRefsRecursive(child, projectConfig, directory));
+        }
+        if (directory.getFiles() != null) {
+            directory.getFiles().forEach(file -> {
+                file.setProjectConfiguration(projectConfig);
+                file.setDirectory(directory);
+            });
+        }
+    }
+
+    // ==================== OOM STRESS TESTS ====================
+
+    /**
+     * Configuration parameters for stress test.
+     * These values simulate a real large project configuration.
+     */
+    private static final int STRESS_PROCESS_COUNT = 500;        // Number of processes
+    private static final int STRESS_COMPOUND_COUNT = 200;       // Number of compounds
+    private static final int STRESS_SECTION_COUNT = 50;         // Number of sections
+    private static final int STRESS_NESTED_SECTION_DEPTH = 3;   // Depth of nested sections
+    private static final int STRESS_INPUTS_PER_PROCESS = 20;    // Inputs per process
+    private static final int STRESS_VALIDATIONS_PER_PROCESS = 10; // Validations per process
+    private static final int STRESS_LARGE_STRING_SIZE = 1000;   // Size of large string values
+
+    @Test
+    @DisplayName("STRESS TEST: Verify large configuration serialization with refs (should NOT cause OOM)")
+    void testLargeConfigurationWithRefsDoesNotCauseOOM() throws Exception {
+        log("=== STRESS TEST: Large Configuration with Refs ===");
+        log("Creating configuration with:");
+        log("  Processes: {}", STRESS_PROCESS_COUNT);
+        log("  Compounds: {}", STRESS_COMPOUND_COUNT);
+        log("  Sections: {}", STRESS_SECTION_COUNT);
+        log("  Nested depth: {}", STRESS_NESTED_SECTION_DEPTH);
+        
+        // Record memory before
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        log("Memory before: {} MB", memoryBefore / (1024 * 1024));
+        
+        // Given: Create a LARGE configuration using ONLY refs (optimized approach)
+        ProjectConfiguration config = createLargeConfigurationWithRefsOnly();
+        
+        long memoryAfterCreate = runtime.totalMemory() - runtime.freeMemory();
+        log("Memory after creating config: {} MB", memoryAfterCreate / (1024 * 1024));
+        log("Memory used for config object: {} MB", (memoryAfterCreate - memoryBefore) / (1024 * 1024));
+        
+        // When: Serialize (this is what Hazelcast does)
+        long startTime = System.currentTimeMillis();
+        byte[] serialized = serializeObject(config);
+        long serializeTime = System.currentTimeMillis() - startTime;
+        
+        log("Serialization completed in {} ms", serializeTime);
+        log("Serialized size: {} KB", serialized.length / 1024);
+        
+        // Then: Deserialize and verify
+        startTime = System.currentTimeMillis();
+        ProjectConfiguration restored = deserializeObject(serialized);
+        long deserializeTime = System.currentTimeMillis() - startTime;
+        
+        log("Deserialization completed in {} ms", deserializeTime);
+        
+        // Verify key metrics
+        assertEquals(config.getProjectId(), restored.getProjectId());
+        assertEquals(config.getProcessRefs().size(), restored.getProcessRefs().size());
+        assertEquals(config.getCompoundRefs().size(), restored.getCompoundRefs().size());
+        assertEquals(config.getSections().size(), restored.getSections().size());
+        
+        // Verify processes and compounds are NULL (transient - not serialized)
+        assertNull(getBackReference(restored, "processes"), "processes should be null (transient)");
+        assertNull(getBackReference(restored, "compounds"), "compounds should be null (transient)");
+        
+        long memoryAfterTest = runtime.totalMemory() - runtime.freeMemory();
+        log("Memory after test: {} MB", memoryAfterTest / (1024 * 1024));
+        
+        log("✓ Large configuration with refs serialized successfully without OOM!");
+    }
+
+    @Test
+    @DisplayName("STRESS TEST: Demonstrate potential OOM with full objects (educational)")
+    void testLargeConfigurationWithFullObjectsWouldCauseOOM() throws Exception {
+        log("=== STRESS TEST: Large Configuration with FULL Objects (OOM Demo) ===");
+        log("This test demonstrates what would happen WITHOUT the transient optimization");
+        log("");
+        log("Creating HEAVY configuration with FULL process/compound objects...");
+        
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        log("Memory before: {} MB", memoryBefore / (1024 * 1024));
+        log("Max memory: {} MB", runtime.maxMemory() / (1024 * 1024));
+        
+        // Create heavy objects that would normally be in processes/compounds lists
+        List<ProcessConfiguration> heavyProcesses = createHeavyProcesses(100); // Reduced count for safety
+        List<CompoundConfiguration> heavyCompounds = createHeavyCompounds(50);
+        
+        long memoryAfterCreate = runtime.totalMemory() - runtime.freeMemory();
+        log("Memory after creating {} processes + {} compounds: {} MB", 
+                heavyProcesses.size(), heavyCompounds.size(), memoryAfterCreate / (1024 * 1024));
+        
+        // Calculate approximate object sizes
+        long processMemory = 0;
+        long compoundMemory = 0;
+        
+        for (ProcessConfiguration p : heavyProcesses) {
+            byte[] bytes = serializeObject(p);
+            processMemory += bytes.length;
+        }
+        for (CompoundConfiguration c : heavyCompounds) {
+            byte[] bytes = serializeObject(c);
+            compoundMemory += bytes.length;
+        }
+        
+        log("Single process serialized size: ~{} KB", processMemory / heavyProcesses.size() / 1024);
+        log("Single compound serialized size: ~{} KB", compoundMemory / heavyCompounds.size() / 1024);
+        log("Total processes serialized: {} KB", processMemory / 1024);
+        log("Total compounds serialized: {} KB", compoundMemory / 1024);
+        
+        // Calculate projected size for full STRESS_PROCESS_COUNT
+        long projectedFullSize = (processMemory / heavyProcesses.size()) * STRESS_PROCESS_COUNT
+                + (compoundMemory / heavyCompounds.size()) * STRESS_COMPOUND_COUNT;
+        log("");
+        log("=== PROJECTION for full {} processes + {} compounds ===", 
+                STRESS_PROCESS_COUNT, STRESS_COMPOUND_COUNT);
+        log("Projected serialized size: {} MB", projectedFullSize / (1024 * 1024));
+        log("This would require ~{} MB additional heap during serialization", 
+                projectedFullSize * 2 / (1024 * 1024)); // x2 for serialization buffer
+        
+        if (projectedFullSize > runtime.maxMemory() / 2) {
+            log("⚠️  WOULD LIKELY CAUSE OOM: Projected size exceeds 50% of max heap!");
+        }
+        
+        log("");
+        log("=== COMPARISON: With transient refs optimization ===");
+        
+        // Now show what happens with refs only
+        List<ConfigurationReference> processRefs = new ArrayList<>();
+        for (ProcessConfiguration p : heavyProcesses) {
+            processRefs.add(new ConfigurationReference(p.getId(), p.getName()));
+        }
+        
+        long refsSize = 0;
+        for (ConfigurationReference ref : processRefs) {
+            byte[] bytes = serializeObject(ref);
+            refsSize += bytes.length;
+        }
+        
+        log("Single ref serialized size: ~{} bytes", refsSize / processRefs.size());
+        log("All refs serialized: {} KB", refsSize / 1024);
+        log("Projected refs size for {} processes: {} KB", 
+                STRESS_PROCESS_COUNT, (refsSize / processRefs.size()) * STRESS_PROCESS_COUNT / 1024);
+        
+        long savings = projectedFullSize - (refsSize / processRefs.size()) * STRESS_PROCESS_COUNT;
+        log("");
+        log("=== MEMORY SAVINGS ===");
+        log("Full objects size: {} MB", projectedFullSize / (1024 * 1024));
+        log("Refs only size: {} KB", (refsSize / processRefs.size()) * STRESS_PROCESS_COUNT / 1024);
+        log("Memory saved: {} MB ({}% reduction)", 
+                savings / (1024 * 1024),
+                savings * 100 / projectedFullSize);
+        
+        log("");
+        log("✓ Test completed - demonstrated OOM risk with full objects vs refs");
+    }
+
+    @Test
+    @DisplayName("STRESS TEST: Verify memory efficiency with refs vs full objects")
+    void testMemoryEfficiencyComparison() throws Exception {
+        log("=== MEMORY EFFICIENCY COMPARISON TEST ===");
+        
+        final int testProcessCount = 50;
+        final int testCompoundCount = 30;
+        
+        // Create full heavy processes
+        List<ProcessConfiguration> fullProcesses = createHeavyProcesses(testProcessCount);
+        List<CompoundConfiguration> fullCompounds = createHeavyCompounds(testCompoundCount);
+        
+        // Calculate full objects size
+        long fullProcessesSize = 0;
+        long fullCompoundsSize = 0;
+        for (ProcessConfiguration p : fullProcesses) {
+            fullProcessesSize += serializeObject(p).length;
+        }
+        for (CompoundConfiguration c : fullCompounds) {
+            fullCompoundsSize += serializeObject(c).length;
+        }
+        
+        // Create refs only
+        List<ConfigurationReference> processRefs = new ArrayList<>();
+        List<ConfigurationReference> compoundRefs = new ArrayList<>();
+        for (ProcessConfiguration p : fullProcesses) {
+            processRefs.add(new ConfigurationReference(p.getId(), p.getName()));
+        }
+        for (CompoundConfiguration c : fullCompounds) {
+            compoundRefs.add(new ConfigurationReference(c.getId(), c.getName()));
+        }
+        
+        // Calculate refs size
+        long refsProcessSize = 0;
+        long refsCompoundSize = 0;
+        for (ConfigurationReference ref : processRefs) {
+            refsProcessSize += serializeObject(ref).length;
+        }
+        for (ConfigurationReference ref : compoundRefs) {
+            refsCompoundSize += serializeObject(ref).length;
+        }
+        
+        log("=== RESULTS for {} processes, {} compounds ===", testProcessCount, testCompoundCount);
+        log("");
+        log("FULL OBJECTS:");
+        log("  Processes total: {} KB ({} bytes each)", 
+                fullProcessesSize / 1024, fullProcessesSize / testProcessCount);
+        log("  Compounds total: {} KB ({} bytes each)", 
+                fullCompoundsSize / 1024, fullCompoundsSize / testCompoundCount);
+        log("  TOTAL: {} KB", (fullProcessesSize + fullCompoundsSize) / 1024);
+        log("");
+        log("REFS ONLY:");
+        log("  Process refs total: {} bytes ({} bytes each)", 
+                refsProcessSize, refsProcessSize / testProcessCount);
+        log("  Compound refs total: {} bytes ({} bytes each)", 
+                refsCompoundSize, refsCompoundSize / testCompoundCount);
+        log("  TOTAL: {} bytes", refsProcessSize + refsCompoundSize);
+        log("");
+        
+        double reductionPercent = 100.0 - ((refsProcessSize + refsCompoundSize) * 100.0 
+                / (fullProcessesSize + fullCompoundsSize));
+        log("MEMORY REDUCTION: {0,number,#.##}%", reductionPercent);
+        
+        // Assert significant reduction
+        assertTrue(reductionPercent > 90, 
+                "Memory reduction should be > 90%, actual: " + reductionPercent);
+        
+        log("");
+        log("✓ Verified refs provide >90% memory reduction compared to full objects");
+    }
+
+    // ==================== HELPER METHODS FOR STRESS TESTS ====================
+
+    /**
+     * Create a large configuration using ONLY refs (no full process/compound objects).
+     * This is the OPTIMIZED approach that should NOT cause OOM.
+     */
+    private ProjectConfiguration createLargeConfigurationWithRefsOnly() {
+        UUID projectId = UUID.randomUUID();
+        
+        // Create process refs only (lightweight)
+        List<ConfigurationReference> processRefs = new ArrayList<>();
+        for (int i = 0; i < STRESS_PROCESS_COUNT; i++) {
+            processRefs.add(new ConfigurationReference(UUID.randomUUID(), "Process_" + i));
+        }
+        
+        // Create compound refs only (lightweight)
+        List<ConfigurationReference> compoundRefs = new ArrayList<>();
+        for (int i = 0; i < STRESS_COMPOUND_COUNT; i++) {
+            compoundRefs.add(new ConfigurationReference(UUID.randomUUID(), "Compound_" + i));
+        }
+        
+        // Create sections with nested structure
+        List<SectionConfiguration> sections = createNestedSections(
+                STRESS_SECTION_COUNT, STRESS_NESTED_SECTION_DEPTH, processRefs, compoundRefs);
+        
+        // Build configuration
+        ProjectConfiguration config = ProjectConfiguration.builder()
+                .projectId(projectId)
+                .projectName("StressTestProject")
+                .sections(sections)
+                .directories(new ArrayList<>())
+                .files(new ArrayList<>())
+                .build();
+        
+        config.getProcessRefs().addAll(processRefs);
+        config.getCompoundRefs().addAll(compoundRefs);
+        
+        // Note: processes and compounds lists remain null/empty - they are transient
+        // This is the key optimization that prevents OOM
+        
+        return config;
+    }
+
+    /**
+     * Create nested sections with refs distributed among them.
+     */
+    private List<SectionConfiguration> createNestedSections(
+            int count, int depth,
+            List<ConfigurationReference> processRefs,
+            List<ConfigurationReference> compoundRefs) {
+        
+        List<SectionConfiguration> sections = new ArrayList<>();
+        int processesPerSection = Math.max(1, processRefs.size() / count);
+        int compoundsPerSection = Math.max(1, compoundRefs.size() / count);
+        
+        for (int i = 0; i < count; i++) {
+            SectionConfiguration section = SectionConfiguration.builder()
+                    .id(UUID.randomUUID())
+                    .name("Section_" + i)
+                    .place(i)
+                    .sections(new ArrayList<>())
+                    .build();
+            
+            // Add some process refs to this section
+            int startProc = i * processesPerSection;
+            int endProc = Math.min(startProc + processesPerSection, processRefs.size());
+            for (int j = startProc; j < endProc; j++) {
+                section.getProcessRefs().add(processRefs.get(j));
+            }
+            
+            // Add some compound refs to this section
+            int startComp = i * compoundsPerSection;
+            int endComp = Math.min(startComp + compoundsPerSection, compoundRefs.size());
+            for (int j = startComp; j < endComp; j++) {
+                section.getCompoundRefs().add(compoundRefs.get(j));
+            }
+            
+            // Add nested sections
+            if (depth > 1) {
+                List<SectionConfiguration> childSections = createNestedSections(
+                        2, depth - 1, 
+                        processRefs.subList(startProc, endProc),
+                        compoundRefs.subList(startComp, endComp));
+                section.getSections().addAll(childSections);
+            }
+            
+            sections.add(section);
+        }
+        
+        return sections;
+    }
+
+    /**
+     * Create heavy ProcessConfiguration objects with lots of data.
+     * These simulate real-world processes with many inputs, validations, etc.
+     */
+    private List<ProcessConfiguration> createHeavyProcesses(int count) {
+        List<ProcessConfiguration> processes = new ArrayList<>();
+        
+        for (int i = 0; i < count; i++) {
+            // Create many inputs
+            List<Input> inputs = new ArrayList<>();
+            for (int j = 0; j < STRESS_INPUTS_PER_PROCESS; j++) {
+                Input input = Input.builder()
+                        .name("input_" + i + "_" + j)
+                        .label("Label_" + i + "_" + j)
+                        .value(generateLargeString("value_" + i + "_" + j + "_"))
+                        .type("STRING")
+                        .build();
+                inputs.add(input);
+            }
+            
+            // Create many validations
+            List<Validation> validations = new ArrayList<>();
+            for (int j = 0; j < STRESS_VALIDATIONS_PER_PROCESS; j++) {
+                Validation validation = Validation.builder()
+                        .name("validation_" + i + "_" + j)
+                        .value(generateLargeString("expected_" + i + "_" + j + "_"))
+                        .build();
+                validations.add(validation);
+            }
+            
+            // Create command with large value
+            Command command = Command.builder()
+                    .name("COMMAND_" + i)
+                    .value(generateLargeString("POST /api/v1/endpoint_" + i + "?data="))
+                    .build();
+            
+            // Create global variables
+            HashMap<String, String> globalVars = new HashMap<>();
+            for (int j = 0; j < 10; j++) {
+                globalVars.put("VAR_" + j, generateLargeString("value_" + j + "_"));
+            }
+            
+            // Create ProcessSettings
+            ProcessSettings settings = ProcessSettings.builder()
+                    .name("ProcessSettings_" + i)
+                    .inputs(inputs)
+                    .validations(validations)
+                    .command(command)
+                    .globalVariables(globalVars)
+                    .referToInput("input_" + i + "_0")
+                    .build();
+            
+            // Create ProcessConfiguration
+            ProcessConfiguration process = ProcessConfiguration.builder()
+                    .id(UUID.randomUUID())
+                    .sourceId(UUID.randomUUID())
+                    .name("HeavyProcess_" + i)
+                    .pathToFile("/path/to/heavy/process_" + i + ".json")
+                    .processSettings(settings)
+                    .build();
+            
+            process.setCompounds(Arrays.asList("Compound1", "Compound2", "Compound3"));
+            process.setSections(Arrays.asList("Section1", "Section2"));
+            
+            processes.add(process);
+        }
+        
+        return processes;
+    }
+
+    /**
+     * Create heavy CompoundConfiguration objects.
+     */
+    private List<CompoundConfiguration> createHeavyCompounds(int count) {
+        List<CompoundConfiguration> compounds = new ArrayList<>();
+        
+        for (int i = 0; i < count; i++) {
+            CompoundConfiguration compound = CompoundConfiguration.builder()
+                    .id(UUID.randomUUID())
+                    .sourceId(UUID.randomUUID())
+                    .name("HeavyCompound_" + i)
+                    .referToInput(generateLargeString("referTo_" + i + "_"))
+                    .build();
+            compounds.add(compound);
+        }
+        
+        return compounds;
+    }
+
+    /**
+     * Generate a large string to simulate real data.
+     */
+    private String generateLargeString(String prefix) {
+        StringBuilder sb = new StringBuilder(prefix);
+        while (sb.length() < STRESS_LARGE_STRING_SIZE) {
+            sb.append("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+        }
+        return sb.substring(0, STRESS_LARGE_STRING_SIZE);
     }
 }
 

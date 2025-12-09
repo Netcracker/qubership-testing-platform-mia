@@ -158,7 +158,8 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      */
     @Transactional(readOnly = true)
     public ProjectConfiguration getConfigByProjectId(UUID projectId) {
-        ProjectConfiguration config = getConfigByProjectIdCached(projectId);
+        // Use self to ensure @Cacheable proxy is invoked
+        ProjectConfiguration config = self.getConfigByProjectIdCached(projectId);
         // Restore back-references that were lost during cache serialization (transient fields)
         restoreBackReferences(config);
         return config;
@@ -166,9 +167,10 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
 
     /**
      * Internal cached method. Back-references may be null after deserialization.
+     * Must be public for Spring AOP proxy to work correctly with @Cacheable.
      */
     @Cacheable(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId", condition = "#projectId != null")
-    protected ProjectConfiguration getConfigByProjectIdCached(UUID projectId) {
+    public ProjectConfiguration getConfigByProjectIdCached(UUID projectId) {
         return getConfiguration(projectId);
     }
 
