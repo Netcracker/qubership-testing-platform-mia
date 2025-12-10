@@ -45,6 +45,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.mia.exceptions.fileservice.ArchiveFileNotFoundException;
 import org.qubership.atp.mia.exceptions.fileservice.ArchiveIoExceptionDuringClose;
 import org.qubership.atp.mia.model.Constants;
@@ -71,8 +72,7 @@ import org.qubership.atp.mia.utils.Utils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import clover.com.google.common.base.Preconditions;
-import clover.org.apache.commons.lang.StringUtils;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -379,7 +379,7 @@ public class MiaContext {
     public void setContext(ExecutionRequest request, UUID projectId, String environmentName) {
         setContext(projectId, request.getSessionId());
         Preconditions.checkNotNull(environmentName, "No environmentName specified in parameters.");
-        log.debug(String.format("Set environment with name '{}' to FlowData.", environmentName));
+        log.debug("Set environment with name '{}' to FlowData.", environmentName);
         getFlowData().setEnvironment(environmentsService.getEnvByName(projectId, environmentName));
         setFlowDataFromRequest(request);
     }

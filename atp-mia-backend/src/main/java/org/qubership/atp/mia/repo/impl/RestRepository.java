@@ -37,6 +37,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -65,7 +66,6 @@ import org.qubership.atp.mia.service.monitoring.MetricsAggregateService;
 import org.qubership.atp.mia.utils.Utils;
 import org.springframework.stereotype.Repository;
 
-import clover.org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;

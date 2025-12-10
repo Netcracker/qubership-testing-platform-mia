@@ -32,8 +32,8 @@ import javax.annotation.Nullable;
 
 import org.qubership.atp.mia.model.pot.Marker;
 
-import clover.com.google.common.base.Strings;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 

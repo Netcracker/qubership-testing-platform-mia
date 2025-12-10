@@ -29,7 +29,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.qubership.atp.integration.configuration.annotation.AtpJaegerLog;
 import org.qubership.atp.mia.exceptions.fileservice.UploadTestDataFailException;
@@ -62,7 +61,7 @@ import org.qubership.atp.mia.utils.Utils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import clover.com.google.common.base.Strings;
+import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -106,7 +105,7 @@ public class TestDataService {
         final TestDataWorkbook testDataWorkbook = new TestDataWorkbook(excelFile);
         testDataRepository.parseWorkbook(testDataWorkbook, true);
         if (testDataWorkbook.getMainSheet().getScenarios() == null
-                || testDataWorkbook.getMainSheet().getScenarios().size() < 1) {
+                || testDataWorkbook.getMainSheet().getScenarios().isEmpty()) {
             throw new UploadTestDataFailException();
         }
         return testDataWorkbook;
@@ -345,7 +344,7 @@ public class TestDataService {
     private void getLastFileAndRemoveTemporaryFiles(LinkedList<String> generatedFiles,
                                                     CommandResponse commandResponse,
                                                     String initialPath) {
-        if (generatedFiles.size() > 0) {
+        if (!generatedFiles.isEmpty()) {
             final String lastFile = generatedFiles.getLast();
             commandResponse.addCommandOutput(new CommandOutput(lastFile, null, false, miaContext));
             generatedFiles.removeLast();
@@ -388,7 +387,7 @@ public class TestDataService {
         if (Strings.isNullOrEmpty(command.getPathForUpload())) {
             throw new MatrixCommandIncorrectParameterException("pathForUpload");
         }
-        if (command.getNamesOfFilesForGeneration() == null || command.getNamesOfFilesForGeneration().size() < 1) {
+        if (command.getNamesOfFilesForGeneration() == null || command.getNamesOfFilesForGeneration().isEmpty()) {
             throw new MatrixCommandIncorrectParameterException("namesOfFilesForGeneration");
         }
         if (Strings.isNullOrEmpty(command.getTestDataParams().getEventFileTemplate())) {

@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-alpine-musl:21.0.6
+FROM bellsoft/liberica-openjdk-alpine-musl:21.0.9
 LABEL maintainer="opensourcegroup@netcracker.com"
 LABEL atp.service="atp-mia"
 

@@ -20,7 +20,7 @@ package org.qubership.atp.mia.repo;
 import org.qubership.atp.mia.model.impl.FlowData;
 import org.springframework.stereotype.Repository;
 
-import clover.com.google.common.base.Preconditions;
+import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

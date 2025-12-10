@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.ws.Holder;
 
+import org.apache.commons.lang3.Range;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -40,8 +41,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.qubership.atp.mia.model.impl.ExcelWorkbook;
 
-import clover.com.google.common.base.Strings;
-import clover.org.apache.commons.lang3.Range;
+import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -73,11 +73,11 @@ public class ExcelParserHelper {
         final Holder<XSSFCell> cellHolder = new Holder<>(null);
         row.forEach(cell -> {
             final XSSFRow rowHeader = row.getSheet().getRow(headerRowNum);
-            if (rowHeader.getCell(cell.getColumnIndex()) != null
-                    && rowHeader.getCell(cell.getColumnIndex()).getCellType() == CellType.STRING
-                    && rowHeader.getCell(cell.getColumnIndex()).getStringCellValue().equalsIgnoreCase(headerName)) {
+            XSSFCell xssfCell = rowHeader.getCell(cell.getColumnIndex());
+            if (xssfCell != null
+                    && xssfCell.getCellType() == CellType.STRING
+                    && xssfCell.getStringCellValue().equalsIgnoreCase(headerName)) {
                 cellHolder.value = (XSSFCell) cell;
-                return;
             }
         });
         return cellHolder.value;
@@ -141,7 +141,6 @@ public class ExcelParserHelper {
             final XSSFCell cell = (XSSFCell) c;
             if (getCellValue(cell).matches(pattern)) {
                 cellHolder.value = cell;
-                return;
             }
         });
         return cellHolder.value;
@@ -166,7 +165,6 @@ public class ExcelParserHelper {
             final XSSFCell cell = (XSSFCell) c;
             if (range.contains(cell.getColumnIndex()) && getCellValue(cell).matches(pattern)) {
                 cellHolder.value = cell;
-                return;
             }
         });
         return cellHolder.value;
@@ -390,7 +388,6 @@ public class ExcelParserHelper {
         sheet.getMergedRegions().forEach(mergedRegion -> {
             if (mergedRegion.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
                 range.value = Range.between(mergedRegion.getFirstColumn(), mergedRegion.getLastColumn());
-                return;
             }
         });
         return range.value;
@@ -508,7 +505,7 @@ public class ExcelParserHelper {
             case NUMERIC:
                 value = decimalFormat(cell.getNumericCellValue());
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/YYYY");
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
                     value = sdf.format(cell.getDateCellValue());
                 }
                 break;

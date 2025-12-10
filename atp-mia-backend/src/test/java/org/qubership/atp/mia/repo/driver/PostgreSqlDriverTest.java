@@ -39,7 +39,7 @@ import org.qubership.atp.mia.model.environment.Server;
 import org.qubership.atp.mia.model.pot.db.table.DbTable;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import clover.com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList;
 
 @ExtendWith(SkipTestInJenkins.class)
 public class PostgreSqlDriverTest extends ConfigTestBean {

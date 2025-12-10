@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ConsistentControllerApiUnitTest {
 
-    final static List<String> controllersPackage = Arrays.asList("org.qubership.atp.mia.controllers");
+    final static List<String> controllersPackage = Collections.singletonList("org.qubership.atp.mia.controllers");
     final static String apiPackage = "org.qubership.atp.mia.controllers.api";
 
     final static Map<Class, List<String>> ctrlMethodsToSkip = new HashMap<>();
@@ -85,13 +86,11 @@ public class ConsistentControllerApiUnitTest {
             errors.add("There are two controllers for api " + apiClass.getCanonicalName());
         }
         List<Method> listOfControllerMethods = null;
-        if (controllersList.size() > 0) {
-            listOfControllerMethods =
-                    Arrays.stream(controllersList.get(0).getDeclaredMethods())
-                            .filter(this::isRestMethod)
-                            .collect(Collectors.toList());
+        if (!controllersList.isEmpty()) {
+            listOfControllerMethods = Arrays.stream(controllersList.get(0).getDeclaredMethods())
+                    .filter(this::isRestMethod).collect(Collectors.toList());
         }
-        if (null != listOfControllerMethods && listOfControllerMethods.size() > 0) {
+        if (null != listOfControllerMethods && !listOfControllerMethods.isEmpty()) {
             listOfControllerMethods.stream().filter(method -> Modifier.isPublic(method.getModifiers()))
                     .forEach(method -> checkMethodInController(method, apiClass, errors));
         }
@@ -140,7 +139,7 @@ public class ConsistentControllerApiUnitTest {
                 .stream()
                 .filter(clazz -> clazz.getPackageName().equalsIgnoreCase(packageName))
                 .filter(clazz -> clazz.getSimpleName().matches("^.*Api$"))
-                .map(clazz -> clazz.load())
+                .map(ClassPath.ClassInfo::load)
                 .collect(Collectors.toSet());
     }
 }

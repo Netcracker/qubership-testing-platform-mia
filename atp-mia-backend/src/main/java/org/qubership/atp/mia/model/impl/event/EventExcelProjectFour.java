@@ -28,10 +28,10 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.Range;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import clover.org.apache.commons.lang3.Range;
 import com.google.common.base.Strings;
 
 public class EventExcelProjectFour extends EventExcelCustomer {

@@ -20,9 +20,8 @@ package org.qubership.atp.mia.model.impl.event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.Range;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-
-import clover.org.apache.commons.lang3.Range;
 
 public class EventExcelProjectFive extends EventExcelProjectFour {
 

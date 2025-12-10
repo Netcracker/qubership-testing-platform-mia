@@ -42,7 +42,7 @@ import org.qubership.atp.mia.utils.CryptoUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.retry.RetryException;
 
-import clover.com.google.common.base.Strings;
+import com.google.common.base.Strings;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -248,7 +248,7 @@ public class SshSession {
                 put("PubkeyAcceptedAlgorithms", session.getConfig("PubkeyAcceptedAlgorithms")
                         + ",ssh-rsa,signature.dss");
                 if (properties.getSshServerKexAlgorithms() != null
-                        && properties.getSshServerKexAlgorithms().trim().length() > 0) {
+                        && !properties.getSshServerKexAlgorithms().trim().isEmpty()) {
                     put("kex", properties.getSshServerKexAlgorithms());
                 }
             }

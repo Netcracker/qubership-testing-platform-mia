@@ -51,7 +51,7 @@ import org.qubership.atp.mia.utils.FileUtils;
 import org.qubership.atp.mia.utils.Utils;
 import org.slf4j.MDC;
 
-import clover.com.google.common.base.Strings;
+import com.google.common.base.Strings;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelShell;
