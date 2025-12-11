@@ -85,7 +85,7 @@ public class RestClientService {
      * Set SSL Context.
      */
     public static SSLContext getSslContext() {
-        SSLContext sslContext = null;
+        SSLContext sslContext;
         TrustManager[] trustAllCerts = new X509TrustManager[]{new X509TrustManager() {
             @Override
             public X509Certificate[] getAcceptedIssuers() {
@@ -194,7 +194,7 @@ public class RestClientService {
         try {
             log.info("Executing REST request: {}", request);
             httpResponse = httpClient.execute(request);
-            log.debug("REST executed with response: " + httpResponse);
+            log.debug("REST executed with response: {}", httpResponse);
         } catch (SocketTimeoutException ste) {
             throw new RestExecutionTimeOutException(executionTimeout, "minute(s)", request.getURI().toString());
         } catch (IOException e) {

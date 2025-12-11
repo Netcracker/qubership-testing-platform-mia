@@ -204,7 +204,7 @@ public class TestDataService {
 
     /**
      * Validate parameters in test data file.
-     * (Rate matrix validation using validation data from excel file (which was used for event generation))
+     * (Rate matrix validation using validation data from Excel file (which was used for event generation))
      *
      * @param command command
      * @return commandResponse

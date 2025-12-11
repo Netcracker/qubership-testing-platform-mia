@@ -89,7 +89,7 @@ public class SshConnectionManager {
         externalPrefix = extPrefix;
         saveFilesToWorkingDir = miaContext.getConfig().getCommonConfiguration().isSaveFilesToWorkingDir();
         managerInstanceNumber = "ssh_conn_manager_N_" + (instancesCounter.incrementAndGet());
-        log.trace("Ssh manager №{} created and has environment properties: {}.", managerInstanceNumber,
+        log.trace("Ssh manager #{} created and has environment properties: {}.", managerInstanceNumber,
                 properties.fullInfo());
     }
 
@@ -176,11 +176,11 @@ public class SshConnectionManager {
             if (!isExecutedFlag.get()) {
                 try {
                     channelShell.sendSignal(INTERRUPT_SIGNAL);
-                    log.info("Ssh command execution was interrupted by timeout.\n"
-                            + "command: [" + command + "], timeout: [" + properties.getTimeoutExecute() + " ms]");
+                    log.info("Ssh command execution was interrupted by timeout.\ncommand: [{}], timeout: [{} ms]",
+                            command, properties.getTimeoutExecute());
                 } catch (Exception e) {
-                    log.info("Can't get channelShell output to interrupt timeout connection "
-                            + "[chId = {}]", channelShell.getId());
+                    log.info("Can't get channelShell output to interrupt timeout connection [chId = {}]",
+                            channelShell.getId());
                 } finally {
                     log.info("Closing channel due timeout [chId = {}]", channelShell.getId());
                     channelShell.disconnect();
@@ -211,7 +211,7 @@ public class SshConnectionManager {
      * Transfer a file.
      */
     public void transferFileOnServer(String pathToFile, String pathToUpLoad) {
-        log.info("Transferring file from [ " + pathToFile + " ]" + " to [ " + pathToUpLoad + " ]");
+        log.info("Transferring file from [ {} ] to [ {} ]", pathToFile, pathToUpLoad);
         String command = "chmod 777 " + pathToFile + "\ncp -p " + pathToFile + " " + pathToUpLoad;
         runCommand(updateCommandForExternalEnv(command));
     }

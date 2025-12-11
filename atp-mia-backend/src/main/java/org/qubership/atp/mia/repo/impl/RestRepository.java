@@ -162,7 +162,7 @@ public class RestRepository {
             Arrays.stream(httpResponse.getAllHeaders()).forEach(header -> {
                 if (header.getName().contains("Cookie")) {
                     miaContext.getFlowData().addParameter("Cookie", header.getValue());
-                    log.info("Cookie is saved to flow data [ " + header.getValue() + " ].");
+                    log.info("Cookie is saved to flow data [ {} ].", header.getValue());
                 }
             });
         }
@@ -346,7 +346,7 @@ public class RestRepository {
                 long restResponseSizeInKb = file.length() / 1024;
                 log.info("[SIZE] REST Response length: {} kb", restResponseSizeInKb);
                 metricsService.restResponseSize(restResponseSizeInKb);
-                log.debug("File with response created, path: " + file.getPath());
+                log.debug("File with response created, path: {}", file.getPath());
                 try {
                     if (contentType.isTextFormat()) {
                         stringBody = FileUtils.readFileToString(file);

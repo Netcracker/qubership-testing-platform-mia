@@ -189,7 +189,7 @@ public class SshSession {
      */
     public void createSession(int retryCount) {
         if (!isConnected()) {
-            log.trace("Create a new session with {} in sshManager №{}", properties, sessionId);
+            log.trace("Create a new session with {} in sshManager #{}", properties, sessionId);
             try {
                 addIdentity(jsch);
                 session = jsch.getSession(properties.getUsername(), properties.getHostname(), properties.getPort());
