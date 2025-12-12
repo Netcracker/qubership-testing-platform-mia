@@ -142,6 +142,7 @@ public class CassandraDriver implements QueryDriver<Cluster> {
                     log.info("[SIZE] Cassandra query retrieved {} records", size);
                     metricsService.sqlQueryRecordsSize(size);
                 }
+                //TODO: below code implicitly relies on queryResult != null and not empty. Need to add explicit checks.
                 ColumnDefinitions columnDefinitions = queryResult.getColumnDefinitions();
                 int columnsSize = columnDefinitions.size();
                 List<String> columnNames = Lists.newArrayListWithExpectedSize(columnsSize);
@@ -152,11 +153,11 @@ public class CassandraDriver implements QueryDriver<Cluster> {
                 Stream<List<String>> rows = Utils.streamOf(queryResult.iterator())
                         .limit(limitRecords > 0 ? limitRecords : Long.MAX_VALUE)
                         .map(row -> {
-                    List<String> result = Lists.newArrayListWithExpectedSize(columnsSize);
-                    for (int i = 0; i < columnsSize; i++) {
-                        result.add(getValueForType(cr, row, i, row.getColumnDefinitions().getType(i)));
-                    }
-                    return result;
+                            List<String> result = Lists.newArrayListWithExpectedSize(columnsSize);
+                            for (int i = 0; i < columnsSize; i++) {
+                                result.add(getValueForType(cr, row, i, row.getColumnDefinitions().getType(i)));
+                            }
+                            return result;
                         });
                 return new DbTable(columnNames, rows);
             } catch (TimeoutException e) {

@@ -561,10 +561,10 @@ public class MiaContext {
     private String replaceMacrosWithResultOfMacros(String text, MacrosType macrosType, String[] macrosParams) {
         /*
             In fact, all errors are processed in caller method.
-            So, if we are here, macrosType is identified successfully, and macrosParams are prepared too.
-            But, let's perform an exceptional check against some sudden damage to 'text' parameter.
+            So, if we are here, macrosType is identified successfully, and macrosParams are prepared too,
+            and, of course, text parameter contains validly located ${ and }.
+            So, we won't check their positions in the method.
          */
-
         int startMacroPosition = text.indexOf("${");
         int endMacroPosition = text.indexOf("}", startMacroPosition);
         String textBeforeMacros = text.substring(0, startMacroPosition);

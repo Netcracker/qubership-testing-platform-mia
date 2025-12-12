@@ -25,7 +25,7 @@ public enum UserManagementEntities {
     DIRECTORY("Directory"),
     FILE("File");
 
-    private String name;
+    private final String name;
 
     UserManagementEntities(String name) {
         this.name = name;

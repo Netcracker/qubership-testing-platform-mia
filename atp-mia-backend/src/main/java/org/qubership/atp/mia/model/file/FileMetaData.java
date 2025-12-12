@@ -144,10 +144,6 @@ public class FileMetaData {
      */
     public String getFileExtension() {
         int lastIndex = fileName.lastIndexOf('.');
-        String contentType = "unknown";
-        if (lastIndex > -1) {
-            contentType = fileName.substring(lastIndex + 1);
-        }
-        return contentType;
+        return lastIndex > -1 ? fileName.substring(lastIndex + 1) : "unknown";
     }
 }

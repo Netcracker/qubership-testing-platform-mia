@@ -24,7 +24,7 @@ public interface Dos2Unix {
     /**
      * Run command {@code dest2unix} (utility from GNU, also present in Windows) at {@code dest} file.
      * Command run only if {@code needDos2Unix} parameter is {@code true} and
-     * operation system where MIA ran is Linux.
+     * operating system where MIA ran is Linux.
      *
      * @param destSource path to file at which bash dos2unix command will be executed.
      */

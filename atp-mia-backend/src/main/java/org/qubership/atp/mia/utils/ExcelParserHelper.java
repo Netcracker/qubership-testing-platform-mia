@@ -175,8 +175,8 @@ public class ExcelParserHelper {
      *
      * @param parentHeaderName   parent header name
      * @param parentHeaderRowNum parent header row number
-     * @param childHeaderName    childheader name
-     * @param childHeaderRowNum  child eader row number
+     * @param childHeaderName    child header name
+     * @param childHeaderRowNum  child header row number
      * @param row                row
      * @return Cell if parent and child headers found, NULL otherwise
      */
@@ -409,11 +409,11 @@ public class ExcelParserHelper {
     }
 
     /**
-     * Gets sheet of excel file.
+     * Gets sheet of Excel file.
      *
      * @param workbook  workbook
      * @param sheetName sheet name
-     * @return sheet of excel file
+     * @return sheet of Excel file
      * @throws IllegalArgumentException in case problem with file or sheet
      */
     @Nonnull
@@ -443,11 +443,11 @@ public class ExcelParserHelper {
     }
 
     /**
-     * Gets sheet of excel file.
+     * Gets sheet of Excel file.
      *
-     * @param path      path to excel file
+     * @param path      path to Excel file
      * @param sheetName sheet name
-     * @return sheet of excel file
+     * @return sheet of Excel file
      * @throws IllegalArgumentException in case problem with file or sheet
      */
     @Nonnull

@@ -31,7 +31,7 @@ import org.qubership.atp.mia.utils.ExcelParserHelper;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Class for parsing excel file in case generating events.
+ * Class for parsing Excel file in case generating events.
  */
 @Slf4j
 public class EventFromExcel {
@@ -41,10 +41,10 @@ public class EventFromExcel {
     @Nonnull
     private final XSSFSheet sheet;
     @Nonnull
-    private EventExcelCustomer eventExcelCustomer;
+    private final EventExcelCustomer eventExcelCustomer;
 
     /**
-     * Defines and parses excel file.
+     * Defines and parses Excel file.
      *
      * @param miaContext miaContext
      * @throws IllegalArgumentException in case incorrect parsing Excel file
@@ -81,21 +81,21 @@ public class EventFromExcel {
     }
 
     /**
-     * Defines customer of excel file.
+     * Defines customer of Excel file.
      *
-     * @return Customer of excel file
+     * @return Customer of Excel file
      */
     private EventExcelCustomer defineCustomerOfExcelFile(@Nullable String scenario,
                                                          @Nullable String testCase) {
         EventExcelCustomer eventExcel = new EventExcelProjectFive(sheet, scenario, testCase);
         if (eventExcel.isCurrentFormat()) {
-            log.info("Parse Excel file as Telekom");
+            log.info("Parse Excel file as Project Five");
             eventExcel.parse();
             return eventExcel;
         }
         eventExcel = new EventExcelProjectFour(sheet, scenario, testCase);
         if (eventExcel.isCurrentFormat()) {
-            log.info("Parse Excel file as O2UK");
+            log.info("Parse Excel file as Project Four");
             eventExcel.parse();
             return eventExcel;
         }

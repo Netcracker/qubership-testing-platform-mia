@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.owasp.encoder.Encode;
 import org.qubership.atp.mia.model.impl.ExecutionResponse;
 import org.qubership.atp.mia.model.impl.output.CommandOutput;
@@ -155,10 +154,9 @@ public class RecordingSessionsService {
      *
      * @param path internal link
      * @param link file link
-     * @return link
+     * @return calculated link object.
      */
     private Link getLinkForPot(String path, Link link) {
-        //return new Link(path, link.getName());
         String safeName = Encode.forHtml(link.getName());
         return new Link(path, safeName);
     }

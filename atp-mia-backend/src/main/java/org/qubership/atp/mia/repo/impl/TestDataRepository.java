@@ -106,7 +106,7 @@ public class TestDataRepository {
         final Map<String, String> params = getParametersFromDescriptions(descrM, descrS);
         params.putAll(contextRepository.getContext().getParameters());
         final CommonConfiguration cConf = miaContext.getConfig().getCommonConfiguration();
-        if (command.getTestDataParams().isEventFileForEachDescription() || templates.size() == 0) {
+        if (command.getTestDataParams().isEventFileForEachDescription() || templates.isEmpty()) {
             final String ethalonFile = miaContext.evaluate(command.getTestDataParams().getEventFileTemplate(), params);
             final String toGeneration = miaContext.evaluate(command.getNamesOfFilesForGeneration().get(0), params);
             fileName = toGeneration;
@@ -371,7 +371,7 @@ public class TestDataRepository {
     }
 
     private void validate(Description descrM, Map<String, String> params, String validV, ValidateValue validateValue) {
-        if (validV.length() > 0) {
+        if (!validV.isEmpty()) {
             validV = miaContext.evaluate(validV, params);
             descrM.updateValidatedParam(validateValue.getValidatedName(), validateValue.getValue(),
                     validateValue.getValue().equals(validV)
@@ -382,9 +382,10 @@ public class TestDataRepository {
                 validateValue.setValue("SKIPPED");
             }
             descrM.updateValidatedParam(validateValue.getValidatedName(), validateValue.getValue(),
-                    validateValue.getValue().length() > 0
+                    !validateValue.getValue().isEmpty()
                             ? ValidatedParameters.State.SKIPPED
-                            : ValidatedParameters.State.PASSED, validV);
+                            : ValidatedParameters.State.PASSED,
+                    validV);
         }
     }
 
@@ -712,12 +713,12 @@ public class TestDataRepository {
         if (value != null && value.toLowerCase().endsWith(".sql")) {
             try {
                 final List<CommandResponse> result = sqlService.executeCommand(value, system, params, false);
-                if (result.size() > 0 && result.get(0).getSqlResponse() != null
+                if (!result.isEmpty() && result.get(0).getSqlResponse() != null
                         && result.get(0).getSqlResponse().getData() != null
                         && result.get(0).getSqlResponse().getData().getData() != null
-                        && result.get(0).getSqlResponse().getData().getData().size() > 0
+                        && !result.get(0).getSqlResponse().getData().getData().isEmpty()
                         && result.get(0).getSqlResponse().getData().getData().get(0) != null
-                        && result.get(0).getSqlResponse().getData().getData().get(0).size() > 0) {
+                        && !result.get(0).getSqlResponse().getData().getData().get(0).isEmpty()) {
                     value = result.get(0).getSqlResponse().getData().getData().get(0).get(0);
                 } else {
                     value = "SQL ERROR: can't parse result of execution";

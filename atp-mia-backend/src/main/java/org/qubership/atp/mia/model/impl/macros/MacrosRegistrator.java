@@ -62,8 +62,7 @@ public class MacrosRegistrator {
             T macros = macrosClass.newInstance();
             return Optional.of(macros);
         } catch (Exception e) {
-            LOGGER.error("Failed to create macros with abstract module: "
-                    + macrosClass, e);
+            LOGGER.error("Failed to create macros with abstract module: {}", macrosClass, e);
             return Optional.empty();
         }
     }

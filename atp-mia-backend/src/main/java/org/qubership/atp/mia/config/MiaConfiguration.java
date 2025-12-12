@@ -99,8 +99,8 @@ public class MiaConfiguration {
     public String fileDownloadPrefix() {
         String internalGatewayFileDownloadPathPrefix = "";
         if (isInternalGateWayEnabled) {
-            if (catalogueUrl != null && catalogueUrl.length() > 0) {
-                if (servicePath != null && servicePath.length() > 0) {
+            if (catalogueUrl != null && !catalogueUrl.isEmpty()) {
+                if (servicePath != null && !servicePath.isEmpty()) {
                     if (servicePath.endsWith("/**")) {
                         servicePath = servicePath.substring(0, servicePath.length() - 3);
                     }

@@ -23,18 +23,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-/*import org.owasp.esapi.Encoder;
-import org.owasp.esapi.codecs.OracleCodec;
-import org.owasp.esapi.reference.DefaultEncoder;*/
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.qubership.atp.mia.exceptions.MiaException;
 import org.qubership.atp.mia.exceptions.businesslogic.sql.SqlConnectionFailException;
@@ -69,9 +63,6 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
     protected int expiredAfter;
     @Value("${db.execution.timeout:30}")
     protected int executionTimeout;
-
-    //private final Encoder esapiEncoder = DefaultEncoder.getInstance();
-    //private final OracleCodec oracleCodec = new OracleCodec();
 
     /**
      * Constructor.

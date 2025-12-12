@@ -20,6 +20,7 @@ package org.qubership.atp.mia.model;
 import static org.qubership.atp.mia.model.exception.ErrorCodes.MIA_1410_REST_CONTENT_TYPE_NOT_SUPPORT;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.util.Strings;
@@ -29,25 +30,25 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public enum ContentType {
-    js(Arrays.asList("application/javascript"), true, true),
-    ogg(Arrays.asList("application/ogg"), false, false),
-    pdf(Arrays.asList("application/pdf"), false, false),
-    json(Arrays.asList("application/json"), true, true),
-    zip(Arrays.asList("application/zip"), false, false),
+    js(Collections.singletonList("application/javascript"), true, true),
+    ogg(Collections.singletonList("application/ogg"), false, false),
+    pdf(Collections.singletonList("application/pdf"), false, false),
+    json(Collections.singletonList("application/json"), true, true),
+    zip(Collections.singletonList("application/zip"), false, false),
     xml(Arrays.asList("application/xml", "text/xml"), true, true),
-    gif(Arrays.asList("image/gif"), false, false),
-    jpeg(Arrays.asList("image/jpeg"), false, false),
-    png(Arrays.asList("image/png"), false, false),
-    tiff(Arrays.asList("image/tiff"), false, false),
-    svg(Arrays.asList("image/svg+xml"), false, false),
-    doc(Arrays.asList("application/msword"), false, false),
-    xls(Arrays.asList("application/vnd.ms-excel"), false, false),
-    txt(Arrays.asList("text/plain"), true, true),
-    undefined(Arrays.asList("undefined"), false, false);
+    gif(Collections.singletonList("image/gif"), false, false),
+    jpeg(Collections.singletonList("image/jpeg"), false, false),
+    png(Collections.singletonList("image/png"), false, false),
+    tiff(Collections.singletonList("image/tiff"), false, false),
+    svg(Collections.singletonList("image/svg+xml"), false, false),
+    doc(Collections.singletonList("application/msword"), false, false),
+    xls(Collections.singletonList("application/vnd.ms-excel"), false, false),
+    txt(Collections.singletonList("text/plain"), true, true),
+    undefined(Collections.singletonList("undefined"), false, false);
 
-    private List<String> mimeType;
-    private boolean display;
-    private boolean textFormat;
+    private final List<String> mimeType;
+    private final boolean display;
+    private final boolean textFormat;
 
     ContentType(List<String> mimeType, boolean display, boolean textFormat) {
         this.mimeType = mimeType;

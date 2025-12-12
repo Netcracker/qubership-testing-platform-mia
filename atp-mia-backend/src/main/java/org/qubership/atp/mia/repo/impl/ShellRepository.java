@@ -193,12 +193,11 @@ public class ShellRepository {
         CommandResponse commandResponse = new CommandResponse();
         final String updatedCommand = updateCommand(logFileName, command.getToExecute(), command.getSystem());
         Holder<String> output = new Holder<>(null);
-        SshConnectionResponse sshResponse = getSshConnection(server, man -> {
-            output.value = man.runCommand(updatedCommand);
-        });
+        SshConnectionResponse sshResponse = getSshConnection(server, man ->
+                output.value = man.runCommand(updatedCommand));
         commandResponse.setCommand(sshResponse.getExecutedCommand());
         commandResponse.setConnectionInfo(sshResponse.connectionInfo());
-        if (commandResponse.getErrors() == null || commandResponse.getErrors().size() < 1) {
+        if (commandResponse.getErrors() == null || commandResponse.getErrors().isEmpty()) {
             CommandOutput logFile = getFileOnServer(command, logFileName, true);
             addResponseTextToError(logFile, command.getToExecute(), output.value);
             commandResponse.concatCommandOutput(logFile);

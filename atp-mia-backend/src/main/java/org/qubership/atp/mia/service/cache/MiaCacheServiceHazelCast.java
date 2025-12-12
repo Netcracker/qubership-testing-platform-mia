@@ -129,7 +129,7 @@ public class MiaCacheServiceHazelCast implements MiaCacheService {
 
     private void startCacheServer() {
         if (hazelcastServerEnable) {
-            log.info("Get or start cache config on address " + hazelcastServerAddress + ":" + hazelcastServerPort);
+            log.info("Get or start cache config on address {}:{}", hazelcastServerAddress, hazelcastServerPort);
             Config config = new Config(CACHE_SERVER_NAME);
             NetworkConfig network = config.getNetworkConfig()
                     .setPort(hazelcastServerPort)

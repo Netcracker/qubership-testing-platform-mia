@@ -22,6 +22,7 @@ import static org.qubership.atp.mia.model.impl.executable.CommandType.SQL;
 import static org.qubership.atp.mia.model.impl.executable.CommandType.getResponseType;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -167,9 +168,9 @@ public class ProcessService {
                     : new ArrayList<>();
             List<Switcher> systemSwitchersBe = config.getHeaderConfiguration().getSystemSwitchers();
             List<Switcher> systemSwitchersBeClone =
-                    systemSwitchersBe.stream().map(sbe -> sbe.clone()).collect(Collectors.toList());
+                    systemSwitchersBe.stream().map(Switcher::clone).collect(Collectors.toList());
             switchersListFromBe = Stream.of(userSwitchersBe, systemSwitchersBeClone)
-                    .flatMap(x -> x.stream())
+                    .flatMap(Collection::stream)
                     .collect(Collectors.toList());
         }
         if (request != null) {
@@ -180,7 +181,7 @@ public class ProcessService {
                     ? request.getSystemSwitchers()
                     : new ArrayList<>();
             switchersListFromFe = Stream.of(userSwitchersFe, systemSwitchersFe)
-                    .flatMap(x -> x.stream())
+                    .flatMap(Collection::stream)
                     .collect(Collectors.toList());
         }
         getActualStateOfSwitchers(switchersListFromBe, switchersListFromFe);
@@ -391,7 +392,7 @@ public class ProcessService {
             commandResponse.getSqlResponse().getLink()
                     .setPath(fileDownloadPrefix + commandResponse.getSqlResponse().getLink().getPath());
         }
-        if (commandResponse.getCommandOutputs() != null && commandResponse.getCommandOutputs().size() > 0) {
+        if (commandResponse.getCommandOutputs() != null && !commandResponse.getCommandOutputs().isEmpty()) {
             commandResponse.getCommandOutputs().forEach(commandOutput -> {
                 commandOutput.getLink().setPath(fileDownloadPrefix + commandOutput.getLink().getPath());
             });
@@ -476,8 +477,7 @@ public class ProcessService {
         Map<String, String> params = miaContext.getFlowData().getParameters();
         if (inputNamesToRefer != null) {
             for (String inputName : inputNamesToRefer) {
-                if (params.containsKey(inputName)
-                        && !Strings.isNullOrEmpty(params.get(inputName))) {
+                if (params.containsKey(inputName) && !Strings.isNullOrEmpty(params.get(inputName))) {
                     return false;
                 }
             }
@@ -573,10 +573,10 @@ public class ProcessService {
         List<String> sshPrerequisitesToExecute = new ArrayList<>();
         for (Prerequisite prerequisite : prerequisites) {
             if (skipPrerequisite(prerequisite, command)) {
-                log.debug("Prerequisite " + prerequisite + " has been skipped");
+                log.debug("Prerequisite {} has been skipped", prerequisite);
                 continue;
             }
-            log.debug("Execute prerequisite: " + prerequisite);
+            log.debug("Execute prerequisite: {}", prerequisite);
             String type = prerequisite.getType();
             if (SQL.toString().equals(type)) {
                 final List<CommandResponse> prerequisiteResponses = sqlService.executeCommand(prerequisite.getValue(),
@@ -789,7 +789,7 @@ public class ProcessService {
             log.debug("cannot set process status from markerResult (NPE1), because [{}]", e.getMessage());
         }
         try {
-            if (executionResponse.getCommandResponse().getErrors().size() > 0) {
+            if (!executionResponse.getCommandResponse().getErrors().isEmpty()) {
                 processStatusFromMarkerResult.setStatus(Statuses.FAIL);
                 executionResponse.setProcessStatus(processStatusFromMarkerResult);
             }

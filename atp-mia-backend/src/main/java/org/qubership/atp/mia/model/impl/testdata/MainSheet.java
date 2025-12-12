@@ -73,7 +73,7 @@ public class MainSheet {
         sheet.addMergedRegion(new CellRangeAddress(12, 13, 1, 1));
         final Holder<Integer> rowNum = new Holder<>(13);
         final Holder<Integer> cellNum = new Holder<>(1);
-        if (scenarios.size() > 0 && scenarios.get(0).getDescriptions().size() > 0) {
+        if (!scenarios.isEmpty() && !scenarios.get(0).getDescriptions().isEmpty()) {
             Description descr = findDescriptionToWriteHeader(true, false, false, false);
             if (descr != null) {
                 descr.getEventParams().forEach((k, v) -> hRow.createCell(++cellNum.value).setCellValue(k));
@@ -134,16 +134,16 @@ public class MainSheet {
                     final Row row = sheet.createRow(++rowNum.value);
                     cellNum.value = 0;
                     row.createCell(++cellNum.value).setCellValue(d.getName());
-                    if (d.getEventParams() != null && d.getEventParams().size() > 0) {
+                    if (d.getEventParams() != null && !d.getEventParams().isEmpty()) {
                         d.getEventParams().forEach((k, v) -> row.createCell(++cellNum.value).setCellValue(v));
                     }
-                    if (d.getOtherParams() != null && d.getOtherParams().size() > 0) {
+                    if (d.getOtherParams() != null && !d.getOtherParams().isEmpty()) {
                         d.getOtherParams().forEach((k, v) -> row.createCell(++cellNum.value).setCellValue(v));
                     }
-                    if (d.getValidationParams() != null && d.getValidationParams().size() > 0) {
+                    if (d.getValidationParams() != null && !d.getValidationParams().isEmpty()) {
                         d.getValidationParams().forEach((k, v) -> row.createCell(++cellNum.value).setCellValue(v));
                     }
-                    if (d.getValidatedParams() != null && d.getValidatedParams().size() > 0) {
+                    if (d.getValidatedParams() != null && !d.getValidatedParams().isEmpty()) {
                         d.getValidatedParams().forEach(v -> {
                             final Cell cell = row.createCell(++cellNum.value);
                             if (v.getState() != null) {
@@ -182,19 +182,19 @@ public class MainSheet {
             }
             if (s.getDescriptions() != null) {
                 for (Description d : s.getDescriptions()) {
-                    if (isEvent && d.getEventParams() != null && d.getEventParams().size() > 0) {
+                    if (isEvent && d.getEventParams() != null && !d.getEventParams().isEmpty()) {
                         descr = d;
                         break;
                     }
-                    if (isOther && d.getOtherParams() != null && d.getOtherParams().size() > 0) {
+                    if (isOther && d.getOtherParams() != null && !d.getOtherParams().isEmpty()) {
                         descr = d;
                         break;
                     }
-                    if (isValidation && d.getValidationParams() != null && d.getValidationParams().size() > 0) {
+                    if (isValidation && d.getValidationParams() != null && !d.getValidationParams().isEmpty()) {
                         descr = d;
                         break;
                     }
-                    if (isValidated && d.getValidatedParams() != null && d.getValidatedParams().size() > 0) {
+                    if (isValidated && d.getValidatedParams() != null && !d.getValidatedParams().isEmpty()) {
                         descr = d;
                         break;
                     }

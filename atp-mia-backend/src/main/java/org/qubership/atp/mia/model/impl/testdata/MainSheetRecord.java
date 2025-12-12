@@ -51,7 +51,7 @@ public class MainSheetRecord {
         if (otherCells == null) {
             otherCells = new HashMap<>();
         }
-        allKeysForOtherKeys.forEach(k -> otherCellsReturn.put(k, otherCells.containsKey(k) ? otherCells.get(k) : ""));
+        allKeysForOtherKeys.forEach(k -> otherCellsReturn.put(k, otherCells.getOrDefault(k, "")));
         return otherCellsReturn;
     }
 }

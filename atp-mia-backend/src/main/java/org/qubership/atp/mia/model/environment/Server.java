@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.Getter;
+
 public class Server {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
@@ -166,8 +168,7 @@ public class Server {
         Pattern pattern = Pattern.compile("([^:^]*)(:\\d*)?(.*)?");
         Matcher matcher = pattern.matcher(getHostFull());
         matcher.find();
-        String host = matcher.group(1);
-        return host;
+        return matcher.group(1);
     }
 
     /**
@@ -264,17 +265,15 @@ public class Server {
     /**
      * Type of Connection.
      */
+    @Getter
     public enum ConnectionType {
         SSH("ssh"), DB("db"), HTTP("http");
 
-        private String type;
+        private final String type;
 
         ConnectionType(String type) {
             this.type = type;
         }
 
-        public String getType() {
-            return type;
-        }
     }
 }

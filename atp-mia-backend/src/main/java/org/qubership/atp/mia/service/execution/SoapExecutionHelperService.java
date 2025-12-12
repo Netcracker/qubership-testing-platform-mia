@@ -56,18 +56,7 @@ public class SoapExecutionHelperService {
 
             Path uploadsPath = miaContext.getUploadsPath().resolve(requestFile).normalize();
             Path projectPath = miaContext.getProjectFilePath().resolve(requestFile).normalize();
-            Path resolvedPath = null;
-            //String internalPathFile = miaContext.getUploadsPath().resolve(requestFile).toString();
-            /*if (Files.notExists(Paths.get(internalPathFile))) {
-                internalPathFile = miaContext.getProjectFilePath().resolve(requestFile).toString();
-                internalPathFile = internalPathFile.replace("//", "/").replace("\\\\", "\\");
-                if (Files.notExists(Paths.get(internalPathFile))) {
-                    miaFileService.getFile(internalPathFile);
-                }
-            }
-            command.getSoap().setRequest(miaContext.evaluate(FileUtils.readFile(Paths.get(internalPathFile))));
-             */
-
+            Path resolvedPath;
             if (Files.exists(uploadsPath)) {
                 resolvedPath = uploadsPath;
             } else if (Files.exists(projectPath)) {

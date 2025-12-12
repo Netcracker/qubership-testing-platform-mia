@@ -233,7 +233,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      *
      * @param projectId id of project which config need to be updated.
      * @param file      directory which is contains MIA config.
-     * @return true if success, otherwise throws exception.
+     * @return ProjectConfiguration loaded, or throws exception.
      */
     @Transactional
     @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId", condition = "#projectId != null")
@@ -248,13 +248,12 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
                 // unzip
                 unzippedDir = FileUtils.unzipConfig(archivePath,
                         new File(archivePath.getParent(), "unzipped-" + System.currentTimeMillis()));
-                ProjectConfiguration projectConfiguration = loadConfigurationFromGit(
+                return loadConfigurationFromGit(
                         ProjectConfiguration.builder()
                                 .projectId(projectId)
                                 .gitUrl(unzippedDir.toString())
                                 .build(),
                         true);
-                return projectConfiguration;
             } catch (IOException e) {
                 throw new ArchiveIoExceptionDuringClose(unzippedDir, e.getMessage());
             } finally {

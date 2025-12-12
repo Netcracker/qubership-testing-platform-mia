@@ -159,7 +159,7 @@ public class SoapRepository {
         } catch (SOAPException e) {
             throw new SoapWriteOutputFailException(e);
         }
-        log.debug("File with response created, path: " + logFile.getPath());
+        log.debug("File with response created, path: {}", logFile.getPath());
         return logFile.getPath();
     }
 }

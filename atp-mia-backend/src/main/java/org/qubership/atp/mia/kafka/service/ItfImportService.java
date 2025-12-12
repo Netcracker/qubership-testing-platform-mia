@@ -67,7 +67,7 @@ public class ItfImportService {
     private final SectionConfigurationService sectionConfigurationService;
     private final LockManager lockManager;
     private final ItfImportFinishNotificationService itfImportFinishNotificationService;
-    private Map<String, String> requestMap = new HashMap<>();
+    private final Map<String, String> requestMap = new HashMap<>();
 
     /**
      * error message response to ITF.
