@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Iterator;
@@ -216,11 +215,6 @@ public class GridFsService {
      */
     public ObjectId uploadFile(FileMetaData fileMetaData, File fullPathToFile) {
         log.info("Upload file {} to GridFs", fileMetaData);
-        /*Path baseDir = miaContext.getProjectFilePath().toAbsolutePath().normalize();
-        Path targetPath = fullPathToFile.toPath().toAbsolutePath().normalize();
-        if (!targetPath.startsWith(baseDir)) {
-            throw new SecurityException("Invalid file path: path traversal attempt detected - " + fullPathToFile);
-        }*/
         try (FileInputStream is = new FileInputStream(fullPathToFile)) {
             return fsRepository.save(fileMetaData, is);
         } catch (FileNotFoundException e) {

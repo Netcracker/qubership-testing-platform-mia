@@ -62,20 +62,6 @@ public class ScheduleService {
     /**
      * Run clean files from gridFs according to cron job.
      */
-    /*@Scheduled(cron = "${atp.mia.cron.clean.mongoProjectFiles}")
-    public void cleanMongoProjectFiles() {
-        lockManager.executeWithLock("mia_cleanMongoProjectFiles", () -> {
-            log.info("Scheduled clean GridFs ProjectFiles job started");
-            environmentsService.getProjects().forEach(p ->
-                    gridFsService.cleanMongoProjectFiles(p.getId(),
-                            projectFileRepository.findAllByProjectId(p.getId())));
-            log.info("Scheduled clean GridFs ProjectFiles job finished");
-        });
-    }*/
-
-    /**
-     * Run clean files from gridFs according to cron job.
-     */
     @Scheduled(cron = "${atp.mia.cron.clean.logs}")
     public void cleanLogs() {
         if (gridFsEnable) {

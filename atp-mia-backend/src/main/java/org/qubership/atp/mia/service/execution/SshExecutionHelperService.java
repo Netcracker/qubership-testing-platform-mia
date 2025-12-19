@@ -43,7 +43,7 @@ import org.qubership.atp.mia.service.file.MiaFileService;
 import org.qubership.atp.mia.utils.Utils;
 import org.springframework.stereotype.Service;
 
-import clover.com.google.common.base.Strings;
+import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -129,7 +129,7 @@ public class SshExecutionHelperService {
         if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getEthalonFilesForGeneration()).get(0))
                 || Strings.isNullOrEmpty(Objects.requireNonNull(command.getNamesOfFilesForGeneration()).get(0))
                 || Strings.isNullOrEmpty(command.getPathForUpload())
-                || Objects.requireNonNull(command.getValues()).size() < 1
+                || Objects.requireNonNull(command.getValues()).isEmpty()
                 || command.getEthalonFilesForGeneration().size() != command.getNamesOfFilesForGeneration().size()) {
             String params = "ethalonFilesForGeneration, namesOfFilesForGeneration, fileExtension,"
                     + "pathForUpload, values. Size of ethalonFilesForGeneration must be equals to size of "
@@ -238,7 +238,7 @@ public class SshExecutionHelperService {
     private LinkedList<CommandOutput> findAndDownloadFiles(final Command command) {
         LinkedList<CommandOutput> outputs = new LinkedList<>();
         List<String> paths = command.getPathsForDownload();
-        if (paths != null && paths.size() > 0) {
+        if (paths != null && !paths.isEmpty()) {
             String evaluateRegexp = miaContext.evaluate(command.getRegexpForFileRetrieve());
             for (String path : paths) {
                 String evaluatePath = miaContext.evaluate(path);
@@ -293,7 +293,7 @@ public class SshExecutionHelperService {
                 || Strings.isNullOrEmpty(Objects.requireNonNull(command.getNamesOfFilesForGeneration()).get(0))
                 || Strings.isNullOrEmpty(command.getFileExtension())
                 || Strings.isNullOrEmpty(command.getPathForUpload())
-                || Objects.requireNonNull(command.getValues()).size() < 1) {
+                || Objects.requireNonNull(command.getValues()).isEmpty()) {
             String params = "ethalonFilesForGeneration, namesOfFilesForGeneration, fileExtension,"
                     + "pathForUpload, values.";
             throw new SshMissedParameterException(params);
@@ -324,7 +324,7 @@ public class SshExecutionHelperService {
             String path = pathForUpload + nameOfFileForGeneration + fileExtension;
             if (!Strings.isNullOrEmpty(command.getDelayForGeneration())) {
                 try {
-                    TimeUnit.SECONDS.sleep(Long.valueOf(command.getDelayForGeneration()));
+                    TimeUnit.SECONDS.sleep(Long.parseLong(command.getDelayForGeneration()));
                 } catch (InterruptedException e) {
                     log.warn("Could not do delay for generation of dump.", e);
                 }

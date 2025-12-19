@@ -42,8 +42,8 @@
         <logstash.gelf.version>1.14.1</logstash.gelf.version>
         <spring.boot.version>2.7.18</spring.boot.version>
         <spring.cloud.version>2021.0.8</spring.cloud.version>
-        <openclover.version>4.2.0</openclover.version>
-        <google.guava.version>27.0-jre</google.guava.version>
+        <openclover.version>4.5.2</openclover.version>
+        <google.guava.version>32.0.1-jre</google.guava.version>
         <mockito.all.version>2.0.2</mockito.all.version>
         <oracle.version>11.2.0.4</oracle.version>
         <lombok.version>1.18.30</lombok.version>
@@ -54,6 +54,8 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <javers.version>6.6.4</javers.version>
         <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
+        <undertow.version>2.2.38.Final</undertow.version>
+        <reactor-netty.version>1.0.39</reactor-netty.version>
     </properties>
 
     <modules>
@@ -192,15 +194,15 @@
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-resources-plugin</artifactId>
-            <version>3.2.0</version>
+            <version>3.3.1</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>asm</artifactId>
                     <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>asm</artifactId>
                     <groupId>asm</groupId>
+                    <artifactId>asm</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -289,17 +291,27 @@
             <dependency>
                 <groupId>io.undertow</groupId>
                 <artifactId>undertow-core</artifactId>
-                <version>2.2.36.Final</version>
+                <version>${undertow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.undertow</groupId>
+                <artifactId>undertow-servlet</artifactId>
+                <version>${undertow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.undertow</groupId>
+                <artifactId>undertow-websockets-jsr</artifactId>
+                <version>${undertow.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.projectreactor.netty</groupId>
                 <artifactId>reactor-netty-core</artifactId>
-                <version>1.0.39</version>
+                <version>${reactor-netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.projectreactor.netty</groupId>
                 <artifactId>reactor-netty-http</artifactId>
-                <version>1.0.39</version>
+                <version>${reactor-netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -412,6 +424,16 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${google.guava.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.errorprone</groupId>
+                        <artifactId>error_prone_annotations</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.oracle.database.jdbc</groupId>
@@ -507,6 +529,16 @@
                 <!--<artifactId>hazelcast</artifactId>-->
                 <artifactId>hazelcast-spring</artifactId>
                 <version>${hazelcast.version}</version> <!-- Should be tested, because versions are set different currently: 4.2.8 and 5.3.5 -->
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>1.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.28.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

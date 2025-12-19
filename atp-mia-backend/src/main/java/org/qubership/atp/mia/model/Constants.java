@@ -59,7 +59,7 @@ public class Constants {
         WORKING_DIRECTORY("workingDirectory"),
         PROCESS_NAME("processName"),
         PROJECT_ID("projectId");
-        private String paramName;
+        private final String paramName;
 
         CustomParameters(String paramName) {
             this.paramName = paramName;

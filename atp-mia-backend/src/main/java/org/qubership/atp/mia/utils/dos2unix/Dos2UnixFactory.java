@@ -28,10 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 public class Dos2UnixFactory {
 
     /**
-     * Depending on operation system name where MIA run
+     * Depending on operating system name where MIA run
      * returns dos2unix implementation.
      *
-     * @param osName operation system name
+     * @param osName operating system name
      * @return dos2unix implementation or empty.
      */
     public static Optional<Dos2Unix> getDos2Unix(String osName, String dos2UnixPath) {

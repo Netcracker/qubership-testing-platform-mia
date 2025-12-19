@@ -127,7 +127,7 @@ public class ProofOfTestingRepository {
      */
     public List<Link> downloadProofOfTesting() {
         UUID sessionId = miaContext.getFlowData().getSessionId();
-        log.info("Start save POT for [" + sessionId + "] session");
+        log.info("Start save POT for [{}] session", sessionId);
         Path parentPath = miaContext.getLogPath();
         File potDocxFile = parentPath.resolve(String.format(POT_DOCX, sessionId)).toFile();
         File potArchiveFile = parentPath.resolve(String.format(POT_ARCHIVE, sessionId)).toFile();
@@ -141,7 +141,7 @@ public class ProofOfTestingRepository {
                 }
             }
             List<Link> result = saveProofOfTesting(session.get(), potDocxFile);
-            log.info("POT saved for [" + sessionId + "] session");
+            log.info("POT saved for [{}] session", sessionId);
             return result;
         } else {
             List<Link> resultFiles = new ArrayList<>();
@@ -173,7 +173,7 @@ public class ProofOfTestingRepository {
             throw new RuntimeException("You should use docx file");
         }
         List<PotExecutionStep> stepList = session.getPotExecutionSteps();
-        if (stepList == null || stepList.size() < 1) {
+        if (stepList == null || stepList.isEmpty()) {
             throw new PotStepListEmptyException();
         }
 
@@ -202,8 +202,8 @@ public class ProofOfTestingRepository {
                 }
                 bookmarkId = 0;
                 for (int i = 0; i < stepList.size(); i++) {
-                    String anchor = stepList.get(i)
-                            .getStepName().replace(" ", "_") + "_" + bookmarkId;
+                    String anchor = stepList.get(i).getStepName()
+                            .replace(" ", "_") + "_" + bookmarkId;
                     XWPFHyperlinkRun hyperLinkRun = createHyperlinkRunToAnchor(paragraphWithContent, anchor);
                     hyperLinkRun.setText(stepsTitles.get(i));
                     hyperLinkRun.setColor(BLUE);
@@ -230,7 +230,7 @@ public class ProofOfTestingRepository {
             throw new PotResultsSavingException(e);
         }
         List<Link> resultFiles = new ArrayList<>();
-        if (filePaths.size() > 0) {
+        if (!filePaths.isEmpty()) {
             filePaths.add(targetFile.getAbsolutePath());
             Path archivePath = targetFile.getParentFile().toPath().resolve(String.format(POT_ARCHIVE, session.getId()));
 
@@ -261,7 +261,7 @@ public class ProofOfTestingRepository {
 
     private boolean analyseAndPrintTable(XWPFDocument document, String content, TableMarkerResult tableMarkerResult) {
         assertTableRowCount(document, tableMarkerResult);
-        if (tableMarkerResult.getColumnStatuses() == null || tableMarkerResult.getColumnStatuses().size() < 1) {
+        if (tableMarkerResult.getColumnStatuses() == null || tableMarkerResult.getColumnStatuses().isEmpty()) {
             return printTable(document, content);
         } else {
             XWPFRun run;
@@ -483,10 +483,10 @@ public class ProofOfTestingRepository {
             run.setText(" : " + step.getProcessStatus().getStatus().toString());
         } else if (step.getProcessStatus() != null && step.getProcessStatus().getStatus().equals(Statuses.WARNING)) {
             run.setColor(YELLOW_STATUS);
-            run.setText(" : " + Statuses.WARNING.toString());
+            run.setText(" : " + Statuses.WARNING);
         } else {
             run.setColor(RED);
-            run.setText(" : " + Statuses.FAIL.toString());
+            run.setText(" : " + Statuses.FAIL);
         }
         XWPFParagraph paragraph = document.createParagraph();
         paragraph.setStyle("Heading2");
@@ -505,7 +505,7 @@ public class ProofOfTestingRepository {
             }
             printOutputFile(document, link, step.getProcessStatus().getMarker(), null, filePaths);
         }
-        if (step.getValidations().size() > 0) {
+        if (!step.getValidations().isEmpty()) {
             paragraph = document.createParagraph();
             paragraph.setStyle("Heading2");
             run = paragraph.createRun();
@@ -516,7 +516,7 @@ public class ProofOfTestingRepository {
         for (SqlResponse sqlResponse : step.getValidations()) {
             printValidation(document, sqlResponse, filePaths);
         }
-        if (step.getErrors().size() > 0) {
+        if (!step.getErrors().isEmpty()) {
             paragraph = document.createParagraph();
             paragraph.setStyle("Heading2");
             run = paragraph.createRun();
@@ -594,7 +594,7 @@ public class ProofOfTestingRepository {
                         CommandResponse commandResponse = shellRepository.executeAndGetLog(
                                 new Command("POT_header", "SSH", header.getSystem(),
                                         listToSet(header.getValue())));
-                        if (commandResponse.getCommandOutputs().size() > 0) {
+                        if (!commandResponse.getCommandOutputs().isEmpty()) {
                             value = String.join("\n", commandResponse.getCommandOutputs().get(0).contentFromFile());
                         } else {
                             value = "No output file for SSH command execution '" + header.getValue() + "'";
@@ -630,8 +630,8 @@ public class ProofOfTestingRepository {
 
     private void printHeaders(XWPFDocument document, PotSession session) {
         PotHeaderConfiguration potHeaderConfiguration = miaContext.getConfig().getPotHeaderConfiguration();
-        if (potHeaderConfiguration.getHeaders().size() == 0
-                || !potHeaderConfiguration.getHeaders().stream().anyMatch(header ->
+        if (potHeaderConfiguration.getHeaders().isEmpty()
+                || potHeaderConfiguration.getHeaders().stream().noneMatch(header ->
                 header.getName().equalsIgnoreCase("Environment"))) {
             potHeaderConfiguration.getHeaders().add(0, new PotHeader(
                     "Environment", PotHeaderType.INPUT.toString(), null,

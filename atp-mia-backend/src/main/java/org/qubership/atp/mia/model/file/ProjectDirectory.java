@@ -111,12 +111,12 @@ public class ProjectDirectory extends DateAuditorEntity {
      * @return list of {@link UUID}
      */
     public List<UUID> getChildrenUuid() {
-        List<UUID> childsUuid = new ArrayList<>();
+        List<UUID> childrenIds = new ArrayList<>();
         directories.forEach(s -> {
-            childsUuid.add(s.getId());
-            childsUuid.addAll(s.getChildrenUuid());
+            childrenIds.add(s.getId());
+            childrenIds.addAll(s.getChildrenUuid());
         });
-        return childsUuid;
+        return childrenIds;
     }
 
     /**
@@ -125,12 +125,12 @@ public class ProjectDirectory extends DateAuditorEntity {
      * @return list of {@link String}
      */
     public List<String> getChildrenNames() {
-        List<String> childsNames = new ArrayList<>();
+        List<String> childrenNames = new ArrayList<>();
         directories.forEach(s -> {
-            childsNames.add(s.getName());
-            childsNames.addAll(s.getChildrenNames());
+            childrenNames.add(s.getName());
+            childrenNames.addAll(s.getChildrenNames());
         });
-        return childsNames;
+        return childrenNames;
     }
 
     /**

@@ -40,10 +40,10 @@ public class VariableFormat {
         split = variableFormat.split(VariableFormat.VAR_NAME);
         beforeVariableName = !variableFormat.startsWith(VariableFormat.VAR_NAME) ? split[0] : "";
         afterVariableName = !variableFormat.endsWith(VariableFormat.VAR_NAME) ? split[split.length - 1] : "";
-        matches.append("[^" + beforeVariableName + "]*");
+        matches.append("[^").append(beforeVariableName).append("]*");
         matches.append(beforeVariableName);
         if (Strings.isNotBlank(afterVariableName)) {
-            matches.append("([^" + afterVariableName + "]*)");
+            matches.append("([^").append(afterVariableName).append("]*)");
         } else {
             matches.append("([^\\W]*)");
         }

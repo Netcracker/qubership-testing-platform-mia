@@ -34,7 +34,7 @@ public class HistoryServiceFactory {
     private final List<RetrieveHistoryService<? extends DateAuditorEntity>> retrieveHistoryServices;
 
     /**
-     * Returns the concrete implementation of RestoreHistoryService depending of entity type.
+     * Returns the concrete implementation of RestoreHistoryService depending on entity type.
      *
      * @param itemType type of domain entity with supported history
      * @return RestoreHistoryService implementation
@@ -46,7 +46,7 @@ public class HistoryServiceFactory {
     }
 
     /**
-     * Returns the concrete implementation of RetrieveHistoryService depending of entity type.
+     * Returns the concrete implementation of RetrieveHistoryService depending on entity type.
      *
      * @param itemType type of domain entity with supported history
      * @return RetrieveHistoryService implementation

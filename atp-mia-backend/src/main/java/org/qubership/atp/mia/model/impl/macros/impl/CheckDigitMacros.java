@@ -52,8 +52,8 @@ public class CheckDigitMacros extends Macros<String> {
             }
         }
         int sum = 0;
-        for (int digitIdx = 0; digitIdx < digits.length; digitIdx++) {
-            sum += digits[digitIdx];
+        for (int i : digits) {
+            sum += i;
         }
         /* multiply by 9 step */
         sum = sum * 9;

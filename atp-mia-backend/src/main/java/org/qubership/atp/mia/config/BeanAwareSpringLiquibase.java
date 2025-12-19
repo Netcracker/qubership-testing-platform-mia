@@ -20,19 +20,17 @@ package org.qubership.atp.mia.config;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import liquibase.integration.spring.SpringLiquibase;
 
 public class BeanAwareSpringLiquibase extends SpringLiquibase {
 
-    @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     private static ResourceLoader applicationContext;
 
     /**
      * Static method for get beans in liquibase task changes.
      */
     public static <T> T getBean(Class<T> beanClass) throws Exception {
-        if (ApplicationContext.class.isInstance(applicationContext)) {
+        if (applicationContext instanceof ApplicationContext) {
             return ((ApplicationContext) applicationContext).getBean(beanClass);
         } else {
             throw new Exception("Resource loader is not an instance of ApplicationContext");

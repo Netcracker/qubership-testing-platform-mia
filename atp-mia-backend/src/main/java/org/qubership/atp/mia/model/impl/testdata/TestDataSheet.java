@@ -68,9 +68,9 @@ public class TestDataSheet {
         final Cell cellDescr = headerRow.createCell(++cellNum.value);
         cellDescr.setCellValue(MainSheetRecord.DESCRIPTION);
         cellDescr.setCellStyle(wb.getCellStyle(IndexedColors.YELLOW));
-        if (scenarios != null && scenarios.size() > 0 && scenarios.get(0).getDescriptions().size() > 0) {
+        if (scenarios != null && !scenarios.isEmpty() && !scenarios.get(0).getDescriptions().isEmpty()) {
             final LinkedHashMap<String, String> params = scenarios.get(0).getDescriptions().get(0).getOtherParams();
-            if (params.size() > 0) {
+            if (!params.isEmpty()) {
                 params.forEach((k, v) -> {
                     final Cell cell = headerRow.createCell(++cellNum.value);
                     cell.setCellValue(k);
@@ -85,7 +85,7 @@ public class TestDataSheet {
                     final Row row = sheet.createRow(++rowNum.value);
                     cellNum.value = 0;
                     row.createCell(++cellNum.value).setCellValue(d.getName());
-                    if (d.getOtherParams().size() > 0) {
+                    if (!d.getOtherParams().isEmpty()) {
                         d.getOtherParams().forEach((k, v) -> row.createCell(++cellNum.value).setCellValue(v));
                     }
                 });

@@ -98,9 +98,7 @@ public class SqlExecutionHelperService {
                 Collection<String> columns = sqlResponse.getData().getColumns();
                 writeLine(columns, stream, true);
                 List<List<String>> data = sqlResponse.getData().getData();
-                data.forEach(row -> {
-                    writeLine(row, stream, true);
-                });
+                data.forEach(row -> writeLine(row, stream, true));
             } else {
                 writeLine(Collections.singleton(""), stream, true);
             }
@@ -215,7 +213,7 @@ public class SqlExecutionHelperService {
             String systemName = validation.getSystem();
             validation.setSystem(miaContext.evaluate(systemName));
             if (skipValidation(validation, command)) {
-                log.debug("Validation has been skipped : " + validation);
+                log.debug("Validation has been skipped : {}", validation);
                 latch.countDown();
                 continue;
             }
@@ -224,10 +222,8 @@ public class SqlExecutionHelperService {
             String value = miaContext.evaluate(validation.getValue());
             String tableName = validation.getTableName();
             List<String> queries;
-            log.trace("Prepare query: " + value);
+            log.trace("Prepare query: {}", value);
             if (value != null && value.endsWith(".sql")) {
-                /*String content = miaContext.evaluate(FileUtils.readFile(miaFileService.getFile(value).toPath()));
-                queries = Arrays.asList(content.split(";\\r?\\n?"));*/
                 try {
                     //Secure dynamic file path resolution
                     Path safePath = getSafeValidatedPath(value);
@@ -242,11 +238,10 @@ public class SqlExecutionHelperService {
                     latch.countDown();
                     continue;
                 }
-
             } else {
                 queries = Collections.singletonList(value);
             }
-            if (queries.size() > 0) {
+            if (!queries.isEmpty()) {
                 for (String query : queries) {
                     log.debug("Execute validation query: " + query);
                     response.add(executeQuery(server, query, tableName,

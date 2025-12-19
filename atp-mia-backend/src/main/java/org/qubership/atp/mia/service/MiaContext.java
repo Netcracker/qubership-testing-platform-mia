@@ -45,6 +45,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.mia.exceptions.fileservice.ArchiveFileNotFoundException;
 import org.qubership.atp.mia.exceptions.fileservice.ArchiveIoExceptionDuringClose;
 import org.qubership.atp.mia.model.Constants;
@@ -71,8 +72,7 @@ import org.qubership.atp.mia.utils.Utils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import clover.com.google.common.base.Preconditions;
-import clover.org.apache.commons.lang.StringUtils;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -106,7 +106,7 @@ public class MiaContext {
         try {
             encodedFileName = URLEncoder.encode(fileName, "UTF-8").replace("+", "%20");
         } catch (UnsupportedEncodingException e) {
-            log.error("Fail to encode " + fileName);
+            log.error("Fail to encode {}", fileName);
         }
         return new Link("/rest/downloadFile" + FilenameUtils.separatorsToUnix(parent) + "/" + encodedFileName,
                 fileName);
@@ -162,17 +162,13 @@ public class MiaContext {
      * @return csv file name
      */
     public String createTableFileName(String tableName) {
-        String fileName;
         String prefix = StringUtils.deleteWhitespace(getFlowData().getParameters().get("processName"));
-        prefix = StringUtils.isBlank(tableName) ? prefix
-                : prefix + "_" + tableName;
-        String accountNumber = Strings.nullToEmpty(getFlowData().getCustom(Constants.CustomParameters.ACCOUNT_NUMBER,
-                        this))
+        prefix = StringUtils.isBlank(tableName) ? prefix : prefix + "_" + tableName;
+        String accountNumber = Strings.nullToEmpty(getFlowData()
+                        .getCustom(Constants.CustomParameters.ACCOUNT_NUMBER,this))
                 .trim().replaceAll(" ", "_");
-        prefix = StringUtils.isBlank(accountNumber) ? prefix
-                : prefix + "_" + accountNumber;
-        fileName = prefix + Utils.getTimestampFile() + ".csv";
-        return fileName;
+        prefix = StringUtils.isBlank(accountNumber) ? prefix : prefix + "_" + accountNumber;
+        return prefix + Utils.getTimestampFile() + ".csv";
     }
 
     /**
@@ -304,16 +300,13 @@ public class MiaContext {
     /**
      * Gets shell prefixes.
      *
-     * @return list of prefixes from application.properties
+     * @return map of prefixes from application.properties
      */
     public LinkedHashMap<String, String> getShellPrefixes(String system) {
         final Optional<CommandPrefix> commandPrefix =
                 getConfig().getCommonConfiguration().getCommandShellPrefixes().stream()
                         .filter(p -> p.getSystem().equals(system)).findFirst();
-        if (commandPrefix.isPresent()) {
-            return commandPrefix.get().getPrefixes();
-        }
-        return new LinkedHashMap<>();
+        return commandPrefix.isPresent() ? commandPrefix.get().getPrefixes() : new LinkedHashMap<>();
     }
 
     /**
@@ -379,7 +372,7 @@ public class MiaContext {
     public void setContext(ExecutionRequest request, UUID projectId, String environmentName) {
         setContext(projectId, request.getSessionId());
         Preconditions.checkNotNull(environmentName, "No environmentName specified in parameters.");
-        log.debug(String.format("Set environment with name '{}' to FlowData.", environmentName));
+        log.debug("Set environment with name '{}' to FlowData.", environmentName);
         getFlowData().setEnvironment(environmentsService.getEnvByName(projectId, environmentName));
         setFlowDataFromRequest(request);
     }
@@ -468,7 +461,7 @@ public class MiaContext {
         int iterationCount = 0;
         while (pattern.matcher(text).find()) {
             if (iterationCount++ > max_Iteration) {
-                log.warn("Maximum iterations reached, exiting loop to prevent infinite loop.");
+                log.warn("Maximum iterations ({}) reached, exiting loop to prevent infinite loop.", max_Iteration);
                 break;
             }
             String newText = text;
@@ -489,7 +482,7 @@ public class MiaContext {
                 }
             }
             if (infinityLoopFound) {
-                log.warn("INFINITY LOOP found in {}", text);
+                log.warn("INFINITE LOOP found in {}", text);
                 break;
             }
             avoidInfinityLoops.add(extractedVariables);
@@ -537,29 +530,26 @@ public class MiaContext {
                     final String typeAsString = macrosText.substring(0, macrosText.indexOf("("));
                     MacrosType marcosType = MacrosType.valueOf(typeAsString);
                     String[] macrosParams;
-                    String macrosParameters = macrosText.substring(macrosText.indexOf("(") + 1, macrosText.indexOf(")"
-                    ));
-                    if (macrosParameters.contains("',")) {
-                        macrosParams = macrosParameters.split("',");
+                    String parameters = macrosText.substring(macrosText.indexOf("(") + 1, macrosText.indexOf(")"));
+                    if (parameters.contains("',")) {
+                        macrosParams = parameters.split("',");
                         for (int paramIdx = 0; paramIdx < macrosParams.length; paramIdx++) {
                             macrosParams[paramIdx] = macrosParams[paramIdx].trim().replaceAll("'", "");
                         }
                     } else {
-                        macrosParams = macrosParameters.split(",");
+                        macrosParams = parameters.split(",");
                     }
                     return evaluateWithMacroses(replaceMacrosWithResultOfMacros(text, marcosType, macrosParams));
                 } catch (IndexOutOfBoundsException e) {
                     log.error("Out of bound for macros '${{}}'.\n1. Probably you use curly brackets incorrectly please "
                             + "check { } that it's closes only macros.\n2. Also please check that macros available in"
-                            + " MIA "
-                            + "documentation", macrosText);
+                            + " MIA documentation", macrosText);
                 } catch (Exception e) {
-                    log.error("Implementation for macros type '${{}}' has not been found", macrosText);
+                    log.error("Implementation for macros type '${{}}' isn't found or parse exception", macrosText, e);
                 }
             }
         }
-        if (text.matches("(?s).*\\$\\w+\\(.*\\)")
-                || text.matches("(?s).*\\#\\w+\\(.*\\)")) {
+        if (text.matches("(?s).*\\$\\w+\\(.*\\)") || text.matches("(?s).*#\\w+\\(.*\\)")) {
             return AtpMacrosUtils.evaluateWithAtpMacros(text, getFlowData().getProjectId());
         }
         return text;
@@ -569,11 +559,19 @@ public class MiaContext {
      * Replaces macros with result of macros.
      */
     private String replaceMacrosWithResultOfMacros(String text, MacrosType macrosType, String[] macrosParams) {
-        String macrosResult = MacroRegistryImpl.getMacros(macrosType.name()).evaluate(macrosParams);
-        String textBeforeMacros = text.substring(0, text.indexOf("${"));
-        int start = text.indexOf("${");
-        int end = start == text.length() ? text.length() + 1 : text.indexOf("}", start) + 1;
-        String textAfterMacros = start == text.length() ? "" : text.substring(end);
-        return textBeforeMacros + macrosResult + textAfterMacros;
+        /*
+            In fact, all errors are processed in caller method.
+            So, if we are here, macrosType is identified successfully, and macrosParams are prepared too,
+            and, of course, text parameter contains validly located ${ and }.
+            So, we won't check their positions in the method.
+         */
+        int startMacroPosition = text.indexOf("${");
+        int endMacroPosition = text.indexOf("}", startMacroPosition);
+        String textBeforeMacros = text.substring(0, startMacroPosition);
+        String textAfterMacros = text.substring(endMacroPosition + 1);
+
+        return textBeforeMacros
+                + MacroRegistryImpl.getMacros(macrosType.name()).evaluate(macrosParams)
+                + textAfterMacros;
     }
 }

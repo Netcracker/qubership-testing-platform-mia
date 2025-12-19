@@ -18,10 +18,9 @@
 package org.qubership.atp.mia.model.impl.macros.impl;
 
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,7 +57,7 @@ public class CycleTextGenerationMacros extends Macros<String> {
             argumentNameCreatesCycle = inputs[2].trim();
             if (parseAttributes(inputs) && checkAttributesLength()) {
                 for (int argIdx = 0; argIdx < argNameValues.get(argumentNameCreatesCycle).size(); argIdx++) {
-                    final LinkedList<String> toAdd = new LinkedList();
+                    final LinkedList<String> toAdd = new LinkedList<>();
                     toAdd.add(textFormat);
                     for (Map.Entry<String, LinkedHashMap<Integer, String>> entry : argNameValues.entrySet()) {
                         final String argumentN = entry.getKey();
@@ -84,14 +83,14 @@ public class CycleTextGenerationMacros extends Macros<String> {
     private boolean parseAttributes(String[] inputs) {
         for (int inputIdx = 3; inputIdx < inputs.length; inputIdx++) {
             if (inputs[inputIdx].split("->").length < 2) {
-                finalText.add(format("Attribute (%d) of the macros has incorrect format!", valueOf(inputIdx + 1)));
+                finalText.add(format("Attribute (%d) of the macros has incorrect format!", inputIdx + 1));
                 addFormatMacros();
                 return false;
             }
             final String argumentN = inputs[inputIdx].split("->")[0].trim();
             final String argumentV = inputs[inputIdx].split("->")[1].trim();
-            final Holder<Boolean> needToString = new Holder(false);
-            final Holder<Boolean> needToAddSingleQuotationMarks = new Holder(false);
+            final Holder<Boolean> needToString = new Holder<>(false);
+            final Holder<Boolean> needToAddSingleQuotationMarks = new Holder<>(false);
             try {
                 final String toType = inputs[inputIdx].split("->")[2].trim();
                 needToString.value = toType.equalsIgnoreCase("string");
@@ -104,7 +103,7 @@ public class CycleTextGenerationMacros extends Macros<String> {
                     return "\"" + valueToString.trim() + "\"";
                 }
                 if (needToAddSingleQuotationMarks.value && !valueToString.isEmpty()) {
-                    return "\'" + valueToString.trim() + "\'";
+                    return "'" + valueToString.trim() + "'";
                 }
                 return valueToString;
             };
@@ -209,7 +208,7 @@ public class CycleTextGenerationMacros extends Macros<String> {
             }
             if (endBlockId > 0 && replaceIndex >= 0) {
                 final String replaceValue = returnValue.size() > replaceIndex ? returnValue.get(replaceIndex) : "";
-                return Arrays.asList(
+                return Collections.singletonList(
                         new StringBuffer(argumentV).replace(startBlockId, endBlockId + 1, replaceValue).toString());
             }
         }

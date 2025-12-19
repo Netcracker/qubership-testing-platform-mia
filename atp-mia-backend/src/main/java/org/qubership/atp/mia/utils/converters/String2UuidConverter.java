@@ -35,9 +35,6 @@ public class String2UuidConverter implements ConditionalConverter<String, UUID> 
 
     @Override
     public UUID convert(MappingContext<String, UUID> context) {
-        if (context.getSource() == null) {
-            return null;
-        }
-        return UUID.fromString(context.getSource());
+        return context.getSource() == null ? null : UUID.fromString(context.getSource());
     }
 }

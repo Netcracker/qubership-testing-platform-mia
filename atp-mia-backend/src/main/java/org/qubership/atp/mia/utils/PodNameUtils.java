@@ -19,7 +19,7 @@ package org.qubership.atp.mia.utils;
 
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;

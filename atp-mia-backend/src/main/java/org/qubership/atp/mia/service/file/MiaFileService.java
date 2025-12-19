@@ -21,7 +21,6 @@ import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -86,7 +85,7 @@ public class MiaFileService {
             return ResponseEntity.ok().header(CONTENT_DISPOSITION, "attachment;filename=" + fileName)
                     .header(ACCESS_CONTROL_EXPOSE_HEADERS, CONTENT_DISPOSITION)
                     .contentType(getMediaTypeForFileName(servletContext, fileName))
-                    .body(new InputStreamResource(new FileInputStream(fullFile)));
+                    .body(new InputStreamResource(Files.newInputStream(fullFile.toPath())));
         } catch (IOException e) {
             throw new ReadFailFileNotFoundException(fullFile.toString());
         }
@@ -194,7 +193,6 @@ public class MiaFileService {
      */
     public ObjectId saveProjectFile(MultipartFile file, Path filePath) {
         if (file != null && !file.isEmpty()) {
-            //final Path dest = miaContext.getProjectFilePath().resolve(filePath);
             final Path baseDir = miaContext.getProjectFilePath().toAbsolutePath().normalize();
             final Path dest = baseDir.resolve(filePath).normalize();
 

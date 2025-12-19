@@ -88,16 +88,16 @@ public abstract class AbstractRetrieveHistoryService<S extends DateAuditorEntity
      */
     public HistoryItemResponseDto getAllHistory(UUID id, Integer offset, Integer limit) {
 
-        log.debug(String.format("Get All History for entity = %s, offset = %s, limit = %s", id, offset, limit));
+        log.debug("Get All History for entity = {}, offset = {}, limit = {}", id, offset, limit);
 
         List<CdoSnapshot> snapshots = javers.findSnapshots(getSnapshotsByLimit(id, offset, limit));
-        log.debug(String.format("Snapshots found for entity = %s, snapshots = %s", id, snapshots));
+        log.debug("Snapshots found for entity = {}, snapshots = {}", id, snapshots);
 
         JqlQuery query = getChangesByIdPaginationQuery(id, snapshots.stream()
                 .map(snapshot -> snapshot.getCommitId().valueAsNumber()).collect(Collectors.toList()));
 
         Changes changes = javers.findChanges(query);
-        log.debug(String.format("Changes found for entity = %s,  changes = %s", id, changes.prettyPrint()));
+        log.debug("Changes found for entity = {},  changes = {}", id, changes.prettyPrint());
 
         List<ChangesByCommit> changesByCommits = changes.groupByCommit();
 
@@ -280,7 +280,7 @@ public abstract class AbstractRetrieveHistoryService<S extends DateAuditorEntity
         List<CdoSnapshot> snapshots = javers.findSnapshots(query);
         QueryBuilder queryBuilder = QueryBuilder.byInstanceId(uuid, getEntityClass())
                 .withVersion(Long.parseLong(version)).withScopeDeepPlus(Integer.MAX_VALUE);
-        if (Objects.nonNull(snapshots) && snapshots.size() > 0) {
+        if (Objects.nonNull(snapshots) && !snapshots.isEmpty()) {
             queryBuilder.withCommitId(snapshots.get(0).getCommitId());
         }
         List<Shadow<S>> shadows = javers.findShadows(queryBuilder.build());

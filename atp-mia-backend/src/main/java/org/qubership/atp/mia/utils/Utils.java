@@ -127,7 +127,7 @@ public class Utils {
         try {
             closeable.close();
         } catch (Exception e) {
-            log.warn("Can not close resource: " + closeable, e);
+            log.warn("Can not close resource: {}", closeable, e);
         }
     }
 
@@ -246,7 +246,7 @@ public class Utils {
      */
     public static boolean checkCondition(String erValue, String arValue) {
         boolean equality = true;
-        char operator = erValue.length() > 0 ? erValue.charAt(0) : '='; // '=' can be replaced with any char unless
+        char operator = !erValue.isEmpty() ? erValue.charAt(0) : '='; // '=' can be replaced with any char unless
         // the below code is changed. It's to avoid throwing error if 'erValue' is empty.
         int intValue;
         try {
@@ -311,7 +311,7 @@ public class Utils {
      */
     public static String getPrettyStringFromXml(String xmlData) {
         log.info("Get pretty string from Xml");
-        log.debug("Xml to transform: " + xmlData);
+        log.debug("Xml to transform: {}", xmlData);
         StreamResult xmlOutput;
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -336,8 +336,9 @@ public class Utils {
      * @return string
      */
     public static String maxExcelString(String stringForCell) {
-        return stringForCell.length() > 32670
-                ? stringForCell.substring(0, 32670)
+        final int MAX_LENGTH = 32670;
+        return stringForCell.length() > MAX_LENGTH
+                ? stringForCell.substring(0, MAX_LENGTH)
                 : stringForCell;
     }
 

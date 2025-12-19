@@ -411,7 +411,7 @@ public class ConfigurationFileDeserializer {
                                 ProcessSettings processSettings = MAPPER_NO_ERROR.readValue(file,
                                         ProcessSettings.class);
                                 if (!processSettings.check()) {
-                                    log.error("In file '" + file.getName() + "' is not Process configuration");
+                                    log.error("In file '{}' is not Process configuration", file.getName());
                                     continue;
                                 }
                                 String procName = uniqueProcName(processSettings.getName(), flowConfig);

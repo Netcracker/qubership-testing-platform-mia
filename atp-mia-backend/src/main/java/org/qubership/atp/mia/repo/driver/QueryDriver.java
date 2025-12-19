@@ -138,13 +138,13 @@ public interface QueryDriver<T extends AutoCloseable> {
         return CacheBuilder.newBuilder()
                 .expireAfterAccess(expireTimeout, TimeUnit.MILLISECONDS)
                 .removalListener((RemovalListener<Server, T>) notification -> {
-                    log.info(getDriverType() + " connection released for {}", notification.getKey());
+                    log.info("{} connection released for {}", getDriverType(), notification.getKey());
                     close(notification.getValue());
                 })
                 .build(new CacheLoader<Server, T>() {
                     @Override
                     public T load(Server key) {
-                        log.debug(getDriverType() + " connection added for {}", key);
+                        log.debug("{} connection added for {}", getDriverType(), key);
                         return create(key);
                     }
                 });

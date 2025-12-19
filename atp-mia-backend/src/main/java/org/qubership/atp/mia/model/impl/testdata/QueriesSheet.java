@@ -76,12 +76,12 @@ public class QueriesSheet {
         headerCell.setCellValue(QueriesSheetRecord.TYPE_COLUMN);
         headerCell.setCellStyle(wb.getCellStyle(IndexedColors.YELLOW));
         //Values
-        if (queries != null && queries.size() > 0) {
+        if (queries != null && !queries.isEmpty()) {
             queries.forEach(q -> {
                 Holder<Row> row = new Holder<>(sheet.createRow(++rowNum.value));
                 row.value.createCell(0).setCellValue(q.getQuery());
                 row.value.createCell(3).setCellValue(q.getType().toString());
-                if (q.getValidateValue() != null && q.getValidateValue().size() > 0) {
+                if (q.getValidateValue() != null && !q.getValidateValue().isEmpty()) {
                     int finalRowNum = rowNum.value + q.getValidateValue().size() - 1;
                     if (finalRowNum > rowNum.value) {
                         sheet.addMergedRegion(new CellRangeAddress(rowNum.value, finalRowNum, 0, 0));

@@ -37,6 +37,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -65,7 +66,6 @@ import org.qubership.atp.mia.service.monitoring.MetricsAggregateService;
 import org.qubership.atp.mia.utils.Utils;
 import org.springframework.stereotype.Repository;
 
-import clover.org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -162,7 +162,7 @@ public class RestRepository {
             Arrays.stream(httpResponse.getAllHeaders()).forEach(header -> {
                 if (header.getName().contains("Cookie")) {
                     miaContext.getFlowData().addParameter("Cookie", header.getValue());
-                    log.info("Cookie is saved to flow data [ " + header.getValue() + " ].");
+                    log.info("Cookie is saved to flow data [ {} ].", header.getValue());
                 }
             });
         }
@@ -346,7 +346,7 @@ public class RestRepository {
                 long restResponseSizeInKb = file.length() / 1024;
                 log.info("[SIZE] REST Response length: {} kb", restResponseSizeInKb);
                 metricsService.restResponseSize(restResponseSizeInKb);
-                log.debug("File with response created, path: " + file.getPath());
+                log.debug("File with response created, path: {}", file.getPath());
                 try {
                     if (contentType.isTextFormat()) {
                         stringBody = FileUtils.readFileToString(file);

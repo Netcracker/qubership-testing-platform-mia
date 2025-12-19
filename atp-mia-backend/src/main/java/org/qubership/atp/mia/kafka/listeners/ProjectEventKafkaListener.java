@@ -65,8 +65,7 @@ public class ProjectEventKafkaListener {
                 try {
                     projectConfigService.updateProject(config, false);
                 } catch (Exception e) {
-                    log.error("Receive message from kafka about update configuration but something goes wrong during "
-                            + "save: {}", e);
+                    log.error("'Update project' event is received but something went wrong during save", e);
                 }
                 break;
             }

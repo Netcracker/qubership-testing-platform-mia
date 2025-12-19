@@ -37,11 +37,11 @@ public class Dos2UnixUtils {
      * @return {@code RealPath} to dos2unix tool.
      */
     public static Path getDos2UnixPath(String pathToDos2UnixS, String... pathToDos2Unix) {
+        Path path = Paths.get(pathToDos2UnixS, pathToDos2Unix);
         try {
-            return Paths.get(pathToDos2UnixS, pathToDos2Unix).toRealPath();
+            return path.toRealPath();
         } catch (IOException e) {
-            throw new Dos2unixIncorrectToolPathException(Paths.get(pathToDos2UnixS, pathToDos2Unix).toAbsolutePath(),
-                    e);
+            throw new Dos2unixIncorrectToolPathException(path.toAbsolutePath(), e);
         }
     }
 
@@ -56,7 +56,7 @@ public class Dos2UnixUtils {
     public static Path destinationToRealPath(Path dest) {
         try {
             dest = dest.toRealPath();
-            log.info("Real path to file which will be converted by dos2unix: {}", dest.toString());
+            log.info("Real path to file which will be converted by dos2unix: {}", dest);
             return dest;
         } catch (IOException e) {
             throw new Dos2unixIncorrectFilePathException(dest.toString(), e);

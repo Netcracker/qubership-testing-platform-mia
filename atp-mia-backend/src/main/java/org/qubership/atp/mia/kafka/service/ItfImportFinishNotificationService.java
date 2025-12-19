@@ -51,7 +51,7 @@ public class ItfImportFinishNotificationService {
             log.info("ITF import ended with ID #{} and payload {}", uuid, payload);
             kafkaTemplate.send(topicName, uuid, payload);
         } catch (Exception e) {
-            log.error("ITF import notify error. Cannot put terminate event to kafka for {}", e);
+            log.error("ITF import notify error. Cannot put terminate event to kafka", e);
         }
     }
 }

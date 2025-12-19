@@ -179,10 +179,10 @@ public class CompoundService {
     }
 
     /**
-     * Check if process/compound should be skip or not.
+     * Check if process/compound should be skipped or not.
      *
      * @param referToInput name of input
-     * @return true if should be skip, false otherwise
+     * @return true if process/compound should be skipped, false otherwise.
      */
     private boolean skipByReferToInput(String referToInput) {
         boolean skip = false;

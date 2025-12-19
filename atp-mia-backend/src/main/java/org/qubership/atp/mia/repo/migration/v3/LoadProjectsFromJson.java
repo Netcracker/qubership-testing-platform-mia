@@ -74,7 +74,6 @@ public class LoadProjectsFromJson implements CustomTaskChange {
     public void execute(Database database) {
         String originalThreadName = Thread.currentThread().getName();
         Thread.currentThread().setName("atp-mia-migration-v3");
-        Set<ProjectsJson> projectsJsonList = new HashSet<>();
         try {
             projectConfigurationService.findByProjectId(new UUID(0, 0)); //correct initialize service
         } catch (Exception e) {
@@ -82,7 +81,7 @@ public class LoadProjectsFromJson implements CustomTaskChange {
         }
         try {
             List<AbstractConfiguratorModel> projects = environmentsService.getProjects();
-            projectsJsonList = new ObjectMapper().readValue(
+            Set<ProjectsJson> projectsJsonList = new ObjectMapper().readValue(
                             miaConfigPath.resolve("project").resolve("projects_config.json").toFile(),
                             new TypeReference<Set<ProjectsJson>>() {
                             })
@@ -90,7 +89,7 @@ public class LoadProjectsFromJson implements CustomTaskChange {
                         try {
                             UUID projectId = UUID.fromString(p.getId());
                             if (p.getConfigUrl() == null) {
-                                log.error("Url for config not defined! No need for migration", p.getId());
+                                log.error("Project with ID '{}': Config Url not defined! Skip migration", p.getId());
                                 return false;
                             }
                             Optional<AbstractConfiguratorModel> project = projects.stream()
@@ -104,7 +103,7 @@ public class LoadProjectsFromJson implements CustomTaskChange {
                             }
                             return true;
                         } catch (IllegalArgumentException e) {
-                            log.error("Project with ID '{}' can't be load", p.getId());
+                            log.error("Project with ID '{}' can't be loaded", p.getId());
                             return false;
                         }
                     })
@@ -129,10 +128,10 @@ public class LoadProjectsFromJson implements CustomTaskChange {
                                     resultExecution.getException().getMessage());
                         }
                     } catch (InterruptedException e) {
-                        log.error("LoadProjectsFromJson InterruptedException: {}", e);
+                        log.error("LoadProjectsFromJson InterruptedException", e);
                         successExecution = false;
                     } catch (ExecutionException e) {
-                        log.error("LoadProjectsFromJson ExecutionException: {}", e);
+                        log.error("LoadProjectsFromJson ExecutionException", e);
                         successExecution = false;
                     } catch (TimeoutException e) {
                         log.error("LoadProjectsFromJson aborted by timeout");
@@ -186,7 +185,7 @@ public class LoadProjectsFromJson implements CustomTaskChange {
         public ProjectsJson call() throws Exception {
             UUID projectId = UUID.fromString(projectJson.getId());
             Thread.currentThread().setName("atp-mia-migration-v3-" + projectId);
-            log.info("Load from json for project " + projectId);
+            log.info("Load from json for project {}", projectId);
             try {
                 Optional<ProjectConfiguration> projectConfigurationOptional =
                         projectConfigurationService.findByProjectId(projectId);

@@ -69,7 +69,7 @@ public class Query {
      * @param commandResponses list of CommandResponses
      */
     public void updateResultsFromListCommandResponses(List<CommandResponse> commandResponses) {
-        if (commandResponses == null || commandResponses.size() < 1
+        if (commandResponses == null || commandResponses.isEmpty()
                 || commandResponses.get(0).getSqlResponse() == null
                 || commandResponses.get(0).getSqlResponse().getData() == null) {
             validateValue.stream().filter(v -> v.getValue() == null).forEach(v -> v.setValue("ERROR: NO QUERY RESULT"));
@@ -79,7 +79,7 @@ public class Query {
                 final String colName = table.getColumns().get(colId);
                 final String colValue =
                         table.getData() != null
-                                && table.getData().size() > 0
+                                && !table.getData().isEmpty()
                                 && table.getData().get(0).size() >= colId
                                 ? table.getData().get(0).get(colId)
                                 : "ERROR: NO COLUMN RESULT";

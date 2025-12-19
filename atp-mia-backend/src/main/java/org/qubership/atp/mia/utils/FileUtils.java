@@ -90,7 +90,7 @@ public class FileUtils {
             zipEntryName = parentDirectoryName + "/" + zipEntryName;
         }
         if (fileToZip.isDirectory()) {
-            log.trace("|" + zipEntryName);
+            log.trace("|{}", zipEntryName);
             File[] files = fileToZip.listFiles();
             if (files != null) {
                 for (File file : files) {
@@ -98,7 +98,7 @@ public class FileUtils {
                 }
             }
         } else {
-            log.trace(" +" + zipEntryName);
+            log.trace(" +{}", zipEntryName);
             byte[] buffer = new byte[1024];
             try (FileInputStream fis = new FileInputStream(fileToZip)) {
                 zos.putNextEntry(new ZipEntry(zipEntryName));
@@ -108,7 +108,7 @@ public class FileUtils {
                 }
                 zos.closeEntry();
             } catch (FileNotFoundException e) {
-                log.error("A file in archiving folder does not exist: %s", e);
+                log.error("A file in archiving folder does not exist", e);
             } catch (IOException e) {
                 throw new ArchiveIoExceptionDuringSave(fileToZip.toString(), e);
             }
@@ -161,7 +161,7 @@ public class FileUtils {
      * @param destinationDir dir to create.
      * @param zipEntry       opened zip archive.
      * @return {@link File} of created dir.
-     * @throws IOException if the created entry is outside of the target dir.
+     * @throws IOException if the created entry is outside the target dir.
      */
     public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
         File destFile = new File(destinationDir, zipEntry.getName());
@@ -275,7 +275,6 @@ public class FileUtils {
      */
     public static String readFile(Path pathToFile) {
         try {
-            //return new String(Files.readAllBytes(pathToFile));
             return new String(Files.readAllBytes(pathToFile.toRealPath().normalize()));
         } catch (IOException e) {
             throw new ReadFailIoExceptionDuringOperation(pathToFile.toString(), e);

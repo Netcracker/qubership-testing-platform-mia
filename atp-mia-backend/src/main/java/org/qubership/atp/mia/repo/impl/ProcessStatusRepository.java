@@ -63,17 +63,17 @@ public class ProcessStatusRepository {
             Marker marker = processStatus.getMarker();
             if (marker.getPassedMarkerForLog() != null) {
                 marker.setPassedMarkerForLog(marker.getPassedMarkerForLog().stream()
-                        .map(m -> miaContext.evaluate(m))
+                        .map(miaContext::evaluate)
                         .collect(Collectors.toList()));
             }
             if (marker.getFailedMarkersForLog() != null) {
                 marker.setFailedMarkersForLog(marker.getFailedMarkersForLog().stream()
-                        .map(m -> miaContext.evaluate(m))
+                        .map(miaContext::evaluate)
                         .collect(Collectors.toList()));
             }
             if (marker.getWarnMarkersForLog() != null) {
                 marker.setWarnMarkersForLog(marker.getWarnMarkersForLog().stream()
-                        .map(m -> miaContext.evaluate(m))
+                        .map(miaContext::evaluate)
                         .collect(Collectors.toList()));
             }
         }
@@ -96,7 +96,7 @@ public class ProcessStatusRepository {
         Marker marker = executionResponse.getProcessStatus().getMarker();
         if (executionResponse.getCommandResponse() != null
                 && executionResponse.getCommandResponse().getCommandOutputs() != null
-                && executionResponse.getCommandResponse().getCommandOutputs().size() > 0) {
+                && !executionResponse.getCommandResponse().getCommandOutputs().isEmpty()) {
             boolean isFirst = true;
             for (CommandOutput logCommandOutput : executionResponse.getCommandResponse().getCommandOutputs()) {
                 try {
@@ -115,7 +115,7 @@ public class ProcessStatusRepository {
                 } catch (MiaException e) {
                     handlerFileNotFoundErr(executionResponse, logCommandOutput, linesAmount, e);
                 }
-                if (logCommandOutput.getMarkedContent().size() == 0) {
+                if (logCommandOutput.getMarkedContent().isEmpty()) {
                     logCommandOutput.saveLatestLineToContent(linesAmount, limitSizeBytes);
                 }
                 if (isFirst) {
@@ -146,7 +146,7 @@ public class ProcessStatusRepository {
         }
         if (marker != null
                 && marker.getPassedMarkerForLog() != null
-                && marker.getPassedMarkerForLog().size() > 0
+                && !marker.getPassedMarkerForLog().isEmpty()
                 && marker.isFailWhenNoPassedMarkersFound()
                 && !logOutput.containsMarkedContentWithState(Statuses.SUCCESS)
                 && !oldStatus.equals(Statuses.FAIL)) {
@@ -168,8 +168,7 @@ public class ProcessStatusRepository {
             try {
                 List<MarkedContent> content = executionResponse.getCommandResponse()
                         .getCommandOutputs().getFirst().getMarkedContent();
-                boolean isContentEmpty = content == null || content.isEmpty();
-                if (!isContentEmpty) {
+                if (content != null && !content.isEmpty()) {
                     return;
                 }
             } catch (NullPointerException ignore) {
@@ -191,7 +190,7 @@ public class ProcessStatusRepository {
         if (response.getCommandResponse().isCheckStatusCodeFlag()) {
             List<String> codes = response.getCommandResponse().getExpectedCodes();
             String statusCode = response.getCommandResponse().getStatusCode();
-            if (codes != null && codes.size() > 0) {
+            if (codes != null && !codes.isEmpty()) {
                 boolean matches = false;
                 for (String code : codes) {
                     if (code.contains("*")) {
