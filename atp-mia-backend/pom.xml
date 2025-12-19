@@ -364,18 +364,6 @@
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-<!--            <version>5.5.0.201909110433-r</version>-->
-            <version>5.13.3.202401111512-r</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jsch</artifactId>
-                    <groupId>com.jcraft</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jzlib</artifactId>
-                    <groupId>com.jcraft</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -566,6 +554,10 @@
             <artifactId>kafka-clients</artifactId>
         </dependency>
         <dependency>
+            <groupId>at.yawk.lz4</groupId>
+            <artifactId>lz4-java</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-commons</artifactId>
         </dependency>
@@ -624,7 +616,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.10.1</version>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
