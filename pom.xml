@@ -24,7 +24,7 @@
         <atp.crypt.version>0.0.20</atp.crypt.version>
 
         <atp.auth.version>1.2.75</atp.auth.version>
-        <atp.ei.lib.node.version>0.2.46-SNAPSHOT</atp.ei.lib.node.version>
+        <atp.ei.lib.node.version>0.2.46</atp.ei.lib.node.version>
         <atp.macros.core.version>1.0.31</atp.macros.core.version>
 
         <maven-pmd-plugin.version>3.8</maven-pmd-plugin.version>
