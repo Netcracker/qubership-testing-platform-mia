@@ -346,7 +346,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * Transactional part of synchronize Configuration
      */
     @Transactional
-    protected void synchronizeConfigurationTx(UUID projectId,
+    public void synchronizeConfigurationTx(UUID projectId,
                                               Supplier<ProjectConfiguration> saveConfiguration,
                                               boolean isEthalonFiles) {
         ProjectConfiguration updatedProjectConfiguration = saveConfiguration.get();
