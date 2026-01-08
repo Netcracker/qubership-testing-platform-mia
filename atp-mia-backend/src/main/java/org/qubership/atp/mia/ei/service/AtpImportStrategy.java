@@ -88,6 +88,7 @@ public class AtpImportStrategy implements ImportStrategy {
                         .importEntity(projectConfiguration, importData, projectConfigurationPath);
                 log.info("Save configuration after import");
                 projectConfigurationService.updateProjectWithReplicationOff(projectConfiguration, true);
+                log.info("Save configuration after import completed");
             } else {
                 log.info("Skipping MIA import. {}", ErrorCodes.MIA_7008_IMPORT_GIT_ENABLED.getMessage());
             }

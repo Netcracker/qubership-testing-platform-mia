@@ -334,10 +334,19 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
      * Synchronize project DB and GIT.
      */
     @CacheEvict(value = CacheKeys.Constants.CONFIGURATION_KEY, key = "#projectId")
-    @Transactional
     public void synchronizeConfiguration(UUID projectId,
                                          Supplier<ProjectConfiguration> saveConfiguration,
                                          boolean isEthalonFiles) {
+        self.synchronizeConfigurationTx(projectId, saveConfiguration, isEthalonFiles);
+    }
+
+    /**
+     * Transactional part of synchronize Configuration
+     */
+    @Transactional
+    protected void synchronizeConfigurationTx(UUID projectId,
+                                              Supplier<ProjectConfiguration> saveConfiguration,
+                                              boolean isEthalonFiles) {
         ProjectConfiguration updatedProjectConfiguration = saveConfiguration.get();
         if (updatedProjectConfiguration.getGitUrl() != null
                 && !updatedProjectConfiguration.getGitUrl().isEmpty()) {
