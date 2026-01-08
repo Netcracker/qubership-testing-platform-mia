@@ -86,7 +86,7 @@ public class AtpImportStrategy implements ImportStrategy {
                         .importEntity(projectConfiguration, importData, projectConfigurationPath);
                 getImportLoader(ExportImportEntities.MIA_POT_HEADER_CONFIGURATION)
                         .importEntity(projectConfiguration, importData, projectConfigurationPath);
-                log.info("Save configuration after import");
+                log.info("Save configuration after import...");
                 projectConfigurationService.updateProjectWithReplicationOff(projectConfiguration, true);
                 log.info("Save configuration after import completed");
             } else {
