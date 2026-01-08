@@ -337,7 +337,9 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
     public void synchronizeConfiguration(UUID projectId,
                                          Supplier<ProjectConfiguration> saveConfiguration,
                                          boolean isEthalonFiles) {
+        log.info("invoke synchronizeConfigurationTx");
         self.synchronizeConfigurationTx(projectId, saveConfiguration, isEthalonFiles);
+        log.info("completed invoke synchronizeConfigurationTx");
     }
 
     /**
