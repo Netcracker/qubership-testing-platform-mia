@@ -439,7 +439,10 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
                 () -> {
                     try {
                         projectConfigurationRepository.setReplicationRoleReplica();
-                        return projectConfigurationRepository.save(projectConfiguration);
+                        log.info("replicationRoleReplica set");
+                        ProjectConfiguration saved =  projectConfigurationRepository.save(projectConfiguration);
+                        log.info("saved successfully ProjectConfiguration ");
+                        return  saved;
                     } finally {
                         projectConfigurationRepository.setReplicationRoleOrigin();
                     }
