@@ -33,7 +33,7 @@ public interface ProjectConfigurationRepository extends CrudRepository<ProjectCo
     void deleteByProjectId(UUID projectId);
 
     @Modifying
-    @Query(value = "SET session_replication_role = 'replica'", nativeQuery = true)
+    @Query(value = "SET session_replication_role = 'local'", nativeQuery = true)
     void setReplicationRoleReplica();
 
     @Modifying
