@@ -18,13 +18,13 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <toolBuildStatus>BETA-TESTING</toolBuildStatus>
 
-        <atp.common.version>0.0.43</atp.common.version>
-        <atp.integration.spring.boot.starter.version>0.2.38</atp.integration.spring.boot.starter.version>
+        <atp.common.version>0.0.47</atp.common.version>
+        <atp.integration.spring.boot.starter.version>0.2.42</atp.integration.spring.boot.starter.version>
         <atp.adapter.robot.version>4.5.71</atp.adapter.robot.version>
         <atp.crypt.version>0.0.20</atp.crypt.version>
 
-        <atp.auth.version>1.2.68</atp.auth.version>
-        <atp.ei.lib.node.version>0.2.43</atp.ei.lib.node.version>
+        <atp.auth.version>1.2.75</atp.auth.version>
+        <atp.ei.lib.node.version>0.2.46</atp.ei.lib.node.version>
         <atp.macros.core.version>1.0.31</atp.macros.core.version>
 
         <maven-pmd-plugin.version>3.8</maven-pmd-plugin.version>
@@ -56,6 +56,7 @@
         <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
         <undertow.version>2.2.38.Final</undertow.version>
         <reactor-netty.version>1.0.39</reactor-netty.version>
+        <io.netty.version>4.1.125.Final</io.netty.version>
     </properties>
 
     <modules>
@@ -176,7 +177,7 @@
     </profiles>
 
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.13.0</version>
@@ -190,8 +191,8 @@
                     <groupId>asm</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--<dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-resources-plugin</artifactId>
             <version>3.3.1</version>
@@ -205,17 +206,17 @@
                     <artifactId>asm</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--<dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
             <version>3.2.2</version>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--<dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
             <version>3.3.0</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
@@ -316,12 +317,22 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
-                <version>4.1.118.Final</version>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${io.netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http2</artifactId>
-                <version>4.1.118.Final</version>
+                <version>${io.netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -416,11 +427,6 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.openclover</groupId>
-                <artifactId>clover</artifactId>
-                <version>${openclover.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${google.guava.version}</version>
@@ -481,6 +487,16 @@
                 <version>${atp.crypt.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.qubership.atp.auth</groupId>
+                <artifactId>atp-auth-models</artifactId>
+                <version>${atp.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp.auth</groupId>
+                <artifactId>atp-auth-impl</artifactId>
+                <version>${atp.auth.version}</version>
+            </dependency>
+            <dependency>
                 <!--https://stackoverflow.com/questions/62540189/correct-the-classpath-of-your-application-so-that-it-contains-a-single-compatib-->
                 <groupId>org.springframework.plugin</groupId>
                 <artifactId>spring-plugin-core</artifactId>
@@ -539,6 +555,57 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <version>1.28.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>3.9.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.lz4</groupId>
+                        <artifactId>lz4-java</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>at.yawk.lz4</groupId>
+                <artifactId>lz4-java</artifactId>
+                <version>1.10.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit</artifactId>
+                <version>5.13.4.202507202350-r</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>jsch</artifactId>
+                        <groupId>com.jcraft</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>jzlib</artifactId>
+                        <groupId>com.jcraft</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.10.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.18.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>20231013</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -322,12 +322,12 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
-
+<!--
         <dependency>
             <groupId>org.openclover</groupId>
             <artifactId>clover</artifactId>
         </dependency>
-
+-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -364,18 +364,6 @@
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-<!--            <version>5.5.0.201909110433-r</version>-->
-            <version>5.13.3.202401111512-r</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jsch</artifactId>
-                    <groupId>com.jcraft</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jzlib</artifactId>
-                    <groupId>com.jcraft</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -516,42 +504,11 @@
 
         <dependency>
             <groupId>org.qubership.atp.auth</groupId>
-            <artifactId>atp-auth-spring-boot-starter</artifactId>
-            <version>${atp.auth.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>HdrHistogram</artifactId>
-                    <groupId>org.hdrhistogram</groupId>
-                </exclusion>
-                <!--<exclusion>
-                    <artifactId>bcpkix-jdk15on</artifactId>
-                    <groupId>org.bouncycastle</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>bcprov-jdk15on</artifactId>
-                    <groupId>org.bouncycastle</groupId>
-                </exclusion>-->
-                <exclusion>
-                    <artifactId>lombok</artifactId>
-                    <groupId>org.projectlombok</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jsr305</artifactId>
-                    <groupId>com.google.code.findbugs</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.qubership.atp.common</groupId>
-                    <artifactId>qubership-atp-common-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>tomcat-embed-core</artifactId>
-                    <groupId>org.apache.tomcat.embed</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>tomcat-embed-websocket</artifactId>
-                    <groupId>org.apache.tomcat.embed</groupId>
-                </exclusion>
-            </exclusions>
+            <artifactId>atp-auth-models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.qubership.atp.auth</groupId>
+            <artifactId>atp-auth-impl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -564,6 +521,10 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>at.yawk.lz4</groupId>
+            <artifactId>lz4-java</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -624,7 +585,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.10.1</version>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
