@@ -141,7 +141,7 @@ jobs:
       repository_name: 'qubership-testing-platform-mia'
       service_name: 'atp-mia'
       namespace: 'mia'
-      pipeline_branch: 'main'
+      pipeline_branch: 'test'
       postgres: enable
       mongo: enable
       enable_test: enable
