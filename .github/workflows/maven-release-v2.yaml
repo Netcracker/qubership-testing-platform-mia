@@ -63,42 +63,6 @@ permissions:
 jobs:
   dry-run-build:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: centos/postgresql-96-centos7:9.6
-        ports:
-          - 5432:5432
-        env:
-          POSTGRESQL_USER: mia
-          POSTGRESQL_PASSWORD: mia
-          POSTGRESQL_DATABASE: mia
-          POSTGRESQL_ADMIN_PASSWORD: postgres
-        options: >-
-          --health-cmd="pg_isready -U postgres -d mia"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-      mongo:
-        image: mongo:4.2
-        env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: root
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'" 
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-      cassandra:
-        image: cassandra:3.11.6
-        ports:
-          - "9042:9042"
-        options: >-
-          --health-cmd "cqlsh -e 'describe keyspaces'" 
-          --health-interval 10s 
-          --health-timeout 10s 
-          --health-retries 30
     steps:
       - name: Checkout pipeline
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -115,95 +79,18 @@ jobs:
           postgresql_database: mia
           postgresql_admin_password: postgres
 
-      - name: Install DB clients
-        run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
-          pip3 install cqlsh
+      - name: Mongo up
+        uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/mongo_for_build@main
+        with:
+          mongo_user: root
+          mongo_password: root
+          mongo_db: admin
 
-      - name: Wait for Postgres to be ready
-        run: |
-          for i in {1..30}; do
-            if pg_isready -h localhost -U postgres -d mia; then
-              echo "Postgres is ready"
-              break
-            fi
-            echo "Waiting for Postgres..."
-            sleep 5
-          done
+      - name: Cassandra up
+        uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/cassandra_for_build@main
 
-      - name: Create uuid-ossp extension
-        run: |
-          PGPASSWORD=postgres psql -h localhost -U postgres -d mia -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
-
-      - name: Wait for MongoDB to be ready using mongosh Docker container
-        run: |
-          for i in {1..30}; do
-            docker run --rm --network container:${{ job.services.mongo.id }} mongo:4.2 \
-              mongo -u root -p root --authenticationDatabase admin \
-              --eval 'db.runCommand({ ping: 1 })'
-            status=$?
-            if [ "$status" -eq 0 ]; then
-              echo "✅ MongoDB is ready"
-              break
-            fi
-            echo "⏳ Waiting for MongoDB... ($i/30), status=$status"
-            sleep 5
-          done
-
-      - name: Wait for Cassandra to be ready
-        run: |
-          for i in {1..30}; do
-            if cqlsh -e "DESCRIBE keyspaces" > /dev/null 2>&1; then
-              echo "Cassandra is ready"
-              break
-            fi
-            echo "Waiting for Cassandra..."
-            sleep 5
-          done
-
-      - name: Install OpenSSH
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openssh-server sshpass
-
-      - name: Configure SSH Server
-        run: |
-          set -e
-
-          sudo mkdir -p /var/run/sshd
-          echo 'root:test_password' | sudo chpasswd
-
-          sudo sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
-          sudo sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-
-          sudo rm -f /etc/ssh/ssh_host_*
-          sudo ssh-keygen -A
-
-          {
-            echo 'HostKey /etc/ssh/ssh_host_rsa_key'
-            echo 'HostKey /etc/ssh/ssh_host_ecdsa_key'
-            echo 'HostKey /etc/ssh/ssh_host_ed25519_key'
-          } | sudo tee -a /etc/ssh/sshd_config > /dev/null
-
-          sudo service ssh restart
-
-      - name: Verify SSH connection
-        run: |
-          set -e
-
-          for i in {1..10}; do
-            if nc -z localhost 22; then
-              echo "✅ SSH port is open"
-              break
-            fi
-            echo "⏳ Waiting for SSH... ($i/10)"
-            sleep 1
-          done
-
-          mkdir -p ~/.ssh
-          ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
-
-          sshpass -p test_password ssh -4 -o StrictHostKeyChecking=no root@localhost -p 22 'echo "✅ SSH is working"'
+      - name: SSH up
+        uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/ssh_for_build@main
 
       - name: "Build and Publish current SNAPSHOT (dry run)"
         uses: netcracker/qubership-workflow-hub/actions/maven-release@9538833017019ab6bbc2138d3034778dfe3a5d1f #v2.0.6
@@ -227,132 +114,35 @@ jobs:
     outputs:
       release-version: ${{ steps.build-and-publish.outputs.release-version }}
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: centos/postgresql-96-centos7:9.6
-        ports:
-          - 5432:5432
-        env:
-          POSTGRESQL_USER: mia
-          POSTGRESQL_PASSWORD: mia
-          POSTGRESQL_DATABASE: mia
-          POSTGRESQL_ADMIN_PASSWORD: postgres
-        options: >-
-          --health-cmd="pg_isready -U postgres -d mia"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-      mongo:
-        image: mongo:4.2
-        env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: root
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd="mongo --eval 'db.runCommand({ ping: 1 })'" 
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-      cassandra:
-        image: cassandra:3.11.6
-        ports:
-          - "9042:9042"
-        options: >-
-          --health-cmd "cqlsh -e 'describe keyspaces'" 
-          --health-interval 10s 
-          --health-timeout 10s 
-          --health-retries 30
     steps:
-      - name: Install DB clients
-        run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
-          pip3 install cqlsh
+      - name: Checkout pipeline
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: 'main'
+          repository: 'Netcracker/qubership-testing-platform-helm-hook-helper'
+          path: 'qubership-testing-platform-helm-hook-helper'
 
-      - name: Wait for Postgres to be ready
-        run: |
-          for i in {1..30}; do
-            if pg_isready -h localhost -U postgres -d mia; then
-              echo "Postgres is ready"
-              break
-            fi
-            echo "Waiting for Postgres..."
-            sleep 5
-          done
+      - name: Postgres up
+        uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build@main
+        with:
+          postgresql_user: mia
+          postgresql_password: mia
+          postgresql_database: mia
+          postgresql_admin_password: postgres
 
-      - name: Create uuid-ossp extension
-        run: |
-          PGPASSWORD=postgres psql -h localhost -U postgres -d mia -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
+      - name: Mongo up
+        uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/mongo_for_build@main
+        with:
+          mongo_user: root
+          mongo_password: root
+          mongo_db: admin
 
-      - name: Wait for MongoDB to be ready using mongosh Docker container
-        run: |
-          for i in {1..30}; do
-            docker run --rm --network container:${{ job.services.mongo.id }} mongo:4.2 \
-              mongo -u root -p root --authenticationDatabase admin \
-              --eval 'db.runCommand({ ping: 1 })'
-            status=$?
-            if [ "$status" -eq 0 ]; then
-              echo "✅ MongoDB is ready"
-              break
-            fi
-            echo "⏳ Waiting for MongoDB... ($i/30), status=$status"
-            sleep 5
-          done
+      - name: Cassandra up
+        uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/cassandra_for_build@main
 
-      - name: Wait for Cassandra to be ready
-        run: |
-          for i in {1..30}; do
-            if cqlsh -e "DESCRIBE keyspaces" > /dev/null 2>&1; then
-              echo "Cassandra is ready"
-              break
-            fi
-            echo "Waiting for Cassandra..."
-            sleep 5
-          done
+      - name: SSH up
+        uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/ssh_for_build@main
 
-      - name: Install OpenSSH
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openssh-server sshpass
-
-      - name: Configure SSH Server
-        run: |
-          set -e
-
-          sudo mkdir -p /var/run/sshd
-          echo 'root:test_password' | sudo chpasswd
-
-          sudo sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
-          sudo sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-
-          sudo rm -f /etc/ssh/ssh_host_*
-          sudo ssh-keygen -A
-
-          {
-            echo 'HostKey /etc/ssh/ssh_host_rsa_key'
-            echo 'HostKey /etc/ssh/ssh_host_ecdsa_key'
-            echo 'HostKey /etc/ssh/ssh_host_ed25519_key'
-          } | sudo tee -a /etc/ssh/sshd_config > /dev/null
-
-          sudo service ssh restart
-
-      - name: Verify SSH connection
-        run: |
-          set -e
-
-          for i in {1..10}; do
-            if nc -z localhost 22; then
-              echo "✅ SSH port is open"
-              break
-            fi
-            echo "⏳ Waiting for SSH... ($i/10)"
-            sleep 1
-          done
-
-          mkdir -p ~/.ssh
-          ssh-keyscan -p 22 localhost >> ~/.ssh/known_hosts
-
-          sshpass -p test_password ssh -4 -o StrictHostKeyChecking=no root@localhost -p 22 'echo "✅ SSH is working"'
       - name: "Prepare app token"
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf #v2.2.1
         id: app-token
@@ -453,3 +243,18 @@ jobs:
     with:
       version: ${{ needs.deploy.outputs.release-version }}
       publish: true
+
+
+  run-tests:
+    needs: [ docker-build ]
+    if: ${{ needs.docker-build.result == 'success' }}
+    uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/workflows/deploy-run-tests.yaml@main
+    with:
+      repository_name: 'qubership-testing-platform-mia'
+      service_name: 'atp-mia'
+      namespace: 'mia'
+      pipeline_branch: 'main'
+      postgres: enable
+      mongo: enable
+      enable_test: enable
+      apply_kube2vcs: enable
