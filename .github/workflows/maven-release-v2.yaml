@@ -100,6 +100,21 @@ jobs:
           --health-timeout 10s 
           --health-retries 30
     steps:
+      - name: Checkout pipeline
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: 'main'
+          repository: 'Netcracker/qubership-testing-platform-helm-hook-helper'
+          path: 'qubership-testing-platform-helm-hook-helper'
+
+      - name: Postgres up
+        uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/postgres_for_build@main
+        with:
+          postgresql_user: mia
+          postgresql_password: mia
+          postgresql_database: mia
+          postgresql_admin_password: postgres
+
       - name: Install DB clients
         run: |
           sudo apt-get update && sudo apt-get install -y postgresql-client
