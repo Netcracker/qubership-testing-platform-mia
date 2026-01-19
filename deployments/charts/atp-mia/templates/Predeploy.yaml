@@ -95,7 +95,7 @@ spec:
           echo "=> Copying scripts to shared folder ..."
           cp -rv /atp/* /shared/
           mkdir -pv /shared/lib
-          find . -type f -regex '.*/lib/\(atp-crypt\|slf4j-api\|bcprov\|commons-lang\)-.*\.jar$' -exec cp -v "{}" /shared/lib/ \;
+          find . -type f -regex '.*/lib/\(atp-crypt\|slf4j-api\|bcprov\|commons-lang\|commons-lang3\)-.*\.jar$' -exec cp -v "{}" /shared/lib/ \;
       serviceAccount: atp
       serviceAccountName: atp
 {{- end }}

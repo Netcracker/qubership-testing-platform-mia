@@ -21,7 +21,7 @@
         <atp.common.version>0.0.47</atp.common.version>
         <atp.integration.spring.boot.starter.version>0.2.42</atp.integration.spring.boot.starter.version>
         <atp.adapter.robot.version>4.5.71</atp.adapter.robot.version>
-        <atp.crypt.version>0.0.20</atp.crypt.version>
+        <atp.crypt.version>0.0.24</atp.crypt.version>
 
         <atp.auth.version>1.2.75</atp.auth.version>
         <atp.ei.lib.node.version>0.2.46</atp.ei.lib.node.version>
