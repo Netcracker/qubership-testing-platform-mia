@@ -46,6 +46,6 @@ public class ExportStrategiesRegistry {
         return exportStrategies.stream()
                 .filter(exportStrategy -> format.equals(exportStrategy.getFormat()))
                 .findFirst()
-                .orElseThrow(() -> new MiaExportTypeNotSupportException(format.name()));
+                .orElse(exportStrategies.get(0));
     }
 }
