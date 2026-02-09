@@ -54,7 +54,7 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <javers.version>6.6.4</javers.version>
         <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
-        <undertow.version>2.2.38.Final</undertow.version>
+        <undertow.version>2.2.39.Final</undertow.version>
         <reactor-netty.version>1.0.39</reactor-netty.version>
         <io.netty.version>4.1.125.Final</io.netty.version>
     </properties>
