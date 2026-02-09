@@ -406,7 +406,7 @@ public class ProcessService {
                 if (v.getValue().contains(".sql")) {
                     String content =
                             miaContext.evaluate(FileUtils.readFile(miaFileService.getFile(v.getValue()).toPath()));
-                    return content.contains(sqlResponse.getQuery());
+                    return sqlResponse.getQuery() != null && content.contains(sqlResponse.getQuery());
                 } else {
                     return miaContext.evaluate(v.getValue()).equals(sqlResponse.getQuery());
                 }
