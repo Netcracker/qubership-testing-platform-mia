@@ -23,7 +23,7 @@
         <atp.adapter.robot.version>4.5.71</atp.adapter.robot.version>
         <atp.crypt.version>0.0.24</atp.crypt.version>
 
-        <atp.auth.version>1.2.75</atp.auth.version>
+        <atp.auth.version>1.2.79</atp.auth.version>
         <atp.ei.lib.node.version>0.2.46</atp.ei.lib.node.version>
         <atp.macros.core.version>1.0.31</atp.macros.core.version>
 
