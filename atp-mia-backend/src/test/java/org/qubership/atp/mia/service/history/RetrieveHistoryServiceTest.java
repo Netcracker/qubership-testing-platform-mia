@@ -122,13 +122,7 @@ public class RetrieveHistoryServiceTest {
         CommitMetadata commitMetadata = new CommitMetadata("author", new HashMap<>(), LocalDateTime.now(),
                 null, CommitId.valueOf(BigDecimal.valueOf(800.0)));
         when(shadow.getCommitMetadata()).thenReturn(commitMetadata);
-        CdoSnapshot snapshot = CdoSnapshotBuilder.cdoSnapshot()
-                .withManagedType(new UnknownType("entity"))
-                .withCommitMetadata(commitMetadata)
-                .withState(mock(CdoSnapshotState.class))
-                .withType(SnapshotType.UPDATE)
-                .withGlobalId(mock(ValueObjectId.class))
-                .build();
+        CdoSnapshot snapshot = initCdoSnapshot(commitMetadata);
         when(javers.get().findSnapshots(any())).thenReturn(Collections.singletonList(snapshot));
 
         List<CompareEntityResponseDto> result = sectionRetrieveHistoryService.get()
@@ -137,8 +131,8 @@ public class RetrieveHistoryServiceTest {
         Assertions.assertEquals(2, result.size());
         Assertions.assertEquals("1", result.get(0).getRevision());
         Assertions.assertEquals("2", result.get(1).getRevision());
-        Assertions.assertTrue(result.get(0).getCompareEntity() instanceof SectionHistoryChangeDto);
-        Assertions.assertTrue(result.get(1).getCompareEntity() instanceof SectionHistoryChangeDto);
+        Assertions.assertInstanceOf(SectionHistoryChangeDto.class, result.get(0).getCompareEntity());
+        Assertions.assertInstanceOf(SectionHistoryChangeDto.class, result.get(1).getCompareEntity());
         SectionHistoryChangeDto entity1 = (SectionHistoryChangeDto) result.get(0).getCompareEntity();
         SectionHistoryChangeDto entity2 = (SectionHistoryChangeDto) result.get(1).getCompareEntity();
         Assertions.assertEquals(2, entity1.getProcesses().size());
@@ -147,8 +141,6 @@ public class RetrieveHistoryServiceTest {
         Assertions.assertEquals("author", entity2.getModifiedBy());
         Assertions.assertEquals(2, entity1.getCompounds().size());
         Assertions.assertEquals(2, entity2.getCompounds().size());
-        //Assertions.assertEquals(1, entity1.getChildSections().size());
-        //Assertions.assertEquals(1, entity2.getChildSections().size());
     }
 
     @Test
@@ -159,15 +151,7 @@ public class RetrieveHistoryServiceTest {
                 new PrettyValuePrinter(new JaversCoreProperties.PrettyPrintDateFormats()));
 
         when(javers.get().findChanges(any())).thenReturn(changes);
-        CdoSnapshot snapshot = CdoSnapshotBuilder.cdoSnapshot()
-                .withManagedType(new UnknownType("entity"))
-                .withCommitMetadata(new CommitMetadata("author", new HashMap<>(), LocalDateTime.now(),
-                        null, new CommitId(1L, 1)))
-                .withState(mock(CdoSnapshotState.class))
-                .withType(SnapshotType.UPDATE)
-                .withGlobalId(mock(ValueObjectId.class))
-                .withVersion(1L)
-                .build();
+        CdoSnapshot snapshot = initCdoSnapshot();
         when(javers.get().findSnapshots(any())).thenReturn(Collections.singletonList(snapshot));
         when(metadata.get().getId()).thenReturn(new CommitId(1L, 1));
         when(metadata.get().getCommitDate()).thenReturn(LocalDateTime.now());
@@ -193,13 +177,7 @@ public class RetrieveHistoryServiceTest {
         CommitMetadata commitMetadata = new CommitMetadata("author", new HashMap<>(), LocalDateTime.now(),
                 null, CommitId.valueOf(BigDecimal.valueOf(800.0)));
         when(shadow.getCommitMetadata()).thenReturn(commitMetadata);
-        CdoSnapshot snapshot = CdoSnapshotBuilder.cdoSnapshot()
-                .withManagedType(new UnknownType("entity"))
-                .withCommitMetadata(commitMetadata)
-                .withState(mock(CdoSnapshotState.class))
-                .withType(SnapshotType.UPDATE)
-                .withGlobalId(mock(ValueObjectId.class))
-                .build();
+        CdoSnapshot snapshot = initCdoSnapshot(commitMetadata);
         when(javers.get().findSnapshots(any())).thenReturn(Collections.singletonList(snapshot));
 
         List<CompareEntityResponseDto> result = compoundRetrieveHistoryService.get()
@@ -208,8 +186,8 @@ public class RetrieveHistoryServiceTest {
         Assertions.assertEquals(2, result.size());
         Assertions.assertEquals("1", result.get(0).getRevision());
         Assertions.assertEquals("2", result.get(1).getRevision());
-        Assertions.assertTrue(result.get(0).getCompareEntity() instanceof CompoundHistoryChangeDto);
-        Assertions.assertTrue(result.get(1).getCompareEntity() instanceof CompoundHistoryChangeDto);
+        Assertions.assertInstanceOf(CompoundHistoryChangeDto.class, result.get(0).getCompareEntity());
+        Assertions.assertInstanceOf(CompoundHistoryChangeDto.class, result.get(1).getCompareEntity());
         CompoundHistoryChangeDto entity1 = (CompoundHistoryChangeDto) result.get(0).getCompareEntity();
         CompoundHistoryChangeDto entity2 = (CompoundHistoryChangeDto) result.get(1).getCompareEntity();
         Assertions.assertEquals(2, entity1.getProcesses().size());
@@ -228,15 +206,7 @@ public class RetrieveHistoryServiceTest {
                 new PrettyValuePrinter(new JaversCoreProperties.PrettyPrintDateFormats()));
 
         when(javers.get().findChanges(any())).thenReturn(changes);
-        CdoSnapshot snapshot = CdoSnapshotBuilder.cdoSnapshot()
-                .withManagedType(new UnknownType("entity"))
-                .withCommitMetadata(new CommitMetadata("author", new HashMap<>(), LocalDateTime.now(),
-                        null, new CommitId(1L, 1)))
-                .withState(mock(CdoSnapshotState.class))
-                .withType(SnapshotType.UPDATE)
-                .withGlobalId(mock(ValueObjectId.class))
-                .withVersion(1L)
-                .build();
+        CdoSnapshot snapshot = initCdoSnapshot();
         when(javers.get().findSnapshots(any())).thenReturn(Collections.singletonList(snapshot));
         when(metadata.get().getId()).thenReturn(new CommitId(1L, 1));
         when(metadata.get().getCommitDate()).thenReturn(LocalDateTime.now());
@@ -271,13 +241,7 @@ public class RetrieveHistoryServiceTest {
         CommitMetadata commitMetadata = new CommitMetadata("author", new HashMap<>(), LocalDateTime.now(),
                 null, CommitId.valueOf(BigDecimal.valueOf(800.0)));
         when(shadow.getCommitMetadata()).thenReturn(commitMetadata);
-        CdoSnapshot snapshot = CdoSnapshotBuilder.cdoSnapshot()
-                .withManagedType(new UnknownType("entity"))
-                .withCommitMetadata(commitMetadata)
-                .withState(mock(CdoSnapshotState.class))
-                .withType(SnapshotType.UPDATE)
-                .withGlobalId(mock(ValueObjectId.class))
-                .build();
+        CdoSnapshot snapshot = initCdoSnapshot(commitMetadata);
         when(javers.get().findSnapshots(any())).thenReturn(Collections.singletonList(snapshot));
 
         List<CompareEntityResponseDto> result = fileRetrieveHistoryService.get()
@@ -286,8 +250,8 @@ public class RetrieveHistoryServiceTest {
         Assertions.assertEquals(2, result.size());
         Assertions.assertEquals("1", result.get(0).getRevision());
         Assertions.assertEquals("2", result.get(1).getRevision());
-        Assertions.assertTrue(result.get(0).getCompareEntity() instanceof FileHistoryChangeDto);
-        Assertions.assertTrue(result.get(1).getCompareEntity() instanceof FileHistoryChangeDto);
+        Assertions.assertInstanceOf(FileHistoryChangeDto.class, result.get(0).getCompareEntity());
+        Assertions.assertInstanceOf(FileHistoryChangeDto.class, result.get(1).getCompareEntity());
         FileHistoryChangeDto entity1 = (FileHistoryChangeDto) result.get(0).getCompareEntity();
         FileHistoryChangeDto entity2 = (FileHistoryChangeDto) result.get(1).getCompareEntity();
         Assertions.assertEquals(createdWhen.getTime(), entity1.getCreatedWhen(), 10);
@@ -306,15 +270,7 @@ public class RetrieveHistoryServiceTest {
                 new PrettyValuePrinter(new JaversCoreProperties.PrettyPrintDateFormats()));
 
         when(javers.get().findChanges(any())).thenReturn(changes);
-        CdoSnapshot snapshot = CdoSnapshotBuilder.cdoSnapshot()
-                .withManagedType(new UnknownType("entity"))
-                .withCommitMetadata(new CommitMetadata("author", new HashMap<>(), LocalDateTime.now(),
-                        null, new CommitId(1L, 1)))
-                .withState(mock(CdoSnapshotState.class))
-                .withType(SnapshotType.UPDATE)
-                .withGlobalId(mock(ValueObjectId.class))
-                .withVersion(1L)
-                .build();
+        CdoSnapshot snapshot = initCdoSnapshot();
         when(javers.get().findSnapshots(any())).thenReturn(Collections.singletonList(snapshot));
         when(metadata.get().getId()).thenReturn(new CommitId(1L, 1));
         when(metadata.get().getCommitDate()).thenReturn(LocalDateTime.now());
@@ -325,6 +281,28 @@ public class RetrieveHistoryServiceTest {
         Assertions.assertEquals(2, historyItem.getChanged().size());
         Assertions.assertEquals("name", historyItem.getChanged().get(0));
         Assertions.assertEquals("size", historyItem.getChanged().get(1));
+    }
+
+    private CdoSnapshot initCdoSnapshot() {
+        return CdoSnapshotBuilder.cdoSnapshot()
+                .withManagedType(new UnknownType("entity"))
+                .withCommitMetadata(new CommitMetadata("author", new HashMap<>(), LocalDateTime.now(),
+                        null, new CommitId(1L, 1)))
+                .withState(mock(CdoSnapshotState.class))
+                .withType(SnapshotType.UPDATE)
+                .withGlobalId(mock(ValueObjectId.class))
+                .withVersion(1L)
+                .build();
+    }
+
+    private CdoSnapshot initCdoSnapshot(CommitMetadata commitMetadata) {
+        return CdoSnapshotBuilder.cdoSnapshot()
+                .withManagedType(new UnknownType("entity"))
+                .withCommitMetadata(commitMetadata)
+                .withState(mock(CdoSnapshotState.class))
+                .withType(SnapshotType.UPDATE)
+                .withGlobalId(mock(ValueObjectId.class))
+                .build();
     }
 
     private SectionConfiguration createSection(String name, String ... childProcesses) {

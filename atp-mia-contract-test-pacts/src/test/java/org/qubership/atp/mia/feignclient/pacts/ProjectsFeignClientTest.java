@@ -25,6 +25,11 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
+import org.qubership.atp.mia.clients.api.environments.dto.projects.EnvironmentResDto;
+import org.qubership.atp.mia.clients.api.environments.dto.projects.ProjectFullVer1ViewDto;
+import org.qubership.atp.mia.clients.api.environments.dto.projects.ProjectFullVer2ViewDto;
+import org.qubership.atp.mia.service.client.ProjectsFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
@@ -45,11 +50,6 @@ import au.com.dius.pact.consumer.junit.PactProviderRule;
 import au.com.dius.pact.consumer.junit.PactVerification;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
-import org.qubership.atp.mia.clients.api.environments.dto.projects.EnvironmentResDto;
-import org.qubership.atp.mia.clients.api.environments.dto.projects.ProjectFullVer1ViewDto;
-import org.qubership.atp.mia.clients.api.environments.dto.projects.ProjectFullVer2ViewDto;
-import org.qubership.atp.mia.service.client.ProjectsFeignClient;
 
 @RunWith(SpringRunner.class)
 @EnableFeignClients(clients = {ProjectsFeignClient.class})
@@ -71,22 +71,22 @@ public class ProjectsFeignClientTest {
         UUID projectId = UUID.fromString("7c9dafe9-2cd1-4ffc-ae54-45867f2b9702");
         ResponseEntity<List<ProjectFullVer2ViewDto>> result_getAllProjects =
                 projectsFeignClient.getAllProjects(null, false);
-        Assert.assertEquals(result_getAllProjects.getStatusCode().value(), 200);
+        Assert.assertEquals(200, result_getAllProjects.getStatusCode().value());
         Assert.assertTrue(result_getAllProjects.getHeaders().get("Content-Type").contains("application/json"));
 
         ResponseEntity<ProjectFullVer1ViewDto> result_getProject = projectsFeignClient
                 .getProject(projectId, null);
-        Assert.assertEquals(result_getProject.getStatusCode().value(), 200);
+        Assert.assertEquals(200, result_getProject.getStatusCode().value());
         Assert.assertTrue(result_getProject.getHeaders().get("Content-Type").contains("application/json"));
 
         ResponseEntity<List<EnvironmentResDto>> result_getEnvironments = projectsFeignClient
                 .getEnvironments(projectId, true);
-        Assert.assertEquals(result_getEnvironments.getStatusCode().value(), 200);
+        Assert.assertEquals(200, result_getEnvironments.getStatusCode().value());
         Assert.assertTrue(result_getEnvironments.getHeaders().get("Content-Type").contains("application/json"));
 
         ResponseEntity<List<EnvironmentResDto>> result_getTemporaryEnvironments = projectsFeignClient
                 .getTemporaryEnvironments(projectId, true);
-        Assert.assertEquals(result_getTemporaryEnvironments.getStatusCode().value(), 200);
+        Assert.assertEquals(200, result_getTemporaryEnvironments.getStatusCode().value());
         Assert.assertTrue(result_getTemporaryEnvironments.getHeaders().get("Content-Type").contains("application/json"));
     }
 
@@ -95,57 +95,13 @@ public class ProjectsFeignClientTest {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
-        DslPart object = new PactDslJsonBody()
-                .stringType("description")
-                .stringType("name")
-                .integerType("created")
-                .uuid("createdBy")
-                .uuid("id")
-                .integerType("modified")
-                .uuid("modifiedBy")
-                .stringType("shortName")
-                .array("environments").object().closeArray();
+        DslPart objects = new PactDslJsonArray().template(initDslPartObjectOfEnvironments());
 
-        DslPart objects = new PactDslJsonArray().template(object);
+        DslPart infoForGetProjectResponse = initDslPartObjectOfEnvironments();
 
-        DslPart infoForGetProjectResponse = new PactDslJsonBody()
-                .integerType("created")
-                .uuid("createdBy")
-                .stringType("description")
-                .uuid("id")
-                .integerType("modified")
-                .uuid("modifiedBy")
-                .stringType("name")
-                .stringType("shortName")
-                .array("environments").object().closeArray();
+        DslPart infoForGetEnvironmentsResponse1 = new PactDslJsonArray().template(initDslPartObjectOfSystems());
 
-        DslPart object1 = new PactDslJsonBody()
-                .integerType("created")
-                .uuid("createdBy")
-                .stringType("description")
-                .stringType("graylogName")
-                .uuid("id")
-                .integerType("modified")
-                .uuid("modifiedBy")
-                .stringType("name")
-                .uuid("projectId")
-                .eachLike("systems").closeArray();
-
-        DslPart infoForGetEnvironmentsResponse1 = new PactDslJsonArray().template(object1);
-
-        DslPart object2 = new PactDslJsonBody()
-                .integerType("created")
-                .uuid("createdBy")
-                .stringType("description")
-                .stringType("graylogName")
-                .uuid("id")
-                .integerType("modified")
-                .uuid("modifiedBy")
-                .stringType("name")
-                .uuid("projectId")
-                .eachLike("systems").closeArray();
-
-        DslPart infoForGetEnvironmentsResponse2 = new PactDslJsonArray().template(object2);
+        DslPart infoForGetEnvironmentsResponse2 = new PactDslJsonArray().template(initDslPartObjectOfSystems());
 
         PactDslResponse response = builder
                 .given("all ok")
@@ -188,6 +144,33 @@ public class ProjectsFeignClientTest {
                 .body(infoForGetEnvironmentsResponse2);
 
         return response.toPact();
+    }
+
+    private DslPart initDslPartObjectOfSystems() {
+        return new PactDslJsonBody()
+                .integerType("created")
+                .uuid("createdBy")
+                .stringType("description")
+                .stringType("graylogName")
+                .uuid("id")
+                .integerType("modified")
+                .uuid("modifiedBy")
+                .stringType("name")
+                .uuid("projectId")
+                .eachLike("systems").closeArray();
+    }
+
+    private DslPart initDslPartObjectOfEnvironments() {
+        return new PactDslJsonBody()
+                .stringType("description")
+                .stringType("name")
+                .integerType("created")
+                .uuid("createdBy")
+                .uuid("id")
+                .integerType("modified")
+                .uuid("modifiedBy")
+                .stringType("shortName")
+                .array("environments").object().closeArray();
     }
 }
 
