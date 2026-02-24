@@ -163,18 +163,20 @@ public class ConfigurationFileSerializer {
         List<ExecutableDto> executableDtoList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(section.getCompounds())) {
             for (CompoundConfiguration c : section.getCompounds()) {
-                ExecutableDto executableDto = new ExecutableDto()
-                        .id(c.getId())
-                        .name(c.getName())
-                        .execType("Compound")
-                        .referToInput(c.getReferToInput())
-                        .processList(new ArrayList<>());
-                if (c.getProcesses() != null && !c.getProcesses().isEmpty()) {
-                    c.getProcesses().stream()
-                            .filter(Objects::nonNull)
-                            .forEach(p -> executableDto.getProcessList().add(makeOldProcess(p, isForFile)));
+                if (c != null) {
+                    ExecutableDto executableDto = new ExecutableDto()
+                            .id(c.getId())
+                            .name(c.getName())
+                            .execType("Compound")
+                            .referToInput(c.getReferToInput())
+                            .processList(new ArrayList<>());
+                    if (c.getProcesses() != null && !c.getProcesses().isEmpty()) {
+                        c.getProcesses().stream()
+                                .filter(Objects::nonNull)
+                                .forEach(p -> executableDto.getProcessList().add(makeOldProcess(p, isForFile)));
+                    }
+                    executableDtoList.add(executableDto);
                 }
-                executableDtoList.add(executableDto);
             }
         }
 
