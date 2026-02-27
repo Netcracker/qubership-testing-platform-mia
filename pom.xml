@@ -16,14 +16,13 @@
         <java.version>21</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <toolBuildStatus>BETA-TESTING</toolBuildStatus>
 
         <atp.common.version>0.0.47</atp.common.version>
         <atp.integration.spring.boot.starter.version>0.2.42</atp.integration.spring.boot.starter.version>
         <atp.adapter.robot.version>4.5.71</atp.adapter.robot.version>
         <atp.crypt.version>0.0.24</atp.crypt.version>
 
-        <atp.auth.version>1.2.81-SNAPSHOT</atp.auth.version>
+        <atp.auth.version>1.2.80</atp.auth.version>
         <atp.ei.lib.node.version>0.2.46</atp.ei.lib.node.version>
         <atp.macros.core.version>1.0.31</atp.macros.core.version>
 
@@ -31,7 +30,6 @@
         <spotbugs-maven-plugin.version>4.7.3.0</spotbugs-maven-plugin.version>
         <spotbugs.version>4.7.3</spotbugs.version>
         <pmd.version>7.0.0</pmd.version>
-        <toolBuildStatus>BETA-TESTING</toolBuildStatus>
         <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
