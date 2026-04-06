@@ -505,7 +505,7 @@
                 <groupId>com.hazelcast</groupId>
                 <!--<artifactId>hazelcast</artifactId>-->
                 <artifactId>hazelcast-spring</artifactId>
-                <version>${hazelcast.version}</version> <!-- Should be tested, because versions are set different currently: 4.2.8 and 5.3.5 -->
+                <version>${hazelcast.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-fileupload</groupId>
