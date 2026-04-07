@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,17 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
 
 import org.qubership.atp.mia.exceptions.soap.SoapCreateConnectionFailException;
 import org.qubership.atp.mia.exceptions.soap.SoapCreateRequestFailException;
@@ -56,6 +49,12 @@ import org.qubership.atp.mia.utils.FileUtils;
 import org.qubership.atp.mia.utils.Utils;
 import org.springframework.stereotype.Repository;
 
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPConnection;
+import jakarta.xml.soap.SOAPConnectionFactory;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -153,7 +152,7 @@ public class SoapRepository {
             String responseString = out.toString();
             responseString = Utils.getPrettyStringFromXml(responseString).replaceFirst(">", ">\n");
             log.debug(responseString);
-            Files.write(Paths.get(logFile.getPath()), responseString.getBytes(StandardCharsets.UTF_8));
+            Files.write(Path.of(logFile.getPath()), responseString.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new SoapWriteIoException(e);
         } catch (SOAPException e) {

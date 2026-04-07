@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,21 +28,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.annotation.Nonnull;
-import javax.xml.ws.Holder;
-
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.qubership.atp.mia.exceptions.fileservice.ArchiveIoExceptionDuringSave;
 import org.qubership.atp.mia.exceptions.fileservice.CreateDirFailedException;
 import org.qubership.atp.mia.exceptions.fileservice.ReadFailIoExceptionDuringOperation;
 
+import jakarta.annotation.Nonnull;
+import jakarta.xml.ws.Holder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -327,7 +325,7 @@ public class FileUtils {
      */
     public static void removeFile(String fileToDelete) {
         try {
-            Files.deleteIfExists(Paths.get(fileToDelete));
+            Files.deleteIfExists(Path.of(fileToDelete));
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -373,10 +371,10 @@ public class FileUtils {
      * @return correct path to file,
      */
     public static Path getPathToFileFromFile(File file) {
-        Path path = Paths.get(file.getName());
-        Path parent = Paths.get(file.getParent());
+        Path path = Path.of(file.getName());
+        Path parent = Path.of(file.getParent());
         while (!parent.getFileName().toString().equals("flow")) {
-            path = Paths.get(parent.getFileName().toString()).resolve(path);
+            path = Path.of(parent.getFileName().toString()).resolve(path);
             parent = parent.getParent();
         }
         return path.normalize();

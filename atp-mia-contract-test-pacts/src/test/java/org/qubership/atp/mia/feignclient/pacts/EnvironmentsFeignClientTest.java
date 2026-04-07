@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,10 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.migrationsupport.rules.ExternalResourceSupport;
+import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
+import org.qubership.atp.mia.clients.api.environments.dto.projects.EnvironmentFullVer1ViewDto;
+import org.qubership.atp.mia.service.client.EnvironmentsFeignClient;
+import org.qubership.atp.mia.service.client.ProjectsFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
@@ -33,9 +38,8 @@ import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
@@ -45,21 +49,17 @@ import au.com.dius.pact.consumer.junit.PactProviderRule;
 import au.com.dius.pact.consumer.junit.PactVerification;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
-import org.qubership.atp.mia.clients.api.environments.dto.projects.EnvironmentFullVer1ViewDto;
-import org.qubership.atp.mia.service.client.EnvironmentsFeignClient;
-import org.qubership.atp.mia.service.client.ProjectsFeignClient;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 
-@RunWith(SpringRunner.class)
 @EnableFeignClients(clients = {EnvironmentsFeignClient.class})
-@ContextConfiguration(classes = {TestAppConfiguration.class})
+@ExtendWith(ExternalResourceSupport.class)
+@SpringJUnitConfig(classes = {TestAppConfiguration.class})
 @Import({JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, FeignConfiguration.class,
         FeignAutoConfiguration.class})
 @TestPropertySource(properties = {"feign.atp.environments.name=atp-environments", "feign.atp.environments.route=",
-                "feign.atp.environments.url=http://localhost:8888"})
+        "feign.atp.environments.url=http://localhost:8888"})
 public class EnvironmentsFeignClientTest {
 
     @Rule
@@ -74,8 +74,8 @@ public class EnvironmentsFeignClientTest {
         ResponseEntity<EnvironmentFullVer1ViewDto> result_EnvironmentFull =
                 environmentsFeignClient.getEnvironment(environmentId, true);
 
-        Assert.assertEquals(result_EnvironmentFull.getStatusCode().value(), 200);
-        Assert.assertTrue(result_EnvironmentFull.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertEquals(result_EnvironmentFull.getStatusCode().value(), 200);
+        Assertions.assertTrue(result_EnvironmentFull.getHeaders().get("Content-Type").contains("application/json"));
 
     }
 

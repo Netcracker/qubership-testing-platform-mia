@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import static java.util.Objects.nonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -139,7 +139,7 @@ public class GridFsRepositoryImpl implements GridFsRepository {
             gridFsBucket.find(new Document().append("projectId", projectId))
                     .forEach(file -> lengths.add(file.getLength()));
         }
-        return String.format("Amount of documents %s, Size: %s byte",
+        return "Amount of documents %s, Size: %s byte".formatted(
                 lengths.size(), lengths.stream().reduce(0L, Long::sum));
     }
 
@@ -172,7 +172,7 @@ public class GridFsRepositoryImpl implements GridFsRepository {
     public void rename(ProjectFile projectFile) {
         log.debug("Rename file '{}'", projectFile);
         gridFsBucket.rename(new ObjectId(projectFile.getGridFsObjectId()),
-                Paths.get(ProjectFileType.MIA_FILE_TYPE_PROJECT.name()).resolve(projectFile.getPathFile()).toString());
+                Path.of(ProjectFileType.MIA_FILE_TYPE_PROJECT.name()).resolve(projectFile.getPathFile()).toString());
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import static org.qubership.atp.mia.utils.Utils.listToSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.model.impl.ExecutionResponse;
 import org.qubership.atp.mia.model.impl.executable.Command;
@@ -56,7 +56,7 @@ public class ProcessServiceEnvironmentVariablesTest extends ProcessServiceBaseTe
         final ProcessSettings process = new ProcessSettings().toBuilder().name("pr").command(command).validations(validations).build();
         //do
         executeProcess(process);
-        Assert.assertEquals(expUrl, miaContext.get().getFlowData().getParameters().get(expUrlParam.toUpperCase()));
+        Assertions.assertEquals(expUrl, miaContext.get().getFlowData().getParameters().get(expUrlParam.toUpperCase()));
     }
 
     @Test
@@ -70,9 +70,9 @@ public class ProcessServiceEnvironmentVariablesTest extends ProcessServiceBaseTe
         final ProcessSettings process = new ProcessSettings().toBuilder().name("pr").command(command).validations(validations).build();
         //do
         ExecutionResponse response = executeProcess(process);
-        Assert.assertEquals(expectedStatus.getStatus(), response.getProcessStatus().getStatus());
-        Assert.assertTrue("No key in flow data: " + expUrlParam.toUpperCase(),
-                miaContext.get().getFlowData().getParameters().containsKey(expUrlParam.toUpperCase()));
-        Assert.assertEquals(expUrl, miaContext.get().getFlowData().getParameters().get(expUrlParam.toUpperCase()));
+        Assertions.assertEquals(expectedStatus.getStatus(), response.getProcessStatus().getStatus());
+        Assertions.assertTrue(miaContext.get().getFlowData().getParameters().containsKey(expUrlParam.toUpperCase()),
+                "No key in flow data: " + expUrlParam.toUpperCase());
+        Assertions.assertEquals(expUrl, miaContext.get().getFlowData().getParameters().get(expUrlParam.toUpperCase()));
     }
 }

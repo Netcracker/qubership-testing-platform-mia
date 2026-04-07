@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,24 +17,23 @@
 
 package org.qubership.atp.mia.model.configuration;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.Value;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,7 +43,6 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "project_command_prefix")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
@@ -53,6 +51,7 @@ import lombok.ToString;
 @Value
 public class CommandPrefix implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2325603243441977662L;
 
     @Id
@@ -61,7 +60,7 @@ public class CommandPrefix implements Serializable {
     private String system;
 
     @Column(name = "prefixes", columnDefinition = "jsonb")
-    @Type(type = "jsonb")
+    @Type(JsonBinaryType.class)
     private LinkedHashMap<String, String> prefixes;
 
     @ManyToOne(targetEntity = CommonConfiguration.class, optional = false)

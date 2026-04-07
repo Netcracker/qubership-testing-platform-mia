@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import static org.qubership.atp.mia.utils.Utils.listToSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.model.impl.CommandResponse;
@@ -76,7 +76,7 @@ public class ProcessServiceStatusTest extends ProcessServiceBaseTest {
                 .validations(validations).build();
         //do
         ExecutionResponse response = executeProcess(process);
-        Assert.assertEquals(Statuses.FAIL, response.getProcessStatus().getStatus());
+        Assertions.assertEquals(Statuses.FAIL, response.getProcessStatus().getStatus());
     }
 
     @Test
@@ -90,6 +90,6 @@ public class ProcessServiceStatusTest extends ProcessServiceBaseTest {
                 .validations(validations).build();
         //do
         ExecutionResponse response = executeProcess(process);
-        Assert.assertEquals(expectedStatus.getStatus(), response.getProcessStatus().getStatus());
+        Assertions.assertEquals(expectedStatus.getStatus(), response.getProcessStatus().getStatus());
     }
 }

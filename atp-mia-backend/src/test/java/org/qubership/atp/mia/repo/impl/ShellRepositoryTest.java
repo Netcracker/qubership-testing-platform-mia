@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,10 +38,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Map;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,7 +89,7 @@ public class ShellRepositoryTest extends ConfigTestBean {
         flowData.addParameter("param1", "value1");
         flowData.addParameter("processName", "Process Name");
         repository.get().executeAndGetLog(command);
-        final String startMatcher = "^" + String.format(prefixes.get().get(ACCOUNT_NUMBER.toString()), accountNumber) + "\n";
+        final String startMatcher = "^" + prefixes.get().get(ACCOUNT_NUMBER.toString()).formatted(accountNumber) + "\n";
         verify(sshConnectionManager.get()).getFileFromServer(matches("^/" + "ProcessName_" + accountNumber + "_\\w+.log"),
                 eq(""));
         verify(sshConnectionManager.get(), times(1)).runCommand(
@@ -98,22 +98,22 @@ public class ShellRepositoryTest extends ConfigTestBean {
         flowData.addParameter(GENEVA_DATE, "010101");
         repository.get().executeAndGetLog(command);
         verify(sshConnectionManager.get(), times(1)).runCommand(
-                matches(startMatcher + String.format(prefixes.get().get(GENEVA_DATE.toString()), "010101")
-                        + "\n" + String.format(prefixes.get().get(WORKING_DIRECTORY.toString()), "/")
+                matches(startMatcher + prefixes.get().get(GENEVA_DATE.toString()).formatted("010101")
+                        + "\n" + prefixes.get().get(WORKING_DIRECTORY.toString()).formatted("/")
                         + "\necho value1 > /ProcessName_" + accountNumber + "_\\w+.log 2>&1"));
         flowData.addParameter(GENEVA_DATE, null);
         flowData.addParameter(WORKING_DIRECTORY, "/TEST");
         repository.get().executeAndGetLog(command);
         verify(sshConnectionManager.get(), times(1)).runCommand(
-                matches(startMatcher + String.format(prefixes.get().get(WORKING_DIRECTORY.toString()), "/TEST")
+                matches(startMatcher + prefixes.get().get(WORKING_DIRECTORY.toString()).formatted("/TEST")
                         + "\necho value1 > /TEST/ProcessName_" + accountNumber + "_\\w+.log 2>&1"));
         flowData.addParameter(FULL_TRACE_MODE, "true");
         flowData.addParameter(WORKING_DIRECTORY, "/TEST/");
         repository.get().executeAndGetLog(command);
         verify(sshConnectionManager.get(), times(1)).runCommand(
                 matches(startMatcher
-                        + String.format(prefixes.get().get(WORKING_DIRECTORY.toString()), "/TEST/")
-                        + "\n" + String.format(prefixes.get().get(FULL_TRACE_MODE.toString()), "true")
+                        + prefixes.get().get(WORKING_DIRECTORY.toString()).formatted("/TEST/")
+                        + "\n" + prefixes.get().get(FULL_TRACE_MODE.toString()).formatted("true")
                         + "\necho value1 > /TEST/ProcessName_" + accountNumber + "_\\w+.log 2>&1"));
         final File file = new File(fileToUse);
         String workingDir = flowData.getCustom(WORKING_DIRECTORY, miaContext.get());
@@ -121,7 +121,7 @@ public class ShellRepositoryTest extends ConfigTestBean {
                 eq(workingDir))).thenReturn(file);
 /*        doReturn(file).when(sshConnectionManager.get()).getFileFromServer(anyString(),
                 eq(workingDir));*/
-        Assert.assertEquals(Files.readAllLines(Paths.get(file.getPath()), Charset.forName("UTF-8")),
+        Assertions.assertEquals(Files.readAllLines(Path.of(file.getPath()), Charset.forName("UTF-8")),
                 repository.get().executeAndGetLog(command).getCommandOutputs().get(0).contentFromFile());
         flowData.removeParameter(FULL_TRACE_MODE.toString());
         flowData.removeParameter(GENEVA_DATE.toString());
@@ -161,8 +161,8 @@ public class ShellRepositoryTest extends ConfigTestBean {
         flowData.addParameter(EXPORT_GENEVA_DATE, exportGenevaDate);
         repository.get().executeAndGetLog(command);
         verify(sshConnectionManager.get(), times(1)).runCommand(
-                startsWith(String.format(prefixes.get().get(WORKING_DIRECTORY.toString()), "/"))
-                        + "\n" + String.format(prefixes.get().get(EXPORT_GENEVA_DATE), exportGenevaDate));
+                startsWith(prefixes.get().get(WORKING_DIRECTORY.toString()).formatted("/"))
+                        + "\n" + prefixes.get().get(EXPORT_GENEVA_DATE).formatted(exportGenevaDate));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class ShellRepositoryTest extends ConfigTestBean {
             flowData.addParameter(EXPORT_GENEVA_DATE, exportGenDate);
             repository.get().executeAndGetLog(command);
             verify(sshConnectionManager.get(), times(execCount++)).runCommand(
-                    startsWith(String.format(prefixes.get().get(WORKING_DIRECTORY.toString()), "/")));
+                    startsWith(prefixes.get().get(WORKING_DIRECTORY.toString()).formatted("/")));
         }
     }
 }

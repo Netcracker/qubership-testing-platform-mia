@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -147,7 +147,7 @@ public class SshSession {
                 log.trace("Free to open channel with ID {}", channelId);
                 ch = session.openChannel(channelType.toString());
                 if (ch == null || ch.isClosed()) {
-                    String err = String.format("Can't open channel it %s", ch == null
+                    String err = "Can't open channel it %s".formatted(ch == null
                             ? "is null" : ch.isClosed()
                             ? "is closed" : "unknown reason");
                     throw new Exception(err);

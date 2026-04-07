@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package org.qubership.atp.mia.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public class MiaGeneralController implements MiaGeneralControllerApi {
     @Override
     public ResponseEntity<Map<String, String>> feVariables() {
         try {
-            File file = Paths.get(feVariablesPath, feVariablesFileName).toFile();
+            File file = Path.of(feVariablesPath, feVariablesFileName).toFile();
             log.debug("Fetching FE variables from path: {}", file);
             String jsonContent = FileUtils.readFileToString(file, "UTF-8");
             Map<String, String> feVariables = objectMapper.readValue(

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ package org.qubership.atp.mia.service.cache;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 import org.qubership.atp.mia.model.CacheKeys;
 import org.springframework.cache.Cache;
@@ -55,11 +53,10 @@ public interface MiaCacheService {
                     continue;
                 }
                 Set<Object> keySet = new HashSet<>();
-                if (cache instanceof HazelcastCache) {
-                    keySet = ((HazelcastCache) cache).getNativeCache().keySet();
-                }
-                if (cache instanceof CaffeineCache) {
-                    keySet = ((CaffeineCache) cache).getNativeCache().asMap().keySet();
+                if (cache instanceof HazelcastCache hazelcastCache) {
+                    keySet = hazelcastCache.getNativeCache().keySet();
+                } else if (cache instanceof CaffeineCache caffeineCache) {
+                    keySet = caffeineCache.getNativeCache().asMap().keySet();
                 }
                 for (Object key : keySet) {
                     if (key.toString().contains(projectId.toString())) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,16 +48,14 @@ import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.xml.ws.Holder;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,6 +77,8 @@ import org.qubership.atp.mia.service.AtpUserService;
 import org.qubership.atp.mia.service.execution.RecordingSessionsService;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.testcontainers.shaded.org.apache.commons.io.FilenameUtils;
+
+import jakarta.xml.ws.Holder;
 
 @ExtendWith(SkipTestInJenkins.class)
 public class ProofOfTestingRepositoryTest extends ConfigTestBean {
@@ -112,7 +111,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
 
     @BeforeEach
     public void beforeProofOfTestingRepositoryTest() {
-        TEST_DIRECTORY.set(Paths.get("src").resolve("test").resolve("resources").resolve("testData").resolve("pot")
+        TEST_DIRECTORY.set(Path.of("src").resolve("test").resolve("resources").resolve("testData").resolve("pot")
                 .resolve("" + System.currentTimeMillis()).resolve("" + new Random().nextInt(10000)));
         TEST_DIRECTORY.get().toFile().mkdirs();
         fileToSave.set(TEST_DIRECTORY.get().resolve(potFilename).toFile());
@@ -134,7 +133,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
 
     public void correctFilePath(List<Link> links) {
         if (links == null || links.size() == 0) {
-            Assert.fail("Links is empty");
+            Assertions.fail("Links is empty");
         }
         links.forEach(f -> f.setPath(TEST_DIRECTORY.get().resolve(f.getName()).toString()));
     }
@@ -180,19 +179,19 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
                                                          List<List<SqlResponse>> validations,
                                                          List<MiaException> errors) {
         if (namesToResponses.size() == 0) {
-            Assert.fail("you forgot to add any items to map names to response");
+            Assertions.fail("you forgot to add any items to map names to response");
         }
         if (statuses.size() == 0) {
-            Assert.fail("you forgot to add any items to statuses");
+            Assertions.fail("you forgot to add any items to statuses");
         }
         if (namesToResponses.size() != statuses.size()) {
-            Assert.fail("Size of statuses should be equal to namesToResponses! "
+            Assertions.fail("Size of statuses should be equal to namesToResponses! "
                     + "Remember every process name will have related status.");
         } else if (validations != null && validations.size() != namesToResponses.size()) {
-            Assert.fail("Size of validations (if not null) should be equal to namesToResponses! "
+            Assertions.fail("Size of validations (if not null) should be equal to namesToResponses! "
                     + "Remember every process name will have related validation.");
         } else if (errors != null && errors.size() != namesToResponses.size()) {
-            Assert.fail("Size of errors (if not null) should be equal to namesToResponses! "
+            Assertions.fail("Size of errors (if not null) should be equal to namesToResponses! "
                     + "Remember every process name will have related validation.");
         }
         int i = 0;
@@ -261,7 +260,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
             }
             wr.close();
         } catch (IOException e) {
-            Assert.fail("can't generate output file: " + e.getMessage());
+            Assertions.fail("can't generate output file: " + e.getMessage());
         }
         return new Link(file.getAbsolutePath(), filename);
     }
@@ -337,7 +336,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
         correctFilePath(resultFiles);
         Map<File, List<File>> unzippedFiles = unzipFiles(resultFiles);
         // assert
-        Assert.assertEquals(1, resultFiles.size());
+        Assertions.assertEquals(1, resultFiles.size());
         validatePotLinks(unzippedFiles);
     }
 
@@ -356,7 +355,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
         List<Link> resultFiles = proofOfTestingRepository.get().saveProofOfTesting(session.get(), fileToSave.get());
         correctFilePath(resultFiles);
         // assert
-        Assert.assertEquals(1, resultFiles.size());
+        Assertions.assertEquals(1, resultFiles.size());
     }
 
     @Test
@@ -374,7 +373,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
         List<Link> resultFiles = proofOfTestingRepository.get().saveProofOfTesting(session.get(), fileToSave.get());
         correctFilePath(resultFiles);
         // assert
-        Assert.assertEquals(1, resultFiles.size());
+        Assertions.assertEquals(1, resultFiles.size());
     }
 
     @Test
@@ -395,7 +394,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
         correctFilePath(resultFiles);
         Map<File, List<File>> potAndOutputs = unzipFiles(resultFiles);
         // assert
-        Assert.assertEquals(1, resultFiles.size());
+        Assertions.assertEquals(1, resultFiles.size());
         validatePotValidation(potAndOutputs, validations);
         // TODO check validation printed successfully
     }
@@ -416,7 +415,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
         List<Link> resultFiles = proofOfTestingRepository.get().saveProofOfTesting(session.get(), fileToSave.get());
         correctFilePath(resultFiles);
         // assert
-        Assert.assertEquals(1, resultFiles.size());
+        Assertions.assertEquals(1, resultFiles.size());
     }
 
     @Test
@@ -435,7 +434,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
         correctFilePath(resultFiles);
         Map<File, List<File>> unzippedFiles = unzipFiles(resultFiles);
         // assert
-        Assert.assertEquals(1, resultFiles.size());
+        Assertions.assertEquals(1, resultFiles.size());
         validatePotValidation(unzippedFiles, validations);
     }
 
@@ -455,23 +454,23 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
         correctFilePath(resultFiles);
         Map<File, List<File>> unzippedFiles = unzipFiles(resultFiles);
         // assert
-        Assert.assertEquals(1, resultFiles.size());
+        Assertions.assertEquals(1, resultFiles.size());
         validatePotValidation(unzippedFiles, validations);
     }
 
     public Map<File, List<File>> unzipFiles(List<Link> files) {
         if (files.size() == 0) {
-            Assert.fail("POT output Files is empty");
+            Assertions.fail("POT output Files is empty");
         }
         if (files.size() > 1) {
-            Assert.fail("POT output files size is more than 1. If implementation changed, apply it here.");
+            Assertions.fail("POT output files size is more than 1. If implementation changed, apply it here.");
         }
         Map<File, List<File>> result = new HashMap<>();
         for (Link link : files) {
             try {
                 result.putAll(unzipFiles(link));
             } catch (IOException e) {
-                Assert.fail("IOException during unzip file: " + link.getPath() + " error: " + e.getMessage());
+                Assertions.fail("IOException during unzip file: " + link.getPath() + " error: " + e.getMessage());
             }
         }
         return result;
@@ -481,7 +480,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
         Map<File, List<File>> unzippedFiles = new HashMap<>();
         List<File> outputFiles = new ArrayList<>();
         String fileZip = file.getPath();
-        File destDir = Paths.get(file.getPath()).getParent().resolve("test_zip").toFile();
+        File destDir = Path.of(file.getPath()).getParent().resolve("test_zip").toFile();
         byte[] buffer = new byte[1024];
         ZipInputStream zis = new ZipInputStream(new FileInputStream(fileZip));
         ZipEntry zipEntry = zis.getNextEntry();
@@ -522,7 +521,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
         try (XWPFDocument document = new XWPFDocument(new FileInputStream(potFile))) {
             List<XWPFTable> tables = document.getTables();
             if (tables.size() - 1 != validationInfo.stream().mapToInt(i -> i.size()).sum()) {
-                Assert.fail("Validation tables is not equal than tables in POT file (1 is for environment)."
+                Assertions.fail("Validation tables is not equal than tables in POT file (1 is for environment)."
                         + "pot: " + (tables.size() - 1)
                         + " validation: " + validationInfo.stream().mapToInt(i -> i.size()).sum());
             }
@@ -530,7 +529,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
                 XWPFTable table = tables.get(tableI++);
                 for (SqlResponse sqlResponse : sqlResponses) {
                     if (sqlResponse.getTableMarkerResult() == null) {
-                        Assert.fail("TableMarkerResult is null for table from file:"
+                        Assertions.fail("TableMarkerResult is null for table from file:"
                                 + sqlResponse.getInternalPathToFile());
                     }
                     List<TableMarkerResult.TableMarkerColumnStatus> colStatuses =
@@ -545,20 +544,20 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
                             if (validationColName.get().getStatus().equals(Statuses.SUCCESS)) {
                                 String errMsg = "Cell is not green when status success! tableIndex: " + tableI
                                         + " colIndex" + i + " colHeader: " + firstRowCells.get(i).getText();
-                                Assert.assertTrue(errMsg, lastRowCells.get(i).getColor().equalsIgnoreCase(GREEN));
+                                Assertions.assertTrue(lastRowCells.get(i).getColor().equalsIgnoreCase(GREEN), errMsg);
                             } else if (validationColName.get().getStatus().equals(Statuses.FAIL)) {
                                 String errMsg = "Cell is not red when status fail! tableIndex: " + tableI
                                         + " colIndex" + i + " colHeader: " + firstRowCells.get(i).getText();
-                                Assert.assertTrue(errMsg, lastRowCells.get(i).getColor().equalsIgnoreCase(RED));
+                                Assertions.assertTrue(lastRowCells.get(i).getColor().equalsIgnoreCase(RED), errMsg);
                             }
                         }
                     }
                 }
             }
         } catch (FileNotFoundException e) {
-            Assert.fail("POT file not found: " + potFile.getAbsolutePath());
+            Assertions.fail("POT file not found: " + potFile.getAbsolutePath());
         } catch (IOException e) {
-            Assert.fail("POT file IOError: " + potFile.getAbsolutePath() + ", error:" + e.getMessage());
+            Assertions.fail("POT file IOError: " + potFile.getAbsolutePath() + ", error:" + e.getMessage());
         }
     }
 
@@ -567,14 +566,14 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
         try (XWPFDocument document = new XWPFDocument(new FileInputStream(potFile))) {
             for (XWPFHyperlink hyperlink : document.getHyperlinks()) {
                 Optional r = outputFilesCopy.stream().filter(fn -> hyperlink.getURL().contains(fn)).findAny();
-                if (!r.isPresent()) {
-                    Assert.fail("Hyperlink doesn't contain any outputfile name: " + hyperlink.getURL());
+                if (r.isEmpty()) {
+                    Assertions.fail("Hyperlink doesn't contain any outputfile name: " + hyperlink.getURL());
                 }
             }
         } catch (FileNotFoundException e) {
-            Assert.fail("POT file not found: " + potFile.getAbsolutePath());
+            Assertions.fail("POT file not found: " + potFile.getAbsolutePath());
         } catch (IOException e) {
-            Assert.fail("POT file IOError: " + potFile.getAbsolutePath() + ", error:" + e.getMessage());
+            Assertions.fail("POT file IOError: " + potFile.getAbsolutePath() + ", error:" + e.getMessage());
         }
     }
 
@@ -586,12 +585,12 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
                 outputFilesCopy.remove(text);
             }
             if (outputFilesCopy.size() > 0) {
-                Assert.fail("This filenames is not present in POT document: " + String.join(", ", outputFilesCopy));
+                Assertions.fail("This filenames is not present in POT document: " + String.join(", ", outputFilesCopy));
             }
         } catch (FileNotFoundException e) {
-            Assert.fail("POT file not found: " + potFile.getAbsolutePath());
+            Assertions.fail("POT file not found: " + potFile.getAbsolutePath());
         } catch (IOException e) {
-            Assert.fail("POT file IOError: " + potFile.getAbsolutePath() + ", error:" + e.getMessage());
+            Assertions.fail("POT file IOError: " + potFile.getAbsolutePath() + ", error:" + e.getMessage());
         }
     }
 
@@ -668,7 +667,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
             wr.write("ER," + String.join(",", expCols) + "\n");
             wr.write("AR," + String.join(",", isColumnSuccess ? expCols : failCols) + "\n");
         } catch (IOException e) {
-            Assert.fail("fill validation error: " + e.getMessage());
+            Assertions.fail("fill validation error: " + e.getMessage());
         }
         return fillValidation(link, query, tmr);
     }

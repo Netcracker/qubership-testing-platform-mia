@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,25 +17,24 @@
 
 package org.qubership.atp.mia.model.file;
 
+import java.io.Serial;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.qubership.atp.mia.model.DateAuditorEntity;
 import org.qubership.atp.mia.model.configuration.ProjectConfiguration;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -51,6 +50,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class ProjectFile extends DateAuditorEntity {
 
+    @Serial
     private static final long serialVersionUID = 8428162091529756975L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -94,7 +94,7 @@ public class ProjectFile extends DateAuditorEntity {
      * @return full path for project file
      */
     public Path getPathFile() {
-        Path pathFile = Paths.get("");
+        Path pathFile = Path.of("");
         if (directory != null) {
             pathFile = pathFile.resolve(directory.getPathDirectory());
         }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 
 package org.qubership.atp.mia.service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,7 +92,7 @@ public class RestProcessServiceTest extends ConfigTestBean {
         command = new Command();
         command.setSystem(testSystem.get().getName());
         command.setRest(rest);
-        Path path = Paths.get(PROJECT_FOLDER, projectId.get().toString(),
+        Path path = Path.of(PROJECT_FOLDER, projectId.get().toString(),
                 ProjectFileType.MIA_FILE_TYPE_UPLOAD.toString(),
                 miaContext.get().getFlowData().getSessionId().toString());
         doReturn(path).when(miaContext.get()).getUploadsPath();
@@ -106,64 +105,72 @@ public class RestProcessServiceTest extends ConfigTestBean {
     @Test
     public void when_EndPointIsNotPresentInRestFile_thenError() throws IOException {
         //construct
-        String fileInput = "GET\n"
-                + "\n"
-                + "\n"
-                + "\n"
-                + "Content-Type: application/json;charset=UTF-8\n"
-                + "\n"
-                + "bdoy1\n";
+        String fileInput = """
+                GET
+                
+                
+                
+                Content-Type: application/json;charset=UTF-8
+                
+                bdoy1
+                """;
         rest.setRestFile(fileName);
         createFile(file, fileInput);
         RestIncorrectEndpointException ex = assertThrows(RestIncorrectEndpointException.class,
                 () -> restService.get().sendRestRequest(command));
-        assertTrue("MIA-1400", ex.getMessage().contains("MIA-1400"));
+        assertTrue(ex.getMessage().contains("MIA-1400"), "MIA-1400");
     }
 
     @Test
     public void when_HeaderIsNotPresentInRestFile_thenError() throws IOException {
         //construct
-        String fileInput = "GET\n"
-                + "\n"
-                + "endPoint\n"
-                + "\n"
-                + "\n"
-                + "\n"
-                + "bdoy1\n";
+        String fileInput = """
+                GET
+                
+                endPoint
+                
+                
+                
+                bdoy1
+                """;
         rest.setRestFile(fileName);
         createFile(file, fileInput);
         RestHeadersIncorrectFormatException ex = assertThrows(RestHeadersIncorrectFormatException.class,
                 () -> restService.get().sendRestRequest(command));
-        assertTrue("MIA-1406", ex.getMessage().contains("MIA-1406"));
+        assertTrue(ex.getMessage().contains("MIA-1406"), "MIA-1406");
     }
 
     @Test
     public void when_MethodIsNotPresentInRestFile_thenError() throws IOException {
         //construct
-        String fileInput = "\n"
-                + "\n"
-                + "/rest/endpoint/check\n"
-                + "\n"
-                + "Content-Type: application/json;charset=UTF-8\n"
-                + "\n"
-                + "bdoy1\n";
+        String fileInput = """
+                
+                
+                /rest/endpoint/check
+                
+                Content-Type: application/json;charset=UTF-8
+                
+                bdoy1
+                """;
         rest.setRestFile(fileName);
         createFile(file, fileInput);
         UnsupportedRestMethodException ex = assertThrows(UnsupportedRestMethodException.class,
                 () -> restService.get().sendRestRequest(command));
-        assertTrue("MIA-1402", ex.getMessage().contains("MIA-1402"));
+        assertTrue(ex.getMessage().contains("MIA-1402"), "MIA-1402");
     }
 
     @Test
     public void when_RestFile_thenCommandResponse() throws IOException {
-        String fileInput = "GET\n"
-                + "\n"
-                + "/rest/endpoint/check\n"
-                + "\n"
-                + "Content-Type: application/json;charset=UTF-8\n"
-                + "\n"
-                + "body1\n"
-                + "body2\n";
+        String fileInput = """
+                GET
+                
+                /rest/endpoint/check
+                
+                Content-Type: application/json;charset=UTF-8
+                
+                body1
+                body2
+                """;
         //construct
         CommandResponse commandResponse = new CommandResponse();
         commandResponse.setStatusCode("200");
@@ -184,19 +191,21 @@ public class RestProcessServiceTest extends ConfigTestBean {
         createFile(file, fileInput);
         RestFormatNotCorrectException ex = assertThrows(RestFormatNotCorrectException.class,
                 () -> restService.get().sendRestRequest(command));
-        assertTrue("MIA-1412", ex.getMessage().contains("MIA-1412"));
+        assertTrue(ex.getMessage().contains("MIA-1412"), "MIA-1412");
     }
 
     @Test
     public void when_bodyFile_thenCommandResponse() throws IOException {
-        String fileInput = "GET\n"
-                + "\n"
-                + "/rest/endpoint/check\n"
-                + "\n"
-                + "Content-Type: application/json;charset=UTF-8\n"
-                + "\n"
-                + "bdoy1\n"
-                + "body2\n";
+        String fileInput = """
+                GET
+                
+                /rest/endpoint/check
+                
+                Content-Type: application/json;charset=UTF-8
+                
+                bdoy1
+                body2
+                """;
         //construct
         CommandResponse commandResponse = new CommandResponse();
         commandResponse.setStatusCode("200");
@@ -215,6 +224,6 @@ public class RestProcessServiceTest extends ConfigTestBean {
         command.setRest(null);
         RestNotFoundException ex = assertThrows(RestNotFoundException.class,
                 () -> restService.get().sendRestRequest(command));
-        assertTrue("MIA-1409", ex.getMessage().contains("MIA-1409"));
+        assertTrue(ex.getMessage().contains("MIA-1409"), "MIA-1409");
     }
 }

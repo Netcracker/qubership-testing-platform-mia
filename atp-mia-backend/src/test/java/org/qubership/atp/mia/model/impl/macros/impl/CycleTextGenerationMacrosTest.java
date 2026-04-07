@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 
 package org.qubership.atp.mia.model.impl.macros.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CycleTextGenerationMacrosTest {
 
@@ -38,12 +38,15 @@ public class CycleTextGenerationMacrosTest {
     @Test
     public void testEvaluate() {
         assertEquals(
-                "ERROR IN GENERATION TEXT: NUMBER OF PARAMETERS MACROS SHOULD BE MORE THEN 3\n"
-                        + "MACROS format: $ { CycleTextGeneration('Text for generation in cycle [OtherArgumentName1], "
-                        + "[ArgumentNameCreatesCycle] [OtherArgumentNameN]', 'ArgumentNameCreatesCycle', 'OtherArgumentName1->"
-                        + " [1, 2, 3] -> string', 'ArgumentNameCreatesCycle -> [A,B,C] -> string', 'OtherArgumentNameN -> 0' ) }"
-                        + "\n" + "As result will be generated following:\n" + "Text for generation in cycle 1 A 0\n"
-                        + "Text for generation in cycle 2 B 0\n" + "Text for generation in cycle 3 B 0",
+                """
+                ERROR IN GENERATION TEXT: NUMBER OF PARAMETERS MACROS SHOULD BE MORE THEN 3
+                MACROS format: $ { CycleTextGeneration('Text for generation in cycle [OtherArgumentName1], \
+                [ArgumentNameCreatesCycle] [OtherArgumentNameN]', 'ArgumentNameCreatesCycle', 'OtherArgumentName1->\
+                 [1, 2, 3] -> string', 'ArgumentNameCreatesCycle -> [A,B,C] -> string', 'OtherArgumentNameN -> 0' ) }
+                As result will be generated following:
+                Text for generation in cycle 1 A 0
+                Text for generation in cycle 2 B 0
+                Text for generation in cycle 3 B 0""",
                 (new CycleTextGenerationMacros()).evaluate(new String[]{"Inputs"}));
     }
 }

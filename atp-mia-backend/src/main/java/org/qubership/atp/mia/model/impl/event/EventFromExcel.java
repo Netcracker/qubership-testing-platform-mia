@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,15 +19,14 @@ package org.qubership.atp.mia.model.impl.event;
 
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.qubership.atp.mia.model.Constants;
 import org.qubership.atp.mia.model.impl.FlowData;
 import org.qubership.atp.mia.service.MiaContext;
 import org.qubership.atp.mia.utils.ExcelParserHelper;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 /**

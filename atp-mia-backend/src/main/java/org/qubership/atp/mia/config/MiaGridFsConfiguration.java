@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -161,7 +161,7 @@ public class MiaGridFsConfiguration {
      */
     private GridFSBucket provideGridFileSystemBuckets(MeterRegistry meterRegistry) {
         log.info("Creating gridFS bucket");
-        String mongoClientUri = String.format("mongodb://%s%s:%s/%s",
+        String mongoClientUri = "mongodb://%s%s:%s/%s".formatted(
                 user.isEmpty() || password.isEmpty() ? "" : user + ":" + password + "@",
                 host, port, database.isEmpty() ? "" : "?authSource=" + database);
         log.info("Mongo connection string: {}", mongoClientUri);

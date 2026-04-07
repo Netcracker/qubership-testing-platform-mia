@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,8 +34,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
@@ -57,6 +55,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -237,7 +236,7 @@ public class SshConnectionManager {
         final String src = tempPath;
         final File dest = miaContext.getLogPath().resolve(fileName).toFile();
         dest.getParentFile().mkdirs();
-        commandToExecute = new StringBuilder(String.format("get file from server [src: %s, dest: %s]",
+        commandToExecute = new StringBuilder("get file from server [src: %s, dest: %s]".formatted(
                 src, dest.getAbsolutePath()));
         String exceptionStr = "Failed to " + commandToExecute;
         channelFlow(ChannelType.SFTP, true, exceptionStr,
@@ -250,7 +249,7 @@ public class SshConnectionManager {
      * Put file from ssh server.
      */
     public void putFileFromServer(Path pathToFile, String pathToUpLoad) {
-        channelFlow(ChannelType.SFTP, true, String.format("Error while put file %s to %s", pathToFile, pathToUpLoad),
+        channelFlow(ChannelType.SFTP, true, "Error while put file %s to %s".formatted(pathToFile, pathToUpLoad),
                 (channel) -> {
                     final ChannelSftp sftpChannel = (ChannelSftp) channel;
                     sftpChannel.put(pathToFile.toString(), pathToUpLoad.trim());

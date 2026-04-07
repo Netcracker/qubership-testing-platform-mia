@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@
 package org.qubership.atp.mia.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -34,7 +34,6 @@ import static org.qubership.atp.mia.utils.Utils.listToSet;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -115,10 +114,10 @@ public class TestDataHelperServiceTest extends ConfigTestBean {
         File dest = miaContext.get().getProjectPathWithType(ProjectFileType.MIA_FILE_TYPE_UPLOAD,
                 miaContext.get().getFlowData().getSessionId()).resolve(fileName).toFile();
         try {
-            FileUtils.copyFile(Paths.get(origFilePath).toFile(), dest);
-            FileUtils.copyFile(Paths.get("src/main/config/project/default/etalon_files/event_testData.dat").toFile(),
+            FileUtils.copyFile(Path.of(origFilePath).toFile(), dest);
+            FileUtils.copyFile(Path.of("src/main/config/project/default/etalon_files/event_testData.dat").toFile(),
                     projectDir.resolve("event_testData.dat").toFile());
-            FileUtils.copyFile(Paths.get("src/main/config/project/default/etalon_files/control_templ.dat").toFile(),
+            FileUtils.copyFile(Path.of("src/main/config/project/default/etalon_files/control_templ.dat").toFile(),
                     projectDir.resolve("control_templ.dat").toFile());
         } catch (IOException e) {
             //copied by other thread

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
 
 package org.qubership.atp.mia.exceptions.soap;
 
-import javax.xml.soap.SOAPException;
-
 import org.qubership.atp.mia.exceptions.MiaException;
 import org.qubership.atp.mia.model.exception.ErrorCodes;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import jakarta.xml.soap.SOAPException;
 
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "MIA-1505")
 public class SoapWriteOutputFailException extends MiaException {

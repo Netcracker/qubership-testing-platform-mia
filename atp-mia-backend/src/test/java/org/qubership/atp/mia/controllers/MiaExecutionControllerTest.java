@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
@@ -54,7 +54,7 @@ public class MiaExecutionControllerTest extends BaseIntegrationTestConfiguration
 
     @BeforeEach
     public void beforeMiaExecutionControllerTest() {
-        randomId = (int) (Math.random() * 1000);
+        randomId = (int) (ThreadLocalRandom.current().nextDouble() * 1000);
         UUID envId = UUID.randomUUID();
         UUID systemId = UUID.randomUUID();
         System testSystem2 = System.builder()
@@ -97,7 +97,7 @@ public class MiaExecutionControllerTest extends BaseIntegrationTestConfiguration
         FlowData flowData = new FlowData();
         flowData.setParameters(parameters);
         request1.setFlowData(flowData);
-        Assert.assertEquals(expectedValue, miaExecutionController.getNextBillDate(projectId.get(), "Test", request1));
+        Assertions.assertEquals(expectedValue, miaExecutionController.getNextBillDate(projectId.get(), "Test", request1));
     }
 }
 

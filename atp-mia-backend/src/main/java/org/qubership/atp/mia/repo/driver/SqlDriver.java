@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -209,8 +209,8 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
 
     private MiaException handleConnectionException(String query, Exception e) {
         Throwable cause = e.getCause();
-        if (cause instanceof SqlConnectionFailException) {
-            return (SqlConnectionFailException) cause;
+        if (cause instanceof SqlConnectionFailException exception) {
+            return exception;
         }
         return new SqlExecuteFailException(query, e);
     }

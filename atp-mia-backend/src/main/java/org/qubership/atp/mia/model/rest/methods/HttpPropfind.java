@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package org.qubership.atp.mia.model.rest.methods;
 
 import java.net.URI;
 
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 
-public class HttpPropfind extends HttpRequestBase {
+public class HttpPropfind extends HttpUriRequestBase {
     public static final String METHOD_NAME = "PROPFIND";
 
     public HttpPropfind() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ package org.qubership.atp.mia.controllers;
 import java.util.List;
 import java.util.UUID;
 
-import javax.servlet.ServletContext;
-
 import org.qubership.atp.integration.configuration.configuration.AuditAction;
 import org.qubership.atp.mia.controllers.api.MiaFileControllerApi;
 import org.qubership.atp.mia.model.file.ProjectFileType;
@@ -35,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
+import jakarta.servlet.ServletContext;
 import lombok.RequiredArgsConstructor;
 
 /**

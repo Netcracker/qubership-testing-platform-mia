@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,25 +17,12 @@
 
 package org.qubership.atp.mia.model.file;
 
+import java.io.Serial;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.javers.core.metamodel.annotation.DiffIgnore;
@@ -43,6 +30,17 @@ import org.javers.core.metamodel.annotation.DiffInclude;
 import org.qubership.atp.mia.model.DateAuditorEntity;
 import org.qubership.atp.mia.model.configuration.ProjectConfiguration;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -59,6 +57,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class ProjectDirectory extends DateAuditorEntity {
 
+    @Serial
     private static final long serialVersionUID = -1184948591984244690L;
 
     @Id
@@ -81,11 +80,10 @@ public class ProjectDirectory extends DateAuditorEntity {
     @DiffInclude
     private ProjectDirectory parentDirectory;
 
-    @OneToMany(mappedBy = "parentDirectory", targetEntity = ProjectDirectory.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parentDirectory", targetEntity = ProjectDirectory.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
     @DiffInclude
     private List<ProjectDirectory> directories = new ArrayList<>();
 
@@ -97,11 +95,10 @@ public class ProjectDirectory extends DateAuditorEntity {
     private ProjectConfiguration projectConfiguration;
 
     @OneToMany(mappedBy = "directory", targetEntity = ProjectFile.class, cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
     @DiffInclude
     private List<ProjectFile> files = new ArrayList<>();
 
@@ -152,7 +149,7 @@ public class ProjectDirectory extends DateAuditorEntity {
      * @return full path for directory
      */
     public Path getPathDirectory() {
-        Path path = Paths.get("");
+        Path path = Path.of("");
         if (getParentDirectory() != null) {
             path = getParentDirectory().getPathDirectory();
         }

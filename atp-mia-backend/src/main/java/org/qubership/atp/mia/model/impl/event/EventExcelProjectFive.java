@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@
 
 package org.qubership.atp.mia.model.impl.event;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.Range;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public class EventExcelProjectFive extends EventExcelProjectFour {
 
     EventExcelProjectFive(@Nonnull XSSFSheet sheet, @Nullable String scenario, @Nullable String testCase) {
         super(sheet, scenario, testCase);
-        eventInfoRange = Range.between(4, 28);
+        eventInfoRange = Range.of(4, 28);
         identifications.put("Partial Event Identifier", false);
         identifications.put("Sequence", false);
         identifications.put("Record Type", false);

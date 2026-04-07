@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import static org.qubership.atp.mia.TestConstants.SSH_TIMEOUT_EXECUTE;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +85,7 @@ public class TestUtils {
     }
 
     public static List<String> readFile(String pathStr) {
-        Path path = Paths.get(pathStr);
+        Path path = Path.of(pathStr);
         List<String> data = null;
         try (Stream<String> lines = Files.lines(path)) {
             data = lines.collect(Collectors.toList());

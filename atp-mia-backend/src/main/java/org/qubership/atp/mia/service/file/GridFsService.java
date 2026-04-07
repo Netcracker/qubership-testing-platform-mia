@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.bson.types.ObjectId;
 import org.qubership.atp.mia.exceptions.gridfs.GridFsFileNotFoundException;
@@ -203,8 +203,7 @@ public class GridFsService {
      * @return ObjectId of file in GridFs.
      */
     public ObjectId uploadFile(FileMetaData fileMetaData, String fullPathToFile) {
-        //return uploadFile(fileMetaData, new File(fullPathToFile));
-        return uploadFile(fileMetaData, Paths.get(fullPathToFile).toAbsolutePath().normalize().toFile());
+        return uploadFile(fileMetaData, Path.of(fullPathToFile).toAbsolutePath().normalize().toFile());
     }
 
     /**

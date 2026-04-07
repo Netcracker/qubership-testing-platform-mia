@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -59,7 +58,7 @@ import io.undertow.util.FileUtils;
 
 public class ExportTest extends ExportImportBaseTest {
 
-    private final Path testPath = Paths.get("src/test/resources/ei/export/");
+    private final Path testPath = Path.of("src/test/resources/ei/export/");
     private final ObjectMapper mapper = new ObjectMapper();
 
     @AfterEach
@@ -324,7 +323,7 @@ public class ExportTest extends ExportImportBaseTest {
 
         int actual = getFiles(path.toFile()).length;
         assertEquals(expectedSize, actual,
-                String.format("Expected %03d exported folders, but found %03d", expectedSize, actual));
+                "Expected %03d exported folders, but found %03d".formatted(expectedSize, actual));
     }
 
     private static File[] getFiles(File file) {

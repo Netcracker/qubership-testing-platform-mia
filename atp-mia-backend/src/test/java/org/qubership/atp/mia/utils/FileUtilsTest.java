@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.qubership.atp.mia.ConfigTestBean;
@@ -64,8 +64,8 @@ public class FileUtilsTest extends ConfigTestBean {
         ExecutionResponse body = getExecutionResponse("process");
         String response = logProcessResponseIntoFile(body, query);
         File file = new File(response);
-        Assert.assertTrue(file.exists());
-        Assert.assertTrue(file.isFile());
+        Assertions.assertTrue(file.exists());
+        Assertions.assertTrue(file.isFile());
     }
 
     @Test
@@ -74,16 +74,15 @@ public class FileUtilsTest extends ConfigTestBean {
         IntStream.range(1, 4).forEach(x -> body.add(getExecutionResponse("compoundProc1" + x)));
         String response = logProcessResponseIntoFile(body, query);
         File file = new File(response);
-        Assert.assertTrue(file.exists());
-        Assert.assertTrue(file.isDirectory());
+        Assertions.assertTrue(file.exists());
+        Assertions.assertTrue(file.isDirectory());
     }
 
     public String logProcessResponseIntoFile(Object body, String queryUrl) {
         String fileName = "unknown";
         Matcher containProjectId = projectIdPattern.matcher(queryUrl);
         String projectId = containProjectId.matches() ? containProjectId.group(1) : "unknownId";
-        if (body instanceof ExecutionResponse) {
-            ExecutionResponse response = (ExecutionResponse) body;
+        if (body instanceof ExecutionResponse response) {
             File file = getProcessFileName(response.getProcessName(), Optional.empty());
             logProcessResponseIntoFile(response, file);
             fileName = file.getPath();
@@ -103,7 +102,7 @@ public class FileUtilsTest extends ConfigTestBean {
 
     private File getProcessFileName(String processName, Optional<String> prefix) {
         String process = Strings.isNullOrEmpty(processName) ? "unknown" : processName;
-        String fileName = String.format("logs/%s/responseLog_process-%s_date-%s.txt",
+        String fileName = "logs/%s/responseLog_process-%s_date-%s.txt".formatted(
                 prefix.orElse(process), process, nowDate());
         File file = miaContext.get().getLogPath().resolve(fileName.replaceAll("[ :]", "_")).toFile();
         File parent = file.getParentFile();

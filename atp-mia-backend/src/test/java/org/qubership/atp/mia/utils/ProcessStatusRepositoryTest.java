@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 
 package org.qubership.atp.mia.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.File;
 import java.util.Collections;
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -151,7 +151,7 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.SUCCESS, executionResponse.getProcessStatus().getStatus());
         LinkedList<MarkedContent> markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(1, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, PASSED));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(PASSED));
         assertEquals(Statuses.SUCCESS, markedContent.get(0).getState());
         //action
         executionResponse.getProcessStatus().setStatus(Statuses.WARNING);
@@ -160,7 +160,7 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.WARNING, executionResponse.getProcessStatus().getStatus());
         markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(1, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, PASSED));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(PASSED));
         assertEquals(Statuses.SUCCESS, markedContent.get(0).getState());
         //action
         executionResponse.getProcessStatus().setStatus(Statuses.FAIL);
@@ -169,7 +169,7 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.FAIL, executionResponse.getProcessStatus().getStatus());
         markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(1, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, PASSED));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(PASSED));
         assertEquals(Statuses.SUCCESS, markedContent.get(0).getState());
     }
 
@@ -186,7 +186,7 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.FAIL, executionResponse.getProcessStatus().getStatus());
         LinkedList<MarkedContent> markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(1, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, WARNING));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(WARNING));
         assertEquals(Statuses.WARNING, markedContent.get(0).getState());
         //action
         executionResponse.getProcessStatus().setStatus(Statuses.WARNING);
@@ -195,7 +195,7 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.FAIL, executionResponse.getProcessStatus().getStatus());
         markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(1, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, WARNING));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(WARNING));
         assertEquals(Statuses.WARNING, markedContent.get(0).getState());
         //action
         executionResponse.getProcessStatus().setStatus(Statuses.FAIL);
@@ -204,7 +204,7 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.FAIL, executionResponse.getProcessStatus().getStatus());
         markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(1, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, WARNING));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(WARNING));
         assertEquals(Statuses.WARNING, markedContent.get(0).getState());
     }
 
@@ -220,7 +220,7 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.WARNING, executionResponse.getProcessStatus().getStatus());
         LinkedList<MarkedContent> markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(1, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, WARNING));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(WARNING));
         assertEquals(Statuses.WARNING, markedContent.get(0).getState());
         //action
         executionResponse.getProcessStatus().setStatus(Statuses.WARNING);
@@ -229,7 +229,7 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.WARNING, executionResponse.getProcessStatus().getStatus());
         markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(1, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, WARNING));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(WARNING));
         assertEquals(Statuses.WARNING, markedContent.get(0).getState());
         //action
         executionResponse.getProcessStatus().setStatus(Statuses.FAIL);
@@ -238,7 +238,7 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.FAIL, executionResponse.getProcessStatus().getStatus());
         markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(1, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, WARNING));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(WARNING));
         assertEquals(Statuses.WARNING, markedContent.get(0).getState());
     }
 
@@ -255,11 +255,11 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.FAIL, executionResponse.getProcessStatus().getStatus());
         LinkedList<MarkedContent> markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(3, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, FAILED));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(FAILED));
         assertEquals(Statuses.FAIL, markedContent.get(0).getState());
-        assertEquals(markedContent.get(1).getText(), String.format(LINE_TO_CHECK, PASSED));
+        assertEquals(markedContent.get(1).getText(), LINE_TO_CHECK.formatted(PASSED));
         assertEquals(Statuses.SUCCESS, markedContent.get(1).getState());
-        assertEquals(markedContent.get(2).getText(), String.format(LINE_TO_CHECK, WARNING));
+        assertEquals(markedContent.get(2).getText(), LINE_TO_CHECK.formatted(WARNING));
         assertEquals(Statuses.WARNING, markedContent.get(2).getState());
         //action
         executionResponse.getProcessStatus().setStatus(Statuses.WARNING);
@@ -268,11 +268,11 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.FAIL, executionResponse.getProcessStatus().getStatus());
         markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(3, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, FAILED));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(FAILED));
         assertEquals(Statuses.FAIL, markedContent.get(0).getState());
-        assertEquals(markedContent.get(1).getText(), String.format(LINE_TO_CHECK, PASSED));
+        assertEquals(markedContent.get(1).getText(), LINE_TO_CHECK.formatted(PASSED));
         assertEquals(Statuses.SUCCESS, markedContent.get(1).getState());
-        assertEquals(markedContent.get(2).getText(), String.format(LINE_TO_CHECK, WARNING));
+        assertEquals(markedContent.get(2).getText(), LINE_TO_CHECK.formatted(WARNING));
         assertEquals(Statuses.WARNING, markedContent.get(2).getState());
         //action
         executionResponse.getProcessStatus().setStatus(Statuses.FAIL);
@@ -281,11 +281,11 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         assertEquals(Statuses.FAIL, executionResponse.getProcessStatus().getStatus());
         markedContent = executionResponse.getCommandResponse().getCommandOutputs().get(0).getMarkedContent();
         assertEquals(3, markedContent.size());
-        assertEquals(markedContent.get(0).getText(), String.format(LINE_TO_CHECK, FAILED));
+        assertEquals(markedContent.get(0).getText(), LINE_TO_CHECK.formatted(FAILED));
         assertEquals(Statuses.FAIL, markedContent.get(0).getState());
-        assertEquals(markedContent.get(1).getText(), String.format(LINE_TO_CHECK, PASSED));
+        assertEquals(markedContent.get(1).getText(), LINE_TO_CHECK.formatted(PASSED));
         assertEquals(Statuses.SUCCESS, markedContent.get(1).getState());
-        assertEquals(markedContent.get(2).getText(), String.format(LINE_TO_CHECK, WARNING));
+        assertEquals(markedContent.get(2).getText(), LINE_TO_CHECK.formatted(WARNING));
         assertEquals(Statuses.WARNING, markedContent.get(2).getState());
     }
 
@@ -296,8 +296,8 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         status.setStatus(Statuses.SUCCESS);
         response.setProcessStatus(status);
         processStatusRepository.get().parseReturnCodeAndUpdateStatus(response);
-        Assert.assertNotNull("Status null", response.getProcessStatus());
-        Assert.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
+        Assertions.assertNotNull(response.getProcessStatus(), "Status null");
+        Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
     }
 
     @Test
@@ -460,8 +460,8 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         processStatusRepository.get().parseLogStatus(executionResponse);
         //check result
         Exception err = executionResponse.getError();
-        Assert.assertNotNull("Error field shouldn't be null!", err);
-        Assert.assertEquals("Error message not equal to expected", expectedErr, err.getMessage());
+        Assertions.assertNotNull(err, "Error field shouldn't be null!");
+        Assertions.assertEquals(expectedErr, err.getMessage(), "Error message not equal to expected");
     }
 
     @Test
@@ -471,34 +471,34 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         ps.setStatus(Statuses.SUCCESS);
         response.setProcessStatus(ps);
         processStatusRepository.get().parseReturnCodeAndUpdateStatus(response);
-        Assert.assertNotNull("Status null", response.getProcessStatus());
-        Assert.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
+        Assertions.assertNotNull(response.getProcessStatus(), "Status null");
+        Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
     }
 
     @Test
     public void actualReturnCodeNotEqualToExpected() {
         ExecutionResponse response = generateResponseWithCode(true, "200", Collections.singletonList("40*"));
         processStatusRepository.get().parseReturnCodeAndUpdateStatus(response);
-        Assert.assertNotNull("Status null", response.getProcessStatus());
-        Assert.assertEquals(Statuses.FAIL, response.getProcessStatus().getStatus());
+        Assertions.assertNotNull(response.getProcessStatus(), "Status null");
+        Assertions.assertEquals(Statuses.FAIL, response.getProcessStatus().getStatus());
     }
 
     @Test
     public void actualReturnCodeIsNotEqual_regexCheck() {
         ExecutionResponse response = generateResponseWithCode(true, "2000", Collections.singletonList("20*"));
         processStatusRepository.get().parseReturnCodeAndUpdateStatus(response);
-        Assert.assertNotNull("Status null", response.getProcessStatus());
-        Assert.assertEquals("2000 should not match 20* regex (* is like \\\\d)", Statuses.FAIL,
-                response.getProcessStatus().getStatus());
+        Assertions.assertNotNull(response.getProcessStatus(), "Status null");
+        Assertions.assertEquals(Statuses.FAIL, response.getProcessStatus().getStatus(),
+                "2000 should not match 20* regex (* is like \\\\d)");
     }
 
     @Test
     public void actualReturnCodeIsNotEqual_regexCheckSymbol() {
         ExecutionResponse response = generateResponseWithCode(true, "200a", Collections.singletonList("20*"));
         processStatusRepository.get().parseReturnCodeAndUpdateStatus(response);
-        Assert.assertNotNull("Status null", response.getProcessStatus());
-        Assert.assertEquals("20a should not match 20* regex (* is like \\\\d)", Statuses.FAIL,
-                response.getProcessStatus().getStatus());
+        Assertions.assertNotNull(response.getProcessStatus(), "Status null");
+        Assertions.assertEquals(Statuses.FAIL, response.getProcessStatus().getStatus(),
+                "20a should not match 20* regex (* is like \\\\d)");
     }
 
     @Test
@@ -549,7 +549,7 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         } else {
             erroredMarker = null;
             markerRegex = null;
-            Assert.fail("Make sure you set Marker before use this method!");
+            Assertions.fail("Make sure you set Marker before use this method!");
         }
         //expected
         MarkerRegexException expected = new MarkerRegexException(erroredMarker, markerRegex);
@@ -563,9 +563,9 @@ public class ProcessStatusRepositoryTest extends ConfigTestBean {
         //action
         try {
             processStatusRepository.get().parseLogStatus(executionResponse);
-            Assert.fail("MiaException MIA-0260 should be thrown");
+            Assertions.fail("MiaException MIA-0260 should be thrown");
         } catch (MarkerRegexException e) {
-            Assert.assertEquals(e.getMessage(), expected.getMessage());
+            Assertions.assertEquals(e.getMessage(), expected.getMessage());
         }
     }
 

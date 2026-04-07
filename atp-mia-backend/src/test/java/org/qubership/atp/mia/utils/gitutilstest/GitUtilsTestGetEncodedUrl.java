@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 package org.qubership.atp.mia.utils.gitutilstest;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.qubership.atp.mia.SkipTestInJenkins;
@@ -37,20 +37,20 @@ public class GitUtilsTestGetEncodedUrl {
      */
     @Test
     public void getEncodedGitUrl_whenUrl_thenOk() {
-        String expected = String.format(urlTemplate, "user_name%2Fatp-mia-project", x_cube2vcsId);
+        String expected = urlTemplate.formatted("user_name%2Fatp-mia-project", x_cube2vcsId);
         String pathToGit = "https://git.somedomain.com/user_name/atp-mia-project";
         // do
         String actual = getGitEncodedUrl(pathToGit);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void getEncodedGitUrl_whenLongUrl_thenOk() {
-        String expected = String.format(urlTemplate, "Personal%2FCustom_projects%2FPROJ%2Fproject_mia", x_cube2vcsId);
+        String expected = urlTemplate.formatted("Personal%2FCustom_projects%2FPROJ%2Fproject_mia", x_cube2vcsId);
         String pathToGit = "https://git.somedomain.com/Personal/Custom_projects/PROJ/project_mia";
         // do
         String actual = getGitEncodedUrl(pathToGit);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class GitUtilsTestGetEncodedUrl {
         String pathToGit = "";
         // do
         String actual = getGitEncodedUrl(pathToGit);
-        Assert.assertEquals(errMsg, expected, actual);
+        Assertions.assertEquals(expected, actual, errMsg);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class GitUtilsTestGetEncodedUrl {
         String pathToGit = "atp-mia-backend/src/main/config\\project\\323eda51-47b5-414a-951a-27221fa374a2/";
         // do
         String actual = getGitEncodedUrl(pathToGit);
-        Assert.assertEquals(errMsg, expected, actual);
+        Assertions.assertEquals(expected, actual, errMsg);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class GitUtilsTestGetEncodedUrl {
         String pathToGit = "someWord";
         // do
         String actual = getGitEncodedUrl(pathToGit);
-        Assert.assertEquals(errMsg, expected, actual);
+        Assertions.assertEquals(expected, actual, errMsg);
     }
     private String getGitEncodedUrl(String pathToGit) {
         return gitService.getGitEncodedUrl(pathToGit);

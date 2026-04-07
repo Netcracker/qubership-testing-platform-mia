@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 
 package org.qubership.atp.mia.repo.impl;
 
-import static java.lang.String.format;
 import static org.qubership.atp.mia.model.Constants.ERROR_SSH_DOWNLOAD_FAILED;
 
 import java.io.File;
@@ -28,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
-
-import javax.xml.ws.Holder;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +43,7 @@ import org.qubership.atp.mia.service.monitoring.MetricsAggregateService;
 import org.qubership.atp.mia.utils.FileUtils;
 import org.springframework.stereotype.Repository;
 
+import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,7 +60,7 @@ public class ShellRepository {
     private final MetricsAggregateService metricsService;
 
     private static String getRightsMsg(File internalDir) {
-        return format("Local directory %s read rights and %s write rights",
+        return "Local directory %s read rights and %s write rights".formatted(
                 internalDir.canRead() ? "has" : "doesn't have",
                 internalDir.canWrite() ? "has" : "doesn't have");
     }
@@ -124,12 +122,12 @@ public class ShellRepository {
                 if (params.containsKey(k)) {
                     String param = params.get(k);
                     if (param != null && !param.isEmpty() && !param.equals("false")) {
-                        command.add(format(prefixValue, params.get(k)));
+                        command.add(prefixValue.formatted(params.get(k)));
                     }
                 }
             }
         });
-        command.add(format(INTERACTIVE_FORMAT, miaContext.evaluate(commandValue, params), logFileName));
+        command.add(INTERACTIVE_FORMAT.formatted(miaContext.evaluate(commandValue, params), logFileName));
         return command.toString();
     }
 

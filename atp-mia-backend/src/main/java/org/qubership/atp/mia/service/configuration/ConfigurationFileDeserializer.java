@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package org.qubership.atp.mia.service.configuration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,9 +29,6 @@ import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.UUID;
 
-import javax.xml.ws.Holder;
-
-import org.apache.commons.lang.IllegalClassException;
 import org.qubership.atp.mia.exceptions.configuration.DeserializeErrorInFileException;
 import org.qubership.atp.mia.exceptions.configuration.DeserializeJsonConfigFailedException;
 import org.qubership.atp.mia.exceptions.configuration.ErrorInFlowJsonException;
@@ -59,6 +55,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -303,7 +300,7 @@ public class ConfigurationFileDeserializer {
                     if (jsonNode.has("id") && p.getId().equals(UUID.fromString(jsonNode.get("id").asText()))) {
                         return true;
                     } else {
-                        return (fileName != null && fileName.equals(Paths.get(p.getPathToFile()).normalize()))
+                        return (fileName != null && fileName.equals(Path.of(p.getPathToFile()).normalize()))
                                 || (procName != null && procName.equals(p.getName()));
                     }
                 }).findFirst();
@@ -390,7 +387,7 @@ public class ConfigurationFileDeserializer {
             try {
                 headerConfiguration = clazz.newInstance();
             } catch (Exception e) {
-                throw new IllegalClassException("Can't create class " + clazz.getName());
+                throw new IllegalArgumentException("Can't create class " + clazz.getName());
             }
         }
         return headerConfiguration;
@@ -406,7 +403,7 @@ public class ConfigurationFileDeserializer {
                     if (!file.getName().equals("Flow.json") && file.getName().endsWith(".json")) {
                         Path fileName = FileUtils.getPathToFileFromFile(file);
                         if (flowConfig.getProcesses().stream()
-                                .noneMatch(p -> Paths.get(p.getPathToFile()).normalize().equals(fileName))) {
+                                .noneMatch(p -> Path.of(p.getPathToFile()).normalize().equals(fileName))) {
                             try {
                                 ProcessSettings processSettings = MAPPER_NO_ERROR.readValue(file,
                                         ProcessSettings.class);
@@ -449,20 +446,20 @@ public class ConfigurationFileDeserializer {
                               CompoundConfiguration compoundConfiguration) {
         Path filePath;
         if (processJsonNode.has("template")) {
-            filePath = Paths.get(processJsonNode.get("template").asText()).normalize();
+            filePath = Path.of(processJsonNode.get("template").asText()).normalize();
         } else if (processJsonNode.has("process")) {
-            filePath = Paths.get(processJsonNode.get("process").asText()).normalize();
+            filePath = Path.of(processJsonNode.get("process").asText()).normalize();
         } else if (processJsonNode.has("Process")) {
-            filePath = Paths.get(processJsonNode.get("Process").asText()).normalize();
+            filePath = Path.of(processJsonNode.get("Process").asText()).normalize();
         } else if (processJsonNode.has("pathToFile")) {
-            filePath = Paths.get(processJsonNode.get("pathToFile").asText()).normalize();
+            filePath = Path.of(processJsonNode.get("pathToFile").asText()).normalize();
         } else {
-            filePath = Paths.get(processJsonNode.asText()).normalize();
+            filePath = Path.of(processJsonNode.asText()).normalize();
         }
         UUID processId = getProcessId(processJsonNode, filePath, null);
         ProcessConfiguration processConfiguration = flowConfig.getProcesses()
                 .stream()
-                .filter(p -> filePath.equals(Paths.get(p.getPathToFile()).normalize())
+                .filter(p -> filePath.equals(Path.of(p.getPathToFile()).normalize())
                         || (p.getId() != null && p.getId().equals(processId)))
                 .findAny()
                 .orElseGet(() -> {

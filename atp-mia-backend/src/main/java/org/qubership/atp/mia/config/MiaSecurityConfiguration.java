@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,15 +19,17 @@ package org.qubership.atp.mia.config;
 
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.qubership.atp.auth.springbootstarter.config.SecurityConfiguration;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
+@Configuration
 @Order(1)
 @KeycloakConfiguration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @Profile("default")
 public class MiaSecurityConfiguration extends SecurityConfiguration {
 
@@ -35,23 +37,18 @@ public class MiaSecurityConfiguration extends SecurityConfiguration {
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
         http
-                .headers()
-                .frameOptions()
-                .sameOrigin()
-                .and()
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/rest/deployment/liveness", "/rest/deployment/readiness",
-                        "/version", "/v3/api-docs/**", "/swagger-ui/**",
-                        "/webjars/**", "/metrics")
-                .permitAll()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/**")
-                .authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .headers(headers -> headers
+                        .frameOptions(options -> options
+                                .sameOrigin()))
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/rest/deployment/liveness", "/rest/deployment/readiness", "/version", "/v3/api-docs/**", "/swagger-ui/**", "/webjars/**", "/metrics")
+                        .permitAll())
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/**")
+                        .authenticated())
+                .sessionManagement(management -> management
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     }
 }
 

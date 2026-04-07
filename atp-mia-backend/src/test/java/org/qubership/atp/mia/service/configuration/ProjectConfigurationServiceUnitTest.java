@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.exceptions.MiaException;
@@ -54,7 +52,7 @@ public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfigurati
     @Test
     public void getCompoundById_WhenCompoundNotFound() {
         UUID compoundId = UUID.randomUUID();
-        MiaException thrown = Assert.assertThrows(MiaException.class, () ->
+        MiaException thrown = Assertions.assertThrows(MiaException.class, () ->
                 compoundConfigurationService.get().getCompoundById(testProjectConfiguration.get(), compoundId));
         Assertions.assertEquals("MIA-0067: Compound with name/id '"+compoundId+"' not found!", thrown.getMessage());
     }
@@ -62,7 +60,7 @@ public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfigurati
     @Test
     public void addDuplicateCompound() {
         String compoundName = "Compound Name";
-        MiaException thrown = Assert.assertThrows(MiaException.class, () ->
+        MiaException thrown = Assertions.assertThrows(MiaException.class, () ->
                 compoundConfigurationService.get().addCompound(testProjectConfiguration.get(),
                 getCompoundDto(UUID.randomUUID(), UUID.randomUUID(), compoundName,
                         UUID.randomUUID(), "Process1", UUID.randomUUID(), "Process2")));
@@ -86,7 +84,7 @@ public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfigurati
     public void addDuplicateProcess() {
         //TO-DO: projectConfigurationService1 to have processes also similar to compounds. And then test this.
         String processName = "SSH_BG";
-        MiaException thrown = Assert.assertThrows(MiaException.class, () ->
+        MiaException thrown = Assertions.assertThrows(MiaException.class, () ->
                 processConfigurationService.get().addProcess(testProjectConfiguration.get(),
                 getProcessDto(UUID.randomUUID(), UUID.randomUUID(), processName)));
         // Assert that the exception message is as expected
@@ -96,7 +94,7 @@ public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfigurati
     @Test
     public void addProcess_ExpectErrorInRealUpdate() {
         String processName = "Process1";
-        MiaException thrown = Assert.assertThrows(MiaException.class, () ->
+        MiaException thrown = Assertions.assertThrows(MiaException.class, () ->
                 processConfigurationService.get().addProcess(testProjectConfiguration.get(),
                 getProcessDto(UUID.randomUUID(), UUID.randomUUID(), processName)));
         // Assert that the exception message is as expected
@@ -109,7 +107,7 @@ public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfigurati
     @Test
     public void addDuplicateSection() {
         String sectionName = "CM";
-        MiaException thrown = Assert.assertThrows(MiaException.class, () ->
+        MiaException thrown = Assertions.assertThrows(MiaException.class, () ->
                 sectionConfigurationService.get().addSection(testProjectConfiguration.get(),
                 getSectionDto(UUID.randomUUID(), sectionName, 0, null)));
         Assertions.assertEquals("MIA-0071: Section with name '"+sectionName+"' already present", thrown.getMessage());
@@ -137,7 +135,7 @@ public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfigurati
     @Test
     public void getDirectoryByNotExistId_ExpectException() {
         UUID directoryId = UUID.randomUUID();
-        MiaException thrown = Assert.assertThrows(MiaException.class, () ->
+        MiaException thrown = Assertions.assertThrows(MiaException.class, () ->
                 directoryConfigurationService.get().getDirectoryById(testProjectConfiguration.get(), directoryId));
         Assertions.assertEquals("MIA-0069: Directory with name/id '"+directoryId+"' not found!", thrown.getMessage());
     }
@@ -152,7 +150,7 @@ public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfigurati
 
     @Test
     public void addDuplicateDirectory() {
-        MiaException thrown = Assert.assertThrows(MiaException.class, () ->
+        MiaException thrown = Assertions.assertThrows(MiaException.class, () ->
                 directoryConfigurationService.get().addDirectory(testProjectConfiguration.get(),
                 getDirectoryDto(null,
                         projectChildDirectoryName,
@@ -165,12 +163,12 @@ public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfigurati
     // File Test Cases
     @Test
     public void getProjectFile_WhichDoesnotExist() {
-        Path path = Paths.get("src\\main\\config\\project");
+        Path path = Path.of("src\\main\\config\\project");
         miaConfigPath.set(mock(Path.class));
         when(miaConfigPath.get().resolve(anyString())).thenReturn(path);
         UUID fileId = UUID.randomUUID();
         when(projectConfigurationRepository.get().save(any())).thenReturn(testProjectConfiguration.get());
-        MiaException thrown = Assert.assertThrows(MiaException.class, () ->
+        MiaException thrown = Assertions.assertThrows(MiaException.class, () ->
                 fileConfigurationService.get().getProjectFile(testProjectConfiguration.get().getProjectId(), fileId,
                 servletContext.get()));
         Assertions.assertInstanceOf(FIleNotFoundException.class, thrown);

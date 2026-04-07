@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,9 +43,9 @@ public class MacrosRegistrator {
                 .getSubTypesOf(Macros.class)
                 .stream()
                 .map(this::instantiate)
-                .filter(Optional::isPresent) //ignore not registered macroses
-                .map(Optional::get)
-                .collect(Collectors.toList());
+                //ignore not registered macroses
+                .flatMap(Optional::stream)
+                .toList();
         macroses.forEach(MacroRegistryImpl::registerMacros);
         return macroses.stream().collect(Collectors.toMap(m -> (Class<Macros>) m.getClass(), m -> m));
     }

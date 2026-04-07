@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,9 +36,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
-
-import javax.annotation.Nonnull;
-import javax.xml.ws.Holder;
 
 import org.qubership.atp.integration.configuration.annotation.AtpJaegerLog;
 import org.qubership.atp.mia.component.QueryDriverFactory;
@@ -64,6 +60,8 @@ import org.qubership.atp.mia.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.Nonnull;
+import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -87,7 +85,7 @@ public class SqlExecutionHelperService {
         log.info("Initiating CSV export to: {}", targetFile.getAbsolutePath());
         Path safeDir = Optional.ofNullable(targetFile.getParentFile())
                 .map(File::toPath)
-                .orElse(Paths.get("."))
+                .orElse(Path.of("."))
                 .toAbsolutePath()
                 .normalize();
         Path safePath = safeDir.resolve(targetFile.getName()).normalize();
@@ -248,7 +246,7 @@ public class SqlExecutionHelperService {
                             validation.isSaveToWordFile(), validation.isSaveToZipFile()));
                 }
             } else {
-                String warnMessage = String.format("No queries were found in the file %s for validation", value);
+                String warnMessage = "No queries were found in the file %s for validation".formatted(value);
                 addSqlResponseWithError(response, warnMessage, server);
                 log.warn(warnMessage);
             }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import javax.xml.ws.Holder;
-
 import org.qubership.atp.mia.exceptions.testdata.MatrixExcelParseFailException;
 import org.qubership.atp.mia.exceptions.testdata.MatrixQuerySheetMissedDbTypeException;
 import org.qubership.atp.mia.model.configuration.CommonConfiguration;
@@ -63,6 +61,7 @@ import org.springframework.stereotype.Repository;
 
 import com.poiji.bind.Poiji;
 import com.poiji.option.PoijiOptions;
+import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -337,7 +336,7 @@ public class TestDataRepository {
                     .stream().filter(q -> q.getValidateValue()
                             .stream().anyMatch(v -> v.getValidateName().equals(validK)))
                     .findAny();
-            if (!queryOptional.isPresent()) {
+            if (queryOptional.isEmpty()) {
                 descrM.addValidatedParam(validK, "ERROR: QUERY TO EXECUTE NOT FOUND");
                 return;
             }

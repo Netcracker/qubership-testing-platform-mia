@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import static org.qubership.atp.mia.ei.ExportImportTestUtils.compareProjectAndEi
 import static org.qubership.atp.mia.ei.ExportImportTestUtils.readEntity;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -128,7 +127,7 @@ public class ImportTest extends ExportImportBaseTest {
             }});
         }};
         exportScope.set(new ExportScope(scopes));
-        Path importPath = Paths.get("src/test/resources/ei/import/TheSameProject/");
+        Path importPath = Path.of("src/test/resources/ei/import/TheSameProject/");
         ExportImportData data = new ExportImportData(projectId.get(), exportScope.get(), ExportFormat.ATP);
         exportImportData.set(data);
         ArgumentCaptor<ProjectConfiguration> captor = ArgumentCaptor.forClass(ProjectConfiguration.class);
@@ -367,7 +366,7 @@ public class ImportTest extends ExportImportBaseTest {
             }});
         }};
         exportScope.set(new ExportScope(scopes));
-        Path importPath = Paths.get("src/test/resources/ei/import/AnotherProject/");
+        Path importPath = Path.of("src/test/resources/ei/import/AnotherProject/");
         exportImportData.set(new ExportImportData(projectId.get(), exportScope.get(), ExportFormat.ATP, false,
                 true, projectId.get(), new HashMap<>(), null, null, false));
         ValidationResult validationResult = atpMiaImportExecutor.validateData(exportImportData.get(), importPath);
@@ -646,7 +645,7 @@ public class ImportTest extends ExportImportBaseTest {
             }});
         }};
         exportScope.set(new ExportScope(scopes));
-        Path importPath = Paths.get("src/test/resources/ei/import/NewProject/");
+        Path importPath = Path.of("src/test/resources/ei/import/NewProject/");
         exportImportData.set(new ExportImportData(projectId.get(), exportScope.get(), ExportFormat.ATP, false,
                 true, projectId.get(), new HashMap<>(), null, null, false));
         ValidationResult validationResult = atpMiaImportExecutor.validateData(exportImportData.get(), importPath);

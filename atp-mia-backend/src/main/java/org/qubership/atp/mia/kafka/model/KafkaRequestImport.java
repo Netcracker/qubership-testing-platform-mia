@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.qubership.atp.mia.kafka.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -32,6 +33,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class KafkaRequestImport implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3051033397308532692L;
     private String id;
     private String projectId;

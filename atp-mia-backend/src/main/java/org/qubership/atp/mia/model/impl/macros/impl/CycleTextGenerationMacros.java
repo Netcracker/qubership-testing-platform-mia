@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 
 package org.qubership.atp.mia.model.impl.macros.impl;
 
-import static java.lang.String.format;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -28,10 +26,10 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Function;
 
-import javax.xml.ws.Holder;
-
 import org.qubership.atp.mia.model.impl.macros.Macros;
 import org.qubership.atp.mia.model.impl.macros.MacrosType;
+
+import jakarta.xml.ws.Holder;
 
 public class CycleTextGenerationMacros extends Macros<String> {
 
@@ -83,7 +81,7 @@ public class CycleTextGenerationMacros extends Macros<String> {
     private boolean parseAttributes(String[] inputs) {
         for (int inputIdx = 3; inputIdx < inputs.length; inputIdx++) {
             if (inputs[inputIdx].split("->").length < 2) {
-                finalText.add(format("Attribute (%d) of the macros has incorrect format!", inputIdx + 1));
+                finalText.add("Attribute (%d) of the macros has incorrect format!".formatted(inputIdx + 1));
                 addFormatMacros();
                 return false;
             }
@@ -127,7 +125,7 @@ public class CycleTextGenerationMacros extends Macros<String> {
      */
     private boolean checkAttributesLength() {
         if (argNameValues.get(argumentNameCreatesCycle) == null) {
-            finalText.add(format("No attribute values found (%s)!", argumentNameCreatesCycle));
+            finalText.add("No attribute values found (%s)!".formatted(argumentNameCreatesCycle));
             addFormatMacros();
             return false;
         } else {
@@ -135,9 +133,8 @@ public class CycleTextGenerationMacros extends Macros<String> {
             for (Map.Entry<String, LinkedHashMap<Integer, String>> entry : argNameValues.entrySet()) {
                 final int valueSize = entry.getValue().size();
                 if (valueSize != argumentLengthCreatesCycle && valueSize != 1) {
-                    finalText.add(format("Values size (%d) of attribute (%s) is incorrect! Should be %d or 1",
-                            valueSize,
-                            entry.getKey(), argumentLengthCreatesCycle));
+                    finalText.add("Values size (%d) of attribute (%s) is incorrect! Should be %d or 1"
+                            .formatted(valueSize, entry.getKey(), argumentLengthCreatesCycle));
                     addFormatMacros();
                     return false;
                 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,27 +17,26 @@
 
 package org.qubership.atp.mia.model.configuration;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.javers.core.metamodel.annotation.Value;
 import org.qubership.atp.mia.model.impl.executable.PotHeader;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,7 +46,6 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "project_pot_header_configuration")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
@@ -55,12 +53,13 @@ import lombok.ToString;
 @Value
 public class PotHeaderConfiguration implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4051242360768974857L;
     @Id
     @Column(name = "project_id")
     private UUID projectId;
     @Column(name = "headers", columnDefinition = "jsonb")
-    @Type(type = "jsonb")
+    @Type(JsonBinaryType.class)
     @DiffInclude
     private List<PotHeader> headers = new ArrayList<>();
     @OneToOne(targetEntity = ProjectConfiguration.class, cascade = CascadeType.MERGE)

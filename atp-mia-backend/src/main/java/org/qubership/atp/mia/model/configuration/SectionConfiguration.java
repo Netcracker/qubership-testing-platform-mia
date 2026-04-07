@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.qubership.atp.mia.model.configuration;
 
 import static org.qubership.atp.mia.utils.Utils.correctPlaceInList;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,33 +28,31 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.PostRemove;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.qubership.atp.mia.model.DateAuditorEntity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.PostRemove;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -71,6 +70,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class SectionConfiguration extends DateAuditorEntity {
 
+    @Serial
     private static final long serialVersionUID = -640501254431769898L;
 
     @Id
@@ -100,26 +100,24 @@ public class SectionConfiguration extends DateAuditorEntity {
     @DiffInclude
     private SectionConfiguration parentSection;
 
-    @OneToMany(mappedBy = "parentSection", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parentSection", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name = "place", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @EqualsAndHashCode.Exclude
-    @LazyCollection(LazyCollectionOption.FALSE)
     @DiffInclude
     private List<SectionConfiguration> sections;
 
-    @ManyToMany(targetEntity = CompoundConfiguration.class, cascade = CascadeType.MERGE)
+    @ManyToMany(targetEntity = CompoundConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "project_section_compound_configuration",
             joinColumns = @JoinColumn(name = "section_id"),
             inverseJoinColumns = {@JoinColumn(name = "compound_id")})
     @OrderColumn(name = "place")
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
     @DiffInclude
     private List<CompoundConfiguration> compounds = new ArrayList<>();
 
-    @ManyToMany(targetEntity = ProcessConfiguration.class, cascade = CascadeType.MERGE)
+    @ManyToMany(targetEntity = ProcessConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "project_section_process_configuration",
             joinColumns = @JoinColumn(name = "section_id"),
             inverseJoinColumns = {@JoinColumn(name = "process_id")})
@@ -127,7 +125,6 @@ public class SectionConfiguration extends DateAuditorEntity {
     @Fetch(FetchMode.SUBSELECT)
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
     @DiffInclude
     private List<ProcessConfiguration> processes = new ArrayList<>();
 

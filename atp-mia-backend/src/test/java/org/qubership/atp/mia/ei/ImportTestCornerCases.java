@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ import static org.qubership.atp.mia.ei.ExportImportTestUtils.validateFilenameCha
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -463,7 +462,7 @@ public class ImportTestCornerCases extends ExportImportBaseTest {
 
     public Path copyTestDataToWorkingDirectory(TestInfo testInfo) {
         String testFolder = "src/test/resources/ei/import/CornerCases/";
-        Path testPath = Paths.get(testFolder).resolve(testInfo.getTestMethod().get().getName());
+        Path testPath = Path.of(testFolder).resolve(testInfo.getTestMethod().get().getName());
         try {
             FileUtils.copyDirectory(testPath.toFile(), path.get().toFile());
             return testPath;

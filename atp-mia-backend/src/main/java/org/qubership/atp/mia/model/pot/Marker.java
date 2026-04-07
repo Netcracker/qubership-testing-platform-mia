@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@
 
 package org.qubership.atp.mia.model.pot;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.annotation.Nullable;
-
 import org.apache.logging.log4j.util.Strings;
 import org.qubership.atp.mia.exceptions.responseerrors.MarkerRegexException;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 public class Marker implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8129637806434896234L;
     @Nullable
     private List<String> passedMarkerForLog;

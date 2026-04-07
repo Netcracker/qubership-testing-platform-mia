@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@ import static org.qubership.atp.mia.model.Constants.DEFAULT_PROJECT_NAME;
 import java.io.File;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
@@ -47,7 +47,7 @@ public class MiaServiceControllerTest extends BaseIntegrationTestConfiguration {
 
     @BeforeEach
     public void beforeMiaServiceControllerTest() {
-        int randomId = (int) (Math.random() * 1000);
+        int randomId = (int) (ThreadLocalRandom.current().nextDouble() * 1000);
         UUID envId = UUID.randomUUID();
         systemId = UUID.randomUUID();
         System testSystem2 = System.builder()
@@ -87,19 +87,19 @@ public class MiaServiceControllerTest extends BaseIntegrationTestConfiguration {
 
     @Test
     public void dbSize_test() {
-        Assert.assertNotNull(miaServiceController.dbSize(projectId.get()).getBody());
+        Assertions.assertNotNull(miaServiceController.dbSize(projectId.get()).getBody());
     }
 
     @Test
     public void getTimeShifting_Tetst() {
-        Assert.assertFalse(miaServiceController.getTimeShifting(projectId.get(), systemId.toString()).getBody());
+        Assertions.assertFalse(miaServiceController.getTimeShifting(projectId.get(), systemId.toString()).getBody());
     }
 
     @Test
     public void updateTimeShifting_Test() {
         // Incomplete Test.
         // miaContext.getFlowData.getEnvironment is coming as null. Fix it and continue to finish.
-        Assert.assertThrows(NullPointerException.class, () -> {
+        Assertions.assertThrows(NullPointerException.class, () -> {
             miaServiceController.updateTimeShifting(projectId.get(), UUID.randomUUID(), true).getBody();
         });
     }

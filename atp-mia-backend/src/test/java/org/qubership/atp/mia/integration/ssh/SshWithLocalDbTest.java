@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ import static org.qubership.atp.mia.integration.utils.TestUtils.getSshTestParams
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
 import org.qubership.atp.mia.model.impl.ExecutionResponse;
@@ -83,7 +82,7 @@ public class SshWithLocalDbTest extends BaseIntegrationTestConfiguration {
                     return resp.bodyToMono(typeRef);
                 })
                 .block();
-        Assert.assertNotNull(saveResult);
-        Assert.assertEquals(saveResult.size(), 1);
+        Assertions.assertNotNull(saveResult);
+        Assertions.assertEquals(saveResult.size(), 1);
     }
 }

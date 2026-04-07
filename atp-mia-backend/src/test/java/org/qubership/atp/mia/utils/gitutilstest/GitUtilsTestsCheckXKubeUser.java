@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,7 +63,7 @@ public class GitUtilsTestsCheckXKubeUser extends ConfigTestBean {
         String pathToGit = "https://git.somedomain.com/user_name/atp-mia-project";
         // do
         String actual = gitServiceCheckXKubeUserRights(pathToGit, token);
-        Assert.assertEquals("Validation result should be empty (without errors)", expected, actual);
+        Assertions.assertEquals(expected, actual, "Validation result should be empty (without errors)");
     }
 
     @Test
@@ -75,7 +75,7 @@ public class GitUtilsTestsCheckXKubeUser extends ConfigTestBean {
         String pathToGit = "https://git.somedomain.com/Personal/Custom_projects/PROJ/project_mia";
         // do
         String actual = gitServiceCheckXKubeUserRights(pathToGit, token);
-        Assert.assertEquals("Validation result should be empty (without errors)", expected, actual);
+        Assertions.assertEquals(expected, actual, "Validation result should be empty (without errors)");
     }
 
     @Test
@@ -87,7 +87,7 @@ public class GitUtilsTestsCheckXKubeUser extends ConfigTestBean {
         String pathToGit = "atp-mia-backend/src/main/config\\project\\322eda51-47b5-414a-951a-27221fa374aa/";
         // do
         String actual = gitServiceCheckXKubeUserRights(pathToGit, "");
-        Assert.assertEquals("Validation result should be empty (without errors)", expected, actual);
+        Assertions.assertEquals(expected, actual, "Validation result should be empty (without errors)");
     }
 
     @Test
@@ -99,7 +99,7 @@ public class GitUtilsTestsCheckXKubeUser extends ConfigTestBean {
         String pathToGit = "https://git.somedomain.com/user_name/atp-mia-project";
         // do
         String actual = gitServiceCheckXKubeUserRights(pathToGit, "");
-        Assert.assertEquals("Validation result should be empty (without errors)", expected, actual);
+        Assertions.assertEquals(expected, actual, "Validation result should be empty (without errors)");
     }
 
     @Test
@@ -111,7 +111,7 @@ public class GitUtilsTestsCheckXKubeUser extends ConfigTestBean {
         String expected = ErrorCodes.MIA_0115_GIT_VALIDATION_USER_NO_RIGHTS.getMessage(pathToGit);
         // do
         String actual = gitServiceCheckXKubeUserRights(pathToGit, token);
-        Assert.assertEquals("Validation result should have errors", expected, actual);
+        Assertions.assertEquals(expected, actual, "Validation result should have errors");
     }
 
     @Test
@@ -123,7 +123,7 @@ public class GitUtilsTestsCheckXKubeUser extends ConfigTestBean {
         String expected = ErrorCodes.MIA_0116_GIT_VALIDATION_UNEXPECTED_ERROR.getMessage(pathToGit);
         // do
         String actual = gitServiceCheckXKubeUserRights(pathToGit, token);
-        Assert.assertEquals("Validation result should have errors", expected, actual);
+        Assertions.assertEquals(expected, actual, "Validation result should have errors");
     }
 
     @Test
@@ -135,7 +135,7 @@ public class GitUtilsTestsCheckXKubeUser extends ConfigTestBean {
         String expected = ErrorCodes.MIA_0115_GIT_VALIDATION_USER_NO_RIGHTS.getMessage(pathToGit);
         // do
         String actual = gitServiceCheckXKubeUserRights(pathToGit, token);
-        Assert.assertEquals("Validation result should have errors", expected, actual);
+        Assertions.assertEquals(expected, actual, "Validation result should have errors");
     }
 
     private String gitServiceCheckXKubeUserRights(String pathToGit, String token) {

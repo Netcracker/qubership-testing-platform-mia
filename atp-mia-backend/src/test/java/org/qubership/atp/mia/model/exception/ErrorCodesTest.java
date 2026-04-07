@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 package org.qubership.atp.mia.model.exception;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class ErrorCodesTest {
@@ -26,7 +26,7 @@ public class ErrorCodesTest {
     public void smoke_test() {
         String expected = "some random text";
         Exception e = new Exception(expected);
-        Assert.assertTrue("Doesn't contain expected text",
-                ErrorCodes.MIA_8000_UNEXPECTED_ERROR.getMessage(e).contains(expected));
+        Assertions.assertTrue(ErrorCodes.MIA_8000_UNEXPECTED_ERROR.getMessage(e).contains(expected),
+                "Doesn't contain expected text");
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -41,15 +41,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.qubership.atp.mia.exceptions.fileservice.ReadFailIoExceptionDuringOperation;
 import org.qubership.atp.mia.exceptions.itflite.IncorrectProcessNameException;
 import org.qubership.atp.mia.model.Constants;
@@ -62,6 +60,8 @@ import org.slf4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -144,7 +144,7 @@ public class Utils {
         ArrayList<String> paths = new ArrayList<>();
         Pattern pattern = Pattern.compile(regex);
         try {
-            String result = new String(Files.readAllBytes(Paths.get(outputFilePath)), StandardCharsets.UTF_8);
+            String result = new String(Files.readAllBytes(Path.of(outputFilePath)), StandardCharsets.UTF_8);
             Matcher matcher = pattern.matcher(result);
             while (matcher.find()) {
                 final String pathToFileFound = matcher.group();
@@ -191,7 +191,7 @@ public class Utils {
     /**
      * check content-disposition is present in http response header.
      */
-    public static boolean isHeaderNamePresent(HttpResponse httpResponse, String headerName) {
+    public static boolean isHeaderNamePresent(ClassicHttpResponse httpResponse, String headerName) {
         return Arrays.stream(httpResponse.getAllHeaders())
                 .anyMatch(h -> h.getName().equalsIgnoreCase(headerName));
     }
@@ -199,7 +199,7 @@ public class Utils {
     /**
      * Get header value from the response header by passing header name as input.
      */
-    public static String getHeaderValue(HttpResponse httpResponse, String headerName) {
+    public static String getHeaderValue(ClassicHttpResponse httpResponse, String headerName) {
         return Arrays.stream(httpResponse.getAllHeaders())
                 .filter(h -> h.getName().equalsIgnoreCase(headerName))
                 .map(v -> v.getValue()).reduce("", String::concat);

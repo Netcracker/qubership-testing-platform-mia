@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
 
 package org.qubership.atp.mia.model.impl.executable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import javax.annotation.Nullable;
-
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -35,6 +35,7 @@ import lombok.ToString;
 @ToString
 public class TableMarker implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3243885189318738229L;
     @Nullable
     private String tableRowCount;

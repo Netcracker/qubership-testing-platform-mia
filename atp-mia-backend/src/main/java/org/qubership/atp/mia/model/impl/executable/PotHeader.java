@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 
 package org.qubership.atp.mia.model.impl.executable;
 
+import java.io.Serial;
 import java.io.Serializable;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.javers.core.metamodel.annotation.Value;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,6 +34,7 @@ import lombok.NoArgsConstructor;
 @Value
 public class PotHeader implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3009547447129986844L;
     private String name;
     private String type;

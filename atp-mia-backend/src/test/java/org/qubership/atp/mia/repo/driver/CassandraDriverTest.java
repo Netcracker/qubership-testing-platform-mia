@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,20 +18,18 @@
 package org.qubership.atp.mia.repo.driver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.spy;
 import static org.qubership.atp.mia.TestConstants.CASSANDRA_QUERY;
 import static org.qubership.atp.mia.TestConstants.JDBC_URL;
 import static org.qubership.atp.mia.TestConstants.SQL_LOGIN;
 import static org.qubership.atp.mia.TestConstants.SQL_PASSWORD;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.qubership.atp.mia.ConfigTestBean;
 import org.qubership.atp.mia.SkipTestInJenkins;
-import org.qubership.atp.mia.component.QueryDriverFactory;
 import org.qubership.atp.mia.model.environment.Connection;
 import org.qubership.atp.mia.model.environment.Server;
 

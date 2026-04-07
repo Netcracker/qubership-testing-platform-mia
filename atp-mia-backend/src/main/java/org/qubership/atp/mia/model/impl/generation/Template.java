@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 
 import org.qubership.atp.mia.exceptions.testdata.MatrixEthalonReadFailException;
@@ -67,7 +66,7 @@ public class Template {
                 relativeEthalonPath, rawOutputFileName, fileExtension);
         this.miaContext = miaContext;
         this.miaFileService = miaFileService;
-        this.ethalonFilePath = miaContext.getProjectFilePath().resolve(Paths.get(relativeEthalonPath)).normalize();
+        this.ethalonFilePath = miaContext.getProjectFilePath().resolve(Path.of(relativeEthalonPath)).normalize();
         log.debug("Resolved ethalonFilePath: {}", this.ethalonFilePath);
         this.sanitizedFileName = sanitizeFileName(rawOutputFileName);
         log.debug("Sanitized fileName: {}", this.sanitizedFileName);
@@ -84,7 +83,7 @@ public class Template {
      * @return sanitized file name with only the base name
      */
     private static String sanitizeFileName(String input) {
-        return Paths.get(input).getFileName().toString();
+        return Path.of(input).getFileName().toString();
     }
 
     /**

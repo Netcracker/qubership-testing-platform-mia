@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.qubership.atp.mia.model.impl.executable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import javax.annotation.Nonnull;
-
+import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 public class ProcessSettings implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5699515696527707001L;
     private String name;
     private List<Input> inputs;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.qubership.atp.mia.model.configuration;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import org.javers.core.metamodel.annotation.Value;
@@ -33,6 +34,7 @@ import lombok.NoArgsConstructor;
 @Value
 public class Switcher implements Serializable, Cloneable {
 
+    @Serial
     private static final long serialVersionUID = -233711472714816457L;
     private boolean value;
     private String actionType;

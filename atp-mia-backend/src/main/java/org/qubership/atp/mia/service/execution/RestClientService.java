@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -36,21 +36,19 @@ import java.util.regex.Pattern;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.xml.ws.Holder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.CredentialsStore;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.LaxRedirectStrategy;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.qubership.atp.mia.exceptions.internal.ssl.SslAlgorithmNotPresentException;
 import org.qubership.atp.mia.exceptions.internal.ssl.SslInitException;
 import org.qubership.atp.mia.exceptions.rest.RestExceptionDuringExecution;
@@ -68,6 +66,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
+import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -121,19 +120,19 @@ public class RestClientService {
         final String password = server.getProperty("password");
         connectionInfo.put("user", login);
         HttpClientBuilder httpClient = HttpClientBuilder.create()
-                .setDefaultRequestConfig(org.apache.http.client.config.RequestConfig.custom()
-                        .setSocketTimeout((int) TimeUnit.MINUTES.toMillis(executionTimeout))
-                        .setConnectTimeout((int) TimeUnit.MINUTES.toMillis(executionTimeout))
+                .setDefaultRequestConfig(org.apache.hc.client5.http.config.RequestConfig.custom()
+                        .setResponseTimeout((int) TimeUnit.MINUTES.toMillis(executionTimeout), TimeUnit.MILLISECONDS)
+                        .setConnectTimeout((int) TimeUnit.MINUTES.toMillis(executionTimeout), TimeUnit.MILLISECONDS)
                         .build())
                 .setSSLContext(getSslContext())
                 .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE);
         if (Strings.isNullOrEmpty(login) || Strings.isNullOrEmpty(password)) {
             log.info("These fields from REST connection are empty: login, password.");
         } else {
-            CredentialsProvider provider = new BasicCredentialsProvider();
+            CredentialsStore provider = new BasicCredentialsProvider();
             UsernamePasswordCredentials credentials =
-                    new UsernamePasswordCredentials(login, CryptoUtils.decryptValue(password));
-            provider.setCredentials(AuthScope.ANY, credentials);
+                    new UsernamePasswordCredentials(login, CryptoUtils.decryptValue(password).toCharArray());
+            provider.setCredentials(new AuthScope(null, -1), credentials);
             httpClient.setDefaultCredentialsProvider(provider);
         }
         if (disableRedirect) {
@@ -147,7 +146,7 @@ public class RestClientService {
     /**
      * Prepares rest request by rest method (get, post, put, delete).
      */
-    public HttpRequestBase prepareRestRequest(Rest rest, Server server, Map<String, String> connectionInfo) {
+    public HttpUriRequestBase prepareRestRequest(Rest rest, Server server, Map<String, String> connectionInfo) {
         log.info("Preparing REST request");
         Rest.RestMethod method;
         try {
@@ -169,17 +168,17 @@ public class RestClientService {
         }
         connectionInfo.put("endpoint", fullUrl);
         connectionInfo.put("method", method.name());
-        HttpRequestBase request = method.getHttpRequest(fullUrl);
+        HttpUriRequestBase request = method.getHttpRequest(fullUrl);
         if (!Strings.isNullOrEmpty(rest.getHeaders())) {
             String headers = miaContext.evaluate(miaContext.evaluate(rest.getHeaders()));
             setHeaders(request, headers);
             connectionInfo.put("headersRequest", headers);
         }
-        if (!Strings.isNullOrEmpty(rest.getBody()) && request instanceof HttpEntityEnclosingRequestBase) {
+        if (!Strings.isNullOrEmpty(rest.getBody()) && request instanceof HttpUriRequestBase base) {
             String body = miaContext.evaluate(miaContext.evaluate(rest.getBody()));
             connectionInfo.put("bodyRequest", body);
             HttpEntity bodyEntity = new ByteArrayEntity(body.getBytes(getCharsetFromRequest(request)));
-            ((HttpEntityEnclosingRequestBase) request).setEntity(bodyEntity);
+            base.setEntity(bodyEntity);
             log.debug("REST body: {}", bodyEntity);
         }
         log.debug("REST request: {}", request);
@@ -189,14 +188,14 @@ public class RestClientService {
     /**
      * Executes rest request.
      */
-    public HttpResponse executeRestRequest(HttpClient httpClient, HttpRequestBase request) {
-        HttpResponse httpResponse;
+    public ClassicHttpResponse executeRestRequest(HttpClient httpClient, HttpUriRequestBase request) {
+        ClassicHttpResponse httpResponse;
         try {
             log.info("Executing REST request: {}", request);
             httpResponse = httpClient.execute(request);
             log.debug("REST executed with response: {}", httpResponse);
         } catch (SocketTimeoutException ste) {
-            throw new RestExecutionTimeOutException(executionTimeout, "minute(s)", request.getURI().toString());
+            throw new RestExecutionTimeOutException(executionTimeout, "minute(s)", request.getUri().toString());
         } catch (IOException e) {
             throw new RestExceptionDuringExecution(e);
         }
@@ -211,7 +210,7 @@ public class RestClientService {
             responseBody = Utils.getPrettyStringFromXml(responseBody).replaceFirst(">", ">\n");
         }
         try {
-            Files.write(Paths.get(logFile.getPath()), responseBody.getBytes(StandardCharsets.UTF_8));
+            Files.write(Path.of(logFile.getPath()), responseBody.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RestResultWriteToFileException(e);
         }
@@ -221,7 +220,7 @@ public class RestClientService {
     /**
      * Sets http headers on rest request.
      */
-    private void setHeaders(HttpRequestBase request, String headers) {
+    private void setHeaders(HttpUriRequestBase request, String headers) {
         log.info("Setting headers to request: {}, headers: {}", request, headers);
         for (String header : headers.split("\n")) {
             if (header.contains(":")) {
@@ -238,7 +237,7 @@ public class RestClientService {
         }
     }
 
-    private Charset getCharsetFromRequest(HttpRequestBase request) {
+    private Charset getCharsetFromRequest(HttpUriRequestBase request) {
         Holder<Charset> charset = new Holder<>(StandardCharsets.ISO_8859_1);
         Arrays.stream(request.getHeaders("Content-Type")).anyMatch(h -> {
             Matcher matcher = Pattern.compile(".*charset=([\\w\\-]+).*").matcher(h.getValue());

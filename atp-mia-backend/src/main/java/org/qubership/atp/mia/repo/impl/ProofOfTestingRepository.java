@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,8 +34,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import javax.xml.ws.Holder;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
@@ -89,6 +87,7 @@ import org.qubership.atp.mia.service.file.MiaFileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -129,8 +128,8 @@ public class ProofOfTestingRepository {
         UUID sessionId = miaContext.getFlowData().getSessionId();
         log.info("Start save POT for [{}] session", sessionId);
         Path parentPath = miaContext.getLogPath();
-        File potDocxFile = parentPath.resolve(String.format(POT_DOCX, sessionId)).toFile();
-        File potArchiveFile = parentPath.resolve(String.format(POT_ARCHIVE, sessionId)).toFile();
+        File potDocxFile = parentPath.resolve(POT_DOCX.formatted(sessionId)).toFile();
+        File potArchiveFile = parentPath.resolve(POT_ARCHIVE.formatted(sessionId)).toFile();
         Optional<PotSession> session = recordingSessionsService.getSession(sessionId);
         if (session.isPresent()) {
             if (!parentPath.toFile().exists()) {
@@ -232,7 +231,7 @@ public class ProofOfTestingRepository {
         List<Link> resultFiles = new ArrayList<>();
         if (!filePaths.isEmpty()) {
             filePaths.add(targetFile.getAbsolutePath());
-            Path archivePath = targetFile.getParentFile().toPath().resolve(String.format(POT_ARCHIVE, session.getId()));
+            Path archivePath = targetFile.getParentFile().toPath().resolve(POT_ARCHIVE.formatted(session.getId()));
 
             //validatePathTraversal(archivePath, baseDir);
 

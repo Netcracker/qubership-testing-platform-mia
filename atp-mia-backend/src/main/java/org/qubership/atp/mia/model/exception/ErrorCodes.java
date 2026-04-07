@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -79,8 +79,10 @@ public enum ErrorCodes {
             + "Exception: %s", 1),
     MIA_0062_WRONG_VARIABLE_FORMAT("MIA-0062", "Wrong variable format (%s), please make sure"
             + "that you correctly escaped all special characters.", 1),
-    MIA_0065_VALIDATE_CONFIG_FOR_NULL_FILE_PATH_IN_PROCESSES("MIA-0065", "Please check the Flow.json file "
-            + "configuration for correctness. \n\"pathToFile\" might have missed for processes in %s.", 1),
+    MIA_0065_VALIDATE_CONFIG_FOR_NULL_FILE_PATH_IN_PROCESSES("MIA-0065", """
+            Please check the Flow.json file \
+            configuration for correctness.\s
+            "pathToFile" might have missed for processes in %s.""", 1),
     MIA_0066_SECTION_NOT_FOUND("MIA-0066", "Section with name/id '%s' not found!", 1),
     MIA_0067_COMPOUND_NOT_FOUND("MIA-0067", "Compound with name/id '%s' not found!", 1),
     MIA_0068_PROCESS_NOT_FOUND("MIA-0068", "Process with name/id '%s' not found!", 1),
@@ -162,9 +164,11 @@ public enum ErrorCodes {
     MIA_0203_SECTION_ACTION_WRONG_TYPE("MIA-0203", "Unknown section action type: %s", 1),
     MIA_0204_SECTION_ACTION_FAIL("MIA-0204", "Error occurred on [%s], with section [%s] and project [%s]", 1),
 
-    MIA_0215_EDIT_SECTION("MIA-0215", "You have multiple occurrence of the process/compound, "
-            + "don't know which one to update.\n Please check all processes/compounds for "
-            + "a name: %s ; in a section: %s", 1),
+    MIA_0215_EDIT_SECTION("MIA-0215", """
+            You have multiple occurrence of the process/compound, \
+            don't know which one to update.
+             Please check all processes/compounds for \
+            a name: %s ; in a section: %s""", 1),
     MIA_0216_EDIT_SECTION_CONTAIN_NULL("MIA-0216", "Error during retrieving executable, "
             + "probably you didn't use find section executable before method use. Exception: %s", 1),
 
@@ -195,8 +199,9 @@ public enum ErrorCodes {
             + "If you not planning to download files change process type to SSH. Otherwise specify download path "
             + "process settings (pathsForDownload parameter)", 1),
 
-    MIA_1113_SSH_EXECUTION_TIMEOUT("MIA-1113", "Ssh command execution was interrupted by timeout. \n"
-            + "command: [\" %s \"], timeout: [\" %s ms\"]", 1),
+    MIA_1113_SSH_EXECUTION_TIMEOUT("MIA-1113", """
+            Ssh command execution was interrupted by timeout.\s
+            command: [" %s "], timeout: [" %s ms"]""", 1),
 
     MIA_1300_SQL_COMMAND_UNSUPPORTED("MIA-1300", "Unsupported sql command: %s", 1),
     MIA_1301_SQL_UPDATE_QUERY_FAIL("MIA-1301", "SqlException during updateSqlResponse with resultSet."
@@ -307,9 +312,12 @@ public enum ErrorCodes {
             + "Example: ${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}", 1),
     MIA_1905_MACROS_DATE_INCORRECT_FORMAT("MIA-1905", "Could not parse date %s to %s format, "
             + "please check. Exception: %s", 1),
-    MIA_1906_INCORRECT_ENVIRONMENT_VARIABLE_FORMAT("MIA-1906", "Incorrect format of Input Environment Variable %s."
-            + "\nSyntax : ${ENV.SYSTEM_NAME.CONNECTION_NAME.parameter}"
-            + "\n\nExample: ${ENV.Billing System.DB.db_type}", 1),
+    MIA_1906_INCORRECT_ENVIRONMENT_VARIABLE_FORMAT("MIA-1906", """
+            Incorrect format of Input Environment Variable %s.
+            Syntax : ${ENV.SYSTEM_NAME.CONNECTION_NAME.parameter}
+            
+            Example: ${ENV.Billing System.DB.db_type}\
+            """, 1),
     MIA_1907_PATTERN_COMPILE_EXCEPTION("MIA-1907", "Pattern Compile Error. Exception: %s", 1),
 
     MIA_2000_DOS2UNIX_WINDOWS_FAIL("MIA-2000", "Error during dos2unix execution at Windows. Exception: %s.", 1),
@@ -445,7 +453,7 @@ public enum ErrorCodes {
      */
     public String getMessage(Object... params) {
         try {
-            return errorCode + ": " + String.format(errorMessageTemplate, params);
+            return errorCode + ": " + errorMessageTemplate.formatted(params);
         } catch (NullPointerException e) {
             log.error("You passed null value to error template! Add null checking before the method call.", e);
         } catch (MissingFormatArgumentException e) {

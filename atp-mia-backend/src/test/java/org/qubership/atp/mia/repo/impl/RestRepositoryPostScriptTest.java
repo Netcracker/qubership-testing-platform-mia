@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,26 +23,21 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.qubership.atp.mia.ConfigTestBean;
 import org.qubership.atp.mia.SkipTestInJenkins;
 import org.qubership.atp.mia.model.impl.executable.Rest;
 import org.qubership.atp.mia.service.execution.RestClientService;
 import org.qubership.atp.mia.service.execution.SqlExecutionHelperService;
-import org.qubership.atp.mia.utils.Utils;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 @ExtendWith(SkipTestInJenkins.class)
-@PowerMockIgnore(value = {"javax.management.*", "javax.script.*"})
 @SpringBootTest(classes = {RestRepository.class}, properties = {"spring.cloud.vault.enabled=false"})
-@PrepareForTest(Utils.class)
 public class RestRepositoryPostScriptTest extends ConfigTestBean {
 
     private final String DEFAULT_PROCESS_NAME = "process";
@@ -63,7 +58,7 @@ public class RestRepositoryPostScriptTest extends ConfigTestBean {
         // Arrange
         String expected = "";
         Rest rest = new Rest();
-        HttpResponse response = mock(HttpResponse.class);
+        ClassicHttpResponse response = mock(ClassicHttpResponse.class);
         String body = "body";
         // Act
         String result = restRepository.executeScript(rest, response, body, DEFAULT_PROCESS_NAME);
@@ -77,10 +72,10 @@ public class RestRepositoryPostScriptTest extends ConfigTestBean {
         String expectedMessage = "Post script has been successfully executed";
         String expectedKey = "example_field";
         String expectedValue = "some_variable";
-        String script = String.format("collectionVariables.put(\"%s\", \"%s\");", expectedKey, expectedValue);
+        String script = "collectionVariables.put(\"%s\", \"%s\");".formatted(expectedKey, expectedValue);
         Rest rest = new Rest();
         rest.setScript(script);
-        HttpResponse response = mock(HttpResponse.class);
+        ClassicHttpResponse response = mock(ClassicHttpResponse.class);
         String body = "body";
         // Act
         String result = restRepository.executeScript(rest, response, body, DEFAULT_PROCESS_NAME);
@@ -97,7 +92,7 @@ public class RestRepositoryPostScriptTest extends ConfigTestBean {
         String script = "var file = new java.io.File(\"sample.js\").createNewFile();";
         Rest rest = new Rest();
         rest.setScript(script);
-        HttpResponse response = mock(HttpResponse.class);
+        ClassicHttpResponse response = mock(ClassicHttpResponse.class);
         String body = "body";
         // Act
         String result = restRepository.executeScript(rest, response, body, DEFAULT_PROCESS_NAME);
@@ -111,10 +106,10 @@ public class RestRepositoryPostScriptTest extends ConfigTestBean {
         String expectedMessage = "Post script has been successfully executed";
         String expectedKey = "example_field";
         String expectedValue = "some_variable";
-        String script = String.format("collectionVariables.put(\"%s\", \"%s\");", expectedKey, expectedValue);
+        String script = "collectionVariables.put(\"%s\", \"%s\");".formatted(expectedKey, expectedValue);
         Rest rest = new Rest();
         rest.setScript(script);
-        HttpResponse response = mock(HttpResponse.class);
+        ClassicHttpResponse response = mock(ClassicHttpResponse.class);
         String body = "plain text body";
         // Act
         String result = restRepository.executeScript(rest, response, body, DEFAULT_PROCESS_NAME);
@@ -130,10 +125,10 @@ public class RestRepositoryPostScriptTest extends ConfigTestBean {
         String expectedMessage = "Post script has been successfully executed";
         String expectedKey = "test_key";
         String expectedValue = "test_value";
-        String script = String.format("collectionVariables.put(\"%s\", responseBody.get(\"field\"));", expectedKey);
+        String script = "collectionVariables.put(\"%s\", responseBody.get(\"field\"));".formatted(expectedKey);
         Rest rest = new Rest();
         rest.setScript(script);
-        HttpResponse response = mock(HttpResponse.class);
+        ClassicHttpResponse response = mock(ClassicHttpResponse.class);
         String body = "{\"field\": \"test_value\"}";
         // Act
         String result = restRepository.executeScript(rest, response, body, DEFAULT_PROCESS_NAME);
@@ -149,10 +144,10 @@ public class RestRepositoryPostScriptTest extends ConfigTestBean {
         String expectedMessage = "Post script has been successfully executed";
         String expectedKey = "list_size";
         int expectedSize = 3;
-        String script = String.format("collectionVariables.put(\"%s\", responseBody.size());", expectedKey);
+        String script = "collectionVariables.put(\"%s\", responseBody.size());".formatted(expectedKey);
         Rest rest = new Rest();
         rest.setScript(script);
-        HttpResponse response = mock(HttpResponse.class);
+        ClassicHttpResponse response = mock(ClassicHttpResponse.class);
         String body = "[\"one\", \"two\", \"three\"]";
         // Act
         String result = restRepository.executeScript(rest, response, body, DEFAULT_PROCESS_NAME);
@@ -168,7 +163,7 @@ public class RestRepositoryPostScriptTest extends ConfigTestBean {
         String script = "collectionVariables.put(\"test\", responseBody.get(\"field\"));";
         Rest rest = new Rest();
         rest.setScript(script);
-        HttpResponse response = mock(HttpResponse.class);
+        ClassicHttpResponse response = mock(ClassicHttpResponse.class);
         String body = "{field: 'missing_quotes'}"; // Malformed JSON
         // Act
         String result = restRepository.executeScript(rest, response, body, DEFAULT_PROCESS_NAME);
@@ -182,10 +177,10 @@ public class RestRepositoryPostScriptTest extends ConfigTestBean {
         String expectedMessage = "Post script has been successfully executed";
         String expectedKey = "empty_check";
         Set<String> expectedValues = new HashSet<String>(Arrays.asList("undefined", ""));
-        String script = String.format("collectionVariables.put(\"%s\", JSON.stringify(responseBody));", expectedKey);
+        String script = "collectionVariables.put(\"%s\", JSON.stringify(responseBody));".formatted(expectedKey);
         Rest rest = new Rest();
         rest.setScript(script);
-        HttpResponse response = mock(HttpResponse.class);
+        ClassicHttpResponse response = mock(ClassicHttpResponse.class);
         String body = "{}";
         // Act
         String result = restRepository.executeScript(rest, response, body, DEFAULT_PROCESS_NAME);

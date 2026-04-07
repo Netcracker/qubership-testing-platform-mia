@@ -19,7 +19,6 @@ package org.qubership.atp.mia.utils.dos2unix.utils;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.qubership.atp.mia.exceptions.dos2unix.Dos2unixIncorrectFilePathException;
 import org.qubership.atp.mia.exceptions.dos2unix.Dos2unixIncorrectToolPathException;
@@ -37,7 +36,7 @@ public class Dos2UnixUtils {
      * @return {@code RealPath} to dos2unix tool.
      */
     public static Path getDos2UnixPath(String pathToDos2UnixS, String... pathToDos2Unix) {
-        Path path = Paths.get(pathToDos2UnixS, pathToDos2Unix);
+        Path path = Path.of(pathToDos2UnixS, pathToDos2Unix);
         try {
             return path.toRealPath();
         } catch (IOException e) {

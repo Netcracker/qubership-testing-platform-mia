@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.qubership.atp.mia.service.execution;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -349,7 +349,7 @@ public class TestDataService {
             commandResponse.addCommandOutput(new CommandOutput(lastFile, null, false, miaContext));
             generatedFiles.removeLast();
             try {
-                FileUtils.copyFile(Paths.get(lastFile), Paths.get(initialPath));
+                FileUtils.copyFile(Path.of(lastFile), Path.of(initialPath));
             } catch (IOException e) {
                 log.error(e.getMessage());
             }
@@ -411,7 +411,7 @@ public class TestDataService {
     private Scenario findScenarioByName(LinkedList<Scenario> scenarios, String scenarioName, String error) {
         if (scenarios != null) {
             Optional<Scenario> scenario = scenarios.stream().filter(s -> s.getName().equals(scenarioName)).findFirst();
-            if (!scenario.isPresent()) {
+            if (scenario.isEmpty()) {
                 if (Strings.isNullOrEmpty(error)) {
                     return null;
                 } else {

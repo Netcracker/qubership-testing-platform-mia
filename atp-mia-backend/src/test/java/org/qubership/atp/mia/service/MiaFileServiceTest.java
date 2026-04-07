@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.exceptions.MiaException;
 import org.qubership.atp.mia.exceptions.fileservice.ReadFailFileNotFoundException;
@@ -41,22 +40,22 @@ public class MiaFileServiceTest extends BaseUnitTestConfiguration {
 
     @Test
     public void fileDownload() {
-        MiaException thrown = Assert.assertThrows(MiaException.class, () -> {
+        MiaException thrown = Assertions.assertThrows(MiaException.class, () -> {
             miaFileService.get().downloadFile(projectId.get(), ProjectFileType.MIA_FILE_TYPE_LOG, UUID.randomUUID(), "console.log",
                     servletContext.get());
         });
-        Assert.assertTrue(thrown instanceof ReadFailFileNotFoundException);
+        Assertions.assertTrue(thrown instanceof ReadFailFileNotFoundException);
         verify(gridFsService.get(), times(1)).restoreFile(any());
     }
 
     @Test
     public void downloadFileFromUploads() {
-        MiaException thrown = Assert.assertThrows(MiaException.class, () -> {
+        MiaException thrown = Assertions.assertThrows(MiaException.class, () -> {
             miaFileService.get().downloadFile(projectId.get(), ProjectFileType.MIA_FILE_TYPE_UPLOAD, UUID.randomUUID(),
                     "RateMatrix.xls",
                     servletContext.get());
         });
-        Assert.assertTrue(thrown instanceof ReadFailFileNotFoundException);
+        Assertions.assertTrue(thrown instanceof ReadFailFileNotFoundException);
         verify(gridFsService.get(), times(1)).restoreFile(any());
     }
 
@@ -70,10 +69,10 @@ public class MiaFileServiceTest extends BaseUnitTestConfiguration {
                 "text/plain",
                 input
         );
-        Path fileName = Paths.get(multipartFile.getOriginalFilename());
+        Path fileName = Path.of(multipartFile.getOriginalFilename());
         final File dest = miaContext.get().getProjectPathWithType(ProjectFileType.MIA_FILE_TYPE_UPLOAD).resolve(fileName.getFileName()).toFile();
         miaFileService.get().uploadFileOnBe(multipartFile, false);
-        Assert.assertTrue(dest.exists());
+        Assertions.assertTrue(dest.exists());
         verify(gridFsService.get(), times(1)).uploadFile(any(), eq(dest));
     }
 
@@ -87,12 +86,12 @@ public class MiaFileServiceTest extends BaseUnitTestConfiguration {
                 "text/plain",
                 input
         );
-        Path fileName = Paths.get(multipartFile.getOriginalFilename());
+        Path fileName = Path.of(multipartFile.getOriginalFilename());
         final File dest = miaContext.get().getProjectPathWithType(ProjectFileType.MIA_FILE_TYPE_UPLOAD).resolve(fileName.getFileName()).toFile();
-        Assert.assertThrows(Exception.class, () -> {
+        Assertions.assertThrows(Exception.class, () -> {
             testDataService.get().uploadTestDataFileAndValidate(multipartFile);
         });
-        Assert.assertTrue(dest.exists());
+        Assertions.assertTrue(dest.exists());
         verify(gridFsService.get(), times(1)).uploadFile(any(), eq(dest));
     }
 }

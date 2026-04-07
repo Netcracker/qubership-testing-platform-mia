@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -241,7 +241,7 @@ public class CassandraDriver implements QueryDriver<Cluster> {
                 return formatter.format(row.get(columnNo, cr.codecFor(colType).getJavaType()));
             }
             if (type.equals("double")) {
-                return String.valueOf(new Double(row.getDouble(columnNo)).longValue());
+                return String.valueOf(Double.valueOf(row.getDouble(columnNo)).longValue());
             }
         }
         return String.valueOf(row.getObject(columnNo));

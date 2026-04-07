@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 
 package org.qubership.atp.mia.integration.ssh;
 
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.qubership.atp.mia.integration.utils.TestUtils.getSshTestParams;
 import static org.qubership.atp.mia.integration.utils.TestUtils.readFile;
 import static org.qubership.atp.mia.model.Constants.DEFAULT_PROJECT_ID;
@@ -26,8 +26,7 @@ import static org.qubership.atp.mia.model.Constants.DEFAULT_PROJECT_ID;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
 import org.qubership.atp.mia.model.impl.ExecutionResponse;
@@ -99,10 +98,10 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                     })
                     .block();
             // check response
-            Assert.assertNotNull(result);
-            Assert.assertEquals(Statuses.FAIL, result.getProcessStatus().getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(Statuses.FAIL, result.getProcessStatus().getStatus());
             Exception outputException = result.getCommandResponse().getErrors().getFirst();
-            Assert.assertNotNull(outputException);
+            Assertions.assertNotNull(outputException);
             assertTrue(outputException.getMessage().contains(expectedErrMessage));
         });
     }
@@ -126,10 +125,10 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 .bodyToMono(ExecutionResponse.class)
                 .block();
         // check response
-        Assert.assertNotNull(response);
-        Assert.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         CommandOutput commandOutput = response.getCommandResponse().getCommandOutputs().getFirst();
-        Assert.assertNotNull(commandOutput);
+        Assertions.assertNotNull(commandOutput);
         String filename = commandOutput.getLink().getName();
         assertTrue(commandOutput.getLink().getPath().contains(filename));
         assertTrue(commandOutput.getInternalPathToFile().contains(filename));
@@ -137,7 +136,7 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
         //compare execution result and downloaded file
         List<String> content = commandOutput.contentFromFile();
         List<String> file = readFile(commandOutput.getInternalPathToFile());
-        Assert.assertArrayEquals(content.toArray(), file.toArray());
+        Assertions.assertArrayEquals(content.toArray(), file.toArray());
     }
 
     @Test
@@ -157,10 +156,10 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 .bodyToMono(ExecutionResponse.class)
                 .block();
         // check response
-        Assert.assertNotNull(response);
-        Assert.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         CommandOutput commandOutput = response.getCommandResponse().getCommandOutputs().getFirst();
-        Assert.assertNotNull(commandOutput);
+        Assertions.assertNotNull(commandOutput);
         String filename = commandOutput.getLink().getName();
         assertTrue(commandOutput.getLink().getPath().contains(filename));
         assertTrue(commandOutput.getInternalPathToFile().contains(filename));
@@ -184,10 +183,10 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 .bodyToMono(ExecutionResponse.class)
                 .block();
         // check response
-        Assert.assertNotNull(response);
-        Assert.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         CommandOutput commandOutput = response.getCommandResponse().getCommandOutputs().getFirst();
-        Assert.assertNotNull(commandOutput);
+        Assertions.assertNotNull(commandOutput);
         String filename = commandOutput.getLink().getName();
         assertTrue(commandOutput.getLink().getPath().contains(filename));
         assertTrue(commandOutput.getInternalPathToFile().contains(filename));
@@ -218,10 +217,10 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 })
                 .block();
         // check response
-        Assert.assertNotNull(response);
-        Assert.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         CommandOutput commandOutput = response.getCommandResponse().getCommandOutputs().getFirst();
-        Assert.assertNotNull(commandOutput);
+        Assertions.assertNotNull(commandOutput);
         String filename = commandOutput.getLink().getName();
         assertTrue(commandOutput.getLink().getPath().contains(filename));
         assertTrue(commandOutput.getInternalPathToFile().contains(filename));
@@ -248,14 +247,14 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
         //.block();
         // check response
         assertTrue(response.isPresent());
-        Assert.assertEquals(Statuses.SUCCESS, response.get().getProcessStatus().getStatus());
+        Assertions.assertEquals(Statuses.SUCCESS, response.get().getProcessStatus().getStatus());
         CommandOutput commandOutput = response.get().getCommandResponse().getCommandOutputs().getFirst();
-        Assert.assertNotNull(commandOutput);
+        Assertions.assertNotNull(commandOutput);
         String savedFileAtServer = commandOutput.getLink().getName();
         assertTrue(commandOutput.getLink().getPath().contains(savedFileAtServer));
         assertTrue(commandOutput.getInternalPathToFile().contains(savedFileAtServer));
         assertTrue(commandOutput.getExternalPathToFile().contains(savedFileAtServer));
-        Assert.assertEquals(filename, commandOutput.contentFromFile().get(0));
+        Assertions.assertEquals(filename, commandOutput.contentFromFile().get(0));
     }
 
     @Test
@@ -280,12 +279,12 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 .bodyToMono(ExecutionResponse.class)
                 .block();
         // check response
-        Assert.assertNotNull(response);
-        Assert.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
-        Assert.assertNotNull(response.getCommandResponse().getCommandOutputs());
-        Assert.assertEquals(6, response.getCommandResponse().getCommandOutputs().size());
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
+        Assertions.assertNotNull(response.getCommandResponse().getCommandOutputs());
+        Assertions.assertEquals(6, response.getCommandResponse().getCommandOutputs().size());
         CommandOutput commandOutput = response.getCommandResponse().getCommandOutputs().getFirst();
-        Assert.assertNotNull(commandOutput);
+        Assertions.assertNotNull(commandOutput);
         String filename = commandOutput.getLink().getName();
         assertTrue(commandOutput.getLink().getPath().contains(filename));
         assertTrue(commandOutput.getInternalPathToFile().contains(filename));

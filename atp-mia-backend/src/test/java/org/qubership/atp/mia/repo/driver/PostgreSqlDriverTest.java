@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,16 +17,16 @@
 
 package org.qubership.atp.mia.repo.driver;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.qubership.atp.mia.TestConstants.POSTGRESQL_QUERY;
 
 import java.util.Arrays;
 
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -93,7 +93,7 @@ public class PostgreSqlDriverTest extends ConfigTestBean {
         } catch (SqlTimeoutException timeoutException) {
             //check
             Long timestampAfter = System.currentTimeMillis();
-            MatcherAssert.assertThat(timestampAfter - timestampBefore, Matchers.lessThan(8000L)); // slow machine in jenkins
+            assertThat(timestampAfter - timestampBefore, Matchers.lessThan(8000L)); // slow machine in jenkins
             Thread.sleep(7000L);
             assertEquals(cacheSizeBefore, postgreSqlDriver.get().poolSize());
         }

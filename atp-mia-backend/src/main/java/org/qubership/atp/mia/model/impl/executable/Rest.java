@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,28 +17,28 @@
 
 package org.qubership.atp.mia.model.impl.executable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpTrace;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpHead;
+import org.apache.hc.client5.http.classic.methods.HttpOptions;
+import org.apache.hc.client5.http.classic.methods.HttpPatch;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.classic.methods.HttpTrace;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.qubership.atp.mia.exceptions.rest.RestIncorrectEndpointException;
 import org.qubership.atp.mia.exceptions.rest.UnsupportedRestMethodException;
 import org.qubership.atp.mia.model.rest.methods.HttpConnect;
 import org.qubership.atp.mia.model.rest.methods.HttpMkcol;
 import org.qubership.atp.mia.model.rest.methods.HttpPropfind;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -52,6 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Rest implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3948743951276707091L;
     private String restFile;
     private String endpoint;
@@ -95,7 +96,7 @@ public class Rest implements Serializable {
         PROPFIND(HttpPropfind.class),
         MKCOL(HttpMkcol.class);
 
-        private Class<HttpRequestBase> methodClass;
+        private Class<HttpUriRequestBase> methodClass;
 
         RestMethod(Class httpMethodClass) {
             this.methodClass = httpMethodClass;
@@ -104,7 +105,7 @@ public class Rest implements Serializable {
         /**
          * return rest request by rest method.
          */
-        public HttpRequestBase getHttpRequest(String url) {
+        public HttpUriRequestBase getHttpRequest(String url) {
             try {
                 return this.methodClass.getConstructor(String.class).newInstance(url);
             } catch (InvocationTargetException ite) {

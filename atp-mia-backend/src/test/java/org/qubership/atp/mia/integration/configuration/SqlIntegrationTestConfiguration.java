@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import static org.qubership.atp.mia.TestConstants.SYS_DATE_VALUE;
 
 import java.util.List;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.qubership.atp.mia.model.Constants;
 import org.qubership.atp.mia.model.impl.ExecutionResponse;
 import org.qubership.atp.mia.model.impl.FlowData;
@@ -67,15 +67,15 @@ public abstract class SqlIntegrationTestConfiguration extends BaseIntegrationTes
                 })
                 .block();
         System.out.println("ResponseBody: " + result);
-        Assert.assertNotNull("Http response shouldn't be null!", result);
-        Assert.assertEquals("Http response status should be SUCCESS",
-                Statuses.SUCCESS, result.getProcessStatus().getStatus());
+        Assertions.assertNotNull(result, "Http response shouldn't be null!");
+        Assertions.assertEquals(Statuses.SUCCESS,
+                result.getProcessStatus().getStatus(), "Http response status should be SUCCESS");
         return result;
     }
 
     protected void checkColumnNames(List<String> columns) {
-        Assert.assertEquals(2, columns.size());
-        Assert.assertEquals("id", columns.get(0));
-        Assert.assertEquals("name", columns.get(1));
+        Assertions.assertEquals(2, columns.size());
+        Assertions.assertEquals("id", columns.get(0));
+        Assertions.assertEquals("name", columns.get(1));
     }
 }

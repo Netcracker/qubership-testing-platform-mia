@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.servlet.ServletContext;
-
 import org.modelmapper.ModelMapper;
 import org.qubership.atp.mia.controllers.api.dto.MoveProjectFileRequestDto;
 import org.qubership.atp.mia.controllers.api.dto.ProjectFileDto;
@@ -49,6 +47,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.ServletContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -239,7 +238,7 @@ public class FileConfigurationService {
     private ProjectFile checkAndGetFile(ProjectConfiguration projectConfiguration, UUID fileId) {
         Optional<ProjectFile> optionalProjectFile = projectConfiguration.getFiles().stream()
                 .filter(f -> f.getId().equals(fileId)).findFirst();
-        if (!optionalProjectFile.isPresent()) {
+        if (optionalProjectFile.isEmpty()) {
             throw new FIleNotFoundException(fileId);
         }
         return optionalProjectFile.get();

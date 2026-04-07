@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.qubership.atp.mia.model.impl.executable;
 
+import java.io.Serial;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,13 +28,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.qubership.atp.mia.model.pot.Marker;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.Strings;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -42,6 +42,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class Command extends GeneralModel {
 
+    @Serial
     private static final long serialVersionUID = -4849070705138269312L;
     @Nullable
     private String pathForUpload;

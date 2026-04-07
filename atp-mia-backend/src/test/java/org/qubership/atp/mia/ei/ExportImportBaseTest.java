@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,11 +19,10 @@ package org.qubership.atp.mia.ei;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -348,7 +347,7 @@ public class ExportImportBaseTest extends ConfigTestBean {
                 Mockito.mock(NotificationService.class)
         ));
         exportScope.set(new ExportScope());
-        path.set(Paths.get("TestExportImport").resolve(projectId.get().toString()));
+        path.set(Path.of("TestExportImport").resolve(projectId.get().toString()));
         exportImportData.set(new ExportImportData(projectId.get(), exportScope.get(), ExportFormat.ATP));
         importDataAnotherProject.set(new ExportImportData(projectId.get(), exportScope.get(), ExportFormat.ATP, false,
                 true, projectId.get(), new HashMap<>(), null, null, false));

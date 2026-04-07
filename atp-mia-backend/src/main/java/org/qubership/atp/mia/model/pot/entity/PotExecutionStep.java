@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,33 +21,30 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.qubership.atp.mia.model.pot.Link;
 import org.qubership.atp.mia.model.pot.PotSessionException;
 import org.qubership.atp.mia.model.pot.ProcessStatus;
 import org.qubership.atp.mia.model.pot.db.SqlResponse;
 
-import com.vladmihalcea.hibernate.type.json.JsonType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
 @Table(name = "pot_execution_step")
-@TypeDef(name = "json", typeClass = JsonType.class)
 public class PotExecutionStep {
 
     @Id
@@ -67,22 +64,22 @@ public class PotExecutionStep {
     private String executedCommand;
 
     @Column(name = "process_status", columnDefinition = "json")
-    @Type(type = "json")
+    @Type(JsonType.class)
     @EqualsAndHashCode.Exclude
     private ProcessStatus processStatus;
 
     @Column(name = "links", columnDefinition = "json")
-    @Type(type = "json")
+    @Type(JsonType.class)
     @EqualsAndHashCode.Exclude
     private List<Link> links;
 
     @Column(name = "validations", columnDefinition = "json")
-    @Type(type = "json")
+    @Type(JsonType.class)
     @EqualsAndHashCode.Exclude
     private List<SqlResponse> validations;
 
     @Column(name = "errors", columnDefinition = "json")
-    @Type(type = "json")
+    @Type(JsonType.class)
     @EqualsAndHashCode.Exclude
     private List<PotSessionException> errors;
 

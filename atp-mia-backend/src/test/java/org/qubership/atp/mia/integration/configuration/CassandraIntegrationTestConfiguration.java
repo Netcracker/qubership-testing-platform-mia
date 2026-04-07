@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ import static org.qubership.atp.mia.TestConstants.SYS_DATE_VALUE;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 import com.datastax.driver.core.Cluster;
@@ -86,7 +86,7 @@ public abstract class CassandraIntegrationTestConfiguration extends SqlIntegrati
             while (!runCleanCassandraCommand(cluster) && i++ < retryAmount) {
                 Thread.sleep(sleepTime);
                 if (i++ == retryAmount) {
-                    Assert.fail("Retried " + retryAmount + " times and can't start cassandra");
+                    Assertions.fail("Retried " + retryAmount + " times and can't start cassandra");
                 }
             }
         }

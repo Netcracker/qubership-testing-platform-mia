@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,9 +41,9 @@ public class PotSessionException {
      */
     public PotSessionException(Exception e) {
         this.message = e.getMessage();
-        if (e instanceof MiaException) {
-            this.errorCode = ((MiaException) e).getErrorCode();
-            this.httpStatus = ((MiaException) e).getHttpStatus();
+        if (e instanceof MiaException exception) {
+            this.errorCode = exception.getErrorCode();
+            this.httpStatus = exception.getHttpStatus();
         } else {
             this.errorCode = ErrorCodes.MIA_8000_UNEXPECTED_ERROR.toString();
             this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;

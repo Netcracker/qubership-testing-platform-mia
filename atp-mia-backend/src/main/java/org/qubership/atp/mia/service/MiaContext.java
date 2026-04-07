@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -98,16 +97,12 @@ public class MiaContext {
     public static Link getLogLinkOnUi(String path) {
         final String projectFolder = PROJECT_FOLDER.toString();
         final Path pathOnUi = path.contains(projectFolder)
-                ? Paths.get(path.split(projectFolder)[1])
-                : Paths.get(path);
+                ? Path.of(path.split(projectFolder)[1])
+                : Path.of(path);
         final String parent = pathOnUi.getParent() == null ? "" : pathOnUi.getParent().toString();
         final String fileName = pathOnUi.getFileName().toString();
         String encodedFileName = fileName;
-        try {
-            encodedFileName = URLEncoder.encode(fileName, "UTF-8").replace("+", "%20");
-        } catch (UnsupportedEncodingException e) {
-            log.error("Fail to encode {}", fileName);
-        }
+        encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
         return new Link("/rest/downloadFile" + FilenameUtils.separatorsToUnix(parent) + "/" + encodedFileName,
                 fileName);
     }
@@ -327,16 +322,12 @@ public class MiaContext {
      */
     public String prepareMiaURL(String miaPath, String processName) {
         String urlSuffix = "";
-        try {
-            String urlParams = "";
-            String[] sections = miaPath.split("/");
-            for (String section : sections) {
-                urlParams = urlParams + section + ",";
-            }
-            urlSuffix = URLEncoder.encode(urlParams + processName, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            log.error(ErrorCodes.MIA_1812_MIA_URL_ENCODE_FAIL.getMessage(processName));
+        String urlParams = "";
+        String[] sections = miaPath.split("/");
+        for (String section : sections) {
+            urlParams = urlParams + section + ",";
         }
+        urlSuffix = URLEncoder.encode(urlParams + processName, StandardCharsets.UTF_8);
         return catalogueUrl + "/project/" + getProjectId() + "/mia?path=" + urlSuffix;
     }
 
@@ -425,7 +416,7 @@ public class MiaContext {
                     File file = new File(filePath);
                     if (file.exists() && !file.isDirectory()) {
                         zos.putNextEntry(new ZipEntry(file.getName()));
-                        byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+                        byte[] bytes = Files.readAllBytes(Path.of(filePath));
                         zos.write(bytes, 0, bytes.length);
                     } else {
                         final String errMsg = ++i + "_Error_file_is_directory_or_not_present_" + file.getName();
@@ -541,9 +532,12 @@ public class MiaContext {
                     }
                     return evaluateWithMacroses(replaceMacrosWithResultOfMacros(text, marcosType, macrosParams));
                 } catch (IndexOutOfBoundsException e) {
-                    log.error("Out of bound for macros '${{}}'.\n1. Probably you use curly brackets incorrectly please "
-                            + "check { } that it's closes only macros.\n2. Also please check that macros available in"
-                            + " MIA documentation", macrosText);
+                    log.error("""
+                            Out of bound for macros '${{}}'.
+                            1. Probably you use curly brackets incorrectly please \
+                            check { } that it's closes only macros.
+                            2. Also please check that macros available in\
+                             MIA documentation""", macrosText);
                 } catch (Exception e) {
                     log.error("Implementation for macros type '${{}}' isn't found or parse exception", macrosText, e);
                 }

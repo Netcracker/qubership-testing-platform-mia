@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.qubership.atp.mia.model.configuration;
 
 import static org.qubership.atp.mia.utils.Utils.correctPlaceInList;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,16 +29,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.javers.core.metamodel.annotation.DiffInclude;
@@ -48,6 +39,14 @@ import org.qubership.atp.mia.model.exception.MiaException;
 import org.qubership.atp.mia.model.file.ProjectDirectory;
 import org.qubership.atp.mia.model.file.ProjectFile;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -63,6 +62,7 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 public class ProjectConfiguration extends DateAuditorEntity {
 
+    @Serial
     private static final long serialVersionUID = -1488230148100162341L;
     @Id
     @Column(name = "project_id")
@@ -101,33 +101,28 @@ public class ProjectConfiguration extends DateAuditorEntity {
     private PotHeaderConfiguration potHeaderConfiguration;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = SectionConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<SectionConfiguration> sections;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProcessConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<ProcessConfiguration> processes;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = CompoundConfiguration.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<CompoundConfiguration> compounds;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProjectDirectory.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<ProjectDirectory> directories;
 
     @OneToMany(mappedBy = "projectConfiguration", targetEntity = ProjectFile.class,
-            cascade = CascadeType.MERGE, orphanRemoval = true)
+            cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<ProjectFile> files;
 
     /**

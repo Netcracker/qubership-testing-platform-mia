@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,14 +20,13 @@ package org.qubership.atp.mia.model.pot.db;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import org.qubership.atp.mia.model.environment.Server;
 import org.qubership.atp.mia.model.pot.Link;
 import org.qubership.atp.mia.model.pot.db.table.DbTable;
 import org.qubership.atp.mia.model.pot.db.table.TableMarkerResult;
 import org.qubership.atp.mia.service.MiaContext;
 
+import jakarta.annotation.Nullable;
 import lombok.Data;
 
 @Data

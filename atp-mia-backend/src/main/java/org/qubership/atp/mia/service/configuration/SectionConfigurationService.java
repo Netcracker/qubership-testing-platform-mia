@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,8 +32,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.xml.ws.Holder;
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.qubership.atp.mia.controllers.api.dto.CompoundDto;
@@ -53,6 +51,7 @@ import org.qubership.atp.mia.repo.configuration.SectionConfigurationRepository;
 import org.qubership.atp.mia.service.history.impl.AbstractEntityHistoryService;
 import org.springframework.stereotype.Service;
 
+import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -142,7 +141,7 @@ public class SectionConfigurationService extends AbstractEntityHistoryService<Se
         log.info("Attempting to delete section with ID '{}'", sectionId);
         Optional<SectionConfiguration> optionalSectionConfiguration =
                 projectConfiguration.getAllSections().stream().filter(s -> s.getId().equals(sectionId)).findAny();
-        if (!optionalSectionConfiguration.isPresent()) {
+        if (optionalSectionConfiguration.isEmpty()) {
             throw new SectionNotFoundException(sectionId);
         }
         try {
@@ -229,7 +228,7 @@ public class SectionConfigurationService extends AbstractEntityHistoryService<Se
                             && s.getName().equalsIgnoreCase(sectionName);
                 }
             }).findAny();
-            if (!sectionConfig.isPresent()) {
+            if (sectionConfig.isEmpty()) {
                 throw new SectionNotFoundException(sectionName);
             } else {
                 section = sectionConfig.get();

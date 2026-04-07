@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.qubership.atp.mia.ei.component;
 
 import java.io.Serializable;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +98,7 @@ public abstract class ImportLoader<E extends ExportImportEntities,
     protected List<F> loadConfiguration(ExportImportData importData, Path path) {
         log.info("Extract {} during import", getEntityType());
         List<F> extractedFolderEntities = new ArrayList<>();
-        Path entityPath = Paths.get(path.toString());
+        Path entityPath = Path.of(path.toString());
         Map<UUID, Path> entityFiles = objectLoaderFromDiskService.getListOfObjects(entityPath, getClazz());
         Map<UUID, UUID> replacementMap = importData.getReplacementMap();
         log.debug("Extracted {} list with paths: {}", getEntityType(), entityFiles);

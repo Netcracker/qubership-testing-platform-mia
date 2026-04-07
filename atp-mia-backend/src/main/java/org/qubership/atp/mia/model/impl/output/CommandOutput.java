@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.qubership.atp.mia.exceptions.fileservice.ReadFailFileNotFoundException;
 import org.qubership.atp.mia.exceptions.fileservice.ReadFailIoExceptionDuringOperation;
@@ -36,6 +34,7 @@ import org.qubership.atp.mia.model.pot.Statuses;
 import org.qubership.atp.mia.service.MiaContext;
 import org.springframework.lang.NonNull;
 
+import jakarta.annotation.Nonnull;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

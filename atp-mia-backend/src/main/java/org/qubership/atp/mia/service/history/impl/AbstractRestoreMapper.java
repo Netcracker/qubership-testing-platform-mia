@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 
 package org.qubership.atp.mia.service.history.impl;
 
-import javax.annotation.PostConstruct;
-
 import org.modelmapper.ModelMapper;
+
+import jakarta.annotation.PostConstruct;
 
 abstract class AbstractRestoreMapper<S> extends AbstractMapper<S, S> {
 
