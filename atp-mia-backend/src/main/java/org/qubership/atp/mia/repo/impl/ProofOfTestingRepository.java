@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
@@ -210,7 +209,7 @@ public class ProofOfTestingRepository {
                     bookmarkId++;
                 }
                 if (document.getParagraphs().size() > 3) {
-                    while (document.getParagraphs().get(0).getText().startsWith("Heading")) {
+                    while (document.getParagraphs().getFirst().getText().startsWith("Heading")) {
                         document.removeBodyElement(0);
                     }
                 }
@@ -402,7 +401,7 @@ public class ProofOfTestingRepository {
     private XWPFRun createRunForEmptyHeaderCell(XWPFTableCell cell) {
         cell.setColor("ffffff");
         cell.getCTTc().getTcPr().addNewTcW().setW(BigInteger.valueOf(5000));
-        return getXwpfRunFromParagraph(cell.getParagraphs().get(0), 11);
+        return getXwpfRunFromParagraph(cell.getParagraphs().getFirst(), 11);
     }
 
     private LineIterator getLineIterator(File outputFile) {
@@ -422,19 +421,19 @@ public class ProofOfTestingRepository {
     }
 
     private XWPFRun getRunForCell(XWPFTableCell cell) {
-        return getXwpfRunFromParagraph(cell.getParagraphs().get(0), 6);
+        return getXwpfRunFromParagraph(cell.getParagraphs().getFirst(), 6);
     }
 
     private XWPFRun getRunForColumnNameCell(XWPFTableCell cell) {
         cell.setColor("E3FCDF");
         cell.getCTTc().getTcPr().addNewTcW().setW(BigInteger.valueOf(1500));
-        return getXwpfRunFromParagraph(cell.getParagraphs().get(0), 6);
+        return getXwpfRunFromParagraph(cell.getParagraphs().getFirst(), 6);
     }
 
     private XWPFRun getRunForFirstHeaderCell(XWPFTableCell cell) {
         cell.setColor("E3FCDF");
         cell.getCTTc().getTcPr().addNewTcW().setW(BigInteger.valueOf(2000));
-        final XWPFRun run = getXwpfRunFromParagraph(cell.getParagraphs().get(0), 11);
+        final XWPFRun run = getXwpfRunFromParagraph(cell.getParagraphs().getFirst(), 11);
         run.setBold(true);
         return run;
     }
@@ -594,7 +593,7 @@ public class ProofOfTestingRepository {
                                 new Command("POT_header", "SSH", header.getSystem(),
                                         listToSet(header.getValue())));
                         if (!commandResponse.getCommandOutputs().isEmpty()) {
-                            value = String.join("\n", commandResponse.getCommandOutputs().get(0).contentFromFile());
+                            value = String.join("\n", commandResponse.getCommandOutputs().getFirst().contentFromFile());
                         } else {
                             value = "No output file for SSH command execution '" + header.getValue() + "'";
                         }
@@ -632,11 +631,11 @@ public class ProofOfTestingRepository {
         if (potHeaderConfiguration.getHeaders().isEmpty()
                 || potHeaderConfiguration.getHeaders().stream().noneMatch(header ->
                 header.getName().equalsIgnoreCase("Environment"))) {
-            potHeaderConfiguration.getHeaders().add(0, new PotHeader(
+            potHeaderConfiguration.getHeaders().addFirst(new PotHeader(
                     "Environment", PotHeaderType.INPUT.toString(), null,
                     session.getPotExecutionSteps().stream()
                             .map(PotExecutionStep::getEnvironmentName)
-                            .collect(Collectors.toList()).toString()));
+                            .toList().toString()));
         }
         XWPFTable table = document.createTable();
         XWPFTableRow row = setTableStyleAndCreateRow(table);

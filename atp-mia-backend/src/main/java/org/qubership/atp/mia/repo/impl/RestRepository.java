@@ -80,7 +80,7 @@ public class RestRepository {
 
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
-    private static final TypeReference<DbTable> TYPE_REF_DB_TABLE = new TypeReference<DbTable>() {
+    private static final TypeReference<DbTable> TYPE_REF_DB_TABLE = new TypeReference<>() {
     };
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final MiaContext miaContext;

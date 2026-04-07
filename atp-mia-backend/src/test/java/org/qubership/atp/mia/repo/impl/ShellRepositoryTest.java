@@ -36,7 +36,7 @@ import static org.qubership.atp.mia.utils.Utils.listToSet;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -121,8 +121,8 @@ public class ShellRepositoryTest extends ConfigTestBean {
                 eq(workingDir))).thenReturn(file);
 /*        doReturn(file).when(sshConnectionManager.get()).getFileFromServer(anyString(),
                 eq(workingDir));*/
-        Assertions.assertEquals(Files.readAllLines(Path.of(file.getPath()), Charset.forName("UTF-8")),
-                repository.get().executeAndGetLog(command).getCommandOutputs().get(0).contentFromFile());
+        Assertions.assertEquals(Files.readAllLines(Path.of(file.getPath()), StandardCharsets.UTF_8),
+                repository.get().executeAndGetLog(command).getCommandOutputs().getFirst().contentFromFile());
         flowData.removeParameter(FULL_TRACE_MODE.toString());
         flowData.removeParameter(GENEVA_DATE.toString());
         flowData.removeParameter(ACCOUNT_NUMBER.toString());

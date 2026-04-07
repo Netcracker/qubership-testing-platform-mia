@@ -54,7 +54,7 @@ public class PotSession {
 
     @Column(name = "created_at")
     @EqualsAndHashCode.Exclude
-    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+    private final Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
     @Column(name = "created_by")
     @EqualsAndHashCode.Exclude

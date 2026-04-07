@@ -176,7 +176,7 @@ public class RestRepositoryPostScriptTest extends ConfigTestBean {
         // Arrange
         String expectedMessage = "Post script has been successfully executed";
         String expectedKey = "empty_check";
-        Set<String> expectedValues = new HashSet<String>(Arrays.asList("undefined", ""));
+        Set<String> expectedValues = new HashSet<>(Arrays.asList("undefined", ""));
         String script = "collectionVariables.put(\"%s\", JSON.stringify(responseBody));".formatted(expectedKey);
         Rest rest = new Rest();
         rest.setScript(script);

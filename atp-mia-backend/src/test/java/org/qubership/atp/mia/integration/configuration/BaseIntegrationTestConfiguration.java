@@ -141,7 +141,7 @@ public abstract class BaseIntegrationTestConfiguration extends ConfigTestBean {
         postgresJdbcUrl = integrationPostgresEnvironment.getJdbcUrl();
         initDbParameters = testConnectionDb.get().getParameters();
         testConnectionDb.get().setParameters(
-                new HashMap<String, String>() {{
+                new HashMap<>() {{
                     put(JDBC_URL, postgresJdbcUrl);
                     put(SQL_LOGIN, SQL_LOGIN_VALUE);
                     put(SQL_PASSWORD, SQL_PASSWORD_VALUE);

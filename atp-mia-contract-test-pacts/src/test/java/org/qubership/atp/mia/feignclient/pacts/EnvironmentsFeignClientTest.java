@@ -18,6 +18,7 @@ package org.qubership.atp.mia.feignclient.pacts;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.junit.Rule;
@@ -74,8 +75,9 @@ public class EnvironmentsFeignClientTest {
         ResponseEntity<EnvironmentFullVer1ViewDto> result_EnvironmentFull =
                 environmentsFeignClient.getEnvironment(environmentId, true);
 
-        Assertions.assertEquals(result_EnvironmentFull.getStatusCode().value(), 200);
-        Assertions.assertTrue(result_EnvironmentFull.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertEquals(200, result_EnvironmentFull.getStatusCode().value());
+        Assertions.assertTrue(Objects.requireNonNull(result_EnvironmentFull.getHeaders().get("Content-Type"))
+                .contains("application/json"));
 
     }
 

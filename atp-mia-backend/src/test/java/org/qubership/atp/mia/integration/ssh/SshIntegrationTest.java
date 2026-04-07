@@ -17,6 +17,7 @@
 
 package org.qubership.atp.mia.integration.ssh;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.qubership.atp.mia.integration.utils.TestUtils.getSshTestParams;
@@ -24,6 +25,7 @@ import static org.qubership.atp.mia.integration.utils.TestUtils.readFile;
 import static org.qubership.atp.mia.model.Constants.DEFAULT_PROJECT_ID;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -67,7 +69,7 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 })
                 .block();
         // check exception response
-        assertTrue(result instanceof Exception);
+        assertInstanceOf(Exception.class, result);
         assertTrue(((Exception) result).getMessage().contains(expectedErrMessage));
     }
 
@@ -90,7 +92,7 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                     .exchange()
                     .flatMap(resp -> {
                         if (resp.statusCode().isError()) {
-                            String err = "Error during webClient request execution: code[" + resp.rawStatusCode() + "]";
+                            String err = "Error during webClient request execution: code[" + resp.statusCode().value() + "]";
                             log.error(err);
                             return Mono.error(new Exception(err));
                         }
@@ -99,6 +101,7 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                     .block();
             // check response
             Assertions.assertNotNull(result);
+            Assertions.assertNotNull(result.getProcessStatus());
             Assertions.assertEquals(Statuses.FAIL, result.getProcessStatus().getStatus());
             Exception outputException = result.getCommandResponse().getErrors().getFirst();
             Assertions.assertNotNull(outputException);
@@ -126,6 +129,7 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 .block();
         // check response
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         CommandOutput commandOutput = response.getCommandResponse().getCommandOutputs().getFirst();
         Assertions.assertNotNull(commandOutput);
@@ -157,6 +161,7 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 .block();
         // check response
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         CommandOutput commandOutput = response.getCommandResponse().getCommandOutputs().getFirst();
         Assertions.assertNotNull(commandOutput);
@@ -184,6 +189,7 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 .block();
         // check response
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         CommandOutput commandOutput = response.getCommandResponse().getCommandOutputs().getFirst();
         Assertions.assertNotNull(commandOutput);
@@ -209,7 +215,7 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 .exchange()
                 .flatMap(resp -> {
                     if (resp.statusCode().isError()) {
-                        String err = "Error during webClient SSH request execution code [" + resp.rawStatusCode() + "]";
+                        String err = "Error during webClient SSH request execution code [" + resp.statusCode().value() + "]";
                         log.error(err);
                         return Mono.error(new Exception(err));
                     }
@@ -218,6 +224,7 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 .block();
         // check response
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         CommandOutput commandOutput = response.getCommandResponse().getCommandOutputs().getFirst();
         Assertions.assertNotNull(commandOutput);
@@ -247,14 +254,14 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
         //.block();
         // check response
         assertTrue(response.isPresent());
-        Assertions.assertEquals(Statuses.SUCCESS, response.get().getProcessStatus().getStatus());
+        Assertions.assertEquals(Statuses.SUCCESS, Objects.requireNonNull(response.get().getProcessStatus()).getStatus());
         CommandOutput commandOutput = response.get().getCommandResponse().getCommandOutputs().getFirst();
         Assertions.assertNotNull(commandOutput);
         String savedFileAtServer = commandOutput.getLink().getName();
         assertTrue(commandOutput.getLink().getPath().contains(savedFileAtServer));
         assertTrue(commandOutput.getInternalPathToFile().contains(savedFileAtServer));
         assertTrue(commandOutput.getExternalPathToFile().contains(savedFileAtServer));
-        Assertions.assertEquals(filename, commandOutput.contentFromFile().get(0));
+        Assertions.assertEquals(filename, commandOutput.contentFromFile().getFirst());
     }
 
     @Test
@@ -280,6 +287,7 @@ public class SshIntegrationTest extends BaseIntegrationTestConfiguration {
                 .block();
         // check response
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         Assertions.assertNotNull(response.getCommandResponse().getCommandOutputs());
         Assertions.assertEquals(6, response.getCommandResponse().getCommandOutputs().size());

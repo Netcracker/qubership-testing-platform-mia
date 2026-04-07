@@ -157,7 +157,7 @@ public class MiaConfiguration {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         Converter<SectionConfiguration, UUID> sectionConfigurationUuidConverter =
-                new AbstractConverter<SectionConfiguration, UUID>() {
+                new AbstractConverter<>() {
                     protected UUID convert(SectionConfiguration source) {
                         if (source != null) {
                             return source.getId();
@@ -166,7 +166,7 @@ public class MiaConfiguration {
                     }
                 };
         Converter<ProcessConfiguration, UUID> processConfigurationUuidConverter =
-                new AbstractConverter<ProcessConfiguration, UUID>() {
+                new AbstractConverter<>() {
                     protected UUID convert(ProcessConfiguration source) {
                         if (source != null) {
                             return source.getId();
@@ -175,7 +175,7 @@ public class MiaConfiguration {
                     }
                 };
         Converter<CompoundConfiguration, UUID> compoundConfigurationUuidConverter =
-                new AbstractConverter<CompoundConfiguration, UUID>() {
+                new AbstractConverter<>() {
                     protected UUID convert(CompoundConfiguration source) {
                         if (source != null) {
                             return source.getId();
@@ -184,7 +184,7 @@ public class MiaConfiguration {
                     }
                 };
         Converter<ProjectDirectory, UUID> projectDirectoryUuidConverter =
-                new AbstractConverter<ProjectDirectory, UUID>() {
+                new AbstractConverter<>() {
                     protected UUID convert(ProjectDirectory source) {
                         if (source != null) {
                             return source.getId();

@@ -196,8 +196,8 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
-        Assertions.assertFalse(result.getCommandOutputs().get(0).isDisplayed());
-        Assertions.assertEquals(file.getPath(), result.getCommandOutputs().get(0).getInternalPathToFile());
+        Assertions.assertFalse(result.getCommandOutputs().getFirst().isDisplayed());
+        Assertions.assertEquals(file.getPath(), result.getCommandOutputs().getFirst().getInternalPathToFile());
     }
 
     @Test
@@ -241,7 +241,7 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
-        Assertions.assertFalse(result.getCommandOutputs().get(0).isDisplayed());
+        Assertions.assertFalse(result.getCommandOutputs().getFirst().isDisplayed());
     }
 
     @Test
@@ -257,8 +257,8 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
-        Assertions.assertTrue(result.getCommandOutputs().get(0).isDisplayed());
-        Assertions.assertTrue(result.getCommandOutputs().get(0).getLink().getName().endsWith(".json"),
+        Assertions.assertTrue(result.getCommandOutputs().getFirst().isDisplayed());
+        Assertions.assertTrue(result.getCommandOutputs().getFirst().getLink().getName().endsWith(".json"),
                 "File should have Json extension");
     }
 
@@ -338,6 +338,6 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         Assertions.assertNotNull(result.getErrors());
         Assertions.assertFalse(result.getErrors().isEmpty());
         final String errMsg = "Text '%s' defined but not found".formatted(rest.get().getRestLoopParameters().getTextToCheck());
-        Assertions.assertEquals(errMsg, result.getErrors().get(0).getMessage());
+        Assertions.assertEquals(errMsg, result.getErrors().getFirst().getMessage());
     }
 }

@@ -77,7 +77,7 @@ public class ImportTest extends ExportImportBaseTest {
         MiaException thrown = assertThrows(
                 MiaException.class,
                 () -> {
-                    Map<String, Set<String>> scopes = new HashMap<String, Set<String>>() {{
+                    Map<String, Set<String>> scopes = new HashMap<>() {{
                         put(ExportImportEntities.MIA_SECTION.name(), new HashSet<>());
                     }};
                     exportScope.set(new ExportScope(scopes));
@@ -96,7 +96,7 @@ public class ImportTest extends ExportImportBaseTest {
 
     @Test
     public void import_TheSameProject() {
-        Map<String, Set<String>> scopes = new HashMap<String, Set<String>>() {{
+        Map<String, Set<String>> scopes = new HashMap<>() {{
             put(ExportImportEntities.MIA_SECTION.name(), new HashSet() {{
                 add(new UUID(1, 1));
                 add(new UUID(1, 2));
@@ -141,7 +141,7 @@ public class ImportTest extends ExportImportBaseTest {
         SectionConfiguration sectionToCheck = config.getSections().stream().filter(s -> s.getName().equals("Section1")).findAny().get();
         assertNull(sectionToCheck.getParentSection());
         assertEquals(1, sectionToCheck.getCompounds().size());
-        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().get(0).getId());
+        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().getFirst().getId());
         assertEquals(2, sectionToCheck.getProcesses().size());
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getId().equals(new UUID(3, 1))));
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getId().equals(new UUID(3, 2))));
@@ -335,7 +335,7 @@ public class ImportTest extends ExportImportBaseTest {
 
     @Test
     public void import_AnotherProject() {
-        Map<String, Set<String>> scopes = new HashMap<String, Set<String>>() {{
+        Map<String, Set<String>> scopes = new HashMap<>() {{
             put(ExportImportEntities.MIA_SECTION.name(), new HashSet() {{
                 add(new UUID(1, 1));
                 add(new UUID(1, 2));
@@ -384,7 +384,7 @@ public class ImportTest extends ExportImportBaseTest {
         SectionConfiguration sectionToCheck = config.getSections().stream().filter(s -> s.getName().equals("Section1")).findAny().get();
         assertNull(sectionToCheck.getParentSection());
         assertEquals(1, sectionToCheck.getCompounds().size());
-        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().get(0).getId());
+        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().getFirst().getId());
         assertEquals(2, sectionToCheck.getProcesses().size());
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getId().equals(new UUID(3, 1))));
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getId().equals(new UUID(3, 2))));
@@ -596,9 +596,9 @@ public class ImportTest extends ExportImportBaseTest {
                         ))
                         .build())
                 .commonConfiguration(CommonConfiguration.builder()
-                        .commandShellPrefixes(Arrays.asList(CommandPrefix.builder()
+                        .commandShellPrefixes(Collections.singletonList(CommandPrefix.builder()
                                 .system(testSystem.get().getName())
-                                .prefixes(new LinkedHashMap<String, String>() {{
+                                .prefixes(new LinkedHashMap<>() {{
                                     put("accountNumber", "echo \"Something with accountNumber %s\"");
                                     put("genevaDate", "echo \"Something with genevaDate %s\"");
                                     put("infinys_root", "cd %s\nsource infinys.env");
@@ -613,7 +613,7 @@ public class ImportTest extends ExportImportBaseTest {
                 .thenReturn(testProjectConfiguration.get());
         when(projectConfigurationService.get().getConfiguration(eq(projectId.get())))
                 .thenReturn(testProjectConfiguration.get());
-        Map<String, Set<String>> scopes = new HashMap<String, Set<String>>() {{
+        Map<String, Set<String>> scopes = new HashMap<>() {{
             put(ExportImportEntities.MIA_SECTION.name(), new HashSet() {{
                 add(new UUID(1, 1));
                 add(new UUID(1, 2));
@@ -662,7 +662,7 @@ public class ImportTest extends ExportImportBaseTest {
         SectionConfiguration sectionToCheck = config.getSections().stream().filter(s -> s.getName().equals("Section1")).findAny().get();
         assertNull(sectionToCheck.getParentSection());
         assertEquals(1, sectionToCheck.getCompounds().size());
-        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().get(0).getSourceId());
+        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().getFirst().getSourceId());
         assertEquals(2, sectionToCheck.getProcesses().size());
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getSourceId().equals(new UUID(3, 1))));
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getSourceId().equals(new UUID(3, 2))));

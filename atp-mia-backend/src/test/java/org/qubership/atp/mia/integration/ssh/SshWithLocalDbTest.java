@@ -55,7 +55,7 @@ public class SshWithLocalDbTest extends BaseIntegrationTestConfiguration {
                 .exchange()
                 .flatMap(resp -> {
                     if (resp.statusCode().isError()) {
-                        String err = "Error during webClient request execution: code[" + resp.rawStatusCode() + "]";
+                        String err = "Error during webClient request execution: code[" + resp.statusCode().value() + "]";
                         log.error(err);
                         log.error(err);
                         return Mono.error(new Exception(err));
@@ -73,16 +73,16 @@ public class SshWithLocalDbTest extends BaseIntegrationTestConfiguration {
                 .exchange()
                 .flatMap(resp -> {
                     if (resp.statusCode().isError()) {
-                        String err = "Error during webClient request execution: code[" + resp.rawStatusCode() + "]";
+                        String err = "Error during webClient request execution: code[" + resp.statusCode().value() + "]";
                         log.error(err);
                         return Mono.error(new Exception(err));
                     }
-                    ParameterizedTypeReference<List<Link>> typeRef = new ParameterizedTypeReference<List<Link>>() {
+                    ParameterizedTypeReference<List<Link>> typeRef = new ParameterizedTypeReference<>() {
                     };
                     return resp.bodyToMono(typeRef);
                 })
                 .block();
         Assertions.assertNotNull(saveResult);
-        Assertions.assertEquals(saveResult.size(), 1);
+        Assertions.assertEquals(1, saveResult.size());
     }
 }

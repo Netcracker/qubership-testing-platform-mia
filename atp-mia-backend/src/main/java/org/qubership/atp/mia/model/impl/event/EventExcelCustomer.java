@@ -51,9 +51,9 @@ public abstract class EventExcelCustomer {
     @Nonnull
     HashMap<String, Boolean> identifications = new HashMap<>();
     @Nonnull
-    Range<Integer> headerRowRange = Range.between(0, 0);
+    Range<Integer> headerRowRange = Range.of(0, 0);
     @Nonnull
-    Range<Integer> eventInfoRange = Range.between(0, 0);
+    Range<Integer> eventInfoRange = Range.of(0, 0);
     int attrNameRowNumber = 0;
 
     EventExcelCustomer(@Nonnull XSSFSheet sheet, @Nullable String scenario, @Nullable String testCase) {

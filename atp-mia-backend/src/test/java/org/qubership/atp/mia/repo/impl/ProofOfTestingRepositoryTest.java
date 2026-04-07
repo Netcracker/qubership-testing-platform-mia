@@ -293,7 +293,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
     public List<List<SqlResponse>> generateValidation(int amountProcesses, int amountValidationInProcess,
                                                       String query, boolean isRowSuccess, boolean isColumnSuccess) {
         List<String> names = IntStream.range(0, amountProcesses).sequential()
-                .mapToObj(i -> defaultTableName + i + ".csv").collect(Collectors.toList());
+                .mapToObj(i -> defaultTableName + i + ".csv").toList();
         List<List<SqlResponse>> result = new LinkedList<>();
         for (String name : names) {
             List<SqlResponse> validationPerProcess = new LinkedList<>();
@@ -407,7 +407,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
                 generateOutputFileLinks(amount, defaultProcessName, defaultOutputName, 15);
         List<Statuses> statuses = generateStatusesList(amount);
         List<List<SqlResponse>> validations = generateValidation(amount, 15, "SELECT1", true, true);
-        Link sqlLink = validations.get(0).get(0).getLink();
+        Link sqlLink = validations.getFirst().getFirst().getLink();
         Map<String, CommandResponse> command = fillCommandResponse(procNamesToLinks, sqlLink, null);
         List<ExecutionResponse> responses = fillExecutionResponse(command, statuses, null);
         addExecutionSteps(responses);
@@ -534,8 +534,8 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
                     }
                     List<TableMarkerResult.TableMarkerColumnStatus> colStatuses =
                             sqlResponse.getTableMarkerResult().getColumnStatuses();
-                    List<XWPFTableCell> firstRowCells = table.getRows().get(0).getTableCells();
-                    List<XWPFTableCell> lastRowCells = table.getRows().get(table.getRows().size() - 1).getTableCells();
+                    List<XWPFTableCell> firstRowCells = table.getRows().getFirst().getTableCells();
+                    List<XWPFTableCell> lastRowCells = table.getRows().getLast().getTableCells();
                     for (int i = 0; i < lastRowCells.size(); i++) {
                         String colName = firstRowCells.get(i).getText().trim();
                         Optional<TableMarkerResult.TableMarkerColumnStatus> validationColName = colStatuses.stream()
@@ -562,7 +562,7 @@ public class ProofOfTestingRepositoryTest extends ConfigTestBean {
     }
 
     public void validatePotContainsLinksEqualOutputFileName(File potFile, List<File> outputFiles) {
-        List<String> outputFilesCopy = outputFiles.stream().map(File::getName).collect(Collectors.toList());
+        List<String> outputFilesCopy = outputFiles.stream().map(File::getName).toList();
         try (XWPFDocument document = new XWPFDocument(new FileInputStream(potFile))) {
             for (XWPFHyperlink hyperlink : document.getHyperlinks()) {
                 Optional r = outputFilesCopy.stream().filter(fn -> hyperlink.getURL().contains(fn)).findAny();

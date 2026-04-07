@@ -112,7 +112,7 @@ public class ExportImportBaseTest extends ConfigTestBean {
                 .id(new UUID(2, 1))
                 .name("Compound1")
                 .referToInput("blabla")
-                .processes(new ArrayList<ProcessConfiguration>() {{
+                .processes(new ArrayList<>() {{
                     add(processConfigurations.get(0));
                     add(processConfigurations.get(1));
                     add(processConfigurations.get(0));
@@ -122,7 +122,7 @@ public class ExportImportBaseTest extends ConfigTestBean {
         compoundConfigurations.add(CompoundConfiguration.builder()
                 .id(new UUID(2, 2))
                 .name("Compound2")
-                .processes(new ArrayList<ProcessConfiguration>() {{
+                .processes(new ArrayList<>() {{
                     add(processConfigurations.get(0));
                     add(processConfigurations.get(2));
                 }})
@@ -135,12 +135,12 @@ public class ExportImportBaseTest extends ConfigTestBean {
                 .name("Section1")
                 .place(0)
                 .parentSection(null)
-                .processes(new ArrayList<ProcessConfiguration>() {{
+                .processes(new ArrayList<>() {{
                     add(processConfigurations.get(0));
                     add(processConfigurations.get(1));
                 }})
-                .compounds(new ArrayList<CompoundConfiguration>() {{
-                    add(compoundConfigurations.get(0));
+                .compounds(new ArrayList<>() {{
+                    add(compoundConfigurations.getFirst());
                 }})
                 .projectConfiguration(testProjectConfiguration.get())
                 .build());
@@ -149,7 +149,7 @@ public class ExportImportBaseTest extends ConfigTestBean {
                 .name("Section2")
                 .place(1)
                 .parentSection(null)
-                .processes(new ArrayList<ProcessConfiguration>() {{
+                .processes(new ArrayList<>() {{
                     add(processConfigurations.get(2));
                     add(processConfigurations.get(4));
                 }})
@@ -167,57 +167,57 @@ public class ExportImportBaseTest extends ConfigTestBean {
                 .name("Section1.1")
                 .place(0)
                 .parentSection(sectionConfigurations.get(0))
-                .compounds(new ArrayList<CompoundConfiguration>() {{
+                .compounds(new ArrayList<>() {{
                     add(compoundConfigurations.get(0));
                     add(compoundConfigurations.get(1));
                 }})
-                .processes(new ArrayList<ProcessConfiguration>() {{
+                .processes(new ArrayList<>() {{
                     add(processConfigurations.get(0));
                     add(processConfigurations.get(3));
                     add(processConfigurations.get(5));
                 }})
                 .projectConfiguration(testProjectConfiguration.get())
                 .build());
-        sectionConfigurations.get(0).setSections(new ArrayList<SectionConfiguration>() {{
+        sectionConfigurations.get(0).setSections(new ArrayList<>() {{
             add(sectionConfigurations.get(3));
         }});
         //Set section in processes
-        processConfigurations.get(0).setInSections(new ArrayList<SectionConfiguration>() {{
+        processConfigurations.get(0).setInSections(new ArrayList<>() {{
             add(sectionConfigurations.get(0));
             add(sectionConfigurations.get(3));
         }});
-        processConfigurations.get(1).setInSections(new ArrayList<SectionConfiguration>() {{
-            add(sectionConfigurations.get(0));
+        processConfigurations.get(1).setInSections(new ArrayList<>() {{
+            add(sectionConfigurations.getFirst());
         }});
-        processConfigurations.get(2).setInSections(new ArrayList<SectionConfiguration>() {{
+        processConfigurations.get(2).setInSections(new ArrayList<>() {{
             add(sectionConfigurations.get(1));
         }});
-        processConfigurations.get(3).setInSections(new ArrayList<SectionConfiguration>() {{
+        processConfigurations.get(3).setInSections(new ArrayList<>() {{
             add(sectionConfigurations.get(3));
         }});
-        processConfigurations.get(4).setInSections(new ArrayList<SectionConfiguration>() {{
+        processConfigurations.get(4).setInSections(new ArrayList<>() {{
             add(sectionConfigurations.get(1));
         }});
-        processConfigurations.get(5).setInSections(new ArrayList<SectionConfiguration>() {{
+        processConfigurations.get(5).setInSections(new ArrayList<>() {{
             add(sectionConfigurations.get(3));
         }});
         //Set compound in processes
-        processConfigurations.get(0).setInCompounds(new ArrayList<CompoundConfiguration>() {{
+        processConfigurations.get(0).setInCompounds(new ArrayList<>() {{
             add(compoundConfigurations.get(0));
             add(compoundConfigurations.get(1));
         }});
-        processConfigurations.get(1).setInCompounds(new ArrayList<CompoundConfiguration>() {{
-            add(compoundConfigurations.get(0));
+        processConfigurations.get(1).setInCompounds(new ArrayList<>() {{
+            add(compoundConfigurations.getFirst());
         }});
-        processConfigurations.get(2).setInCompounds(new ArrayList<CompoundConfiguration>() {{
+        processConfigurations.get(2).setInCompounds(new ArrayList<>() {{
             add(compoundConfigurations.get(1));
         }});
         //Set section in compounds
-        compoundConfigurations.get(0).setInSections(new ArrayList<SectionConfiguration>() {{
+        compoundConfigurations.get(0).setInSections(new ArrayList<>() {{
             add(sectionConfigurations.get(0));
             add(sectionConfigurations.get(3));
         }});
-        compoundConfigurations.get(1).setInSections(new ArrayList<SectionConfiguration>() {{
+        compoundConfigurations.get(1).setInSections(new ArrayList<>() {{
             add(sectionConfigurations.get(3));
         }});
         //Set projectID in common configuration as configurations already created in ConfigTestBean
@@ -229,7 +229,7 @@ public class ExportImportBaseTest extends ConfigTestBean {
         testProjectConfiguration.get().setPotHeaderConfiguration(
                 PotHeaderConfiguration.builder()
                         .projectId(projectId.get())
-                        .headers(new ArrayList<PotHeader>() {{
+                        .headers(new ArrayList<>() {{
                             add(new PotHeader("MainHeader", "Text", "Billing System", "MainHeader"));
                             add(new PotHeader("SubHeader", "Digit", "Billing System", "1"));
                         }})
@@ -266,7 +266,7 @@ public class ExportImportBaseTest extends ConfigTestBean {
         );
 
         // set directory in directories
-        directoryConfigurationsMap.get("/rootDirectory0").setDirectories(new ArrayList<ProjectDirectory>() {{
+        directoryConfigurationsMap.get("/rootDirectory0").setDirectories(new ArrayList<>() {{
             add(directoryConfigurationsMap.get("/rootDirectory0/Directory1"));
             add(directoryConfigurationsMap.get("/rootDirectory0/Directory2"));
         }});
@@ -276,15 +276,15 @@ public class ExportImportBaseTest extends ConfigTestBean {
         directoryConfigurationsMap.get("/rootDirectory0/Directory2")
                 .setParentDirectory(directoryConfigurationsMap.get("/rootDirectory0"));
         // set files in directories
-        directoryConfigurationsMap.get("/rootDirectory0").setFiles(new ArrayList<ProjectFile>() {{
+        directoryConfigurationsMap.get("/rootDirectory0").setFiles(new ArrayList<>() {{
             add(fileConfigurationsMap.get("rootDirectory0_File1.txt"));
             add(fileConfigurationsMap.get("rootDirectory0_File6.txt"));
         }});
-        directoryConfigurationsMap.get("/rootDirectory0/Directory1").setFiles(new ArrayList<ProjectFile>() {{
+        directoryConfigurationsMap.get("/rootDirectory0/Directory1").setFiles(new ArrayList<>() {{
             add(fileConfigurationsMap.get("rootDirectory0_Directory1_File2.txt"));
             add(fileConfigurationsMap.get("rootDirectory0_Directory1_File3.txt"));
         }});
-        directoryConfigurationsMap.get("/rootDirectory0/Directory2").setFiles(new ArrayList<ProjectFile>() {{
+        directoryConfigurationsMap.get("/rootDirectory0/Directory2").setFiles(new ArrayList<>() {{
             add(fileConfigurationsMap.get("rootDirectory0_Directory2_File4.txt"));
             add(fileConfigurationsMap.get("rootDirectory0_Directory2_File5.txt"));
         }});
@@ -321,7 +321,7 @@ public class ExportImportBaseTest extends ConfigTestBean {
         ObjectLoaderFromDiskService loaderToDisk = new ObjectLoaderFromDiskService();
         FileService eiFileService = new FileService();
         ExportStrategiesRegistry exportStrategiesRegistry = new ExportStrategiesRegistry(
-                Arrays.asList(
+                List.of(
                         new AtpExportStrategy(
                                 eiFileService,
                                 gridFsService.get(),

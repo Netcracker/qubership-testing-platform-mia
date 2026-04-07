@@ -72,7 +72,7 @@ public class MainSheet {
         sheet.addMergedRegion(new CellRangeAddress(12, 13, 1, 1));
         final Holder<Integer> rowNum = new Holder<>(13);
         final Holder<Integer> cellNum = new Holder<>(1);
-        if (!scenarios.isEmpty() && !scenarios.get(0).getDescriptions().isEmpty()) {
+        if (!scenarios.isEmpty() && !scenarios.getFirst().getDescriptions().isEmpty()) {
             Description descr = findDescriptionToWriteHeader(true, false, false, false);
             if (descr != null) {
                 descr.getEventParams().forEach((k, v) -> hRow.createCell(++cellNum.value).setCellValue(k));

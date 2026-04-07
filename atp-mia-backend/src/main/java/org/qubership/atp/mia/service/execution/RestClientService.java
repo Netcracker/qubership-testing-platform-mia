@@ -210,7 +210,7 @@ public class RestClientService {
             responseBody = Utils.getPrettyStringFromXml(responseBody).replaceFirst(">", ">\n");
         }
         try {
-            Files.write(Path.of(logFile.getPath()), responseBody.getBytes(StandardCharsets.UTF_8));
+            Files.writeString(Path.of(logFile.getPath()), responseBody);
         } catch (IOException e) {
             throw new RestResultWriteToFileException(e);
         }

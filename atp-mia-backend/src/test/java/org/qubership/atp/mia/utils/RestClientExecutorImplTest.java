@@ -20,6 +20,7 @@ package org.qubership.atp.mia.utils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -45,7 +46,7 @@ public class RestClientExecutorImplTest extends RestRepositoryTestConfiguration 
     }
 
     @Test
-    public void prepareRestRequest() {
+    public void prepareRestRequest() throws URISyntaxException {
         miaContext.get().getFlowData().addParameter("postMethod", "POST");
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         listAppender.start();
@@ -62,7 +63,7 @@ public class RestClientExecutorImplTest extends RestRepositoryTestConfiguration 
     }
 
     @Test
-    public void whenHttpRestRequest_correctlyResult() {
+    public void whenHttpRestRequest_correctlyResult() throws URISyntaxException {
         Rest restHttp = Rest.builder().build();
         restHttp.setEndpoint("https://atp-public-gateway:8080/");
         restHttp.setMethod("GET");

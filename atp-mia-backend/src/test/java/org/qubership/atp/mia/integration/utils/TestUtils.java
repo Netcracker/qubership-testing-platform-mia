@@ -74,7 +74,7 @@ public class TestUtils {
     public static Server preparePostgresServer(String jdbcUrl) {
         Server sqlServer = new Server(Connection.builder().build(), "db");
         sqlServer.getConnection().setParameters(
-                new HashMap<String, String>() {{
+                new HashMap<>() {{
                     put(SQL_HOST, getHost(jdbcUrl));
                     put(JDBC_URL, jdbcUrl);
                     put(SQL_LOGIN, SQL_LOGIN_VALUE);

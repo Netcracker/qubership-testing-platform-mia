@@ -70,6 +70,7 @@ public class ProcessServiceEnvironmentVariablesTest extends ProcessServiceBaseTe
         final ProcessSettings process = new ProcessSettings().toBuilder().name("pr").command(command).validations(validations).build();
         //do
         ExecutionResponse response = executeProcess(process);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(expectedStatus.getStatus(), response.getProcessStatus().getStatus());
         Assertions.assertTrue(miaContext.get().getFlowData().getParameters().containsKey(expUrlParam.toUpperCase()),
                 "No key in flow data: " + expUrlParam.toUpperCase());

@@ -102,7 +102,7 @@ public class Template {
     private String readContent() {
         try {
             miaFileService.getFile(ethalonFilePath.toFile());
-            content = new String(Files.readAllBytes(ethalonFilePath), this.charset);
+            content = Files.readString(ethalonFilePath, this.charset);
             content = miaContext.evaluate(content);
             return content;
         } catch (IOException e) {
@@ -185,7 +185,7 @@ public class Template {
         try {
             generatedFile = miaContext.getLogPath().resolve(outputFileName);
             log.trace("Write content into {} file:\n{}", generatedFile, content);
-            Files.write(generatedFile, content.getBytes(charset));
+            Files.writeString(generatedFile, content, charset);
         } catch (IOException e) {
             throw new MatrixEthalonWriteFailException(generatedFile, e);
         }

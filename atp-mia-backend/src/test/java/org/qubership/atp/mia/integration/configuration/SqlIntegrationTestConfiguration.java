@@ -59,7 +59,7 @@ public abstract class SqlIntegrationTestConfiguration extends BaseIntegrationTes
                 .exchange()
                 .flatMap(response -> {
                     if (response.statusCode().isError()) {
-                        String err = "Error during webClient request execution: code[" + response.rawStatusCode() + "]";
+                        String err = "Error during webClient request execution: code[" + response.statusCode().value() + "]";
                         log.error(err);
                         return Mono.error(new Exception(err));
                     }

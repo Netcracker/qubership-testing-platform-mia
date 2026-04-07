@@ -44,7 +44,7 @@ public class MiaFileServiceTest extends BaseUnitTestConfiguration {
             miaFileService.get().downloadFile(projectId.get(), ProjectFileType.MIA_FILE_TYPE_LOG, UUID.randomUUID(), "console.log",
                     servletContext.get());
         });
-        Assertions.assertTrue(thrown instanceof ReadFailFileNotFoundException);
+        Assertions.assertInstanceOf(ReadFailFileNotFoundException.class, thrown);
         verify(gridFsService.get(), times(1)).restoreFile(any());
     }
 
@@ -55,7 +55,7 @@ public class MiaFileServiceTest extends BaseUnitTestConfiguration {
                     "RateMatrix.xls",
                     servletContext.get());
         });
-        Assertions.assertTrue(thrown instanceof ReadFailFileNotFoundException);
+        Assertions.assertInstanceOf(ReadFailFileNotFoundException.class, thrown);
         verify(gridFsService.get(), times(1)).restoreFile(any());
     }
 

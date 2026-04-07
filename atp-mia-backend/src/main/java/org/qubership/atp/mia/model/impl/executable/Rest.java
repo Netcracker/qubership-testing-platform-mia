@@ -96,7 +96,7 @@ public class Rest implements Serializable {
         PROPFIND(HttpPropfind.class),
         MKCOL(HttpMkcol.class);
 
-        private Class<HttpUriRequestBase> methodClass;
+        private final Class<HttpUriRequestBase> methodClass;
 
         RestMethod(Class httpMethodClass) {
             this.methodClass = httpMethodClass;

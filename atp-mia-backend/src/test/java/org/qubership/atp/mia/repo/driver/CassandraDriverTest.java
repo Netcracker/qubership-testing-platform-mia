@@ -73,7 +73,7 @@ class CassandraDriverTest extends ConfigTestBean {
                 .name("cassandra")
                 .sourceTemplateId(Connection.SourceTemplateId.DB.id)
                 .systemId(UUID.randomUUID())
-                .parameters(new HashMap<String, String>() {{
+                .parameters(new HashMap<>() {{
                     put("db_host", cassandraHost);
                     put("db_port", "9042");
                     put(JDBC_URL, "jdbc:cassandra://" + cassandraHost + ":9042/test");

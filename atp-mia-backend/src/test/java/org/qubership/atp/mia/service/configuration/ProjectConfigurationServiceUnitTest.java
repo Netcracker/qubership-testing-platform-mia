@@ -43,10 +43,10 @@ public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfigurati
     public void getCompoundById() {
         CompoundConfiguration compoundConfiguration =
                 compoundConfigurationService.get().getCompoundById(testProjectConfiguration.get(),
-                        testProjectConfiguration.get().getCompounds().get(0).getId());
+                        testProjectConfiguration.get().getCompounds().getFirst().getId());
         Assertions.assertNotNull(compoundConfiguration);
         Assertions.assertEquals(compoundConfiguration.getName(),
-                testProjectConfiguration.get().getCompounds().get(0).getName());
+                testProjectConfiguration.get().getCompounds().getFirst().getName());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfigurati
     public void getDirectoryById() {
         ProjectDirectory projectDirectory =
                 directoryConfigurationService.get().getDirectoryById(testProjectConfiguration.get(),
-                        testProjectConfiguration.get().getDirectories().get(0).getId());
+                        testProjectConfiguration.get().getDirectories().getFirst().getId());
         Assertions.assertNotNull(projectDirectory);
         Assertions.assertEquals(projectDirectory.getName(), projectChildDirectoryName);
     }

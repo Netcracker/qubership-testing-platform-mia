@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -67,7 +68,7 @@ public class ExportTest extends ExportImportBaseTest {
     }
 
     @Test
-    public void export_allSections() throws IOException {
+    public void export_allSections() {
         //Prepare
         Map<String, Set<String>> importExportEntities = new HashMap<>();
         importExportEntities.put(ExportImportEntities.MIA_SECTION.getValue(),
@@ -109,7 +110,7 @@ public class ExportTest extends ExportImportBaseTest {
     public void export_whenCommonConfiguration_thenOnlyItExported() {
         //Prepare
         Map<String, Set<String>> importExportEntities = new HashMap<>();
-        importExportEntities.put(ExportImportEntities.MIA_COMMON_CONFIGURATION.getValue(), new HashSet<String>(){{
+        importExportEntities.put(ExportImportEntities.MIA_COMMON_CONFIGURATION.getValue(), new HashSet<>() {{
             add(projectId.get().toString());
         }});
         exportScope.get().setEntities(importExportEntities);
@@ -126,7 +127,7 @@ public class ExportTest extends ExportImportBaseTest {
     public void export_whenHeaderConfiguration_thenOnlyItExported() {
         //Prepare
         Map<String, Set<String>> importExportEntities = new HashMap<>();
-        importExportEntities.put(ExportImportEntities.MIA_HEADER_CONFIGURATION.getValue(), new HashSet<String>(){{
+        importExportEntities.put(ExportImportEntities.MIA_HEADER_CONFIGURATION.getValue(), new HashSet<>(){{
             add(projectId.get().toString());
         }});
         exportScope.get().setEntities(importExportEntities);
@@ -143,7 +144,7 @@ public class ExportTest extends ExportImportBaseTest {
     public void export_whenPotHeaderConfiguration_thenOnlyItExported() {
         //Prepare
         Map<String, Set<String>> importExportEntities = new HashMap<>();
-        importExportEntities.put(ExportImportEntities.MIA_POT_HEADER_CONFIGURATION.getValue(), new HashSet<String>(){{
+        importExportEntities.put(ExportImportEntities.MIA_POT_HEADER_CONFIGURATION.getValue(), new HashSet<>(){{
             add(projectId.get().toString());
         }});
         exportScope.get().setEntities(importExportEntities);
@@ -167,14 +168,14 @@ public class ExportTest extends ExportImportBaseTest {
 
         //Prepare
         Map<String, Set<String>> importExportEntities = new HashMap<>();
-        Set<String> directoriesToExport = new HashSet<String>() {{
+        Set<String> directoriesToExport = new HashSet<>() {{
             add(rootDirectory0.getId().toString());
             add(rootDirectory0_Directory1.getId().toString());
             add(rootDirectory0_Directory2.getId().toString());
         }};
         importExportEntities.put(ExportImportEntities.MIA_DIRECTORY.getValue(), directoriesToExport);
 
-        Set<String> filesToExport = new HashSet<String>() {{
+        Set<String> filesToExport = new HashSet<>() {{
             add(rootDirectory0_Directory1_File2.getId().toString());
             add(rootDirectory0_Directory1_File3.getId().toString());
         }};
@@ -219,7 +220,7 @@ public class ExportTest extends ExportImportBaseTest {
                 .map(UUID::toString)
                 .collect(Collectors.toSet());
 
-        exportScope.get().setEntities(new HashMap<String, Set<String>>() {{
+        exportScope.get().setEntities(new HashMap<>() {{
             put(ExportImportEntities.MIA_DIRECTORY.getValue(), directoryIdSet);
             put(ExportImportEntities.MIA_FILES.getValue(), fileIdSet);
         }});
@@ -328,7 +329,7 @@ public class ExportTest extends ExportImportBaseTest {
 
     private static File[] getFiles(File file) {
         if (nonNull(file) && nonNull(file.listFiles())) {
-            assertTrue(file.listFiles().length > 0);
+            assertTrue(Objects.requireNonNull(file.listFiles()).length > 0);
             return file.listFiles();
         }
         throw new RuntimeException("File not found " + file.getPath());

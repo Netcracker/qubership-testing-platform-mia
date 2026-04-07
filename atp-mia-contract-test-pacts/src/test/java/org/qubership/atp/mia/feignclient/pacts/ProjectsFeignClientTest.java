@@ -19,6 +19,7 @@ package org.qubership.atp.mia.feignclient.pacts;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.junit.Rule;
@@ -72,22 +73,26 @@ public class ProjectsFeignClientTest {
         ResponseEntity<List<ProjectFullVer2ViewDto>> result_getAllProjects =
                 projectsFeignClient.getAllProjects(null, false);
         Assertions.assertEquals(200, result_getAllProjects.getStatusCode().value());
-        Assertions.assertTrue(result_getAllProjects.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertTrue(Objects.requireNonNull(result_getAllProjects.getHeaders().get("Content-Type"))
+                .contains("application/json"));
 
         ResponseEntity<ProjectFullVer1ViewDto> result_getProject = projectsFeignClient
                 .getProject(projectId, null);
         Assertions.assertEquals(200, result_getProject.getStatusCode().value());
-        Assertions.assertTrue(result_getProject.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertTrue(Objects.requireNonNull(result_getProject.getHeaders().get("Content-Type"))
+                .contains("application/json"));
 
         ResponseEntity<List<EnvironmentResDto>> result_getEnvironments = projectsFeignClient
                 .getEnvironments(projectId, true);
         Assertions.assertEquals(200, result_getEnvironments.getStatusCode().value());
-        Assertions.assertTrue(result_getEnvironments.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertTrue(Objects.requireNonNull(result_getEnvironments.getHeaders().get("Content-Type"))
+                .contains("application/json"));
 
         ResponseEntity<List<EnvironmentResDto>> result_getTemporaryEnvironments = projectsFeignClient
                 .getTemporaryEnvironments(projectId, true);
         Assertions.assertEquals(200, result_getTemporaryEnvironments.getStatusCode().value());
-        Assertions.assertTrue(result_getTemporaryEnvironments.getHeaders().get("Content-Type").contains("application/json"));
+        Assertions.assertTrue(Objects.requireNonNull(result_getTemporaryEnvironments.getHeaders().get("Content-Type"))
+                .contains("application/json"));
     }
 
     @Pact(consumer = "atp-mia")

@@ -362,12 +362,12 @@ public class ExcelParserHelper {
      * @return Range of rows in merged column
      */
     public static Range<Integer> getCellColumnRange(@Nonnull XSSFCell cell) {
-        Range<Integer> returnValue = Range.between(cell.getRowIndex(), cell.getRowIndex());
+        Range<Integer> returnValue = Range.of(cell.getRowIndex(), cell.getRowIndex());
         final XSSFSheet sheet = cell.getSheet();
         for (int mergedRegionsId = 0; mergedRegionsId < sheet.getNumMergedRegions(); ++mergedRegionsId) {
             final CellRangeAddress mergedRegion = sheet.getMergedRegion(mergedRegionsId);
             if (mergedRegion.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
-                returnValue = Range.between(mergedRegion.getFirstRow(), mergedRegion.getLastRow());
+                returnValue = Range.of(mergedRegion.getFirstRow(), mergedRegion.getLastRow());
                 break;
             }
         }
@@ -382,11 +382,11 @@ public class ExcelParserHelper {
      */
     @Nonnull
     public static Range<Integer> getCellRowRange(@Nonnull XSSFCell cell) {
-        final Holder<Range<Integer>> range = new Holder<>(Range.between(cell.getColumnIndex(), cell.getColumnIndex()));
+        final Holder<Range<Integer>> range = new Holder<>(Range.of(cell.getColumnIndex(), cell.getColumnIndex()));
         final XSSFSheet sheet = cell.getSheet();
         sheet.getMergedRegions().forEach(mergedRegion -> {
             if (mergedRegion.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
-                range.value = Range.between(mergedRegion.getFirstColumn(), mergedRegion.getLastColumn());
+                range.value = Range.of(mergedRegion.getFirstColumn(), mergedRegion.getLastColumn());
             }
         });
         return range.value;

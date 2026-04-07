@@ -22,7 +22,7 @@ import static org.qubership.atp.mia.model.Constants.DEFAULT_PROJECT_NAME;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,23 +71,23 @@ public class ExecuteCurrentStatement extends BaseIntegrationTestConfiguration {
                 .id(systemId)
                 .name(TEST_SYSTEM_NAME + randomId)
                 .environmentId(envId)
-                .connections(Arrays.asList())
+                .connections(List.of())
                 .build();
         Environment testEnvironment2 = Environment.builder()
                 .projectId(projectId.get())
                 .id(envId)
                 .name(TEST_ENVIRONMENT_NAME + randomId)
-                .systems(Arrays.asList(testSystem2))
+                .systems(List.of(testSystem2))
                 .build();
         Project testProject2 = Project.builder()
                 .id(projectId.get())
                 .name(DEFAULT_PROJECT_NAME + randomId)
-                .environments(Arrays.asList(testEnvironment2.getId()))
+                .environments(List.of(testEnvironment2.getId()))
                 .build();
         Mockito.when(environmentsService.getEnvironmentsByProject(eq(projectId.get())))
-                .thenReturn(Arrays.asList(testEnvironment2));
+                .thenReturn(List.of(testEnvironment2));
         Mockito.when(environmentsService.getEnvironmentsFull(eq(envId), eq(projectId.get()))).thenReturn(testEnvironment2);
-        Mockito.when(environmentsService.getProjects()).thenReturn(Arrays.asList(testProject2));
+        Mockito.when(environmentsService.getProjects()).thenReturn(List.of(testProject2));
         Mockito.when(environmentsService.getProject(eq(projectId.get()))).thenReturn(testProject2);
         miaContext.setContext(projectId.get(), null);
     }
@@ -104,6 +104,7 @@ public class ExecuteCurrentStatement extends BaseIntegrationTestConfiguration {
     public void executeInValidCurrentStatement() {
         Assertions.assertThrows(SqlExecuteFailException.class, () -> {
             List<ProcessShortDto> processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
+            Assertions.assertNotNull(processes);
             Assertions.assertEquals(24, processes.size());
             //Add a Temporary Process
             String processName = "SSH_PWD";
@@ -111,10 +112,11 @@ public class ExecuteCurrentStatement extends BaseIntegrationTestConfiguration {
             UUID sectionId = processes.stream()
                     .filter(processShortDto -> processShortDto.getName().equals("SSH_BG"))
                     .findFirst().get()
-                    .getInSections().get(0);
-            ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Arrays.asList(sectionId), validation);
+                    .getInSections().getFirst();
+            ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Collections.singletonList(sectionId), validation);
             miaConfigurationController.addProcess(projectId.get(), processDto);
             processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
+            Assertions.assertNotNull(processes);
             Assertions.assertEquals(25, processes.size());
             ExecutionRequest request = new ExecutionRequest();
             request.setSessionId(UUID.randomUUID());
@@ -145,12 +147,13 @@ public class ExecuteCurrentStatement extends BaseIntegrationTestConfiguration {
             UUID sectionId = processes.stream()
                     .filter(processShortDto -> processShortDto.getName().equals("SSH_BG"))
                     .findFirst().get()
-                    .getInSections().get(0);
-            ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Arrays.asList(sectionId), validation);
+                    .getInSections().getFirst();
+            ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Collections.singletonList(sectionId), validation);
             List<ValidationDto> emptyCurrentStatements = new ArrayList<>();
             processDto.getProcessSettings().setCurrentStatement(emptyCurrentStatements);
             miaConfigurationController.addProcess(projectId.get(), processDto);
             processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
+            Assertions.assertNotNull(processes);
             Assertions.assertEquals(25, processes.size());
 
             ExecutionRequest request = new ExecutionRequest();
@@ -181,10 +184,11 @@ public class ExecuteCurrentStatement extends BaseIntegrationTestConfiguration {
         UUID sectionId = processes.stream()
                 .filter(processShortDto -> processShortDto.getName().equals("SSH_BG"))
                 .findFirst().get()
-                .getInSections().get(0);
-        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Arrays.asList(sectionId), validation);
+                .getInSections().getFirst();
+        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Collections.singletonList(sectionId), validation);
         miaConfigurationController.addProcess(projectId.get(), processDto);
         processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
+        Assertions.assertNotNull(processes);
         Assertions.assertEquals(25, processes.size());
         ExecutionRequest request = new ExecutionRequest();
         request.setSessionId(UUID.randomUUID());

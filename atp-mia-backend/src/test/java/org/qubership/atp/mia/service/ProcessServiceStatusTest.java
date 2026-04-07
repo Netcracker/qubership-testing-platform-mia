@@ -76,6 +76,7 @@ public class ProcessServiceStatusTest extends ProcessServiceBaseTest {
                 .validations(validations).build();
         //do
         ExecutionResponse response = executeProcess(process);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.FAIL, response.getProcessStatus().getStatus());
     }
 
@@ -90,6 +91,7 @@ public class ProcessServiceStatusTest extends ProcessServiceBaseTest {
                 .validations(validations).build();
         //do
         ExecutionResponse response = executeProcess(process);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(expectedStatus.getStatus(), response.getProcessStatus().getStatus());
     }
 }

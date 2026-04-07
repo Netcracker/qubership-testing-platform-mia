@@ -82,7 +82,7 @@ public class ImportLoaderPotHeaderConfiguration extends ImportLoader<
     public void importEntity(ProjectConfiguration projectConfiguration, ExportImportData importData, Path path) {
         List<ExportImportPotHeaderConfiguration> configurations = loadConfiguration(importData, path);
         if (!configurations.isEmpty()) {
-            ExportImportPotHeaderConfiguration configuration = configurations.get(0);
+            ExportImportPotHeaderConfiguration configuration = configurations.getFirst();
             projectConfiguration.setPotHeaderConfiguration(toEntity(projectConfiguration, configuration));
         }
     }

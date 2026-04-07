@@ -22,8 +22,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.qubership.atp.mia.model.Constants.DEFAULT_PROJECT_NAME;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -61,23 +61,23 @@ public class MiaExecutionControllerTest extends BaseIntegrationTestConfiguration
                 .id(systemId)
                 .name(TEST_SYSTEM_NAME + randomId)
                 .environmentId(envId)
-                .connections(Arrays.asList())
+                .connections(List.of())
                 .build();
         Environment testEnvironment2 = Environment.builder()
                 .projectId(projectId.get())
                 .id(envId)
                 .name(TEST_ENVIRONMENT_NAME + randomId)
-                .systems(Arrays.asList(testSystem2))
+                .systems(List.of(testSystem2))
                 .build();
         Project testProject2 = Project.builder()
                 .id(projectId.get())
                 .name(DEFAULT_PROJECT_NAME + randomId)
-                .environments(Arrays.asList(testEnvironment2.getId()))
+                .environments(List.of(testEnvironment2.getId()))
                 .build();
         Mockito.when(environmentsService.getEnvironmentsByProject(eq(projectId.get())))
-                .thenReturn(Arrays.asList(testEnvironment2));
+                .thenReturn(List.of(testEnvironment2));
         Mockito.when(environmentsService.getEnvironmentsFull(eq(envId), eq(projectId.get()))).thenReturn(testEnvironment2);
-        Mockito.when(environmentsService.getProjects()).thenReturn(Arrays.asList(testProject2));
+        Mockito.when(environmentsService.getProjects()).thenReturn(List.of(testProject2));
         Mockito.when(environmentsService.getProject(eq(projectId.get()))).thenReturn(testProject2);
         miaContext.setContext(projectId.get(), null);
     }

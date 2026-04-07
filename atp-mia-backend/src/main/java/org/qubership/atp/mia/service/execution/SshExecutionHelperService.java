@@ -73,16 +73,16 @@ public class SshExecutionHelperService {
      */
     @AtpJaegerLog()
     public CommandResponse executeCommandAndGenerateFile(Command command) {
-        if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getEthalonFilesForGeneration()).get(0))
-                || Strings.isNullOrEmpty(Objects.requireNonNull(command.getNamesOfFilesForGeneration()).get(0))
+        if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getEthalonFilesForGeneration()).getFirst())
+                || Strings.isNullOrEmpty(Objects.requireNonNull(command.getNamesOfFilesForGeneration()).getFirst())
                 || Strings.isNullOrEmpty(command.getPathForUpload())) {
             String params = "ethalonFilesForGeneration, namesOfFilesForGeneration, pathForUpload.";
             throw new SshMissedParameterException(params);
         }
         Server server = shellRepository.getServer(command);
         miaContext.getFlowData().addParameters(server.getProperties());
-        String ethalonFileName = miaContext.evaluate(command.getEthalonFilesForGeneration().get(0));
-        String nameOfFileForGeneration = miaContext.evaluate(command.getNamesOfFilesForGeneration().get(0));
+        String ethalonFileName = miaContext.evaluate(command.getEthalonFilesForGeneration().getFirst());
+        String nameOfFileForGeneration = miaContext.evaluate(command.getNamesOfFilesForGeneration().getFirst());
         Template template = new Template(miaContext, miaFileService, ethalonFileName, nameOfFileForGeneration,
                 command.getFileExtension(), command.definedCharsetForGeneratedFile());
         //save generated file to flow data
@@ -105,7 +105,7 @@ public class SshExecutionHelperService {
      */
     @AtpJaegerLog()
     public CommandResponse executeCommandAndUploadFile(Command command) {
-        if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getFilesForUpload().get(0)))
+        if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getFilesForUpload().getFirst()))
                 || Strings.isNullOrEmpty(command.getPathForUpload())) {
             String params = "fileForUpload, pathForUpload";
             throw new SshMissedParameterException(params);
@@ -126,8 +126,8 @@ public class SshExecutionHelperService {
      */
     @AtpJaegerLog()
     public CommandResponse generateEventFilesAndExecuteCommand(Command command) {
-        if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getEthalonFilesForGeneration()).get(0))
-                || Strings.isNullOrEmpty(Objects.requireNonNull(command.getNamesOfFilesForGeneration()).get(0))
+        if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getEthalonFilesForGeneration()).getFirst())
+                || Strings.isNullOrEmpty(Objects.requireNonNull(command.getNamesOfFilesForGeneration()).getFirst())
                 || Strings.isNullOrEmpty(command.getPathForUpload())
                 || Objects.requireNonNull(command.getValues()).isEmpty()
                 || command.getEthalonFilesForGeneration().size() != command.getNamesOfFilesForGeneration().size()) {
@@ -161,7 +161,7 @@ public class SshExecutionHelperService {
         final CommandResponse commandResponse = shellRepository.executeAndGetLog(command);
         //Remove parameter with generated files if saved before
         applyIfSaveGeneratedFiles(command, (name, value) -> flowData.removeParameter(name));
-        Utils.getPathToFileOutOfLog(commandResponse.getCommandOutputs().get(0).getInternalPathToFile(),
+        Utils.getPathToFileOutOfLog(commandResponse.getCommandOutputs().getFirst().getInternalPathToFile(),
                 command.getRegexpForFileRetrieve()).forEach(path ->
                 commandOutputs.add(shellRepository.getFileOnServer(command, pathForUpload + path.trim(), false)));
         commandResponse.addCommandOutputs(commandOutputs);
@@ -180,7 +180,7 @@ public class SshExecutionHelperService {
             throw new SshMissedParameterException(params);
         }
         final CommandResponse commandResponse = shellRepository.executeAndGetLog(command);
-        Utils.getPathToFileOutOfLog(commandResponse.getCommandOutputs().get(0).getInternalPathToFile(),
+        Utils.getPathToFileOutOfLog(commandResponse.getCommandOutputs().getFirst().getInternalPathToFile(),
                 command.getRegexpForFileRetrieve()).forEach(path ->
                 commandResponse.addCommandOutput(shellRepository.getFileOnServer(command, path,
                         command.getDisplayDownloadedFileContent())));
@@ -202,7 +202,7 @@ public class SshExecutionHelperService {
         miaContext.getFlowData().addParameters(server.getProperties());
         final CommandResponse commandResponse = shellRepository.executeAndGetLog(command);
         ArrayList<String> pathsToFiles = Utils.getPathToFileOutOfLog(
-                commandResponse.getCommandOutputs().get(0).getInternalPathToFile(),
+                commandResponse.getCommandOutputs().getFirst().getInternalPathToFile(),
                 command.getRegexpForFileRetrieve());
         final String pathForUpload = miaContext.evaluate(command.getPathForUpload());
         for (String pathToFile : pathsToFiles) {
@@ -224,7 +224,7 @@ public class SshExecutionHelperService {
      */
     @AtpJaegerLog()
     public CommandResponse executeCommandAndDownloadFilesFromServer(Command command) {
-        if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getPathsForDownload()).get(0))
+        if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getPathsForDownload()).getFirst())
                 || Strings.isNullOrEmpty(command.getRegexpForFileRetrieve())) {
             String params = "pathsForDownload, regexpForFileRetrieve";
             throw new SshMissedParameterException(params);
@@ -255,7 +255,7 @@ public class SshExecutionHelperService {
                 // find result files
                 CommandOutput findOutput = null;
                 try {
-                    findOutput = shellRepository.executeAndGetLog(command).getCommandOutputs().get(0);
+                    findOutput = shellRepository.executeAndGetLog(command).getCommandOutputs().getFirst();
                 } catch (Exception e) {
                     StringBuilder errMsg = new StringBuilder();
                     errMsg.append("Error during execution of find command [").append(findCommand).append("]. ");
@@ -289,8 +289,8 @@ public class SshExecutionHelperService {
      */
     @AtpJaegerLog()
     public CommandResponse uploadFilesAndDownloadResults(Command command) {
-        if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getEthalonFilesForGeneration()).get(0))
-                || Strings.isNullOrEmpty(Objects.requireNonNull(command.getNamesOfFilesForGeneration()).get(0))
+        if (Strings.isNullOrEmpty(Objects.requireNonNull(command.getEthalonFilesForGeneration()).getFirst())
+                || Strings.isNullOrEmpty(Objects.requireNonNull(command.getNamesOfFilesForGeneration()).getFirst())
                 || Strings.isNullOrEmpty(command.getFileExtension())
                 || Strings.isNullOrEmpty(command.getPathForUpload())
                 || Objects.requireNonNull(command.getValues()).isEmpty()) {
@@ -315,7 +315,7 @@ public class SshExecutionHelperService {
             //save generated file to flow data
             applyIfSaveGeneratedFiles(command, (name, value) -> miaContext.getFlowData().addParameter(name,
                     template.getFileName()));
-            Command singleCommand = new Command(commandValuesCount == 1 ? commandValues.get(0) : commandValues.get(i));
+            Command singleCommand = new Command(commandValuesCount == 1 ? commandValues.getFirst() : commandValues.get(i));
             singleCommand.setSystem(command.getSystem());
             singleCommand.setPathForUpload(pathForUpload);
             commandResponse.addCommandResponse(shellRepository.executeAndGetLog(singleCommand));

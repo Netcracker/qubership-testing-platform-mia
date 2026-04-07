@@ -74,7 +74,7 @@ public class MiaCacheControllerTests {
     public void testResetDbCache() {
         when(processService.resetDbCache()).thenReturn(true);
         doNothing().when(miaContext)
-                .setContext(Mockito.<ExecutionRequest>any(), Mockito.<UUID>any(), Mockito.<String>any());
+                .setContext(Mockito.any(), Mockito.any(), Mockito.any());
         ResponseEntity<Boolean> actualResetDbCacheResult = miaCacheController.resetDbCache(UUID.randomUUID(), "Env");
         verify(miaContext).setContext(Mockito.<ExecutionRequest>any(), Mockito.<UUID>any(), Mockito.<String>any());
         //verify(processService).resetDbCache();
@@ -88,11 +88,11 @@ public class MiaCacheControllerTests {
      */
     @Test
     public void testResetEnvironmentCaches() {
-        doNothing().when(miaCacheService).clearEnvironmentsCache(Mockito.<CacheManager>any(), Mockito.<UUID>any());
+        doNothing().when(miaCacheService).clearEnvironmentsCache(Mockito.any(), Mockito.any());
         doNothing().when(sshExecutionHelperService).resetCache();
         ResponseEntity<Boolean> actualResetEnvironmentCachesResult = miaCacheController
                 .resetEnvironmentCaches(UUID.randomUUID());
-        verify(miaCacheService).clearEnvironmentsCache(Mockito.<CacheManager>any(), Mockito.<UUID>any());
+        verify(miaCacheService).clearEnvironmentsCache(Mockito.any(), Mockito.any());
         //verify(sshExecutionHelperService).resetCache();
         assertEquals(HttpStatus.OK, actualResetEnvironmentCachesResult.getStatusCode());
         assertTrue(actualResetEnvironmentCachesResult.getBody());
@@ -117,10 +117,10 @@ public class MiaCacheControllerTests {
      */
     @Test
     public void testResetConfigurationCache() {
-        doNothing().when(miaCacheService).clearConfigurationCache(Mockito.<UUID>any());
+        doNothing().when(miaCacheService).clearConfigurationCache(Mockito.any());
         ResponseEntity<Boolean> actualResetConfigurationCacheResult = miaCacheController
                 .resetConfigurationCache(UUID.randomUUID());
-        verify(miaCacheService).clearConfigurationCache(Mockito.<UUID>any());
+        verify(miaCacheService).clearConfigurationCache(Mockito.any());
         assertEquals(HttpStatus.OK, actualResetConfigurationCacheResult.getStatusCode());
         assertTrue(actualResetConfigurationCacheResult.getBody());
         assertTrue(actualResetConfigurationCacheResult.getHeaders().isEmpty());

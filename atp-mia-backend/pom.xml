@@ -736,6 +736,10 @@
             <artifactId>saaj-impl</artifactId>
             <version>1.5.3</version> <!-- Use the latest version -->
         </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -37,12 +37,14 @@ public class CassandraIntegrationTest extends CassandraIntegrationTestConfigurat
         ExecutionResponse response = executeDbQuery(cassandraUrl, sqlCommand);
         // checks
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         // select to check db state
         sqlCommand = "select * from gparams";
         response = executeDbQuery(cassandraUrl, sqlCommand);
         // checks2
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         SqlResponse sqlResponse = response.getCommandResponse().getSqlResponse();
         Assertions.assertNotNull(sqlResponse);
@@ -58,20 +60,22 @@ public class CassandraIntegrationTest extends CassandraIntegrationTestConfigurat
         ExecutionResponse response = executeDbQuery(cassandraUrl, sqlCommand);
         // checks
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         // select to check db state
         sqlCommand = "select * from gparams";
         response = executeDbQuery(cassandraUrl, sqlCommand);
         // checks2
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         SqlResponse sqlResponse = response.getCommandResponse().getSqlResponse();
         Assertions.assertNotNull(sqlResponse);
         checkColumnNames(sqlResponse.getData().getColumns());
         Assertions.assertEquals(2, sqlResponse.getData().getData().size());
-        Assertions.assertEquals(2, sqlResponse.getData().getData().get(0).size());
-        Assertions.assertEquals("2", sqlResponse.getData().getData().get(0).get(0));
-        Assertions.assertEquals(expectedValue, sqlResponse.getData().getData().get(0).get(1));
+        Assertions.assertEquals(2, sqlResponse.getData().getData().getFirst().size());
+        Assertions.assertEquals("2", sqlResponse.getData().getData().getFirst().get(0));
+        Assertions.assertEquals(expectedValue, sqlResponse.getData().getData().getFirst().get(1));
     }
 
     @Test
@@ -83,9 +87,9 @@ public class CassandraIntegrationTest extends CassandraIntegrationTestConfigurat
         Assertions.assertNotNull(sqlResponse);
         checkColumnNames(sqlResponse.getData().getColumns());
         Assertions.assertEquals(1, sqlResponse.getData().getData().size());
-        Assertions.assertEquals(2, sqlResponse.getData().getData().get(0).size());
-        Assertions.assertEquals("1", sqlResponse.getData().getData().get(0).get(0));
-        Assertions.assertEquals(SYS_DATE_VALUE, sqlResponse.getData().getData().get(0).get(1));
+        Assertions.assertEquals(2, sqlResponse.getData().getData().getFirst().size());
+        Assertions.assertEquals("1", sqlResponse.getData().getData().getFirst().get(0));
+        Assertions.assertEquals(SYS_DATE_VALUE, sqlResponse.getData().getData().getFirst().get(1));
     }
 
     @Test
@@ -95,19 +99,21 @@ public class CassandraIntegrationTest extends CassandraIntegrationTestConfigurat
         ExecutionResponse response = executeDbQuery(cassandraUrl, sqlCommand);
         // checks
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         // select to check db state
         sqlCommand = "select * from gparams";
         response = executeDbQuery(cassandraUrl, sqlCommand);
         // checks2
         Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getProcessStatus());
         Assertions.assertEquals(Statuses.SUCCESS, response.getProcessStatus().getStatus());
         SqlResponse sqlResponse = response.getCommandResponse().getSqlResponse();
         Assertions.assertNotNull(sqlResponse);
         checkColumnNames(sqlResponse.getData().getColumns());
         Assertions.assertEquals(1, sqlResponse.getData().getData().size());
-        Assertions.assertEquals(2, sqlResponse.getData().getData().get(0).size());
-        Assertions.assertEquals("1", sqlResponse.getData().getData().get(0).get(0));
-        Assertions.assertEquals(updatedValue, sqlResponse.getData().getData().get(0).get(1));
+        Assertions.assertEquals(2, sqlResponse.getData().getData().getFirst().size());
+        Assertions.assertEquals("1", sqlResponse.getData().getData().getFirst().get(0));
+        Assertions.assertEquals(updatedValue, sqlResponse.getData().getData().getFirst().get(1));
     }
 }

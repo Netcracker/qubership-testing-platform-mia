@@ -52,7 +52,8 @@ public class MiaGeneralController implements MiaGeneralControllerApi {
             log.debug("Fetching FE variables from path: {}", file);
             String jsonContent = FileUtils.readFileToString(file, "UTF-8");
             Map<String, String> feVariables = objectMapper.readValue(
-                    jsonContent, new TypeReference<Map<String, String>>() {}
+                    jsonContent, new TypeReference<>() {
+                    }
             );
             return ResponseEntity.ok(feVariables);
         } catch (IOException e) {
@@ -64,7 +65,7 @@ public class MiaGeneralController implements MiaGeneralControllerApi {
                 );
                 Map<String, String> feVariables = objectMapper.readValue(
                         fallbackJsonContent,
-                        new TypeReference<Map<String, String>>() {
+                        new TypeReference<>() {
                         }
                 );
                 return ResponseEntity.ok(feVariables);

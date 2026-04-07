@@ -103,7 +103,7 @@ public class ImportLoaderCommonConfiguration extends ImportLoader<
     public void importEntity(ProjectConfiguration projectConfiguration, ExportImportData importData, Path path) {
         List<ExportImportCommonConfiguration> configurations = loadConfiguration(importData, path);
         if (!configurations.isEmpty()) {
-            ExportImportCommonConfiguration configuration = configurations.get(0);
+            ExportImportCommonConfiguration configuration = configurations.getFirst();
             projectConfiguration.setCommonConfiguration(toEntity(projectConfiguration, configuration));
         }
     }

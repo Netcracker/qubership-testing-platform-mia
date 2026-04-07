@@ -22,7 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
@@ -152,7 +151,7 @@ public class SoapRepository {
             String responseString = out.toString();
             responseString = Utils.getPrettyStringFromXml(responseString).replaceFirst(">", ">\n");
             log.debug(responseString);
-            Files.write(Path.of(logFile.getPath()), responseString.getBytes(StandardCharsets.UTF_8));
+            Files.writeString(Path.of(logFile.getPath()), responseString);
         } catch (IOException e) {
             throw new SoapWriteIoException(e);
         } catch (SOAPException e) {

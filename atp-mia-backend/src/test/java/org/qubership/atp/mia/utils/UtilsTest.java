@@ -51,7 +51,7 @@ public class UtilsTest extends ConfigTestBean {
     private static final String DEFAULT_VAR_FORMAT = ":\\(VARIABLE_NAME\\)";
     private static final Pattern uuidPattern =
             Pattern.compile("([a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8})");
-    private String headerName = "Content-Disposition";
+    private final String headerName = "Content-Disposition";
 
     private void macroAssert(String actualInput, String expected) {
         String actual = miaContext.get().evaluate(actualInput);
@@ -293,7 +293,7 @@ public class UtilsTest extends ConfigTestBean {
     public void evaluateMacros_shouldWorkWithVariableAndMacros() {
         String expected = "echo 0";
         String text = "echo :(macros)";
-        FlowData flowData = getFlowData(DEFAULT_VAR_FORMAT, true, new HashMap<String, String>() {{
+        FlowData flowData = getFlowData(DEFAULT_VAR_FORMAT, true, new HashMap<>() {{
             put("macros", "${Random(1)}");
             put("var", ":(macros)");
         }});
@@ -334,7 +334,7 @@ public class UtilsTest extends ConfigTestBean {
     public void whenContentDispositionNotHaveFilename_returnFileName() {
         String headerValue = Utils.getHeaderValue(constructAndStubHttpResponse(headerName, "application/zip filename="), headerName);
         String name = Utils.getFirstGroupFromStringByRegexp(headerValue, "filename=(.*)");
-        assertTrue(name.length() == 0);
+        assertEquals(0, name.length());
     }
 
     @Test

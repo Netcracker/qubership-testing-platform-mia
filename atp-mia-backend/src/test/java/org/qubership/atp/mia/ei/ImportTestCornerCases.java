@@ -367,7 +367,7 @@ public class ImportTestCornerCases extends ExportImportBaseTest {
 
         assertFalse(validationResult.isValid());
         assertFalse(validationResult.getDetails().isEmpty());
-        assertEquals(expectedMessage, validationResult.getDetails().get(0).getMessage());
+        assertEquals(expectedMessage, validationResult.getDetails().getFirst().getMessage());
     }
 
     @Test
@@ -379,7 +379,7 @@ public class ImportTestCornerCases extends ExportImportBaseTest {
 
         assertFalse(validationResult.isValid());
         assertFalse(validationResult.getDetails().isEmpty());
-        assertEquals(expectedMessage, validationResult.getDetails().get(0).getMessage());
+        assertEquals(expectedMessage, validationResult.getDetails().getFirst().getMessage());
     }
 
     @Test
@@ -418,10 +418,10 @@ public class ImportTestCornerCases extends ExportImportBaseTest {
         testPath.set(copyTestDataToWorkingDirectory(testInfo));
 
         //Prepare like in base test class
-        testProjectConfiguration.get().setDirectories(new ArrayList<ProjectDirectory>() {{
+        testProjectConfiguration.get().setDirectories(new ArrayList<>() {{
             add(directoryConfigurations.get().get("/rootDirectory0"));
         }});
-        testProjectConfiguration.get().setFiles(new ArrayList<ProjectFile>() {{
+        testProjectConfiguration.get().setFiles(new ArrayList<>() {{
             add(fileConfigurations.get().get("rootDirectory0_File1.txt"));
         }});
 

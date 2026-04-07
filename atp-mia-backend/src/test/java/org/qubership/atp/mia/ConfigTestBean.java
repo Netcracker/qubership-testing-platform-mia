@@ -256,9 +256,9 @@ public class ConfigTestBean {
                         ))
                         .build())
                 .commonConfiguration(CommonConfiguration.builder()
-                        .commandShellPrefixes(Arrays.asList(CommandPrefix.builder()
+                        .commandShellPrefixes(Collections.singletonList(CommandPrefix.builder()
                                 .system(testSystem.get().getName())
-                                .prefixes(new LinkedHashMap<String, String>() {{
+                                .prefixes(new LinkedHashMap<>() {{
                                     put("accountNumber", "echo \"Something with accountNumber %s\"");
                                     put("genevaDate", "echo \"Something with genevaDate %s\"");
                                     put("infinys_root", "cd %s\nsource infinys.env");
@@ -293,7 +293,7 @@ public class ConfigTestBean {
                 .name(TEST_CONNECTION_SSH_NAME)
                 .sourceTemplateId(Connection.SourceTemplateId.SSH.id)
                 .systemId(TEST_SYSTEM_ID)
-                .parameters(new HashMap<String, String>() {{
+                .parameters(new HashMap<>() {{
                     put(SSH_HOST, "localhost:22");
                     put(SSH_LOGIN, SSH_LOGIN_VALUE);
                     put(SSH_PASSWORD, SSH_PASSWORD_VALUE);
@@ -307,7 +307,7 @@ public class ConfigTestBean {
                 .name(TEST_CONNECTION_DB_NAME)
                 .sourceTemplateId(Connection.SourceTemplateId.DB.id)
                 .systemId(TEST_SYSTEM_ID)
-                .parameters(new HashMap<String, String>() {{
+                .parameters(new HashMap<>() {{
                     put(SQL_HOST, java.lang.System.getProperty("POSTGRES_IP"));
                     put(JDBC_URL, "jdbc:postgresql://" + java.lang.System.getProperty("POSTGRES_IP") + ":5432/mia");
                     put(SQL_LOGIN, SQL_LOGIN_VALUE);
@@ -322,7 +322,7 @@ public class ConfigTestBean {
                 .name(TEST_CONNECTION_HTTP_NAME)
                 .sourceTemplateId(Connection.SourceTemplateId.HTTP.id)
                 .systemId(TEST_SYSTEM_ID)
-                .parameters(new HashMap<String, String>() {{
+                .parameters(new HashMap<>() {{
                     put("http_host", "http://localhost:8080");
                     put("url", "http://localhost:8080");
                 }})

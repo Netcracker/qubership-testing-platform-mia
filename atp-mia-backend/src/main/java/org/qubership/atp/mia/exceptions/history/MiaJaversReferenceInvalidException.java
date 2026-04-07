@@ -32,7 +32,7 @@ public class MiaJaversReferenceInvalidException extends MiaException {
 
     public static final String DEFAULT_MESSAGE = "Error while working with history references";
 
-    private Set<ConstraintViolation<Object>> violations;
+    private final Set<ConstraintViolation<Object>> violations;
 
     public MiaJaversReferenceInvalidException(Set<ConstraintViolation<Object>> violations) {
         super(DEFAULT_MESSAGE);
@@ -46,9 +46,7 @@ public class MiaJaversReferenceInvalidException extends MiaException {
                 .map(violation -> violation.getMessage().formatted(
                         nonNull(violation.getPropertyPath()) ? violation.getPropertyPath().toString() : "",
                         nonNull(violation.getInvalidValue()) ? violation.getInvalidValue().toString() : ""))
-                .forEach(violation -> {
-                    sb.append(violation).append(" ");
-                });
+                .forEach(violation -> sb.append(violation).append(" "));
         return sb.toString();
     }
 }

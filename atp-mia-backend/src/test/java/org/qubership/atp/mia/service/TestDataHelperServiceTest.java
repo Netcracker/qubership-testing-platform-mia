@@ -80,17 +80,17 @@ public class TestDataHelperServiceTest extends ConfigTestBean {
     private static final String fileName = "Rating_Matrix.xlsx";
     private static final String origFilePath = "src/test/resources/testData/" + fileName;
     private static final String accountNumber = "12345";
-    private ThreadLocal<GridFsRepository> gridFsRepository = new ThreadLocal<>();
-    private ThreadLocal<GridFsService> gridFsService = new ThreadLocal<>();
-    private ThreadLocal<SqlExecutionHelperService> sqlService = new ThreadLocal<>();
-    private ThreadLocal<SoapExecutionHelperService> soapService = new ThreadLocal<>();
-    private ThreadLocal<RestExecutionHelperService> restService = new ThreadLocal<>();
-    private ThreadLocal<ShellRepository> shellRepository = new ThreadLocal<>();
-    private ThreadLocal<TestDataRepository> testDataRepository = new ThreadLocal<>();
-    private ThreadLocal<TestDataService> testDataService = new ThreadLocal<>();
+    private final ThreadLocal<GridFsRepository> gridFsRepository = new ThreadLocal<>();
+    private final ThreadLocal<GridFsService> gridFsService = new ThreadLocal<>();
+    private final ThreadLocal<SqlExecutionHelperService> sqlService = new ThreadLocal<>();
+    private final ThreadLocal<SoapExecutionHelperService> soapService = new ThreadLocal<>();
+    private final ThreadLocal<RestExecutionHelperService> restService = new ThreadLocal<>();
+    private final ThreadLocal<ShellRepository> shellRepository = new ThreadLocal<>();
+    private final ThreadLocal<TestDataRepository> testDataRepository = new ThreadLocal<>();
+    private final ThreadLocal<TestDataService> testDataService = new ThreadLocal<>();
 
     @BeforeEach
-    public void before() throws IOException {
+    public void before() {
         gridFsRepository.set(mock(GridFsRepository.class));
         gridFsService.set(new GridFsService(gridFsRepository.get(), miaContext.get()));
         sqlService.set(mock(SqlExecutionHelperService.class));
@@ -211,7 +211,7 @@ public class TestDataHelperServiceTest extends ConfigTestBean {
         new MacrosRegistrator().register();
         final ProcessSettings process = DeserializerConfigBaseTest.getSshTestData().getProcessSettings();
         CommandResponse commandResponse = new CommandResponse(new CommandOutput("", "", false, miaContext.get()));
-        commandResponse.getCommandOutputs().get(0).setContent(
+        commandResponse.getCommandOutputs().getFirst().setContent(
                 new LinkedList<>(Arrays.asList("text1", "text2", "text3")));
         final Command newCommand = new Command(process.getCommand());
         newCommand.setToExecute("{ echo text1; echo text2; echo text3; }");
@@ -233,17 +233,17 @@ public class TestDataHelperServiceTest extends ConfigTestBean {
     }
 
     @Test
-    public void validate() throws IOException {
+    public void validate() {
         final DbTable table1 = new DbTable(Arrays.asList("VALIDATED_Usage_Total_Cost", "VALIDATED_source",
                     "VALIDATED_type_id", "VALIDATED_dtm", "VALIDATED_attr_1", "VALIDATED_attr_2", "VALIDATED_attr_3",
                     "VALIDATED_attr_4", "VALIDATED_attr_5", "VALIDATED_attr_6", "VALIDATED_Attr_7", "VALIDATED_attr_8",
                     "VALIDATED_attr_9", "VALIDATED_attr_10", "VALIDATED_attr_11"),
-                    Arrays.asList(Arrays.asList(ExcelParserHelper.decimalFormat(1.22), "78332111111", "1",
-                            "2019/12/11-07-49-57.00", "78332865512", "78332111111", "2019/12/11-07-49-57.00", "2",
-                            "1", "5839139948", "7", "centrex", "OPTS-21", "ERROR: NO COLUMN RESULT", "")));
+                List.of(Arrays.asList(ExcelParserHelper.decimalFormat(1.22), "78332111111", "1",
+                        "2019/12/11-07-49-57.00", "78332865512", "78332111111", "2019/12/11-07-49-57.00", "2",
+                        "1", "5839139948", "7", "centrex", "OPTS-21", "ERROR: NO COLUMN RESULT", "")));
         final SqlResponse sqlResponse = new SqlResponse();
             sqlResponse.setData(table1);
-            List<CommandResponse> responses = Arrays.asList(new CommandResponse(sqlResponse));
+            List<CommandResponse> responses = List.of(new CommandResponse(sqlResponse));
         when(sqlService.get().executeCommand(anyString(), eq(testSystem.get().getName()), any(HashMap.class),
                 anyBoolean()))
                 .thenReturn(responses);
@@ -267,12 +267,12 @@ public class TestDataHelperServiceTest extends ConfigTestBean {
             assertEquals("0", response.getSqlResponse().getData().getData().get(1).get(1));
             assertEquals("13", response.getSqlResponse().getData().getData().get(1).get(2));
         LinkedList<ValidatedParameters> validateValue = testDataRepository.get().getTestDataWorkbook().getMainSheet()
-                    .getScenarios().get(0).getDescriptions().get(0).getValidatedParams();
+                    .getScenarios().getFirst().getDescriptions().getFirst().getValidatedParams();
             ValidatedParameters vp = validateValue.stream().filter(v -> v.getKey().equalsIgnoreCase(
                     "VALIDATED_attr_10")).findFirst().get();
             assertEquals("ERROR: NO COLUMN RESULT", vp.getValue());
             assertEquals(ValidatedParameters.State.PASSED, vp.getState());
-        validateValue = testDataRepository.get().getTestDataWorkbook().getMainSheet().getScenarios().get(0)
+        validateValue = testDataRepository.get().getTestDataWorkbook().getMainSheet().getScenarios().getFirst()
                     .getDescriptions().get(1).getValidatedParams();
             vp = validateValue.stream().filter(v -> v.getKey().equalsIgnoreCase("VALIDATED_attr_9")).findFirst().get();
             assertEquals("OPTS-21", vp.getValue());

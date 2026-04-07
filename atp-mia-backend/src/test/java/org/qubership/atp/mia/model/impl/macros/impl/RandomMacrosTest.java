@@ -17,8 +17,8 @@
 
 package org.qubership.atp.mia.model.impl.macros.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.exceptions.macrosandevaluations.MacrosRandomIncorrectFormatException;
@@ -30,8 +30,8 @@ public class RandomMacrosTest {
     public void evaluate() {
         String[] inputs = {"10"};
         String actualResult = new RandomMacros().evaluate(inputs);
-        assertEquals(true, Integer.valueOf(actualResult) >= 0
-                && Integer.valueOf(actualResult) < Integer.valueOf(inputs[0]));
+        assertTrue(Integer.parseInt(actualResult) >= 0
+                && Integer.parseInt(actualResult) < Integer.parseInt(inputs[0]));
     }
 
     @Test

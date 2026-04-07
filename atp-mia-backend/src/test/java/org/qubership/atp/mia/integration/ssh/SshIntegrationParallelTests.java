@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Assertions;
@@ -58,7 +57,7 @@ public class SshIntegrationParallelTests extends BaseIntegrationTestConfiguratio
     public void testSsh_whenManyParallelQueries_expectEveryQueryCorrectOutput() {
         final String process = "Fill Input by 0";
         List<String> commands =
-                IntStream.range(minBound, maxBound).mapToObj(x -> "sleep " + x + "; echo 'process" + x + "'").collect(Collectors.toList());
+                IntStream.range(minBound, maxBound).mapToObj(x -> "sleep " + x + "; echo 'process" + x + "'").toList();
         Set<RequestResponseMap> commandsWithRequests = new HashSet<>();
         commands.forEach(c -> commandsWithRequests.add( new RequestResponseMap(c, createSshRequest(process, c))));
         checkResponsesArray(commandsWithRequests);
@@ -69,7 +68,7 @@ public class SshIntegrationParallelTests extends BaseIntegrationTestConfiguratio
         final String process = "Fill Input by 0";
         List<String> commands = IntStream.range(minBound, maxBound).mapToObj(x -> "sleep "
                 + (new Random().nextInt(maxBound))
-                + "; echo 'process" + x + "'").collect(Collectors.toList());
+                + "; echo 'process" + x + "'").toList();
         Set<RequestResponseMap> commandsWithRequests = new HashSet<>();
         commands.forEach(c -> commandsWithRequests.add( new RequestResponseMap(c, createSshRequest(process, c))));
         checkResponsesArray(commandsWithRequests);
@@ -78,7 +77,7 @@ public class SshIntegrationParallelTests extends BaseIntegrationTestConfiguratio
     @Test
     public void testSsh_whenNoSleepInParallel_expectEveryQueryCorrectOutput() {
         final String process = "Fill Input by 0";
-        List<String> commands = IntStream.range(minBound, maxBound).mapToObj(x -> "echo 'process" + x + "'").collect(Collectors.toList());
+        List<String> commands = IntStream.range(minBound, maxBound).mapToObj(x -> "echo 'process" + x + "'").toList();
         Set<RequestResponseMap> commandsWithRequests = new HashSet<>();
         commands.forEach(c -> commandsWithRequests.add( new RequestResponseMap(c, createSshRequest(process, c))));
         checkResponsesArray(commandsWithRequests);

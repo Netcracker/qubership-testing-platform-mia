@@ -195,13 +195,12 @@ public class GridFsRepositoryImpl implements GridFsRepository {
     }
 
     private Document getDocument(FileMetaData fileData) {
-        Document document = new Document()
+        return new Document()
                 .append("projectId", fileData.getProjectId().toString())
                 .append("fileType", fileData.getProjectFileType().name())
                 .append("uploadDate", LocalDateTime.now().toString())
                 .append("extension", fileData.getFileExtension())
                 .append("contentType", fileData.getContentType());
-        return document;
     }
 
     private GridFSFile getGridFsFile(FileMetaData fileData) {

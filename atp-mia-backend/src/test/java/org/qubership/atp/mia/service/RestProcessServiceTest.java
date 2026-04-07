@@ -61,8 +61,8 @@ public class RestProcessServiceTest extends ConfigTestBean {
     private String filePath;
     private Rest rest;
     public static final String PROJECT_FOLDER = "." + File.separator + "PROJECT_FOLDER" + File.separator;
-    private ThreadLocal<RestRepository> restRepository = new ThreadLocal<>();
-    private ThreadLocal<RestExecutionHelperService> restService = new ThreadLocal<>();
+    private final ThreadLocal<RestRepository> restRepository = new ThreadLocal<>();
+    private final ThreadLocal<RestExecutionHelperService> restService = new ThreadLocal<>();
 
     private static void createFile(File file, String fileInput) throws IOException {
         file.getParentFile().mkdirs();
@@ -219,7 +219,7 @@ public class RestProcessServiceTest extends ConfigTestBean {
     }
 
     @Test
-    public void when_NotRest_thenError() throws IOException {
+    public void when_NotRest_thenError() {
         //construct
         command.setRest(null);
         RestNotFoundException ex = assertThrows(RestNotFoundException.class,

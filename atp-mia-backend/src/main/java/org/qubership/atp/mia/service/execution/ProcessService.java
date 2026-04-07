@@ -453,7 +453,7 @@ public class ProcessService {
                             String returnColumnName = sqlResponse.getData().getColumns().stream()
                                     .filter(s -> s.equalsIgnoreCase(columnName)).findFirst().get();
                             int rowIndex = 0;
-                            if (sqlResponse.getData().getData().get(0).get(0).equals("ER")) {
+                            if (sqlResponse.getData().getData().getFirst().getFirst().equals("ER")) {
                                 rowIndex = 1;
                             }
                             value = sqlResponse.getData().getData().get(rowIndex).get(
@@ -657,7 +657,7 @@ public class ProcessService {
             for (String column : table.getData().getColumns()) {
                 String columnValue;
                 if (table.getRecords() > 0) {
-                    columnValue = table.getData().getData().get(0)
+                    columnValue = table.getData().getData().getFirst()
                             .get(table.getData().getColumns().indexOf(column));
                 } else {
                     columnValue = "Not Found";
@@ -715,7 +715,7 @@ public class ProcessService {
             if (prerequisiteQuery.isPresent()) {
                 final SqlResponse sqlResponse = prerequisiteQuery.get().getSqlResponse();
                 if (sqlResponse.getRecords() > 0) {
-                    final String value = sqlResponse.getData().getData().get(0).get(0);
+                    final String value = sqlResponse.getData().getData().getFirst().getFirst();
                     miaContext.getFlowData().addParameter(prerequisite.getName(), value);
                     log.info("Parameter {} saved as {} from query: {}", prerequisite.getName(), value,
                             sqlResponse.getQuery());
@@ -739,7 +739,7 @@ public class ProcessService {
      * @param variables       variables
      */
     private void saveVariableFromLog(CommandResponse commandResponse, HashMap<String, String> variables) {
-        CommandOutput commandOutput = commandResponse.getCommandOutputs().get(0);
+        CommandOutput commandOutput = commandResponse.getCommandOutputs().getFirst();
         try {
             commandOutput.contentFromFile().forEach(string -> variables.forEach((variableName, regex) -> {
                 String value = Utils.getFirstGroupFromStringByRegexp(string, regex);

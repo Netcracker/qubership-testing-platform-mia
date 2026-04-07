@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -101,8 +100,7 @@ public class MiaContext {
                 : Path.of(path);
         final String parent = pathOnUi.getParent() == null ? "" : pathOnUi.getParent().toString();
         final String fileName = pathOnUi.getFileName().toString();
-        String encodedFileName = fileName;
-        encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
         return new Link("/rest/downloadFile" + FilenameUtils.separatorsToUnix(parent) + "/" + encodedFileName,
                 fileName);
     }
@@ -321,13 +319,12 @@ public class MiaContext {
      * @return prepared url to IFT response.
      */
     public String prepareMiaURL(String miaPath, String processName) {
-        String urlSuffix = "";
         String urlParams = "";
         String[] sections = miaPath.split("/");
         for (String section : sections) {
             urlParams = urlParams + section + ",";
         }
-        urlSuffix = URLEncoder.encode(urlParams + processName, StandardCharsets.UTF_8);
+        String urlSuffix = URLEncoder.encode(urlParams + processName, StandardCharsets.UTF_8);
         return catalogueUrl + "/project/" + getProjectId() + "/mia?path=" + urlSuffix;
     }
 

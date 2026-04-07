@@ -63,10 +63,10 @@ public class CycleTextGenerationMacros extends Macros<String> {
                         if (valueToChange == null) {
                             valueToChange = entry.getValue().get(0);
                         }
-                        toAdd.add(toAdd.get(toAdd.size() - 1).replace("[" + argumentN + "]", valueToChange.trim()));
+                        toAdd.add(toAdd.getLast().replace("[" + argumentN + "]", valueToChange.trim()));
                     }
-                    toAdd.add(toAdd.get(toAdd.size() - 1).replaceAll("\\[\\w+\\]", ""));
-                    finalText.add(toAdd.get(toAdd.size() - 1));
+                    toAdd.add(toAdd.getLast().replaceAll("\\[\\w+\\]", ""));
+                    finalText.add(toAdd.getLast());
                 }
             }
         }
@@ -197,7 +197,7 @@ public class CycleTextGenerationMacros extends Macros<String> {
                 elementIndex++;
                 String block = argumentV.substring(startElementId + 1, endElementId);
                 while (block.contains("[") && block.contains("]")) {
-                    block = parseArgumentValue(block, elementIndex).get(0);
+                    block = parseArgumentValue(block, elementIndex).getFirst();
                 }
                 startElementId = symbolId + 1;
                 endElementId = -1;

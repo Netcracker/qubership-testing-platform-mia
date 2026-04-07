@@ -28,6 +28,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -119,23 +120,23 @@ public class BaseUnitTestConfiguration extends ConfigTestBean {
                 .id(systemId)
                 .name(TEST_SYSTEM_NAME + randomId)
                 .environmentId(envId)
-                .connections(Arrays.asList())
+                .connections(List.of())
                 .build();
         Environment testEnvironment2 = Environment.builder()
                 .projectId(projectId.get())
                 .id(envId)
                 .name(TEST_ENVIRONMENT_NAME + randomId)
-                .systems(Arrays.asList(testSystem2))
+                .systems(Collections.singletonList(testSystem2))
                 .build();
         Project testProject2 = Project.builder()
                 .id(projectId.get())
                 .name(DEFAULT_PROJECT_NAME + randomId)
-                .environments(Arrays.asList(testEnvironment2.getId()))
+                .environments(Collections.singletonList(testEnvironment2.getId()))
                 .build();
         when(environmentsService.get().getEnvironmentsByProject(eq(projectId.get())))
-                .thenReturn(Arrays.asList(testEnvironment2));
+                .thenReturn(List.of(testEnvironment2));
         when(environmentsService.get().getEnvironmentsFull(eq(envId), eq(projectId.get()))).thenReturn(testEnvironment2);
-        when(environmentsService.get().getProjects()).thenReturn(Arrays.asList(testProject2));
+        when(environmentsService.get().getProjects()).thenReturn(Collections.singletonList(testProject2));
         when(environmentsService.get().getProject(eq(projectId.get()))).thenReturn(testProject2);
         miaContext.get().setContext(projectId.get(), null);
     }
@@ -173,7 +174,9 @@ public class BaseUnitTestConfiguration extends ConfigTestBean {
                                         .command(Command.builder()
                                                 .name("GPARAMS")
                                                 .type("SQL")
-                                                .values(new LinkedHashSet<String>() {{add("some command");}})
+                                                .values(new LinkedHashSet<>() {{
+                                                    add("some command");
+                                                }})
                                                 .build())
                                         .build())
                                 .projectConfiguration(testProjectConfiguration.get())
@@ -187,7 +190,9 @@ public class BaseUnitTestConfiguration extends ConfigTestBean {
                                         .command(Command.builder()
                                                 .name("BG")
                                                 .type("SSH")
-                                                .values(new LinkedHashSet<String>() {{add("some command");}})
+                                                .values(new LinkedHashSet<>() {{
+                                                    add("some command");
+                                                }})
                                                 .build())
                                         .build())
                                 .projectConfiguration(testProjectConfiguration.get())

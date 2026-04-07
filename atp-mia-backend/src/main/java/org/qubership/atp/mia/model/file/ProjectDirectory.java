@@ -137,9 +137,7 @@ public class ProjectDirectory extends DateAuditorEntity {
      */
     public List<String> getFilesNames() {
         List<String> filesNames = new ArrayList<>();
-        files.forEach(s -> {
-            filesNames.add(s.getName());
-        });
+        files.forEach(s -> filesNames.add(s.getName()));
         return filesNames;
     }
 

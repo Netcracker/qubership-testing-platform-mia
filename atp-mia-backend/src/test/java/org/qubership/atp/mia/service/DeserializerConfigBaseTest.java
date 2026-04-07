@@ -47,7 +47,7 @@ import com.google.common.collect.ImmutableList;
 
 public abstract class DeserializerConfigBaseTest extends ProcessServiceBaseTest {
 
-    private static String systemBillingSystem = "Billing System";
+    private static final String systemBillingSystem = "Billing System";
 
     /**
      * Get BG process.
@@ -612,7 +612,7 @@ public abstract class DeserializerConfigBaseTest extends ProcessServiceBaseTest 
      */
     public static ArrayList<Validation> getDefaultCurrentStatement() {
         ArrayList<Validation> validations = new ArrayList<>();
-        validations.add(Validation.builder().type("SQL").system("Billing System").values(new LinkedHashSet<String>() {{
+        validations.add(Validation.builder().type("SQL").system("Billing System").values(new LinkedHashSet<>() {{
             add("select * from gparams where name like '%SYSdate%'");
         }}).saveToWordFile(true).build());
         return validations;
@@ -627,7 +627,7 @@ public abstract class DeserializerConfigBaseTest extends ProcessServiceBaseTest 
         inputs.add(Input.builder().label("SYSdateValue YYYYMMDD hhmmss").mask("YYYYMMDD").name("SYSdateValue")
                 .type("date").required(true).system("Billing System").build());
         inputs.add(Input.builder().label("Bill Period").name("bill_period").required(true)
-                .type("list").system("Billing System").values(new LinkedHashSet<String>() {{
+                .type("list").system("Billing System").values(new LinkedHashSet<>() {{
                     add("1");
                     add("2");
                 }}).build());
@@ -638,7 +638,7 @@ public abstract class DeserializerConfigBaseTest extends ProcessServiceBaseTest 
         inputs.add(Input.builder().label("End Dat").name("endDat")
                 .type("text").system("Billing System").build());
         inputs.add(Input.builder().label("Payment Amount").name("payment_amount")
-                .type("text").system("Billing System").values(new LinkedHashSet<String>() {{
+                .type("text").system("Billing System").values(new LinkedHashSet<>() {{
                     add("100.00");
                 }}).build());
         inputs.add(Input.builder().label("Payment Transaction ID").name("payment_transaction_id")
@@ -652,24 +652,24 @@ public abstract class DeserializerConfigBaseTest extends ProcessServiceBaseTest 
         inputs.add(Input.builder().label("File for request").name("soapRequestFile")
                 .type("attachment").system("ECA").build());
         inputs.add(Input.builder().label("Event types").name("template")
-                .type("checkBoxGroup").system("Billing System").values(new LinkedHashSet<String>() {{
+                .type("checkBoxGroup").system("Billing System").values(new LinkedHashSet<>() {{
                     add("1");
                     add("2");
                 }}).build());
         inputs.add(Input.builder().label("Event Source").name("Calling")
-                .type("text").system("Billing System").values(new LinkedHashSet<String>() {{
+                .type("text").system("Billing System").values(new LinkedHashSet<>() {{
                     add("32553697560");
                 }}).build());
         inputs.add(Input.builder().label("Event Date").name("EVENT_DTM")
-                .type("text").system("Billing System").values(new LinkedHashSet<String>() {{
+                .type("text").system("Billing System").values(new LinkedHashSet<>() {{
                     add("2019/07/05-05-35-28.01");
                 }}).build());
         inputs.add(Input.builder().label("MO").name("MO")
-                .type("text").system("Billing System").values(new LinkedHashSet<String>() {{
+                .type("text").system("Billing System").values(new LinkedHashSet<>() {{
                     add("MO_1");
                 }}).build());
         inputs.add(Input.builder().label("Destination").name("Destination")
-                .type("text").system("Billing System").values(new LinkedHashSet<String>() {{
+                .type("text").system("Billing System").values(new LinkedHashSet<>() {{
                     add("32184854784");
                 }}).build());
         inputs.add(Input.builder().label("New account number (filled by 0 in the start while length < 20)").

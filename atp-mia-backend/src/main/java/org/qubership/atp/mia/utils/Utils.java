@@ -20,7 +20,6 @@ package org.qubership.atp.mia.utils;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -144,7 +143,7 @@ public class Utils {
         ArrayList<String> paths = new ArrayList<>();
         Pattern pattern = Pattern.compile(regex);
         try {
-            String result = new String(Files.readAllBytes(Path.of(outputFilePath)), StandardCharsets.UTF_8);
+            String result = Files.readString(Path.of(outputFilePath));
             Matcher matcher = pattern.matcher(result);
             while (matcher.find()) {
                 final String pathToFileFound = matcher.group();

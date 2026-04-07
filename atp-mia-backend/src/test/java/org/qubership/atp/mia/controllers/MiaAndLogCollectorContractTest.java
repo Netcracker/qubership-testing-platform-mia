@@ -148,7 +148,7 @@ public class MiaAndLogCollectorContractTest {
 
     public CommonConfiguration createCommonConfiguration() {
         return CommonConfiguration.builder().genevaDateMask("geneva").sshRsaFilePath("ssh")
-                .defaultSystem("defaultSystem").commonVariables(new HashMap<String, String>()).build();
+                .defaultSystem("defaultSystem").commonVariables(new HashMap<>()).build();
     }
 
     @State("all ok")

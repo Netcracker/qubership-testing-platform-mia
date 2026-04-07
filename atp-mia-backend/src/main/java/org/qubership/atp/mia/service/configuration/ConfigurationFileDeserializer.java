@@ -77,7 +77,7 @@ public class ConfigurationFileDeserializer {
     private final EnvironmentsService environmentsService;
     private final GridFsService gridFsService;
     private final AtpUserService atpUserService;
-    private ThreadLocal<StringJoiner> validationResults = new ThreadLocal<>();
+    private final ThreadLocal<StringJoiner> validationResults = new ThreadLocal<>();
 
     /**
      * Deserialize config from file.

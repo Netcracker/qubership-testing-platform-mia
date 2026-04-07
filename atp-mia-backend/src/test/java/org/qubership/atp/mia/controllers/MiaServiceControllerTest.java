@@ -21,7 +21,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.qubership.atp.mia.model.Constants.DEFAULT_PROJECT_NAME;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -54,23 +55,23 @@ public class MiaServiceControllerTest extends BaseIntegrationTestConfiguration {
                 .id(systemId)
                 .name(TEST_SYSTEM_NAME + randomId)
                 .environmentId(envId)
-                .connections(Arrays.asList())
+                .connections(List.of())
                 .build();
         Environment testEnvironment2 = Environment.builder()
                 .projectId(projectId.get())
                 .id(envId)
                 .name(TEST_ENVIRONMENT_NAME + randomId)
-                .systems(Arrays.asList(testSystem2))
+                .systems(Collections.singletonList(testSystem2))
                 .build();
         Project testProject2 = Project.builder()
                 .id(projectId.get())
                 .name(DEFAULT_PROJECT_NAME + randomId)
-                .environments(Arrays.asList(testEnvironment2.getId()))
+                .environments(Collections.singletonList(testEnvironment2.getId()))
                 .build();
         Mockito.when(environmentsService.getEnvironmentsByProject(eq(projectId.get())))
-                .thenReturn(Arrays.asList(testEnvironment2));
+                .thenReturn(List.of(testEnvironment2));
         Mockito.when(environmentsService.getEnvironmentsFull(eq(envId), eq(projectId.get()))).thenReturn(testEnvironment2);
-        Mockito.when(environmentsService.getProjects()).thenReturn(Arrays.asList(testProject2));
+        Mockito.when(environmentsService.getProjects()).thenReturn(Collections.singletonList(testProject2));
         Mockito.when(environmentsService.getProject(eq(projectId.get()))).thenReturn(testProject2);
         miaContext.setContext(projectId.get(), null);
         miaContext.getFlowData().setEnvironment(testEnvironment2);

@@ -69,7 +69,7 @@ public abstract class CassandraIntegrationTestConfiguration extends SqlIntegrati
         cleanCassandraDbBeforeTest();
         initDbParameters = testConnectionDb.get().getParameters();
         testConnectionDb.get().setParameters(
-                new HashMap<String, String>() {{
+                new HashMap<>() {{
                     put(CASSANDRA_HOST, cassandraUrl);
                     put(CASSANDRA_PORT, cassandraPort);
                     put(SQL_LOGIN, SQL_LOGIN_VALUE);

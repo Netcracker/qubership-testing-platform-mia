@@ -17,7 +17,6 @@
 
 package org.qubership.atp.mia.model.impl;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -47,7 +46,7 @@ public class ExcelWorkbook {
      */
     public ExcelWorkbook(@Nonnull String filePath) throws IOException {
         this.filePath = filePath;
-        this.fileInputStream = new FileInputStream(new File(filePath));
+        this.fileInputStream = new FileInputStream(filePath);
         this.workbook = new XSSFWorkbook(fileInputStream);
     }
 

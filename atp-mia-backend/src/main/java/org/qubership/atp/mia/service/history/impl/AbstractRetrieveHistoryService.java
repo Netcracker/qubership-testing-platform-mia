@@ -184,7 +184,7 @@ public abstract class AbstractRetrieveHistoryService<S extends DateAuditorEntity
                 .withSnapshotType(SnapshotType.INITIAL)
                 .build());
         if (!CollectionUtils.isEmpty(snapshots)) {
-            CommitMetadata initialCommitMetadata = snapshots.get(0).getCommitMetadata();
+            CommitMetadata initialCommitMetadata = snapshots.getFirst().getCommitMetadata();
             destination.setCreatedBy(initialCommitMetadata.getAuthor());
             destination.setCreatedWhen(Timestamp.valueOf(initialCommitMetadata.getCommitDate()).getTime());
         }
@@ -280,7 +280,7 @@ public abstract class AbstractRetrieveHistoryService<S extends DateAuditorEntity
         QueryBuilder queryBuilder = QueryBuilder.byInstanceId(uuid, getEntityClass())
                 .withVersion(Long.parseLong(version)).withScopeDeepPlus(Integer.MAX_VALUE);
         if (Objects.nonNull(snapshots) && !snapshots.isEmpty()) {
-            queryBuilder.withCommitId(snapshots.get(0).getCommitId());
+            queryBuilder.withCommitId(snapshots.getFirst().getCommitId());
         }
         List<Shadow<S>> shadows = javers.findShadows(queryBuilder.build());
         log.debug("Shadows found : {}", shadows);

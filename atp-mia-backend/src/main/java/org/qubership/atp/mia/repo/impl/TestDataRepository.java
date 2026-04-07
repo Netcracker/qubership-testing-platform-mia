@@ -107,7 +107,7 @@ public class TestDataRepository {
         final CommonConfiguration cConf = miaContext.getConfig().getCommonConfiguration();
         if (command.getTestDataParams().isEventFileForEachDescription() || templates.isEmpty()) {
             final String ethalonFile = miaContext.evaluate(command.getTestDataParams().getEventFileTemplate(), params);
-            final String toGeneration = miaContext.evaluate(command.getNamesOfFilesForGeneration().get(0), params);
+            final String toGeneration = miaContext.evaluate(command.getNamesOfFilesForGeneration().getFirst(), params);
             fileName = toGeneration;
             templates.add(new Template(miaContext, miaFileService, ethalonFile, toGeneration,
                     command.getFileExtension(), command.definedCharsetForGeneratedFile()));
@@ -712,13 +712,13 @@ public class TestDataRepository {
         if (value != null && value.toLowerCase().endsWith(".sql")) {
             try {
                 final List<CommandResponse> result = sqlService.executeCommand(value, system, params, false);
-                if (!result.isEmpty() && result.get(0).getSqlResponse() != null
-                        && result.get(0).getSqlResponse().getData() != null
-                        && result.get(0).getSqlResponse().getData().getData() != null
-                        && !result.get(0).getSqlResponse().getData().getData().isEmpty()
-                        && result.get(0).getSqlResponse().getData().getData().get(0) != null
-                        && !result.get(0).getSqlResponse().getData().getData().get(0).isEmpty()) {
-                    value = result.get(0).getSqlResponse().getData().getData().get(0).get(0);
+                if (!result.isEmpty() && result.getFirst().getSqlResponse() != null
+                        && result.getFirst().getSqlResponse().getData() != null
+                        && result.getFirst().getSqlResponse().getData().getData() != null
+                        && !result.getFirst().getSqlResponse().getData().getData().isEmpty()
+                        && result.getFirst().getSqlResponse().getData().getData().getFirst() != null
+                        && !result.getFirst().getSqlResponse().getData().getData().getFirst().isEmpty()) {
+                    value = result.getFirst().getSqlResponse().getData().getData().getFirst().getFirst();
                 } else {
                     value = "SQL ERROR: can't parse result of execution";
                 }
@@ -738,7 +738,7 @@ public class TestDataRepository {
      * @return result of execution as string
      */
     private String addColumnWithParsingFromLog(Command command, CommandResponse response, Description description) {
-        final String stringResponse = String.join("\n", response.getCommandOutputs().get(0).contentFromFile());
+        final String stringResponse = String.join("\n", response.getCommandOutputs().getFirst().contentFromFile());
         if (stringResponse != null && command.getVariablesToExtractFromLog() != null) {
             command.getVariablesToExtractFromLog().forEach((columnName, regex) -> {
                 String value = Utils.getFirstGroupFromStringByRegexp(stringResponse, regex);

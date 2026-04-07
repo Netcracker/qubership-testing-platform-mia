@@ -68,17 +68,17 @@ public class MongoIntegrationTest extends BaseIntegrationTestConfiguration {
                 .exchange()
                 .flatMap(resp -> {
                     if (resp.statusCode().isError()) {
-                        String err = "Error during webClient SSH request execution code [" + resp.rawStatusCode() + "]";
+                        String err = "Error during webClient SSH request execution code [" + resp.statusCode().value() + "]";
                         log.error(err);
                         return Mono.error(new Exception(err));
                     }
-                    ParameterizedTypeReference<List<Link>> typeRef = new ParameterizedTypeReference<List<Link>>() {
+                    ParameterizedTypeReference<List<Link>> typeRef = new ParameterizedTypeReference<>() {
                     };
                     return resp.bodyToMono(typeRef);
                 })
                 .block();
         Assertions.assertNotNull(saveResponse);
-        String filename = saveResponse.get(0).getName();
+        String filename = saveResponse.getFirst().getName();
         Path path = miaContext.getLogPath().resolve(filename);
         assertTrue(path.toFile().exists());
     }

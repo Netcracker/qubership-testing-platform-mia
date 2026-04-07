@@ -161,7 +161,7 @@ public class TestDataService {
                     findScenarioByName(testDataWorkbook.getTestDataSheet().getScenarios(), sce, null);
             if (command.getTestDataParams().isEventFileForEachScenario()) {
                 final String ethalonFile = miaContext.evaluate(command.getTestDataParams().getEventFileTemplate());
-                final String toGeneration = miaContext.evaluate(command.getNamesOfFilesForGeneration().get(0));
+                final String toGeneration = miaContext.evaluate(command.getNamesOfFilesForGeneration().getFirst());
                 eventFiles.add(new Template(miaContext, miaFileService, ethalonFile, toGeneration,
                         command.getFileExtension(), command.definedCharsetForGeneratedFile()));
             }
