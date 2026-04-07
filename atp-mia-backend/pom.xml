@@ -659,8 +659,8 @@
         <!--allow to use hibernate custom json types-->
         <dependency>
             <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-60</artifactId>
-            <version>3.5.3</version>
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
+            <version>3.9.9</version>
         </dependency>
         <!--liquibase-->
         <dependency>
