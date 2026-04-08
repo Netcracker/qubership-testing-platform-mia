@@ -121,7 +121,7 @@ public class RestRepository {
         boolean textChecked = true;
         Map.Entry<File, String> responseBody = getResponseBody(command, httpResponse);
         if (responseBody.getValue() != null) {
-            textChecked = checkForText(restLoopParameters, responseBody.getValue(), httpResponse.getAllHeaders());
+            textChecked = checkForText(restLoopParameters, responseBody.getValue(), httpResponse.getHeaders());
         }
         int retryCount = 0;
         if (!textChecked && restLoopParameters != null
@@ -136,8 +136,7 @@ public class RestRepository {
                 httpResponse = restClient.executeRestRequest(client, request);
                 responseBody = getResponseBody(command, httpResponse);
                 if (responseBody.getValue() != null) {
-                    textChecked = checkForText(restLoopParameters, responseBody.getValue(),
-                            httpResponse.getAllHeaders());
+                    textChecked = checkForText(restLoopParameters, responseBody.getValue(), httpResponse.getHeaders());
                 }
                 retryCount++;
                 if (textChecked) {
@@ -155,10 +154,10 @@ public class RestRepository {
         connectionInfo.put("timestampResponse", Utils.getTimestamp());
         connectionInfo.put("code", String.valueOf(httpResponse.getCode()));
         StringJoiner headerResponse = new StringJoiner("\n");
-        Arrays.stream(httpResponse.getAllHeaders()).forEach(h -> headerResponse.add(h.toString()));
+        Arrays.stream(httpResponse.getHeaders()).forEach(h -> headerResponse.add(h.toString()));
         connectionInfo.put("headersResponse", headerResponse.toString());
         if (rest.isSaveCookie()) {
-            Arrays.stream(httpResponse.getAllHeaders()).forEach(header -> {
+            Arrays.stream(httpResponse.getHeaders()).forEach(header -> {
                 if (header.getName().contains("Cookie")) {
                     miaContext.getFlowData().addParameter("Cookie", header.getValue());
                     log.info("Cookie is saved to flow data [ {} ].", header.getValue());

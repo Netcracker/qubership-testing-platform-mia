@@ -46,7 +46,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.qubership.atp.mia.exceptions.fileservice.ReadFailIoExceptionDuringOperation;
 import org.qubership.atp.mia.exceptions.itflite.IncorrectProcessNameException;
 import org.qubership.atp.mia.model.Constants;
@@ -190,16 +190,16 @@ public class Utils {
     /**
      * check content-disposition is present in http response header.
      */
-    public static boolean isHeaderNamePresent(ClassicHttpResponse httpResponse, String headerName) {
-        return Arrays.stream(httpResponse.getAllHeaders())
+    public static boolean isHeaderNamePresent(HttpResponse httpResponse, String headerName) {
+        return Arrays.stream(httpResponse.getHeaders())
                 .anyMatch(h -> h.getName().equalsIgnoreCase(headerName));
     }
 
     /**
      * Get header value from the response header by passing header name as input.
      */
-    public static String getHeaderValue(ClassicHttpResponse httpResponse, String headerName) {
-        return Arrays.stream(httpResponse.getAllHeaders())
+    public static String getHeaderValue(HttpResponse httpResponse, String headerName) {
+        return Arrays.stream(httpResponse.getHeaders())
                 .filter(h -> h.getName().equalsIgnoreCase(headerName))
                 .map(v -> v.getValue()).reduce("", String::concat);
     }
@@ -357,8 +357,7 @@ public class Utils {
             tempValue = Long.parseLong(valueToParse);
         } catch (NumberFormatException e) {
             tempValue = defaultValue;
-            log.debug("Error can't parse {} value [{}], use the standard [{}]",
-                    valueName, valueToParse, defaultValue);
+            log.debug("Error can't parse {} value [{}], use the standard [{}]", valueName, valueToParse, defaultValue);
         }
         return tempValue;
     }
@@ -384,7 +383,7 @@ public class Utils {
     public static void sleepForTimeInMillSeconds(long millSeconds) {
         if (millSeconds > 0) {
             try {
-                log.debug("Waiting for {} milli seconds", millSeconds);
+                log.debug("Waiting for {} milliseconds", millSeconds);
                 Thread.sleep(millSeconds);
             } catch (InterruptedException e) {
                 log.debug("InterruptedException while waiting for above timeout", e);

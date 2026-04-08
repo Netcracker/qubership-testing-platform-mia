@@ -20,6 +20,7 @@ package org.qubership.atp.mia.service.execution;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -37,16 +38,23 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.CredentialsStore;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.impl.LaxRedirectStrategy;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.impl.classic.LaxRedirectStrategy;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
 import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.qubership.atp.mia.exceptions.internal.ssl.SslAlgorithmNotPresentException;
@@ -66,7 +74,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
-import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -77,6 +84,22 @@ public class RestClientService {
 
     @Value("${rest.execution.timeout:5}")
     protected long executionTimeout;
+
+    /*
+     * Regexp to capture mime-type as group(1) and charset (if set) as group(2).
+     * It contains robust expression which successfully parses such strings, for example:
+     *  multipart/form-data; Charset=utf-8
+     *  multipart/form-data; Charset="utf-8"
+     *  multipart/form-data
+     *  application/json
+     *  text/html; charset=utf-8
+     *  application/xml; charset=ISO-8859-1
+     *  '  text/plain  ;  charset  =  utf-8  ' (extra spaces between words).
+     */
+    private static final Pattern CONTENT_TYPE_CHARSET_PATTERN =
+            //Pattern.compile("^([^;]+)(?:;\\s*charset=\"?([^;\"]+)\"?)?", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("^\\s*([^;\\s]+)(?:\\s*;\\s*charset\\s*=\\s*\"?([^;\\s\"]+)\"?)?",
+                    Pattern.CASE_INSENSITIVE);
 
     private final MiaContext miaContext;
 
@@ -119,13 +142,26 @@ public class RestClientService {
         final String login = server.getProperty("login");
         final String password = server.getProperty("password");
         connectionInfo.put("user", login);
+
+        // Create an SSLConnectionSocketFactory using the SSLContext
+        SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
+                .setSslContext(getSslContext())
+                .setHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                .build();
+
+        // Create a ConnectionManager and set the SSL socket factory on it
+        PoolingHttpClientConnectionManager connectionManager =
+                PoolingHttpClientConnectionManagerBuilder.create()
+                        .setSSLSocketFactory(sslSocketFactory)
+                        .build();
+
         HttpClientBuilder httpClient = HttpClientBuilder.create()
+                .setConnectionManager(connectionManager)
+                .setConnectionManagerShared(true) // Important for resource management
                 .setDefaultRequestConfig(org.apache.hc.client5.http.config.RequestConfig.custom()
                         .setResponseTimeout((int) TimeUnit.MINUTES.toMillis(executionTimeout), TimeUnit.MILLISECONDS)
                         .setConnectTimeout((int) TimeUnit.MINUTES.toMillis(executionTimeout), TimeUnit.MILLISECONDS)
-                        .build())
-                .setSSLContext(getSslContext())
-                .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE);
+                        .build());
         if (Strings.isNullOrEmpty(login) || Strings.isNullOrEmpty(password)) {
             log.info("These fields from REST connection are empty: login, password.");
         } else {
@@ -152,7 +188,7 @@ public class RestClientService {
         try {
             method = Rest.RestMethod.valueOf(miaContext.evaluate(rest.getMethod()));
         } catch (Exception e) {
-            throw new IllegalArgumentException("Rest method should one of "
+            throw new IllegalArgumentException("Rest method should be one of "
                     + Arrays.toString(Rest.RestMethod.values()));
         }
         String endPoint = miaContext.evaluate(rest.getEndpoint());
@@ -177,7 +213,19 @@ public class RestClientService {
         if (!Strings.isNullOrEmpty(rest.getBody()) && request instanceof HttpUriRequestBase base) {
             String body = miaContext.evaluate(miaContext.evaluate(rest.getBody()));
             connectionInfo.put("bodyRequest", body);
-            HttpEntity bodyEntity = new ByteArrayEntity(body.getBytes(getCharsetFromRequest(request)));
+
+            /*
+                After migration to httpclient5, there is no such constructor:
+                    new ByteArrayEntity(byte[] buf)
+                The closest variant is:
+                    new ByteArrayEntity(byte[] buf, ContentType contentType)
+                and, we already get 'Content-Type' header inside getCharsetFromRequest() method.
+                So, the decision is:
+                    1. Replace the method with a new one, returning 'Content-Type' (it includes Charset as well),
+                    2. Use header value as the 2nd parameter in new ByteArrayEntity(byte[] buf, ContentType contentType)
+             */
+            ContentType contentType = getContentTypeFromRequest(request);
+            HttpEntity bodyEntity = new ByteArrayEntity(body.getBytes(contentType.getCharset()), contentType);
             base.setEntity(bodyEntity);
             log.debug("REST body: {}", bodyEntity);
         }
@@ -192,10 +240,14 @@ public class RestClientService {
         ClassicHttpResponse httpResponse;
         try {
             log.info("Executing REST request: {}", request);
-            httpResponse = httpClient.execute(request);
+            httpResponse = (ClassicHttpResponse) httpClient.execute(request);
             log.debug("REST executed with response: {}", httpResponse);
         } catch (SocketTimeoutException ste) {
-            throw new RestExecutionTimeOutException(executionTimeout, "minute(s)", request.getUri().toString());
+            try {
+                throw new RestExecutionTimeOutException(executionTimeout, "minute(s)", request.getUri().toString());
+            } catch (URISyntaxException e) {
+                throw new RestIncorrectUrlException(); // It seems extra constructor(s) should be added.
+            }
         } catch (IOException e) {
             throw new RestExceptionDuringExecution(e);
         }
@@ -237,22 +289,43 @@ public class RestClientService {
         }
     }
 
-    private Charset getCharsetFromRequest(HttpUriRequestBase request) {
-        Holder<Charset> charset = new Holder<>(StandardCharsets.ISO_8859_1);
-        Arrays.stream(request.getHeaders("Content-Type")).anyMatch(h -> {
-            Matcher matcher = Pattern.compile(".*charset=([\\w\\-]+).*").matcher(h.getValue());
-            if (matcher.matches()) {
-                String charsetValue = matcher.group(1);
-                try {
-                    charset.value = Charset.forName(matcher.group(1));
-                    log.info("Charset \"{}\" will use for parsing request body according to header", charset.value);
-                    return true;
-                } catch (Exception e) {
-                    log.error("Incorrect charset \"{}\". Use default \"{}\"", charsetValue, charset.value);
+    private ContentType getContentTypeFromRequest(HttpUriRequestBase request) {
+        ContentType contentType = ContentType.create("text/html", StandardCharsets.ISO_8859_1);
+
+        Header[] headers = request.getHeaders("Content-Type");
+        if (headers == null || headers.length == 0) {
+            return contentType;
+        } else {
+            String lastMimeTypeString = null;
+            for (Header h : headers) {
+                Matcher matcher = CONTENT_TYPE_CHARSET_PATTERN.matcher(h.getValue());
+                if (matcher.find()) {
+                    String mimeTypeString = matcher.group(1).trim();
+                    String charsetString = matcher.group(2);
+                    if (StringUtils.isEmpty(charsetString)) {
+                        // We need charset (if set).
+                        // So, we check all content-type headers till it's set AND VALID!
+                        // But what if there is no header with valid charset?
+                        // In such case, we use the last mimeType with DEFAULT charset - StandardCharsets.ISO_8859_1
+                        lastMimeTypeString = mimeTypeString;
+                    } else {
+                        try {
+                            Charset charset = Charset.forName(charsetString);
+                            contentType = ContentType.create(mimeTypeString, charset);
+                            log.info("Charset \"{}\" will be used to parse request body according to header {}",
+                                    charset, h.getValue());
+                            return contentType;
+                        } catch (Exception e) {
+                            log.error("Incorrect charset \"{}\". Check other Content-Type headers (if any). "
+                                    + "Finally, use default \"{}\"", charsetString, contentType.getCharset());
+                        }
+                    }
                 }
             }
-            return false;
-        });
-        return charset.value;
+
+            return StringUtils.isEmpty(lastMimeTypeString)
+                    ? contentType
+                    : ContentType.create(lastMimeTypeString, StandardCharsets.ISO_8859_1);
+        }
     }
 }

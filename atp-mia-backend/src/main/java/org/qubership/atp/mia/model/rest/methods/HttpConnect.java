@@ -25,18 +25,15 @@ public class HttpConnect extends HttpUriRequestBase {
 
     public static final String METHOD_NAME = "CONNECT";
 
-    public HttpConnect() {
+    // No no-arg constructor - it cannot exist in HttpClient 5
+
+    public HttpConnect(final URI uri) {
+        super(METHOD_NAME, uri);
     }
 
-    public HttpConnect(URI uri) {
-        this.setURI(uri);
+    public HttpConnect(final String uri) {
+        super(METHOD_NAME, URI.create(uri));
     }
 
-    public HttpConnect(String uri) {
-        this.setURI(URI.create(uri));
-    }
-
-    public String getMethod() {
-        return METHOD_NAME;
-    }
+    // getMethod() method is no longer needed - the parent class handles it
 }
