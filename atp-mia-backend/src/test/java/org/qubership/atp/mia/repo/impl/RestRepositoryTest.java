@@ -110,7 +110,7 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         // stub
         when(status.get().getStatusCode()).thenReturn(200);
         when(new StatusLine(response.get())).thenReturn(status.get());
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(restClientExecutor.get().createFileWithResponse(any(), any())).thenReturn(filename.get());
         when(restClientExecutor.get().prepareRestClient(any(), anyBoolean(), anyMap())).thenReturn(client.get());
         when(restClientExecutor.get().prepareRestRequest(any(), any(), anyMap())).thenReturn(requestBase.get());
@@ -188,11 +188,13 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         rest.get().setParseResponseAsTable(false);
         File file = miaContext.get().getLogPath().resolve("text.zip").toFile();
         Header[] headers = new Header[]{new BasicHeader("Content-Disposition", "filename=text.zip")};
-        BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
-        basicHttpEntity.setChunked(true);
-        basicHttpEntity.setContent(new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)));
+        BasicHttpEntity basicHttpEntity = new BasicHttpEntity(
+                new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)),
+                ContentType.APPLICATION_OCTET_STREAM,
+                true
+        );
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
@@ -206,11 +208,13 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         rest.get().setParseResponseAsTable(false);
         Header[] headers = new Header[]{new BasicHeader("Content-Disposition", "filename=text.json"),
                 new BasicHeader(HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.toString())};
-        BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
-        basicHttpEntity.setChunked(true);
-        basicHttpEntity.setContent(new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)));
+        BasicHttpEntity basicHttpEntity = new BasicHttpEntity(
+                new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)),
+                ContentType.APPLICATION_OCTET_STREAM,
+                true
+        );
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
@@ -233,11 +237,13 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         // construct
         rest.get().setParseResponseAsTable(false);
         Header[] headers = new Header[]{new BasicHeader("Content-Type", "application/pdf")};
-        BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
-        basicHttpEntity.setChunked(true);
-        basicHttpEntity.setContent(new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)));
+        BasicHttpEntity basicHttpEntity = new BasicHttpEntity(
+                new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)),
+                ContentType.APPLICATION_OCTET_STREAM,
+                true
+        );
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
@@ -249,11 +255,13 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         // construct
         rest.get().setParseResponseAsTable(false);
         Header[] headers = new Header[]{new BasicHeader("Content-Type", "application/json;charset=utf-8")};
-        BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
-        basicHttpEntity.setChunked(true);
-        basicHttpEntity.setContent(new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)));
+        BasicHttpEntity basicHttpEntity = new BasicHttpEntity(
+                new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)),
+                ContentType.APPLICATION_OCTET_STREAM,
+                true
+        );
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
@@ -280,7 +288,7 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         // stub
         when(new StatusLine(response)).thenReturn(status);
         when(status.getStatusCode()).thenReturn(200);
-        when(response.getAllHeaders()).thenReturn(headers);
+        when(response.getHeaders()).thenReturn(headers);
         when(response.getEntity()).thenReturn(entity);
         // assert
         Map.Entry<File, String> result = repository.get().getResponseBody(command.get(), response);
@@ -307,7 +315,7 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
                 .chunked()
                 .build();
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(entity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
@@ -331,7 +339,7 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
                 .chunked()
                 .build();
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(entity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);

@@ -359,7 +359,7 @@ public class UtilsTest extends ConfigTestBean {
         //construct
         Header[] headers = new Header[]{new BasicHeader(name, value)};
         //stub
-        when(response.getAllHeaders()).thenReturn(headers);
+        when(response.getHeaders()).thenReturn(headers);
         return response;
     }
 }
