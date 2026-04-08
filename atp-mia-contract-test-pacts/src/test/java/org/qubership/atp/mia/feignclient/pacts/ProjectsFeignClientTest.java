@@ -22,11 +22,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.migrationsupport.rules.ExternalResourceSupport;
 import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
 import org.qubership.atp.mia.clients.api.environments.dto.projects.EnvironmentResDto;
 import org.qubership.atp.mia.clients.api.environments.dto.projects.ProjectFullVer1ViewDto;
@@ -37,6 +35,7 @@ import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConf
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
@@ -47,27 +46,31 @@ import au.com.dius.pact.consumer.dsl.PactDslJsonArray;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit.PactProviderRule;
-import au.com.dius.pact.consumer.junit.PactVerification;
+import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 
 @EnableFeignClients(clients = {ProjectsFeignClient.class})
-@ExtendWith(ExternalResourceSupport.class)
-@SpringJUnitConfig(classes = {TestAppConfiguration.class})
+@ExtendWith(PactConsumerTestExt.class)
+@SpringJUnitConfig(classes = {ProjectsFeignClientTest.TestApp.class})
 @Import({JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, FeignConfiguration.class,
         FeignAutoConfiguration.class})
 @TestPropertySource(properties = {"feign.atp.environments.name=atp-environments", "feign.atp.environments.route=",
         "feign.atp.environments.url=http://localhost:8888"})
+@PactTestFor(providerName = "atp-environments", port = "8888", pactVersion = PactSpecVersion.V3)
 public class ProjectsFeignClientTest {
 
-    @Rule
-    public PactProviderRule mockProvider = new PactProviderRule("atp-environments", "localhost", 8888, this);
+    @Configuration
+    public static class TestApp {
+    }
+
     @Autowired
     ProjectsFeignClient projectsFeignClient;
 
     @Test
-    @PactVerification()
+    @PactTestFor(pactMethod = "createPact")
     public void allPass() {
         UUID projectId = UUID.fromString("7c9dafe9-2cd1-4ffc-ae54-45867f2b9702");
         ResponseEntity<List<ProjectFullVer2ViewDto>> result_getAllProjects =
