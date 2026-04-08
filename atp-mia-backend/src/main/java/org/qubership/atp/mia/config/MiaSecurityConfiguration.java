@@ -17,25 +17,25 @@
 
 package org.qubership.atp.mia.config;
 
-import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.qubership.atp.auth.springbootstarter.config.SecurityConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 @Order(1)
-@KeycloakConfiguration
+@EnableWebSecurity
 @EnableMethodSecurity
 @Profile("default")
 public class MiaSecurityConfiguration extends SecurityConfiguration {
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
+    public void configureHttpSecurity(HttpSecurity http) throws Exception {
+        super.configureHttpSecurity(http);
         http
                 .headers(headers -> headers
                         .frameOptions(options -> options
