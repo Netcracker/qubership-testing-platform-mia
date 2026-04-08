@@ -823,7 +823,23 @@
                 <!-- Generate models and controllers based on api-contract.yml -->
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>6.6.0</version>
+                <version>7.9.0</version>
+                <configuration>
+                    <generatorName>spring</generatorName>
+                    <output>${project.build.directory}/generated-sources</output>
+                    <modelNameSuffix>Dto</modelNameSuffix>
+                    <skipOverwrite>false</skipOverwrite>
+                    <generateModelTests>false</generateModelTests>
+                    <skipValidateSpec>true</skipValidateSpec>
+                    <configOptions>
+                        <useSpringBoot3>true</useSpringBoot3>
+                        <useJakartaEe>true</useJakartaEe>
+                        <java8>true</java8>
+                        <interfaceOnly>true</interfaceOnly>
+                        <useTags>true</useTags>
+                        <skipDefaultInterface>true</skipDefaultInterface>
+                    </configOptions>
+                </configuration>
                 <executions>
                     <execution>
                         <id>openapi-project-v1.yaml</id>
@@ -832,21 +848,11 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>${basedir}/src/main/config/apispecs/api/environments/v1/openapi-project-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${basedir}/src/main/config/apispecs/api/environments/v1/openapi-project-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.clients.api.environments</apiPackage>
                             <modelPackage>org.qubership.atp.mia.clients.api.environments.dto.projects</modelPackage>
                             <invokerPackage>org.qubership.atp.mia.clients</invokerPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
                             <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <serializableModel>true</serializableModel>
                             </configOptions>
                         </configuration>
@@ -858,22 +864,10 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>${basedir}/src/main/config/apispecs/api/environments/v1/openapi-environments-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${basedir}/src/main/config/apispecs/api/environments/v1/openapi-environments-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.clients.api.environments</apiPackage>
                             <modelPackage>org.qubership.atp.mia.clients.api.environments.dto.projects</modelPackage>
                             <invokerPackage>org.qubership.atp.mia.clients</invokerPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -883,22 +877,13 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
                             <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v1/candidates-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto.candidates</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
                             <configOptions>
                                 <additionalModelTypeAnnotations>@lombok.Data
                                     @lombok .AllArgsConstructor
                                 </additionalModelTypeAnnotations>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -909,22 +894,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v1/project-controller-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v1/project-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto.project</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <!-- MIA -->
@@ -935,22 +907,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-models-v2.yaml
-                            </inputSpec>
-                            <modelPackage>
-                                org.qubership.atp.mia.controllers.api.dto
-                            </modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-models-v2.yaml</inputSpec>
+                            <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
                             <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <notNullJacksonAnnotation>true</notNullJacksonAnnotation>
                             </configOptions>
                         </configuration>
@@ -962,22 +921,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-cache-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-cache-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -987,21 +933,10 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-configuration-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-configuration-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <generateModelTests>false</generateModelTests>
                             <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <notNullJacksonAnnotation>true</notNullJacksonAnnotation>
                             </configOptions>
                         </configuration>
@@ -1013,22 +948,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-environment-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-environment-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1038,22 +960,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-execution-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-execution-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1063,21 +972,10 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-file-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-file-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
+                            <skipValidateSpec>false</skipValidateSpec>
                         </configuration>
                     </execution>
                     <execution>
@@ -1087,22 +985,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-service-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-service-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1112,22 +997,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-general-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-general-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1137,22 +1009,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-history-changes-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-history-changes-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>
