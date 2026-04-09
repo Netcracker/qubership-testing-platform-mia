@@ -38,7 +38,7 @@ import ch.qos.logback.core.read.ListAppender;
 
 public class RestClientExecutorImplTest extends RestRepositoryTestConfiguration {
 
-    protected static final ThreadLocal<RestClientService> restClientService = new ThreadLocal();
+    protected static final ThreadLocal<RestClientService> restClientService = new ThreadLocal<>();
 
     @BeforeEach
     public void beforeRestClientExecutorImplTest() {
@@ -58,8 +58,7 @@ public class RestClientExecutorImplTest extends RestRepositoryTestConfiguration 
                 "Appender.list is wrong: " + listAppender.list);
         assertEquals("http://localhost:8080/CUSTOMECA/services/CUSTOMECAAXPaymentsPort",
                 requestBase.getUri().toString());
-        assert requestBase instanceof HttpUriRequestBase;
-        assert Objects.nonNull(((HttpUriRequestBase) requestBase).getEntity());
+        assert Objects.nonNull(requestBase.getEntity());
         assertEquals("", requestBase.getFirstHeader("soapaction").getValue());
         assertEquals("text/xml;charset=UTF-8", requestBase.getFirstHeader("content-type").getValue());
     }
