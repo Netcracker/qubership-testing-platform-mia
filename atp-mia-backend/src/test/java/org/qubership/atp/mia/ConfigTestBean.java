@@ -209,14 +209,14 @@ public class ConfigTestBean {
         miaFileService.set(spy(new MiaFileService(gridFsService.get(), miaContext.get(), projectConfigurationService.get())));
         when(decryptor.get().decryptIfEncrypted(anyString())).thenAnswer(new Answer<String>() {
             @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
+            public String answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 return (String) args[0];
             }
         });
         when(encryptor.get().encrypt(anyString())).thenAnswer(new Answer<String>() {
             @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
+            public String answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 return (String) args[0];
             }

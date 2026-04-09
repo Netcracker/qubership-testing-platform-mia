@@ -20,6 +20,11 @@ package org.qubership.atp.mia.model.impl.macros.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.exceptions.macrosandevaluations.MacrosIncorrectDateFormatException;
 import org.qubership.atp.mia.exceptions.macrosandevaluations.MacrosIncorrectDateInputException;
@@ -35,9 +40,17 @@ public class DateMacrosTest {
     }
 
     @Test
-    public void evaluate() {
+    public void evaluate() throws ParseException {
         String[] inputs = {"20190826 12000000", "yyyyMMdd hhmmssSS", "yyyy-MMMM-dd"};
-        String expectedResult = "2019-August-26";
+        Locale systemLocale = Locale.getDefault();
+        SimpleDateFormat sourceFormat = new SimpleDateFormat(inputs[1], systemLocale);
+        SimpleDateFormat targetFormat = new SimpleDateFormat(inputs[2], systemLocale);
+
+        Date testDate = sourceFormat.parse(inputs[0]);
+
+        // "2019-August-26" in case English locale
+        String expectedResult = targetFormat.format(testDate);
+
         assertEquals(expectedResult, new DateMacros().evaluate(inputs));
     }
 

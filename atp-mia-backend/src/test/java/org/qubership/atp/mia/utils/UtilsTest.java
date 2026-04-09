@@ -23,9 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,7 +73,7 @@ public class UtilsTest extends ConfigTestBean {
     }
 
     @Test
-    public void evaluateMacros_whenSeveralDifferentInLine() {
+    public void evaluateMacros_whenSeveralDifferentInLine() throws ParseException {
         String actual = """
                 
                 Random ${Random(1)}
@@ -79,14 +82,22 @@ public class UtilsTest extends ConfigTestBean {
                 Date ${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}
                 Timestamp ${Timestamp(YYYY)}\
                 """;
+
+        Locale systemLocale = Locale.getDefault();
+        SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyyMMdd hhmmssSS", systemLocale);
+        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MMMM-dd", systemLocale);
+
+        Date testDate = sourceFormat.parse("20190826 12000000");
+        String expectedResult = targetFormat.format(testDate);
+
         String expected = "\nRandom 0\nRandom 0\nRandom 0"
-                + "Date 2019-August-26"
-                + "\nTimestamp " + new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
+                + "Date " + expectedResult
+                + "\nTimestamp " + new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
         macroAssert(actual, expected);
     }
 
     @Test
-    public void evaluateMacros_whenSeveralMacros_andSymbolsBeforeThem() {
+    public void evaluateMacros_whenSeveralMacros_andSymbolsBeforeThem() throws ParseException {
         String actual = """
                 
                 Random "${Random(1)}"
@@ -95,9 +106,17 @@ public class UtilsTest extends ConfigTestBean {
                  Date {{}}${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}
                 Timestamp ${Timestamp(YYYY)}\
                 """;
+
+        Locale systemLocale = Locale.getDefault();
+        SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyyMMdd hhmmssSS", systemLocale);
+        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MMMM-dd", systemLocale);
+
+        Date testDate = sourceFormat.parse("20190826 12000000");
+        String expectedResult = targetFormat.format(testDate);
+
         String expected = "\nRandom \"0\"\nRandom /0\nRandom $$0"
-                + " Date {{}}2019-August-26"
-                + "\nTimestamp " + new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
+                + " Date {{}}" + expectedResult
+                + "\nTimestamp " + new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
         macroAssert(actual, expected);
     }
 
@@ -114,7 +133,7 @@ public class UtilsTest extends ConfigTestBean {
     }
 
     @Test
-    public void evaluateMacros_whenSeveralMacros_andSymbolsBeforeThem2() {
+    public void evaluateMacros_whenSeveralMacros_andSymbolsBeforeThem2() throws ParseException {
         String actual = """
                 
                 Random "${Random(1)}"
@@ -123,9 +142,17 @@ public class UtilsTest extends ConfigTestBean {
                 Date ${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}
                 Timestamp ${Timestamp(YYYY)}\
                 """;
+
+        Locale systemLocale = Locale.getDefault();
+        SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyyMMdd hhmmssSS", systemLocale);
+        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MMMM-dd", systemLocale);
+
+        Date testDate = sourceFormat.parse("20190826 12000000");
+        String expectedResult = targetFormat.format(testDate);
+
         String expected = "\nRandom \"0\"\nRandom /0\nRandom 0"
-                + "Date 2019-August-26"
-                + "\nTimestamp " + new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
+                + "Date " + expectedResult
+                + "\nTimestamp " + new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
         macroAssert(actual, expected);
     }
 
@@ -138,9 +165,15 @@ public class UtilsTest extends ConfigTestBean {
     }
 
     @Test
-    public void evaluateMacros_whenOneAtTime() {
+    public void evaluateMacros_whenOneAtTime() throws ParseException {
         String actual = "Date ${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}";
-        String expectedResult = "Date 2019-August-26";
+
+        Locale systemLocale = Locale.getDefault();
+        SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyyMMdd hhmmssSS", systemLocale);
+        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MMMM-dd", systemLocale);
+
+        Date testDate = sourceFormat.parse("20190826 12000000");
+        String expectedResult = "Date " + targetFormat.format(testDate);
         macroAssert(actual, expectedResult);
         actual += "\nRandom ${Random(1)}";
         expectedResult += "\nRandom 0";
@@ -157,7 +190,7 @@ public class UtilsTest extends ConfigTestBean {
         expectedResult += "\nCycleTextGeneration EVENT: 0,9,\"Z\",,\"I\"\nEVENT: 1,8,\"Z\",,\nEVENT: 2,7,\"Z\",,\"II\"";
         macroAssert(actual, expectedResult);
         actual += "\nTimestamp ${Timestamp(YYYY)}";
-        expectedResult += "\nTimestamp " + new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
+        expectedResult += "\nTimestamp " + new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
         assertEquals(expectedResult, miaContext.get().evaluate(actual));
     }
 
