@@ -26,11 +26,19 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <skipTests>true</skipTests>
+                    <!-- <skipTests>true</skipTests> --> <!-- Tests work fine, 2026-04-09 -->
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
                     <systemPropertyVariables>
                         <pact.rootDir>target/classes/pacts</pact.rootDir>
                     </systemPropertyVariables>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>5.10.5</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
