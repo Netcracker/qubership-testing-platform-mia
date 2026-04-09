@@ -23,7 +23,7 @@ else
   FEIGN_ATP_EI_ROUTE=
 fi
 
-if [ "${SPRING_PROFILES}" = "secured" ]; then
+if [ "${ACTIVE_PROFILES_SPRING}" = "secured" ]; then
   SPRING_CONFIG_LOCATION="./config/application-secured.properties"
 else
   SPRING_CONFIG_LOCATION="./config/application.properties"

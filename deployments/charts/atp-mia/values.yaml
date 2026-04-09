@@ -202,7 +202,7 @@ SERVICE_REGISTRY_URL: "http://atp-registry-service:8080/eureka"
 # Set to ATP2 to enable Prometheus scrapping
 SERVICE_TYPE: ""
 # Spring profile for security
-SPRING_PROFILES: "default"
+ACTIVE_PROFILES_SPRING: "default"
 # Time after which ssh connection will close
 SSH_CLOSE_DELAY: "300"
 # Vault service URL, required when ENCRYPT = vault
