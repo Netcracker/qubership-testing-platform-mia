@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.commons.io.FileUtils;
@@ -42,6 +41,8 @@ import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
+import org.openjdk.nashorn.api.scripting.ClassFilter;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.qubership.atp.mia.exceptions.rest.RestCopyResultToStringException;
 import org.qubership.atp.mia.exceptions.rest.RestCreateConnectionFailException;
 import org.qubership.atp.mia.exceptions.rest.RestNotFoundException;
@@ -226,8 +227,26 @@ public class RestRepository {
      */
     public String executeScript(Rest rest, ClassicHttpResponse httpResponse, String responseBody, String processName) {
         log.trace("Start executing post script of {} process", processName);
-        ScriptEngineManager factory = new ScriptEngineManager();
-        ScriptEngine engine = factory.getEngineByName("Nashorn");
+
+        NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
+
+        // Combined security defense
+        String[] args = {"--no-java", "--no-syntax-extensions"};
+
+        // ClassFilter blocks any access to Java classes
+        ClassFilter strictFilter = (className) -> {
+            log.debug("Blocked access to Java class: {}", className);
+            return false;
+        };
+
+        ScriptEngine engine = factory.getScriptEngine(args, null, strictFilter);
+
+        /*
+            Old engine init; commented
+         */
+        //ScriptEngineManager factory = new ScriptEngineManager();
+        //ScriptEngine engine = factory.getEngineByName("Nashorn");
+
         if (engine == null) {
             return "%s can't define OpenJDK Nashorn script engine.".formatted(Constants.ERROR);
         }
