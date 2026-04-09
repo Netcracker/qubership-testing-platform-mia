@@ -47,6 +47,8 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.modelmapper.ModelMapper;
 import org.qubership.atp.auth.springbootstarter.ssl.Provider;
@@ -99,6 +101,7 @@ import org.qubership.atp.mia.utils.CryptoUtils;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ConfigTestBean {
 
     public static final String TEST_ENVIRONMENT_NAME = "testEnv";
@@ -114,9 +117,9 @@ public class ConfigTestBean {
     public static String SwitcherSQL1 = "Uncomment/comment Sysdatevalue";
     public static String SwitcherSQL2 = "comment SysdateOverride";
 
-    protected static final ThreadLocal<UUID> projectId = new ThreadLocal();
-    protected static final ThreadLocal<EnvironmentsService> environmentsService = new ThreadLocal();
-    protected static final ThreadLocal<MiaContext> miaContext = new ThreadLocal();
+    protected static final ThreadLocal<UUID> projectId = new ThreadLocal<>();
+    protected static final ThreadLocal<EnvironmentsService> environmentsService = new ThreadLocal<>();
+    protected static final ThreadLocal<MiaContext> miaContext = new ThreadLocal<>();
     protected static final ThreadLocal<ProjectConfigurationRepository> projectConfigurationRepository =  new ThreadLocal<>();
     protected static final ThreadLocal<ProcessConfigurationRepository> processConfigurationRepository =  new ThreadLocal<>();
     protected static final ThreadLocal<CompoundConfigurationRepository> compoundConfigurationRepository =  new ThreadLocal<>();
@@ -124,7 +127,7 @@ public class ConfigTestBean {
     protected static final ThreadLocal<DirectoryConfigurationRepository> directoryConfigurationRepository =  new ThreadLocal<>();
     protected static final ThreadLocal<FileConfigurationRepository> fileConfigurationRepository =  new ThreadLocal<>();
     protected static final ThreadLocal<RecordingSessionRepository> recordingSessionRepository =  new ThreadLocal<>();
-    protected static final ThreadLocal<ProjectConfigurationService> projectConfigurationService = new ThreadLocal();
+    protected static final ThreadLocal<ProjectConfigurationService> projectConfigurationService = new ThreadLocal<>();
     protected static final ThreadLocal<ProcessConfigurationService> processConfigurationService =  new ThreadLocal<>();
     protected static final ThreadLocal<CompoundConfigurationService> compoundConfigurationService =  new ThreadLocal<>();
     protected static final ThreadLocal<SectionConfigurationService> sectionConfigurationService =  new ThreadLocal<>();
@@ -132,24 +135,24 @@ public class ConfigTestBean {
     protected static final ThreadLocal<FileConfigurationService> fileConfigurationService =  new ThreadLocal<>();
     protected static final ThreadLocal<SseEmitterService> sseEmitterService =  new ThreadLocal<>();
     protected static final ThreadLocal<MiaExecutionFinishProducer> kafkaExecutionFinishProducer =  new ThreadLocal<>();
-    protected static final ThreadLocal<ProjectConfiguration> testProjectConfiguration = new ThreadLocal();
-    protected static final ThreadLocal<Decryptor> decryptor = new ThreadLocal();
-    protected static final ThreadLocal<Encryptor> encryptor = new ThreadLocal();
+    protected static final ThreadLocal<ProjectConfiguration> testProjectConfiguration = new ThreadLocal<>();
+    protected static final ThreadLocal<Decryptor> decryptor = new ThreadLocal<>();
+    protected static final ThreadLocal<Encryptor> encryptor = new ThreadLocal<>();
     protected static final ThreadLocal<GridFsRepository> gridFsRepository = new ThreadLocal<>();
     protected static final ThreadLocal<GridFsService> gridFsService = new ThreadLocal<>();
     protected static final ThreadLocal<MiaFileService> miaFileService = new ThreadLocal<>();
-    protected static final ThreadLocal<FlowData> FLOW_DATA_TEST = new ThreadLocal();
-    protected static final ThreadLocal<ExecutionRequest> EXECUTION_REQUEST_TEST = new ThreadLocal();
-    protected static final ThreadLocal<Connection> testConnectionSsh = new ThreadLocal();
-    protected static final ThreadLocal<Connection> testConnectionDb = new ThreadLocal();
-    protected static final ThreadLocal<Connection> testConnectionHttp = new ThreadLocal();
-    protected static final ThreadLocal<System> testSystem = new ThreadLocal();
-    protected static final ThreadLocal<Environment> testEnvironment = new ThreadLocal();
-    protected static final ThreadLocal<Project> testProject = new ThreadLocal();
-    protected static final ThreadLocal<QueryDriverFactory> queryDriverFactory = new ThreadLocal();
-    protected static final ThreadLocal<CassandraDriver> cassandraDriver = new ThreadLocal();
-    protected static final ThreadLocal<OracleDriver> oracleDriver = new ThreadLocal();
-    protected static final ThreadLocal<PostgreSqlDriver> postgreSqlDriver = new ThreadLocal();
+    protected static final ThreadLocal<FlowData> FLOW_DATA_TEST = new ThreadLocal<>();
+    protected static final ThreadLocal<ExecutionRequest> EXECUTION_REQUEST_TEST = new ThreadLocal<>();
+    protected static final ThreadLocal<Connection> testConnectionSsh = new ThreadLocal<>();
+    protected static final ThreadLocal<Connection> testConnectionDb = new ThreadLocal<>();
+    protected static final ThreadLocal<Connection> testConnectionHttp = new ThreadLocal<>();
+    protected static final ThreadLocal<System> testSystem = new ThreadLocal<>();
+    protected static final ThreadLocal<Environment> testEnvironment = new ThreadLocal<>();
+    protected static final ThreadLocal<Project> testProject = new ThreadLocal<>();
+    protected static final ThreadLocal<QueryDriverFactory> queryDriverFactory = new ThreadLocal<>();
+    protected static final ThreadLocal<CassandraDriver> cassandraDriver = new ThreadLocal<>();
+    protected static final ThreadLocal<OracleDriver> oracleDriver = new ThreadLocal<>();
+    protected static final ThreadLocal<PostgreSqlDriver> postgreSqlDriver = new ThreadLocal<>();
 
     protected MiaConfiguration miaConfiguration = spy(new MiaConfiguration());
     protected ModelMapper modelMapper = miaConfiguration.modelMapper();
