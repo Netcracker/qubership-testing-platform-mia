@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.qubership.atp.mia.model.Constants;
 import org.qubership.atp.mia.model.environment.Server;
@@ -155,8 +155,8 @@ public class ShellRepository {
     }
 
     private static void addResponseTextToError(CommandOutput logFile, String command, String sshOutput) {
-        boolean commandIsNotEmpty = Strings.isNotEmpty(command);
-        if (commandIsNotEmpty && !logFile.getMarkedContent().isEmpty() && Strings.isNotEmpty(sshOutput)) {
+        boolean commandIsNotEmpty = StringUtils.isNotEmpty(command);
+        if (commandIsNotEmpty && !logFile.getMarkedContent().isEmpty() && StringUtils.isNotEmpty(sshOutput)) {
             logFile.addContent("------------------------------\n", Statuses.FAIL);
             logFile.addContent("Ssh part of execution response\n", Statuses.FAIL);
             String cutCommand = command.split("\n")[0];

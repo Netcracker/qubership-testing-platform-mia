@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.mia.model.impl.testdata.TestDataWorkbook;
 import org.qubership.atp.mia.service.MiaContext;
 
@@ -170,7 +170,7 @@ public class Description {
         if (otherParams == null) {
             this.otherParams = new LinkedHashMap<>();
         }
-        if (Strings.isEmpty(value)) {
+        if (StringUtils.isEmpty(value)) {
             otherParams.putIfAbsent(key, value);
         } else {
             otherParams.put(key, value);

@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.qubership.atp.mia.controllers.api.dto.ExecutableDto;
 import org.qubership.atp.mia.controllers.api.dto.FlowConfigDto;
@@ -263,7 +263,7 @@ public class ConfigurationFileSerializer {
     private void updateProcessFiles(List<ProcessConfiguration> processes, Path flowPath) throws IOException {
         for (ProcessConfiguration proc : processes) {
             proc.getProcessSettings().setName(proc.getName());
-            File processFilePath = Strings.isNotBlank(proc.getPathToFile())
+            File processFilePath = StringUtils.isNotBlank(proc.getPathToFile())
                     ? flowPath.resolve(proc.getPathToFile()).toFile()
                     : flowPath.resolve(proc.getName() + ".json").toFile();
             try {

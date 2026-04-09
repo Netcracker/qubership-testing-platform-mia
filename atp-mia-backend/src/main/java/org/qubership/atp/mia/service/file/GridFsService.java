@@ -36,8 +36,8 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.bson.types.ObjectId;
 import org.qubership.atp.mia.exceptions.gridfs.GridFsFileNotFoundException;
 import org.qubership.atp.mia.exceptions.gridfs.GridFsGetFileFromDbException;
@@ -176,7 +176,7 @@ public class GridFsService {
                 saveCommandOutput(response.getCommandResponse().getCommandOutputs());
             } else if (response.getCommandResponse().getSqlResponse() != null) {
                 String fileName = response.getCommandResponse().getSqlResponse().getInternalPathToFile();
-                if (Strings.isNotEmpty(fileName)) {
+                if (StringUtils.isNotEmpty(fileName)) {
                     uploadFile(FileMetaData.log(miaContext.getProjectId(), fileName), fileName);
                 }
             } else {
@@ -187,7 +187,7 @@ public class GridFsService {
             log.info("Save validations");
             response.getValidations().forEach(v -> {
                 String fileName = v.getInternalPathToFile();
-                if (Strings.isNotEmpty(fileName)) {
+                if (StringUtils.isNotEmpty(fileName)) {
                     uploadFile(FileMetaData.log(miaContext.getProjectId(), fileName), fileName);
                 } else {
                     log.error("Can't upload to GridFs: internal path not defined for validation {}", v);
@@ -243,7 +243,7 @@ public class GridFsService {
                         .anyMatch(markedContent -> markedContent.getText().contains(ERROR_SSH_DOWNLOAD_FAILED))) {
                     log.error("Problem Occurred in process execution. Could not get file from server and Can't "
                             + "upload to GridFs. File path: {}", fileName);
-                } else if (Strings.isNotEmpty(fileName)) {
+                } else if (StringUtils.isNotEmpty(fileName)) {
                     if (fileName.contains(ProjectFileType.MIA_FILE_TYPE_LOG.toString())) {
                         uploadFile(FileMetaData.log(miaContext.getProjectId(), fileName), fileName);
                     } else if (fileName.contains(ProjectFileType.MIA_FILE_TYPE_UPLOAD.toString())) {

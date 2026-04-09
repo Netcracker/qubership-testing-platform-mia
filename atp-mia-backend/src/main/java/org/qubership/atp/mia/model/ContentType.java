@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.mia.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +65,7 @@ public enum ContentType {
     public static ContentType getType(String value) {
         for (ContentType type : ContentType.values()) {
             for (String mimeType : type.mimeType) {
-                if (mimeType.equals(value) || !Strings.isEmpty(value)
+                if (mimeType.equals(value) || !StringUtils.isEmpty(value)
                         && (mimeType.matches(".*?\\b" + value + "\\b.*?")
                         || value.matches(".*?\\b" + mimeType + "\\b.*?"))) {
                     return type;

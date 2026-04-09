@@ -20,7 +20,7 @@ package org.qubership.atp.mia.model.converters;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.mia.model.configuration.ProcessMetaData;
 import org.springframework.stereotype.Component;
 
@@ -55,7 +55,7 @@ public class ProcessMetaDataConverter implements AttributeConverter<List<Process
     @Override
     public List<ProcessMetaData> convertToEntityAttribute(String requestParamsJson) {
         List<ProcessMetaData> requestParams = null;
-        if (Strings.isNotBlank(requestParamsJson)) {
+        if (StringUtils.isNotBlank(requestParamsJson)) {
             try {
                 requestParams = (List<ProcessMetaData>)objectMapper.readValue(requestParamsJson, List.class);
             } catch (final IOException e) {

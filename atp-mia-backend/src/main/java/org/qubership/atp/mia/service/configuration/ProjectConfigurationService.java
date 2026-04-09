@@ -29,7 +29,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.qubership.atp.mia.controllers.api.dto.FlowConfigDto;
 import org.qubership.atp.mia.controllers.api.dto.ProjectConfigurationDto;
@@ -296,7 +296,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
                 self.removeProject(projectConfiguration.getProjectId(), false);
                 projectConfiguration.setPrimaryMigrationDone(true);
             }
-            if (Strings.isNotBlank(projectConfiguration.getGitUrl())
+            if (StringUtils.isNotBlank(projectConfiguration.getGitUrl())
                     && !projectConfiguration.getGitUrl().startsWith("http")) {
                 projectConfiguration.setGitUrl(null);
             }
@@ -376,7 +376,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
             UUID projectId = projectConfiguration.getProjectId();
             ProjectConfiguration projectConfigurationEntity =
                     modelMapper.map(projectConfigurationDto, ProjectConfiguration.class);
-            if (Strings.isNotBlank(projectConfigurationEntity.getGitUrl())
+            if (StringUtils.isNotBlank(projectConfigurationEntity.getGitUrl())
                     && !projectConfigurationEntity.getGitUrl().equals(projectConfiguration.getGitUrl())) {
                 projectConfiguration = self.hardReloadConfiguration(
                         ProjectConfiguration.builder()

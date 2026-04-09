@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -54,7 +54,7 @@ public class ListConverter implements AttributeConverter<List<String>, String> {
     @Override
     public List<String> convertToEntityAttribute(String requestParamsJson) {
         List<String> requestParams = new ArrayList<>();
-        if (Strings.isNotBlank(requestParamsJson)) {
+        if (StringUtils.isNotBlank(requestParamsJson)) {
             try {
                 requestParams = objectMapper.readValue(requestParamsJson, List.class);
             } catch (final IOException e) {

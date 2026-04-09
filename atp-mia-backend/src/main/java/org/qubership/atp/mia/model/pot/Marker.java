@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.mia.exceptions.responseerrors.MarkerRegexException;
 
 import jakarta.annotation.Nullable;
@@ -98,7 +98,7 @@ public class Marker implements Serializable {
     }
 
     private boolean checkLineWithMarker(String marker, String line, String markerType) {
-        if (!Strings.isBlank(marker)) {
+        if (!StringUtils.isBlank(marker)) {
             try {
                 return Pattern.compile(marker).matcher(line).find();
             } catch (PatternSyntaxException e) {
