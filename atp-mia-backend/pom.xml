@@ -242,6 +242,10 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+                <exclusion>
                     <artifactId>asm</artifactId>
                     <groupId>org.ow2.asm</groupId>
                 </exclusion>
@@ -272,8 +276,12 @@
             <artifactId>spring-cloud-starter-consul-config</artifactId>
             <exclusions>
                 <exclusion>
-                    <artifactId>tomcat-embed-el</artifactId>
                     <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-el</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
