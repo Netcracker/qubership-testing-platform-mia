@@ -48,7 +48,6 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
 import org.apache.hc.core5.http.message.BasicHeader;
-import org.apache.hc.core5.http.message.StatusLine;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,7 +71,6 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
     final ThreadLocal<File> logFile = new ThreadLocal<>();
     final ThreadLocal<HttpUriRequestBase> requestBase = new ThreadLocal<>();
     final ThreadLocal<ClassicHttpResponse> response = new ThreadLocal<>();
-    final ThreadLocal<StatusLine> status = new ThreadLocal<>();
 
     @AfterEach
     public void cleanLogFile() {
@@ -89,7 +87,6 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         restClientExecutor.set(mock(RestClientService.class));
         requestBase.set(mock(HttpUriRequestBase.class));
         response.set(mock(ClassicHttpResponse.class));
-        status.set(mock(StatusLine.class));
         repository.set(spy(new RestRepository(miaContext.get(), restClientExecutor.get(), metricsService)));
         // construct
         command.set(new Command());
@@ -108,8 +105,8 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         logFile.set(new File(path.resolve(miaContext.get().createLogFileName(command.get())).toString()));
         filename.set(logFile.get().getName());
         // stub
-        when(status.get().getStatusCode()).thenReturn(200);
-        when(new StatusLine(response.get())).thenReturn(status.get());
+        when(response.get().getCode()).thenReturn(200);
+        when(response.get().getReasonPhrase()).thenReturn("OK");
         when(response.get().getHeaders()).thenReturn(headers);
         when(restClientExecutor.get().createFileWithResponse(any(), any())).thenReturn(filename.get());
         when(restClientExecutor.get().prepareRestClient(any(), anyBoolean(), anyMap())).thenReturn(client.get());
@@ -276,7 +273,6 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         final String expected = "{\"message\":\"it's json\"}";
         // mock
         ClassicHttpResponse response = Mockito.mock(ClassicHttpResponse.class);
-        StatusLine status = Mockito.mock(StatusLine.class);
         // construct
         Header[] headers =
                 new Header[]{new BasicHeader("Content-Type", ContentType.APPLICATION_JSON.getMimeType())};
@@ -286,8 +282,8 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
                 .chunked()
                 .build();
         // stub
-        when(new StatusLine(response)).thenReturn(status);
-        when(status.getStatusCode()).thenReturn(200);
+        when(response.getReasonPhrase()).thenReturn("OK");
+        when(response.getCode()).thenReturn(200);
         when(response.getHeaders()).thenReturn(headers);
         when(response.getEntity()).thenReturn(entity);
         // assert
