@@ -53,7 +53,9 @@ public class RestClientExecutorImplTest extends RestRepositoryTestConfiguration 
         ((Logger) LoggerFactory.getLogger(RestClientService.class)).addAppender(listAppender);
         HttpUriRequestBase requestBase = restClientService.get().prepareRestRequest(rest.get(), server.get(), new HashMap<>());
         assertTrue(listAppender.list.stream().anyMatch(m ->
-                m.getFormattedMessage().equals("Charset \"UTF-8\" will use for parsing request body according to header")), "Appender.list is wrong: " + listAppender.list);
+                m.getFormattedMessage()
+                        .startsWith("Charset \"UTF-8\" will be used to parse request body according to header")),
+                "Appender.list is wrong: " + listAppender.list);
         assertEquals("http://localhost:8080/CUSTOMECA/services/CUSTOMECAAXPaymentsPort",
                 requestBase.getUri().toString());
         assert requestBase instanceof HttpUriRequestBase;
