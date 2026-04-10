@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
@@ -69,6 +70,7 @@ public class CassandraDriver implements QueryDriver<Cluster> {
     public static final String CASSANDRA_DATE_TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
 
     private final LoadingCache<Server, Cluster> pool;
+    private final ScheduledExecutorService cleanupScheduler;
     private final MiaContext miaContext;
     @Autowired
     private MetricsAggregateService metricsService;
@@ -86,7 +88,7 @@ public class CassandraDriver implements QueryDriver<Cluster> {
     public CassandraDriver(MiaContext miaContext) {
         this.miaContext = miaContext;
         pool = initPool(log, expiredAfter * 1000);
-        initPoolCleanUp(log, pool, cleanUpTimeout * 1000L);
+        cleanupScheduler = initPoolCleanUp(log, pool, cleanUpTimeout * 1000L);
     }
 
     /**
@@ -94,7 +96,7 @@ public class CassandraDriver implements QueryDriver<Cluster> {
      */
     public CassandraDriver(@Autowired MiaContext miaContext, int expireAfter, int cleanUpTimeout) {
         pool = initPool(log, expireAfter);
-        initPoolCleanUp(log, pool, cleanUpTimeout);
+        cleanupScheduler = initPoolCleanUp(log, pool, cleanUpTimeout);
         this.miaContext = miaContext;
     }
 
@@ -251,5 +253,22 @@ public class CassandraDriver implements QueryDriver<Cluster> {
         return cluster.connect(server.getProperty("schema") != null
                 ? server.getProperty("schema")
                 : server.getProperty("db_name"));
+    }
+
+    @Override
+    public void shutdown() {
+        if (cleanupScheduler != null && !cleanupScheduler.isShutdown()) {
+            log.info("{}: pool shutdown; shutting down the cleanupScheduler too..", Thread.currentThread().getName());
+            cleanupScheduler.shutdown();
+            try {
+                if (!cleanupScheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                    cleanupScheduler.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                cleanupScheduler.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+            log.info("{}: cleanupScheduler shutdown completed.", Thread.currentThread().getName());
+        }
     }
 }

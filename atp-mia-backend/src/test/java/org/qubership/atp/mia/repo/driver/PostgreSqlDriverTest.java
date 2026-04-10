@@ -64,6 +64,12 @@ public class PostgreSqlDriverTest extends ConfigTestBean {
 
     @Test
     void cleanUp() throws InterruptedException {
+        /*
+            postgreSqlDriver was already initialized in ConfigTestBean#beforeEach.
+            Once we create another one, we should shut down the 1st prior.
+         */
+        shutdownDriver(postgreSqlDriver.get());
+
         //mock
         postgreSqlDriver.set(spy(new PostgreSqlDriver(miaConfiguration.executorServiceForSql(0, 2, 1500), 3000, 1800)));
         queryDriverFactory.set(new QueryDriverFactory(Arrays.asList(cassandraDriver.get(), oracleDriver.get(), postgreSqlDriver.get())));
@@ -80,6 +86,12 @@ public class PostgreSqlDriverTest extends ConfigTestBean {
 
     @Test
     void abortLongExecution() throws InterruptedException {
+        /*
+            postgreSqlDriver was already initialized in ConfigTestBean#beforeEach.
+            Once we create another one, we should shut down the 1st prior.
+         */
+        shutdownDriver(postgreSqlDriver.get());
+
         //mock
         postgreSqlDriver.set(spy(new PostgreSqlDriver(miaConfiguration.executorServiceForSql(0, 2, 1500), 3000, 1800)));
         ReflectionTestUtils.setField(postgreSqlDriver.get(), "executionTimeout", 3);

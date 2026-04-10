@@ -18,6 +18,7 @@
 package org.qubership.atp.mia.repo.driver;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.qubership.atp.mia.exceptions.businesslogic.sql.SqlFirstValueNotPresentException;
@@ -157,16 +158,17 @@ public interface QueryDriver<T extends AutoCloseable> {
      * @param cache          cache.
      * @param cleanUpTimeout timeout for call clean up.
      */
-    default void initPoolCleanUp(Logger log, LoadingCache<Server, T> cache, long cleanUpTimeout) {
+    default ScheduledExecutorService initPoolCleanUp(Logger log, LoadingCache<Server, T> cache, long cleanUpTimeout) {
         long timeout = cleanUpTimeout < 1 ? 30000 : cleanUpTimeout;
-        Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(() -> {
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        scheduledExecutorService.scheduleAtFixedRate(() -> {
                     Thread.currentThread().setName("mia_clean" + getDriverType() + "Pool");
                     long cacheSizeBefore = cache.size();
                     cache.cleanUp();
                     log.info("Clean {} cache finished. Size before {} and after {}",
                             getDriverType(), cacheSizeBefore, cache.size());
                 }, 0L, timeout, TimeUnit.MILLISECONDS);
+        return scheduledExecutorService;
     }
 
     /**
@@ -175,4 +177,7 @@ public interface QueryDriver<T extends AutoCloseable> {
      * @return pool size
      */
     long poolSize();
+
+    default void shutdown() {
+    }
 }

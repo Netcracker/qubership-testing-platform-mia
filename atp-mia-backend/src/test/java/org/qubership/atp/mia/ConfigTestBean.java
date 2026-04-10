@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -83,6 +84,7 @@ import org.qubership.atp.mia.repo.db.RecordingSessionRepository;
 import org.qubership.atp.mia.repo.driver.CassandraDriver;
 import org.qubership.atp.mia.repo.driver.OracleDriver;
 import org.qubership.atp.mia.repo.driver.PostgreSqlDriver;
+import org.qubership.atp.mia.repo.driver.QueryDriver;
 import org.qubership.atp.mia.repo.gridfs.GridFsRepository;
 import org.qubership.atp.mia.service.AtpUserService;
 import org.qubership.atp.mia.service.MiaContext;
@@ -288,6 +290,30 @@ public class ConfigTestBean {
         queryDriverFactory.set(new QueryDriverFactory(Arrays.asList(cassandraDriver.get(), oracleDriver.get(), postgreSqlDriver.get())));
         kafkaExecutionFinishProducer.set(mock(MiaExecutionFinishProducer.class));
         sseEmitterService.set(spy(new SseEmitterService(atpUserService, kafkaExecutionFinishProducer.get(), null, sseProperties)));
+    }
+
+    @AfterEach
+    public void afterEach() {
+        // Shutdown all drivers
+        shutdownDriver(cassandraDriver.get());
+        shutdownDriver(oracleDriver.get());
+        shutdownDriver(postgreSqlDriver.get());
+
+        // Clear ThreadLocals to prevent memory leaks
+        cassandraDriver.remove();
+        oracleDriver.remove();
+        postgreSqlDriver.remove();
+        queryDriverFactory.remove();
+    }
+
+    public void shutdownDriver(QueryDriver<?> driver) {
+        if (driver != null) {
+            try {
+                driver.shutdown();
+            } catch (Exception e) {
+                // Log but don't fail the test
+            }
+        }
     }
 
     private Connection createTestConnectionSsh() {
