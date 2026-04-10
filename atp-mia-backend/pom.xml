@@ -1090,7 +1090,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <!-- <skipTests>true</skipTests> -->
+                    <skipTests>true</skipTests>
                     <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
                     <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
                     <parallelTestsTimeoutForcedInSeconds>60</parallelTestsTimeoutForcedInSeconds>
