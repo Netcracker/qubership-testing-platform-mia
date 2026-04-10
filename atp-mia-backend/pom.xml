@@ -19,6 +19,9 @@
             -Djunit.jupiter.execution.parallel.enabled=true
             -Djunit.jupiter.execution.parallel.mode.default=concurrent
             -Djunit.jupiter.execution.parallel.mode.classes.default=concurrent
+            -Dspring.data.mongodb.connection-timeout=5000
+            -Dspring.data.mongodb.socket-timeout=5000
+            -Dspring.data.mongodb.server-selection-timeout=5000
             -Dspring.cloud.consul.config.enabled=false
             -DconfigPath=test
             -DLOCAL_DOCKER_START=false
@@ -1088,6 +1091,11 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <!-- <skipTests>true</skipTests> -->
+                    <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
+                    <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
+                    <parallelTestsTimeoutForcedInSeconds>60</parallelTestsTimeoutForcedInSeconds>
+                    <parallelTestsTimeoutInSeconds>60</parallelTestsTimeoutInSeconds>
+                    <argLine>-Djdk.tracePinnedThreads=full</argLine>
                     <runOrder>alphabetical</runOrder>
                     <argLine>${tests.argLine}</argLine>
                     <trimStackTrace>false</trimStackTrace>
