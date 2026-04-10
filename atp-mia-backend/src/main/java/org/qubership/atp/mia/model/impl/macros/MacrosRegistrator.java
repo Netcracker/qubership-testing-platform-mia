@@ -39,7 +39,7 @@ public class MacrosRegistrator {
      * @return map of registered macroses (class to concrete registered instance)
      */
     public Map<Class<Macros>, Macros> register() {
-        List<? extends Macros> macroses = new Reflections("org.qubership.atp.mia")
+        List<? extends Macros> macroses = new Reflections("org.qubership.atp.mia.model.impl.macros.impl")
                 .getSubTypesOf(Macros.class)
                 .stream()
                 .map(this::instantiate)
