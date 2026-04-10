@@ -41,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -79,6 +80,25 @@ public class ShellRepositoryTest extends ConfigTestBean {
         when(sshConnectionManager.get().runCommand(anyString())).thenReturn("output of commands");
         doReturn(sshConnectionManager.get()).when(sshSessionPool.get()).getConnection(Mockito.any(), Mockito.any());
         repository.set(new ShellRepository(miaContext.get(), sshSessionPool.get(), metricsService));
+    }
+
+    @AfterEach
+    public void afterEach() {
+        // Shutdown all pools
+        shutdownPool(sshSessionPool.get());
+
+        // Clear ThreadLocals to prevent memory leaks
+        sshSessionPool.remove();
+    }
+
+    public void shutdownPool(SshSessionPool pool) {
+        if (pool != null) {
+            try {
+                pool.shutdown();
+            } catch (Exception e) {
+                // Log but don't fail the test
+            }
+        }
     }
 
     @Test

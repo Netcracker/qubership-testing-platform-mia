@@ -37,7 +37,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Isolated;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.qubership.atp.mia.ConfigTestBean;
 import org.qubership.atp.mia.Main;
@@ -53,7 +52,6 @@ import org.qubership.atp.mia.model.impl.request.ExecutionRequest;
 import org.qubership.atp.mia.repo.gridfs.GridFsRepository;
 import org.qubership.atp.mia.repo.impl.SshConnectionManager;
 import org.qubership.atp.mia.repo.impl.SshSession;
-import org.qubership.atp.mia.repo.impl.pool.ssh.SshSessionPool;
 import org.qubership.atp.mia.service.MiaContext;
 import org.qubership.atp.mia.service.configuration.EnvironmentsService;
 import org.qubership.atp.mia.service.file.GridFsService;
@@ -107,8 +105,6 @@ public abstract class BaseIntegrationTestConfiguration extends ConfigTestBean {
     protected GridFsService gridFsService;
     @SpyBean
     protected GridFsRepository gridFsRepository;
-    @Spy
-    SshSessionPool SshSessionPool = new SshSessionPool("300", "30000", miaContext);
 
     @BeforeAll
     public static void beforeAll() {

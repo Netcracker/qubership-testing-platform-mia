@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.text.MatchesPattern;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,14 +81,17 @@ public class TestDataHelperServiceTest extends ConfigTestBean {
     private static final String fileName = "Rating_Matrix.xlsx";
     private static final String origFilePath = "src/test/resources/testData/" + fileName;
     private static final String accountNumber = "12345";
+
     private final ThreadLocal<GridFsRepository> gridFsRepository = new ThreadLocal<>();
     private final ThreadLocal<GridFsService> gridFsService = new ThreadLocal<>();
     private final ThreadLocal<SqlExecutionHelperService> sqlService = new ThreadLocal<>();
     private final ThreadLocal<SoapExecutionHelperService> soapService = new ThreadLocal<>();
     private final ThreadLocal<RestExecutionHelperService> restService = new ThreadLocal<>();
-    private final ThreadLocal<ShellRepository> shellRepository = new ThreadLocal<>();
     private final ThreadLocal<TestDataRepository> testDataRepository = new ThreadLocal<>();
     private final ThreadLocal<TestDataService> testDataService = new ThreadLocal<>();
+
+    private final ThreadLocal<SshSessionPool> sshSessionPool = new ThreadLocal<>();
+    private final ThreadLocal<ShellRepository> shellRepository = new ThreadLocal<>();
 
     @BeforeEach
     public void before() {
@@ -96,8 +100,11 @@ public class TestDataHelperServiceTest extends ConfigTestBean {
         sqlService.set(mock(SqlExecutionHelperService.class));
         soapService.set(mock(SoapExecutionHelperService.class));
         restService.set(mock(RestExecutionHelperService.class));
-        shellRepository.set(spy(new ShellRepository(miaContext.get(), new SshSessionPool("300", "30000",
-                miaContext.get()), metricsService)));
+
+        SshSessionPool pool = new SshSessionPool("300", "30000", miaContext.get());
+        sshSessionPool.set(pool); // Store for cleanup
+        shellRepository.set(spy(new ShellRepository(miaContext.get(), pool, metricsService)));
+
         miaFileService.set(spy(new MiaFileService(gridFsService.get(), miaContext.get(), projectConfigurationService.get())));
         testDataRepository.set(new TestDataRepository(contextRepository,
                 sqlService.get(),
@@ -126,6 +133,19 @@ public class TestDataHelperServiceTest extends ConfigTestBean {
         testDataWorkbook.setScenariosToExecute(Utils.listToSet(Arrays.asList("Kirov non-National", "Kirov National")));
         testDataWorkbook.setExecuteSql(true);
         miaContext.get().getFlowData().setTestDataWorkbook(testDataWorkbook);
+    }
+
+    @AfterEach
+    public void after() {
+        // Shutdown the SshSessionPool
+        SshSessionPool pool = sshSessionPool.get();
+        if (pool != null) {
+            pool.shutdown();
+            sshSessionPool.remove();
+        }
+
+        // Clean up shellRepository
+        shellRepository.remove();
     }
 
     @Test
