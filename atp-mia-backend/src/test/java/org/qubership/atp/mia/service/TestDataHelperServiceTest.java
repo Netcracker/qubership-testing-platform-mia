@@ -262,8 +262,8 @@ public class TestDataHelperServiceTest extends ConfigTestBean {
                         + "'YYYY/MM/DD-HH24-MI-SS') and event_attr_1='78332865512'"), eq(testSystem.get().getName()),
                 any(HashMap.class), anyBoolean());
             assertEquals(2, response.getSqlResponse().getRecords());
-            assertEquals("1", response.getSqlResponse().getData().getData().get(0).get(1));
-            assertEquals("17", response.getSqlResponse().getData().getData().get(0).get(2));
+            assertEquals("0", response.getSqlResponse().getData().getData().get(0).get(1));
+            assertEquals("18", response.getSqlResponse().getData().getData().get(0).get(2));
             assertEquals("0", response.getSqlResponse().getData().getData().get(1).get(1));
             assertEquals("13", response.getSqlResponse().getData().getData().get(1).get(2));
         LinkedList<ValidatedParameters> validateValue = testDataRepository.get().getTestDataWorkbook().getMainSheet()

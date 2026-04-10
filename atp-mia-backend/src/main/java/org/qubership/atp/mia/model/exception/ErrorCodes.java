@@ -192,7 +192,7 @@ public enum ErrorCodes {
     MIA_1109_SSH_CREATE_SESSION_FAIL("MIA-1109", "Can't get JSch session! Please check at environments"
             + " all SSH credentials such as host/port, login/pass etc. Also make sure that such host is available. "
             + "ConnectionProperties: %s, Exception: %s", 1),
-    MIA_1110_SSH_CREATE_SESSION_EXCEPTION("MIA-1110", "Exception occurred while tyring to connect Session."
+    MIA_1110_SSH_CREATE_SESSION_EXCEPTION("MIA-1110", "Exception occurred while trying to connect Session. "
             + "ConnectionProperties: %s, Exception: %s", 1),
     MIA_1111_SSH_SFTP_EXCEPTION("MIA-1111", "SFTP exception %s%s in channel [%s, %s] .", 1),
     MIA_1112_SSH_PATH_FOR_DOWNLOAD_EMPTY("MIA-1112", "You haven't added paths for downloading! "
