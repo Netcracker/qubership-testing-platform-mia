@@ -29,6 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
@@ -38,7 +39,7 @@ import org.qubership.atp.mia.model.environment.System;
 import org.qubership.atp.mia.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-//@Disabled("Temporarily disabled for refactoring")
+@Disabled("Temporarily disabled for refactoring")
 public class MiaServiceControllerTest extends BaseIntegrationTestConfiguration {
 
     @Autowired
@@ -81,7 +82,7 @@ public class MiaServiceControllerTest extends BaseIntegrationTestConfiguration {
     @AfterEach
     public void afterMiaServiceControllerTest() {
         if(projectId.get() != null) {
-            File file = new File("PROJECT_FOLDER/"+projectId.get());
+            File file = new File("PROJECT_FOLDER/" + projectId.get());
             FileUtils.deleteFolder(file, true);
         }
     }

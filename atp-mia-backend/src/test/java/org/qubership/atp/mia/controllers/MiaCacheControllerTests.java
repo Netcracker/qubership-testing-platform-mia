@@ -77,9 +77,8 @@ public class MiaCacheControllerTests {
                 .setContext(Mockito.any(), Mockito.any(), Mockito.any());
         ResponseEntity<Boolean> actualResetDbCacheResult = miaCacheController.resetDbCache(UUID.randomUUID(), "Env");
         verify(miaContext).setContext(Mockito.<ExecutionRequest>any(), Mockito.<UUID>any(), Mockito.<String>any());
-        //verify(processService).resetDbCache();
         assertEquals(HttpStatus.OK, actualResetDbCacheResult.getStatusCode());
-        assertTrue(actualResetDbCacheResult.getBody());
+        assertEquals(Boolean.TRUE, actualResetDbCacheResult.getBody());
         assertTrue(actualResetDbCacheResult.getHeaders().isEmpty());
     }
 
@@ -93,9 +92,8 @@ public class MiaCacheControllerTests {
         ResponseEntity<Boolean> actualResetEnvironmentCachesResult = miaCacheController
                 .resetEnvironmentCaches(UUID.randomUUID());
         verify(miaCacheService).clearEnvironmentsCache(Mockito.any(), Mockito.any());
-        //verify(sshExecutionHelperService).resetCache();
         assertEquals(HttpStatus.OK, actualResetEnvironmentCachesResult.getStatusCode());
-        assertTrue(actualResetEnvironmentCachesResult.getBody());
+        assertEquals(Boolean.TRUE, actualResetEnvironmentCachesResult.getBody());
         assertTrue(actualResetEnvironmentCachesResult.getHeaders().isEmpty());
     }
 
@@ -106,9 +104,8 @@ public class MiaCacheControllerTests {
     public void testResetPoolCache() {
         doNothing().when(sshExecutionHelperService).resetCache();
         ResponseEntity<Boolean> actualResetPoolCacheResult = miaCacheController.resetPoolCache(UUID.randomUUID());
-        //verify(sshExecutionHelperService).resetCache();
         assertEquals(HttpStatus.OK, actualResetPoolCacheResult.getStatusCode());
-        assertTrue(actualResetPoolCacheResult.getBody());
+        assertEquals(Boolean.TRUE, actualResetPoolCacheResult.getBody());
         assertTrue(actualResetPoolCacheResult.getHeaders().isEmpty());
     }
 
@@ -122,7 +119,7 @@ public class MiaCacheControllerTests {
                 .resetConfigurationCache(UUID.randomUUID());
         verify(miaCacheService).clearConfigurationCache(Mockito.any());
         assertEquals(HttpStatus.OK, actualResetConfigurationCacheResult.getStatusCode());
-        assertTrue(actualResetConfigurationCacheResult.getBody());
+        assertEquals(Boolean.TRUE, actualResetConfigurationCacheResult.getBody());
         assertTrue(actualResetConfigurationCacheResult.getHeaders().isEmpty());
     }
 }

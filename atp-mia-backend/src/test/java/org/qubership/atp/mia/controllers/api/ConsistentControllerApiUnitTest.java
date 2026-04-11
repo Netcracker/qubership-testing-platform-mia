@@ -87,8 +87,8 @@ public class ConsistentControllerApiUnitTest {
         }
         List<Method> listOfControllerMethods = null;
         if (!controllersList.isEmpty()) {
-            listOfControllerMethods = Arrays.stream(controllersList.get(0).getDeclaredMethods())
-                    .filter(this::isRestMethod).collect(Collectors.toList());
+            listOfControllerMethods = Arrays.stream(controllersList.getFirst().getDeclaredMethods())
+                    .filter(this::isRestMethod).toList();
         }
         if (null != listOfControllerMethods && !listOfControllerMethods.isEmpty()) {
             listOfControllerMethods.stream().filter(method -> Modifier.isPublic(method.getModifiers()))
@@ -110,7 +110,7 @@ public class ConsistentControllerApiUnitTest {
         List<Method> listOfApiMethods = Arrays.asList(apiClass.getDeclaredMethods());
         List<Method> apiMethods =
                 listOfApiMethods.stream().filter(apiMethod -> apiMethod.getName().equals(ctrlMethod.getName()))
-                        .collect(Collectors.toList());
+                        .toList();
         if (apiMethods.isEmpty() && (ctrlMethodsToSkip.get(apiClass) == null
                 || !ctrlMethodsToSkip.get(apiClass).contains(ctrlMethod.getName()))) {
             // checking for new method in controller

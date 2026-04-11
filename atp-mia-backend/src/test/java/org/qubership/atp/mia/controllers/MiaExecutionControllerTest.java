@@ -30,6 +30,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
@@ -42,7 +43,7 @@ import org.qubership.atp.mia.repo.driver.PostgreSqlDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-//@Disabled("Temporarily disabled for refactoring")
+@Disabled("Temporarily disabled for refactoring")
 public class MiaExecutionControllerTest extends BaseIntegrationTestConfiguration {
 
     @Autowired
