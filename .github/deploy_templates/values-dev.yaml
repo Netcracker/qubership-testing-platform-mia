@@ -18,6 +18,6 @@ SERVICE_ENTITIES_MIGRATION_ENABLED: 'false'
 MONGO_DB_ADDR: "my-mongodb"
 MIA_EI_DB_ENABLE: "false"
 EI_GRIDFS_DB_ADDR: "my-mongodb"
-EUREKA_CLIENT_ENABLED: "false"
+EUREKA_CLIENT_ENABLED: "true"
 infraPassword: ""
 infraUser: ""
