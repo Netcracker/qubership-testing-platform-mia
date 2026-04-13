@@ -29,6 +29,8 @@
             -DMIA_PASSWORD=mia
             -DskipUnstableTests=true
             -Dnashorn.args="-strict --no-java --no-syntax-extensions"
+            -Dspring.data.cassandra.enabled=false
+            -Dspring.autoconfigure.exclude=org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration
         </tests.argLine>
     </properties>
 
@@ -354,6 +356,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.cassandra</groupId>
+            <artifactId>java-driver-core</artifactId>
+            <version>4.18.1</version>
+        </dependency>
+        <!-- Commented, to be deleted after new dependency (see above) check
+        <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
             <version>3.11.2</version>
@@ -391,7 +399,7 @@
                     <groupId>com.datastax.cassandra</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency> -->
 
         <dependency>
             <groupId>org.qubership.atp</groupId>

@@ -29,15 +29,16 @@ import static org.qubership.atp.mia.TestConstants.SQL_PASSWORD;
 import static org.qubership.atp.mia.TestConstants.SQL_PASSWORD_VALUE;
 import static org.qubership.atp.mia.TestConstants.SYS_DATE_VALUE;
 
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -82,8 +83,8 @@ public abstract class CassandraIntegrationTestConfiguration extends SqlIntegrati
 
     private void cleanCassandraDbBeforeTest() throws InterruptedException {
         int i = 0;
-        try (final Cluster cluster = getCluster()) {
-            while (!runCleanCassandraCommand(cluster) && i++ < retryAmount) {
+        try (final CqlSession session = getCqlSession()) {
+            while (!runCleanCassandraCommand(session) && i++ < retryAmount) {
                 Thread.sleep(sleepTime);
                 if (i++ == retryAmount) {
                     Assertions.fail("Retried " + retryAmount + " times and can't start cassandra");
@@ -92,18 +93,29 @@ public abstract class CassandraIntegrationTestConfiguration extends SqlIntegrati
         }
     }
 
-    private Cluster getCluster() {
-        return Cluster.builder()
-                .addContactPoint(cassandraUrl)
-                .withPort(Integer.parseInt(cassandraPort))
+    private CqlSession getCqlSession() {
+        int port = StringUtils.isEmpty(cassandraPort) ? 9042 : Integer.parseInt(cassandraPort);
+
+        // Please note: SQL_LOGIN and SQL_PASSWORD are present in testConnectionDb, but aren't used in connection
+        return CqlSession.builder()
+                .addContactPoint(new InetSocketAddress(cassandraUrl, port))
                 .build();
     }
 
-    private boolean runCleanCassandraCommand(Cluster cluster) {
+    private boolean runCleanCassandraCommand(CqlSession session) {
         boolean result = true;
-        try (Session session = cluster.connect()) {
+        try {
+            // No keyspace specified while original connection
+            // Create keyspace if not exists
             session.execute(createKeySpace);
-            try (Session sessionWithKeyspace = cluster.connect(CASSANDRA_SCHEMA)) {
+
+            // Now connect WITH the keyspace
+            // Please note: SQL_LOGIN and SQL_PASSWORD are present in testConnectionDb, but aren't used in connection
+            int port = StringUtils.isEmpty(cassandraPort) ? 9042 : Integer.parseInt(cassandraPort);
+            try (CqlSession sessionWithKeyspace = CqlSession.builder()
+                    .addContactPoint(new InetSocketAddress(cassandraUrl, port))
+                    .withKeyspace(CASSANDRA_SCHEMA)  // Now the keyspace exists
+                    .build()) {
                 sessionWithKeyspace.execute(dropTable);
                 sessionWithKeyspace.execute(createTable);
                 sessionWithKeyspace.execute(insertTable);
