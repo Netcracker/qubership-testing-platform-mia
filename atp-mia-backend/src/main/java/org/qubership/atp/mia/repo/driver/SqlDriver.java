@@ -122,6 +122,8 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
                         })
                         .get(timeout, TimeUnit.MILLISECONDS);
                 long executeQueryMs = System.currentTimeMillis() - tExecuteQueryStart;
+                log.info("[SQL-TIMING] (1/3) executeQuery finished in {}ms ({}ms cap). Only this phase uses MIA timeout.",
+                        executeQueryMs, timeout);
 
                 int actualRecordsSize = 0;
                 long tScrollStart = System.currentTimeMillis();
@@ -131,19 +133,25 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
                     metricsService.sqlQueryRecordsSize(actualRecordsSize);
                     rs.beforeFirst();
                 }
-                long scrollForCountMs = System.currentTimeMillis() - tScrollStart;
+                long scrollMs = System.currentTimeMillis() - tScrollStart;
+                log.info("[SQL-TIMING] (2/3) scrollLastForRowCount took {}ms (not covered by {}ms executeQuery cap).",
+                        scrollMs, timeout);
 
                 long tFetchStart = System.currentTimeMillis();
-                DbTable dbTable = SqlUtils.resultSetToDbTable(rs, limitRecords);
-                long fetchRowsMs = System.currentTimeMillis() - tFetchStart;
-
-                log.info("[SQL-TIMING] executeQuery={}ms (MIA cap {}ms); scrollLastForRowCount={}ms; "
-                                + "fetchRowsToTable={}ms; totalAfterExecuteQuery={}ms (only executeQuery uses the cap).",
-                        executeQueryMs, timeout, scrollForCountMs, fetchRowsMs,
-                        executeQueryMs + scrollForCountMs + fetchRowsMs);
-                dbTable.setActualDataSizeBeforeLimit(actualRecordsSize);
-                return dbTable;
+                try {
+                    DbTable dbTable = SqlUtils.resultSetToDbTable(rs, limitRecords);
+                    dbTable.setActualDataSizeBeforeLimit(actualRecordsSize);
+                    return dbTable;
+                } finally {
+                    long fetchMs = System.currentTimeMillis() - tFetchStart;
+                    log.info("[SQL-TIMING] (3/3) fetchRowsToTable took {}ms (not covered by {}ms cap). "
+                                    + "Closed-ResultSet errors occur here or in (2/3), not from executeQuery timeout.",
+                            fetchMs, timeout);
+                }
             } catch (TimeoutException e) {
+                log.info("[SQL-TIMING] executeQuery TIMEOUT: statement.executeQuery() did not return within {}ms "
+                                + "(MIA cap; only this phase is timed).",
+                        timeout);
                 throw new SqlTimeoutException(timeout, "milliseconds", query);
             } catch (Exception e) {
                 throw new SqlExecuteFailException(query, e);
