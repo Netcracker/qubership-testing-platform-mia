@@ -114,20 +114,33 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY)) {
                 Map<String, String> mdcMap = MDC.getCopyOfContextMap();
+                long tExecuteQueryStart = System.currentTimeMillis();
                 ResultSet rs = executorService.submit(() -> {
                             setThreadName(server, "Query");
                             MdcUtils.setContextMap(mdcMap);
                             return statement.executeQuery();
                         })
                         .get(timeout, TimeUnit.MILLISECONDS);
+                long executeQueryMs = System.currentTimeMillis() - tExecuteQueryStart;
+
                 int actualRecordsSize = 0;
+                long tScrollStart = System.currentTimeMillis();
                 if (metricsService != null && rs != null && rs.last()) {
                     actualRecordsSize = rs.getRow();
                     log.info("[SIZE] SQL query retrieved {} records", actualRecordsSize);
                     metricsService.sqlQueryRecordsSize(actualRecordsSize);
                     rs.beforeFirst();
                 }
+                long scrollForCountMs = System.currentTimeMillis() - tScrollStart;
+
+                long tFetchStart = System.currentTimeMillis();
                 DbTable dbTable = SqlUtils.resultSetToDbTable(rs, limitRecords);
+                long fetchRowsMs = System.currentTimeMillis() - tFetchStart;
+
+                log.info("[SQL-TIMING] executeQuery={}ms (MIA cap {}ms); scrollLastForRowCount={}ms; "
+                                + "fetchRowsToTable={}ms; totalAfterExecuteQuery={}ms (only executeQuery uses the cap).",
+                        executeQueryMs, timeout, scrollForCountMs, fetchRowsMs,
+                        executeQueryMs + scrollForCountMs + fetchRowsMs);
                 dbTable.setActualDataSizeBeforeLimit(actualRecordsSize);
                 return dbTable;
             } catch (TimeoutException e) {
