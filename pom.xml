@@ -29,7 +29,7 @@
         <spotbugs-maven-plugin.version>4.7.3.0</spotbugs-maven-plugin.version>
         <spotbugs.version>4.7.3</spotbugs.version>
         <pmd.version>7.0.0</pmd.version>
-        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <console.encoding>UTF-8</console.encoding>
@@ -43,7 +43,6 @@
         <mockito.version>5.23.0</mockito.version>
         <oracle.version>11.2.0.4</oracle.version>
         <lombok.version>1.18.46</lombok.version>
-        <hazelcast-all.version>4.2.8</hazelcast-all.version>
         <hazelcast.version>5.3.5</hazelcast.version>
         <testcontainers.version>1.20.4</testcontainers.version>
         <liquibase.core.version>4.27.0</liquibase.core.version>
@@ -52,7 +51,7 @@
         <owasp.encoder.version>2.5.5.0</owasp.encoder.version>
         <undertow.version>2.3.21.Final</undertow.version>
         <reactor-netty.version>1.0.39</reactor-netty.version>
-        <io.netty.version>4.1.125.Final</io.netty.version>
+        <io.netty.version>4.1.132.Final</io.netty.version>
 
         <httpclient5.version>5.4.4</httpclient5.version>
         <httpcore5.version>5.3.4</httpcore5.version>
@@ -408,17 +407,6 @@
                 <groupId>org.qubership.atp.ei</groupId>
                 <artifactId>qubership-atp-export-import-lib-node</artifactId>
                 <version>${atp.ei.lib.node.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hazelcast</groupId>
-                <artifactId>hazelcast-all</artifactId>
-                <version>${hazelcast-all.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.hazelcast</groupId>
-                        <artifactId>hazelcast</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-fileupload</groupId>
