@@ -18,6 +18,7 @@
 package org.qubership.atp.mia.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -57,7 +58,15 @@ public class SpringLiquibaseConfig {
         SpringLiquibase liquibase = new BeanAwareSpringLiquibase();
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog(this.properties.getChangeLog());
-        liquibase.setContexts(this.properties.getContexts());
+
+        // Complicated setting, due to sudden types mismatch between:
+        //  SpringLiquibase#contexts (String) vs. LiquibaseProperties#contexts (List<String>)
+        //  which appeared after Spring Boot 3.5.11+ upgrade
+        List<String> contextsList = this.properties.getContexts();
+        if (contextsList != null && !contextsList.isEmpty()) {
+            liquibase.setContexts(String.join(",", contextsList));
+        }
+
         liquibase.setDefaultSchema(this.properties.getDefaultSchema());
         liquibase.setDropFirst(this.properties.isDropFirst());
         liquibase.setShouldRun(this.properties.isEnabled());
