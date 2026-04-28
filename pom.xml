@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.13</version>
+        <version>3.5.14</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
@@ -37,12 +37,12 @@
         <tool.config.keys.prefix>${project.name}</tool.config.keys.prefix>
         <logback.version>1.5.32</logback.version>
         <logstash.gelf.version>1.14.1</logstash.gelf.version>
-        <spring.boot.version>3.3.13</spring.boot.version>
-        <spring.cloud.version>2023.0.6</spring.cloud.version>
+        <spring.boot.version>3.5.14</spring.boot.version>
+        <spring.cloud.version>2025.0.2</spring.cloud.version>
         <google.guava.version>32.0.1-jre</google.guava.version>
         <mockito.version>5.23.0</mockito.version>
         <oracle.version>11.2.0.4</oracle.version>
-        <lombok.version>1.18.44</lombok.version>
+        <lombok.version>1.18.46</lombok.version>
         <hazelcast-all.version>4.2.8</hazelcast-all.version>
         <hazelcast.version>5.3.5</hazelcast.version>
         <testcontainers.version>1.20.4</testcontainers.version>
@@ -214,16 +214,6 @@
                 <version>3.3.3</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>6.1.21</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
-                <version>6.3.10</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
                 <version>3.2.2</version>
@@ -282,11 +272,6 @@
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
                 <version>1.4.21</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>6.3.10</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
@@ -403,11 +388,6 @@
                 <version>2.0.0.RELEASE</version>
             </dependency>
             <dependency>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-core</artifactId>
-                <version>${liquibase.core.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring.cloud.version}</version>
@@ -417,7 +397,7 @@
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>2.1.0</version>
+                <version>2.8.17</version>
             </dependency>
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
@@ -439,12 +419,6 @@
                         <artifactId>hazelcast</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.hazelcast</groupId>
-                <!--<artifactId>hazelcast</artifactId>-->
-                <artifactId>hazelcast-spring</artifactId>
-                <version>${hazelcast.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-fileupload</groupId>
@@ -488,16 +462,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>2.10.1</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.18.0</version>
@@ -508,16 +472,6 @@
                 <version>20231013</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>6.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-inline</artifactId>
-                <version>5.2.0</version>
-            </dependency>
-            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
@@ -526,11 +480,6 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>6.5.3.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
@@ -553,16 +502,6 @@
                 <version>${httpclient5.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.projectreactor.netty</groupId>
-                <artifactId>reactor-netty-core</artifactId>
-                <version>${reactor-netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.projectreactor.netty</groupId>
-                <artifactId>reactor-netty-http</artifactId>
-                <version>${reactor-netty.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>1.11.0</version>
@@ -574,17 +513,12 @@
                 </exclusions>
             </dependency>
             <!-- Jakarta JAX-WS API -->
-            <dependency>
-                <groupId>jakarta.xml.ws</groupId>
-                <artifactId>jakarta.xml.ws-api</artifactId>
-                <version>4.0.2</version>
-            </dependency>
 
             <!-- JAX-WS Runtime Implementation -->
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-rt</artifactId>
-                <version>4.0.3</version>
+                <version>4.0.4</version>
                 <scope>runtime</scope>
             </dependency>
         </dependencies>
