@@ -421,7 +421,7 @@
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
-                <version>3.9.1</version>
+                <version>3.9.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.lz4</groupId>
@@ -508,6 +508,12 @@
                 <artifactId>jaxws-rt</artifactId>
                 <version>4.0.4</version>
                 <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>1.84</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
