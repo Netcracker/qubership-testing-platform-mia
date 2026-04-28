@@ -59,7 +59,7 @@ public class MacrosRegistrator {
      */
     private <T extends Macros> Optional<T> instantiate(Class<T> macrosClass) {
         try {
-            T macros = macrosClass.newInstance();
+            T macros = macrosClass.getDeclaredConstructor().newInstance();
             return Optional.of(macros);
         } catch (Exception e) {
             LOGGER.error("Failed to create macros with abstract module: {}", macrosClass, e);

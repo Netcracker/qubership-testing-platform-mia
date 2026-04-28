@@ -385,7 +385,7 @@ public class ConfigurationFileDeserializer {
             }
         } else {
             try {
-                headerConfiguration = clazz.newInstance();
+                headerConfiguration = clazz.getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 throw new IllegalArgumentException("Can't create class " + clazz.getName());
             }
