@@ -93,7 +93,7 @@ jobs:
         uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/ssh_for_build@main
 
       - name: "Build and Publish current SNAPSHOT (dry run)"
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@e64a1ee2fc2f68ab44a4ef416c27d83ce36ba8e1 #v2.2.1
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@cabbb90e9471163cfac84bd50ff0296b2803b44c #v2.3.0
         with:
           java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
@@ -152,7 +152,7 @@ jobs:
       - name: "Build and Publish"
         id: build-and-publish
 
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@e64a1ee2fc2f68ab44a4ef416c27d83ce36ba8e1 #v2.2.1
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@cabbb90e9471163cfac84bd50ff0296b2803b44c #v2.3.0
         with:
           java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
@@ -224,7 +224,7 @@ jobs:
     steps:
       - name: "Docker Build"
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@e64a1ee2fc2f68ab44a4ef416c27d83ce36ba8e1 #v2.2.1
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@cabbb90e9471163cfac84bd50ff0296b2803b44c #v2.3.0
         with:
           ref: v${{ needs.deploy.outputs.release-version }}
           download-artifact: true
