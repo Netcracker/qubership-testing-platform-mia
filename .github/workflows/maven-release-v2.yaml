@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout pipeline
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           ref: 'main'
           repository: 'Netcracker/qubership-testing-platform-helm-hook-helper'
@@ -93,7 +93,7 @@ jobs:
         uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/ssh_for_build@main
 
       - name: "Build and Publish current SNAPSHOT (dry run)"
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@d11baa8a4b42d1a931808c0766ee23eb344c47dd #v2.2.0
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@cabbb90e9471163cfac84bd50ff0296b2803b44c #v2.3.0
         with:
           java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
@@ -116,7 +116,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout pipeline
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           ref: 'main'
           repository: 'Netcracker/qubership-testing-platform-helm-hook-helper'
@@ -144,7 +144,7 @@ jobs:
         uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/ssh_for_build@main
 
       - name: "Prepare app token"
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 #v3.1.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 #v3.2.0
         id: app-token
         with:
           app-id: ${{ vars.GH_BUMP_VERSION_APP_ID }}
@@ -152,7 +152,7 @@ jobs:
       - name: "Build and Publish"
         id: build-and-publish
 
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@d11baa8a4b42d1a931808c0766ee23eb344c47dd #v2.2.0
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@cabbb90e9471163cfac84bd50ff0296b2803b44c #v2.3.0
         with:
           java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
@@ -182,7 +182,7 @@ jobs:
       platforms: ${{ steps.load_component.outputs.platforms }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
 
@@ -224,7 +224,7 @@ jobs:
     steps:
       - name: "Docker Build"
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@d11baa8a4b42d1a931808c0766ee23eb344c47dd #v2.2.0
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@cabbb90e9471163cfac84bd50ff0296b2803b44c #v2.3.0
         with:
           ref: v${{ needs.deploy.outputs.release-version }}
           download-artifact: true
@@ -239,7 +239,7 @@ jobs:
   github-release:
     needs: [deploy]
     if: ${{ needs.deploy.result == 'success' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@d11baa8a4b42d1a931808c0766ee23eb344c47dd #v2.2.0
+    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@cabbb90e9471163cfac84bd50ff0296b2803b44c #v2.3.0
     with:
       version: ${{ needs.deploy.outputs.release-version }}
       publish: true

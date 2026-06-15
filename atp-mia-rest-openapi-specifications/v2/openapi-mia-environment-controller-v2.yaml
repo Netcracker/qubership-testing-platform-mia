@@ -1,11 +1,14 @@
 openapi: 3.0.3
 info:
+  contact:
+    name: Netcracker Opensource Group
+    email: opensourcegroup@netcracker.com
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
   title: MIA Environment Api
   description: MIA -> Get project/environment/system details
   version: '2.0'
-  contact:
-    name: OurCompany
-    url: https://www.ourcompany.com/company/about-ourcompany/contact-us.html
 servers:
   - url: https://atp-public-gateway:8080/api/atp-mia/v1
   - url: http://localhost:8080
