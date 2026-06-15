@@ -39,7 +39,10 @@ public class SwaggerConfiguration {
     public OpenAPI openApiDefinition() {
         return new OpenAPI().addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes("Bearer Authentication", createApiKeyScheme()))
-                .info(new Info().title("ATP-MIA").license(new License().name("(C) Copyright Qubership Technology")));
+                .info(new Info().title("ATP-MIA").license(new License()
+                        .name("Apache-2.0")
+                        .url("https://www.apache.org/licenses/LICENSE-2.0")
+                ));
     }
 
     /**
