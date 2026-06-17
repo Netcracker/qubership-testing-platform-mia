@@ -20,7 +20,7 @@
         <atp.common.version>1.0.0</atp.common.version>
         <atp.integration.version>1.0.0</atp.integration.version>
         <atp.crypt.version>1.0.0</atp.crypt.version>
-        <atp.auth.version>2.0.1-SNAPSHOT</atp.auth.version>
+        <atp.auth.version>2.0.1</atp.auth.version>
         <atp.ei.lib.node.version>1.0.0</atp.ei.lib.node.version>
         <atp.macros.core.version>2.0.0</atp.macros.core.version>
         <atp.adapter.robot.version>5.0.0</atp.adapter.robot.version>
