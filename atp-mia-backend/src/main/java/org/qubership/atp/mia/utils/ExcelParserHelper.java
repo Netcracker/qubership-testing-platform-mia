@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,10 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.xml.ws.Holder;
-
 import org.apache.commons.lang3.Range;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -42,6 +38,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.qubership.atp.mia.model.impl.ExcelWorkbook;
 
 import com.google.common.base.Strings;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import jakarta.xml.ws.Holder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -363,12 +362,12 @@ public class ExcelParserHelper {
      * @return Range of rows in merged column
      */
     public static Range<Integer> getCellColumnRange(@Nonnull XSSFCell cell) {
-        Range<Integer> returnValue = Range.between(cell.getRowIndex(), cell.getRowIndex());
+        Range<Integer> returnValue = Range.of(cell.getRowIndex(), cell.getRowIndex());
         final XSSFSheet sheet = cell.getSheet();
         for (int mergedRegionsId = 0; mergedRegionsId < sheet.getNumMergedRegions(); ++mergedRegionsId) {
             final CellRangeAddress mergedRegion = sheet.getMergedRegion(mergedRegionsId);
             if (mergedRegion.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
-                returnValue = Range.between(mergedRegion.getFirstRow(), mergedRegion.getLastRow());
+                returnValue = Range.of(mergedRegion.getFirstRow(), mergedRegion.getLastRow());
                 break;
             }
         }
@@ -383,11 +382,11 @@ public class ExcelParserHelper {
      */
     @Nonnull
     public static Range<Integer> getCellRowRange(@Nonnull XSSFCell cell) {
-        final Holder<Range<Integer>> range = new Holder<>(Range.between(cell.getColumnIndex(), cell.getColumnIndex()));
+        final Holder<Range<Integer>> range = new Holder<>(Range.of(cell.getColumnIndex(), cell.getColumnIndex()));
         final XSSFSheet sheet = cell.getSheet();
         sheet.getMergedRegions().forEach(mergedRegion -> {
             if (mergedRegion.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
-                range.value = Range.between(mergedRegion.getFirstColumn(), mergedRegion.getLastColumn());
+                range.value = Range.of(mergedRegion.getFirstColumn(), mergedRegion.getLastColumn());
             }
         });
         return range.value;

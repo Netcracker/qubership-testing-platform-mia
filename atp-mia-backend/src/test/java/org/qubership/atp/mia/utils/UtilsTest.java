@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,25 +17,26 @@
 
 package org.qubership.atp.mia.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.message.BasicHeader;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.jupiter.api.Disabled;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -45,6 +46,7 @@ import org.qubership.atp.mia.model.ContentType;
 import org.qubership.atp.mia.model.configuration.CommonConfiguration;
 import org.qubership.atp.mia.model.impl.FlowData;
 import org.qubership.atp.mia.model.impl.VariableFormat;
+
 //@Disabled("Temporarily disabled for refactoring")
 @ExtendWith(SkipTestInJenkins.class)
 public class UtilsTest extends ConfigTestBean {
@@ -52,16 +54,16 @@ public class UtilsTest extends ConfigTestBean {
     private static final String DEFAULT_VAR_FORMAT = ":\\(VARIABLE_NAME\\)";
     private static final Pattern uuidPattern =
             Pattern.compile("([a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8})");
-    private String headerName = "Content-Disposition";
+    private final String headerName = "Content-Disposition";
 
     private void macroAssert(String actualInput, String expected) {
         String actual = miaContext.get().evaluate(actualInput);
-        String macroFailMsg = String.format("Macros failed. actual [%s]\n is not equal to expected [%s].",
+        String macroFailMsg = "Macros failed. actual [%s]\n is not equal to expected [%s].".formatted(
                 actual, expected);
-        assertEquals(macroFailMsg, expected, actual);
+        assertEquals(expected, actual, macroFailMsg);
     }
 
-    HttpResponse response = Mockito.mock(HttpResponse.class);
+    ClassicHttpResponse response = Mockito.mock(ClassicHttpResponse.class);
 
     @Test
     public void evaluateMacros_whenSeveralSameInLine() {
@@ -71,24 +73,50 @@ public class UtilsTest extends ConfigTestBean {
     }
 
     @Test
-    public void evaluateMacros_whenSeveralDifferentInLine() {
-        String actual = "\nRandom ${Random(1)}\nRandom ${Random(1)}\nRandom ${Random(1)}"
-                + "Date ${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}"
-                + "\nTimestamp ${Timestamp(YYYY)}";
+    public void evaluateMacros_whenSeveralDifferentInLine() throws ParseException {
+        String actual = """
+                
+                Random ${Random(1)}
+                Random ${Random(1)}
+                Random ${Random(1)}\
+                Date ${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}
+                Timestamp ${Timestamp(YYYY)}\
+                """;
+
+        Locale systemLocale = Locale.getDefault();
+        SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyyMMdd hhmmssSS", systemLocale);
+        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MMMM-dd", systemLocale);
+
+        Date testDate = sourceFormat.parse("20190826 12000000");
+        String expectedResult = targetFormat.format(testDate);
+
         String expected = "\nRandom 0\nRandom 0\nRandom 0"
-                + "Date 2019-August-26"
-                + "\nTimestamp " + new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
+                + "Date " + expectedResult
+                + "\nTimestamp " + new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
         macroAssert(actual, expected);
     }
 
     @Test
-    public void evaluateMacros_whenSeveralMacros_andSymbolsBeforeThem() {
-        String actual = "\nRandom \"${Random(1)}\"\nRandom /${Random(1)}\nRandom $$${Random(1)}"
-                + " Date {{}}${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}"
-                + "\nTimestamp ${Timestamp(YYYY)}";
+    public void evaluateMacros_whenSeveralMacros_andSymbolsBeforeThem() throws ParseException {
+        String actual = """
+                
+                Random "${Random(1)}"
+                Random /${Random(1)}
+                Random $$${Random(1)}\
+                 Date {{}}${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}
+                Timestamp ${Timestamp(YYYY)}\
+                """;
+
+        Locale systemLocale = Locale.getDefault();
+        SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyyMMdd hhmmssSS", systemLocale);
+        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MMMM-dd", systemLocale);
+
+        Date testDate = sourceFormat.parse("20190826 12000000");
+        String expectedResult = targetFormat.format(testDate);
+
         String expected = "\nRandom \"0\"\nRandom /0\nRandom $$0"
-                + " Date {{}}2019-August-26"
-                + "\nTimestamp " + new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
+                + " Date {{}}" + expectedResult
+                + "\nTimestamp " + new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
         macroAssert(actual, expected);
     }
 
@@ -100,18 +128,31 @@ public class UtilsTest extends ConfigTestBean {
             String macroFailMsg = String.format("Macros error! Matcher failed at the %d iteration of find(),"
                             + "Found %d occurrences of expected pattern: [%s], in actual string: [%s], but need [%d]",
                     i, i - 1, expectedPattern.pattern(), actual, i);
-            assertTrue(macroFailMsg, matcher.find());
+            assertTrue(matcher.find(), macroFailMsg);
         }
     }
 
     @Test
-    public void evaluateMacros_whenSeveralMacros_andSymbolsBeforeThem2() {
-        String actual = "\nRandom \"${Random(1)}\"\nRandom /${Random(1)}\nRandom ${Random(1)}"
-                + "Date ${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}"
-                + "\nTimestamp ${Timestamp(YYYY)}";
+    public void evaluateMacros_whenSeveralMacros_andSymbolsBeforeThem2() throws ParseException {
+        String actual = """
+                
+                Random "${Random(1)}"
+                Random /${Random(1)}
+                Random ${Random(1)}\
+                Date ${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}
+                Timestamp ${Timestamp(YYYY)}\
+                """;
+
+        Locale systemLocale = Locale.getDefault();
+        SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyyMMdd hhmmssSS", systemLocale);
+        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MMMM-dd", systemLocale);
+
+        Date testDate = sourceFormat.parse("20190826 12000000");
+        String expectedResult = targetFormat.format(testDate);
+
         String expected = "\nRandom \"0\"\nRandom /0\nRandom 0"
-                + "Date 2019-August-26"
-                + "\nTimestamp " + new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
+                + "Date " + expectedResult
+                + "\nTimestamp " + new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
         macroAssert(actual, expected);
     }
 
@@ -124,9 +165,15 @@ public class UtilsTest extends ConfigTestBean {
     }
 
     @Test
-    public void evaluateMacros_whenOneAtTime() {
+    public void evaluateMacros_whenOneAtTime() throws ParseException {
         String actual = "Date ${Date_Formatter(20190826 12000000, yyyyMMdd hhmmssSS, yyyy-MMMM-dd)}";
-        String expectedResult = "Date 2019-August-26";
+
+        Locale systemLocale = Locale.getDefault();
+        SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyyMMdd hhmmssSS", systemLocale);
+        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MMMM-dd", systemLocale);
+
+        Date testDate = sourceFormat.parse("20190826 12000000");
+        String expectedResult = "Date " + targetFormat.format(testDate);
         macroAssert(actual, expectedResult);
         actual += "\nRandom ${Random(1)}";
         expectedResult += "\nRandom 0";
@@ -134,53 +181,60 @@ public class UtilsTest extends ConfigTestBean {
         actual += "\nCheckDigit ${Check_Digit(123456789)}";
         expectedResult += "\nCheckDigit 7";
         macroAssert(actual, expectedResult);
-        actual += "\nCycleTextGeneration ${CycleTextGeneration('EVENT: [EventAttr1],[EventAttr2],[EventAttr3],"
-                + "[EventAttr4],[EventAttr5]', '\\n', 'EventAttr2', 'EventAttr1->[0, 1, 2]',"
-                + "'EventAttr2->[9, 8, 7]', 'EventAttr3-> Z -> string', 'EventAttr5-> [I, , II] -> string')}";
+        actual += """
+                
+                CycleTextGeneration ${CycleTextGeneration('EVENT: [EventAttr1],[EventAttr2],[EventAttr3],\
+                [EventAttr4],[EventAttr5]', '\\n', 'EventAttr2', 'EventAttr1->[0, 1, 2]',\
+                'EventAttr2->[9, 8, 7]', 'EventAttr3-> Z -> string', 'EventAttr5-> [I, , II] -> string')}\
+                """;
         expectedResult += "\nCycleTextGeneration EVENT: 0,9,\"Z\",,\"I\"\nEVENT: 1,8,\"Z\",,\nEVENT: 2,7,\"Z\",,\"II\"";
         macroAssert(actual, expectedResult);
         actual += "\nTimestamp ${Timestamp(YYYY)}";
-        expectedResult += "\nTimestamp " + new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
+        expectedResult += "\nTimestamp " + new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
         assertEquals(expectedResult, miaContext.get().evaluate(actual));
     }
 
     @Test
     public void evaluateMacros_whenJsonExample() {
-        String actual = "{\n"
-                + "\"metadata\": {\n"
-                + "\"name\": \"${GenerateUuid()}\",\n"
-                + "\"labels\": {},\n"
-                + "\"annotations\": {\n"
-                + "\"username\": \"${Random(1)}\"\n"
-                + "}\n"
-                + "},\n"
-                + "\"spec\": {\n"
-                + "\"definition_name\": \"EFD\",\n"
-                + "\"params\": [{}\n"
-                + "],\n"
-                + "\"enable_tracing\": false\n"
-                + "}\n"
-                + "}";
+        String actual = """
+                {
+                "metadata": {
+                "name": "${GenerateUuid()}",
+                "labels": {},
+                "annotations": {
+                "username": "${Random(1)}"
+                }
+                },
+                "spec": {
+                "definition_name": "EFD",
+                "params": [{}
+                ],
+                "enable_tracing": false
+                }
+                }\
+                """;
         macroAssert(actual, uuidPattern, 1);
         actual = miaContext.get().evaluate(actual);
         Matcher m = uuidPattern.matcher(actual);
-        Assert.assertTrue(m.find());
+        Assertions.assertTrue(m.find());
         String uuid = m.group();
-        String expected = String.format("{\n"
-                + "\"metadata\": {\n"
-                + "\"name\": \"%s\",\n"
-                + "\"labels\": {},\n"
-                + "\"annotations\": {\n"
-                + "\"username\": \"0\"\n"
-                + "}\n"
-                + "},\n"
-                + "\"spec\": {\n"
-                + "\"definition_name\": \"EFD\",\n"
-                + "\"params\": [{}\n"
-                + "],\n"
-                + "\"enable_tracing\": false\n"
-                + "}\n"
-                + "}", uuid);
+        String expected = """
+                {
+                "metadata": {
+                "name": "%s",
+                "labels": {},
+                "annotations": {
+                "username": "0"
+                }
+                },
+                "spec": {
+                "definition_name": "EFD",
+                "params": [{}
+                ],
+                "enable_tracing": false
+                }
+                }\
+                """.formatted(uuid);
         macroAssert(actual, expected);
     }
 
@@ -265,20 +319,20 @@ public class UtilsTest extends ConfigTestBean {
         flowData.addParameter(k, v);
         flowData.addParameter("projectId", "46578a43-4cfb-46e4-80b8-95ce21151a9f");
         String res = miaContext.get().evaluate(text);
-        Assert.assertEquals(expected, res);
+        Assertions.assertEquals(expected, res);
     }
 
     @Test
     public void evaluateMacros_shouldWorkWithVariableAndMacros() {
         String expected = "echo 0";
         String text = "echo :(macros)";
-        FlowData flowData = getFlowData(DEFAULT_VAR_FORMAT, true, new HashMap<String, String>() {{
+        FlowData flowData = getFlowData(DEFAULT_VAR_FORMAT, true, new HashMap<>() {{
             put("macros", "${Random(1)}");
             put("var", ":(macros)");
         }});
         flowData.addParameter("projectId", "46578a43-4cfb-46e4-80b8-95ce21151a9f");
         String res = miaContext.get().evaluate(text);
-        Assert.assertEquals(expected, res);
+        Assertions.assertEquals(expected, res);
     }
 
     @Test
@@ -313,7 +367,7 @@ public class UtilsTest extends ConfigTestBean {
     public void whenContentDispositionNotHaveFilename_returnFileName() {
         String headerValue = Utils.getHeaderValue(constructAndStubHttpResponse(headerName, "application/zip filename="), headerName);
         String name = Utils.getFirstGroupFromStringByRegexp(headerValue, "filename=(.*)");
-        assertTrue(name.length() == 0);
+        assertEquals(0, name.length());
     }
 
     @Test
@@ -334,11 +388,11 @@ public class UtilsTest extends ConfigTestBean {
         return miaContext.get().getFlowData();
     }
 
-    private HttpResponse constructAndStubHttpResponse(String name, String value) {
+    private ClassicHttpResponse constructAndStubHttpResponse(String name, String value) {
         //construct
         Header[] headers = new Header[]{new BasicHeader(name, value)};
         //stub
-        when(response.getAllHeaders()).thenReturn(headers);
+        when(response.getHeaders()).thenReturn(headers);
         return response;
     }
 }

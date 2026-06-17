@@ -44,12 +44,10 @@ public class TimeShiftService {
         if (sshSessionPool.systemsForTimeShifting.containsKey(systemId)) {
             log.debug("System [{}] is present in systemsForTimeShifting list.", systemId);
             if (sshSessionPool.systemsForTimeShifting.get(systemId)) {
-                log.debug("Time shifting is ON for system [{}].",
-                        systemId);
+                log.debug("Time shifting is ON for system [{}].", systemId);
                 return true;
             } else {
-                log.debug("Time shifting is OFF for system [{}].",
-                        systemId);
+                log.debug("Time shifting is OFF for system [{}].", systemId);
             }
         } else {
             log.debug("No system [{}] in systemsForTimeShifting list.", systemId);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 
 package org.qubership.atp.mia.model.impl.event;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.qubership.atp.mia.model.Constants.EVENT_GENERATION_FILE;
 import static org.qubership.atp.mia.model.Constants.EVENT_GENERATION_SCENARIO;
 import static org.qubership.atp.mia.model.Constants.EVENT_GENERATION_SHEET;
 import static org.qubership.atp.mia.model.Constants.EVENT_GENERATION_TC;
 
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ public class EventFromExcelTest extends ConfigTestBean {
         eventExcelMetricService.init();
         FlowData flowData = miaContext.get().getFlowData();
         miaContext.get().getFlowData().setParameters(null);
-        FileUtils.copyFile(Paths.get("./src/test/resources/EventGeneration/Rating_Matrix_ProjectFour.xlsx"),
+        FileUtils.copyFile(Path.of("./src/test/resources/EventGeneration/Rating_Matrix_ProjectFour.xlsx"),
                 miaContext.get().getUploadsPath().resolve("Rating_Matrix_ProjectFour.xlsx"));
         flowData.addParameter(EVENT_GENERATION_FILE, "Rating_Matrix_ProjectFour.xlsx");
         EventFromExcel eventFromExcel = new EventFromExcel(miaContext.get());
@@ -85,7 +85,7 @@ public class EventFromExcelTest extends ConfigTestBean {
     public void eventGenerationFromFile_ProjectFive() throws IOException {
         FlowData flowData = miaContext.get().getFlowData();
         flowData.setParameters(new HashMap<>());
-        FileUtils.copyFile(Paths.get("./src/test/resources/EventGeneration/Rating_Matrix_ProjectFive.xlsx"),
+        FileUtils.copyFile(Path.of("./src/test/resources/EventGeneration/Rating_Matrix_ProjectFive.xlsx"),
                 miaContext.get().getUploadsPath().resolve("Rating_Matrix_ProjectFive.xlsx"));
         flowData.addParameter(EVENT_GENERATION_FILE, "Rating_Matrix_ProjectFive.xlsx");
         flowData.addParameter(EVENT_GENERATION_SHEET, "Rating Matrix");

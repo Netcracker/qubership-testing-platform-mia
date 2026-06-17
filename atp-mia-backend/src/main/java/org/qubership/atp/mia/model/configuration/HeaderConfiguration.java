@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.qubership.atp.mia.model.configuration;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,22 +25,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.javers.core.metamodel.annotation.Value;
 import org.qubership.atp.mia.model.Constants;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -49,7 +48,6 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "project_header_configuration")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
@@ -57,6 +55,7 @@ import lombok.ToString;
 @Value
 public class HeaderConfiguration implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1708851849749487504L;
     @Id
     @Column(name = "project_id")
@@ -98,12 +97,12 @@ public class HeaderConfiguration implements Serializable {
     @DiffInclude
     private String workingDirectory = Constants.DEFAULT_WORKING_DIRECTORY;
     @Column(name = "switchers", columnDefinition = "jsonb")
-    @Type(type = "jsonb")
+    @Type(JsonBinaryType.class)
     @Builder.Default
     @DiffInclude
     private List<Switcher> switchers = new ArrayList<>();
     @Column(name = "system_switchers", columnDefinition = "jsonb")
-    @Type(type = "jsonb")
+    @Type(JsonBinaryType.class)
     @Builder.Default
     @DiffIgnore
     private List<Switcher> systemSwitchers = HeaderConfiguration.defaultSystemSwitchers();

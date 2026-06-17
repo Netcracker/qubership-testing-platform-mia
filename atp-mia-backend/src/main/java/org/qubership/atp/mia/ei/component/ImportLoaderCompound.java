@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import org.qubership.atp.mia.model.configuration.SectionConfiguration;
 import org.qubership.atp.mia.model.ei.ExportImportCompound;
 import org.qubership.atp.mia.model.ei.ExportImportEntities;
 import org.qubership.atp.mia.service.configuration.SectionConfigurationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +48,7 @@ public class ImportLoaderCompound extends ImportLoader<
         CompoundConfiguration,
         ExportImportCompound> {
 
-    public ImportLoaderCompound(@Autowired ObjectLoaderFromDiskService objectLoaderFromDiskService) {
+    public ImportLoaderCompound(ObjectLoaderFromDiskService objectLoaderFromDiskService) {
         super(objectLoaderFromDiskService);
     }
 

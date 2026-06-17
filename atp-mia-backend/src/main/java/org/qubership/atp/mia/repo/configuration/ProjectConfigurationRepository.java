@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.util.UUID;
 import org.javers.spring.annotation.JaversSpringDataAuditable;
 import org.qubership.atp.mia.model.configuration.ProjectConfiguration;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -33,10 +33,10 @@ public interface ProjectConfigurationRepository extends CrudRepository<ProjectCo
     void deleteByProjectId(UUID projectId);
 
     @Modifying
-    @Query(value = "SET session_replication_role = 'replica'", nativeQuery = true)
+    @NativeQuery("SET session_replication_role = 'replica'")
     void setReplicationRoleReplica();
 
     @Modifying
-    @Query(value = "SET session_replication_role = 'origin'", nativeQuery = true)
+    @NativeQuery("SET session_replication_role = 'origin'")
     void setReplicationRoleOrigin();
 }

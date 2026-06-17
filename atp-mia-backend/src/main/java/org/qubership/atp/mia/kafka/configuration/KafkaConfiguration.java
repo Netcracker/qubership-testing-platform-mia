@@ -45,11 +45,13 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
+import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.AlwaysRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
+import org.springframework.util.backoff.FixedBackOff;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +82,8 @@ public class KafkaConfiguration {
     public String kafkaMiaExecutionFinishTopic;
     @Value("${kafka.retry.backoff.period}")
     private String backOffPeriod;
+    @Value("${kafka.retry.backoff.maxAttempts:2}")
+    int backoffMaxAttempts;
     @Value("${kafka.itf.import.end.topic}")
     private String kafkaItfImportFinishTopic;
     @Value("${kafka.server}")
@@ -119,8 +123,24 @@ public class KafkaConfiguration {
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(itfImportConsumerFactory());
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
-        factory.setRetryTemplate(retryTemplate());
-        factory.setStatefulRetry(true);
+
+        // Replace setRetryTemplate and setStatefulRetry with DefaultErrorHandler
+        DefaultErrorHandler errorHandler = new DefaultErrorHandler(
+                (record, exception) -> {
+                    // This is the 'recovery' callback after all retries are exhausted
+                    log.error("Record processing failed after all retries: {}", record.value());
+                    // You might want to send this to a Dead Letter Topic (DLT) here
+                },
+                // Default: Wait 1 second between retries, for 2 retry attempts
+                new FixedBackOff(Long.parseLong(backOffPeriod), backoffMaxAttempts)
+        );
+
+        // For stateful retry behavior (preserving order on failure), configure the handler:
+        // When true, the consumer will seek back to the failed offset, blocking subsequent records
+        errorHandler.setSeekAfterError(true); // This is the equivalent of setStatefulRetry(true)
+
+        factory.setCommonErrorHandler(errorHandler);
+
         return factory;
     }
 

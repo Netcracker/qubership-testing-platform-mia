@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ALL TESTs" type="JUnit" factoryName="JUnit">
     <module name="atp-mia-backend" />
-    <shortenClasspath name="ARGS_FILE" />
+    <shortenClasspath name="MANIFEST" />
     <useClassPathOnly />
     <extension name="coverage">
       <pattern>

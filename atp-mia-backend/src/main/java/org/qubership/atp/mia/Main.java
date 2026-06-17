@@ -24,6 +24,11 @@ import org.qubership.atp.crypt.config.annotation.AtpDecryptorEnable;
 import org.qubership.atp.integration.configuration.annotation.EnableAtpJaegerLog;
 import org.qubership.atp.integration.configuration.service.annotation.EnableAtpNotification;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.cassandra.CassandraDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.cache.annotation.EnableCaching;
@@ -31,15 +36,24 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication(scanBasePackages = {
-        "org.qubership.atp.mia",
-        "org.qubership.atp.common.probes.controllers"
-})
+@SpringBootApplication(
+        scanBasePackages = {
+                "org.qubership.atp.mia",
+                "org.qubership.atp.common.probes.controllers"},
+        exclude = {
+                CassandraAutoConfiguration.class,
+                CassandraDataAutoConfiguration.class,
+                MongoAutoConfiguration.class,
+                MongoDataAutoConfiguration.class,
+                MongoRepositoriesAutoConfiguration.class})
 @Configuration
 @EnableCaching
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"org.qubership.atp.integration.configuration.feign",
-        "org.qubership.atp.mia", "org.qubership.atp.macros.core.client", "org.qubership.atp.ei.node.clients"})
+@EnableFeignClients(basePackages = {
+        "org.qubership.atp.integration.configuration.feign",
+        "org.qubership.atp.mia",
+        "org.qubership.atp.macros.core.client",
+        "org.qubership.atp.ei.node.clients"})
 @EnableOauth2FeignClientInterceptor
 @EnableM2MRestTemplate
 @EnableAtpJaegerLog

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import org.javers.core.Javers;
 import org.qubership.atp.mia.controllers.api.dto.HistoryItemTypeDto;
 import org.qubership.atp.mia.controllers.api.dto.ProcessHistoryChangeDto;
 import org.qubership.atp.mia.model.configuration.ProcessConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ProcessRetrieveHistoryService
         extends AbstractRetrieveHistoryService<ProcessConfiguration, ProcessHistoryChangeDto> {
 
-    @Autowired
     public ProcessRetrieveHistoryService(Javers javers,
                                          ProcessVersioningMapper mapper) {
         super(javers, mapper);

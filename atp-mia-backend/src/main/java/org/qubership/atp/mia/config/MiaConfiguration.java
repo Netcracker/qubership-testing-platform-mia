@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -69,9 +68,9 @@ public class MiaConfiguration {
     @Bean("miaConfigPath")
     public Path miaConfigPath() {
         if ("test".equals(profile)) {
-            return Paths.get("src", "main", "config");
+            return Path.of("src", "main", "config");
         }
-        return Paths.get("config");
+        return Path.of("config");
     }
 
     @ConditionalOnProperty(
@@ -158,7 +157,7 @@ public class MiaConfiguration {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         Converter<SectionConfiguration, UUID> sectionConfigurationUuidConverter =
-                new AbstractConverter<SectionConfiguration, UUID>() {
+                new AbstractConverter<>() {
                     protected UUID convert(SectionConfiguration source) {
                         if (source != null) {
                             return source.getId();
@@ -167,7 +166,7 @@ public class MiaConfiguration {
                     }
                 };
         Converter<ProcessConfiguration, UUID> processConfigurationUuidConverter =
-                new AbstractConverter<ProcessConfiguration, UUID>() {
+                new AbstractConverter<>() {
                     protected UUID convert(ProcessConfiguration source) {
                         if (source != null) {
                             return source.getId();
@@ -176,7 +175,7 @@ public class MiaConfiguration {
                     }
                 };
         Converter<CompoundConfiguration, UUID> compoundConfigurationUuidConverter =
-                new AbstractConverter<CompoundConfiguration, UUID>() {
+                new AbstractConverter<>() {
                     protected UUID convert(CompoundConfiguration source) {
                         if (source != null) {
                             return source.getId();
@@ -185,7 +184,7 @@ public class MiaConfiguration {
                     }
                 };
         Converter<ProjectDirectory, UUID> projectDirectoryUuidConverter =
-                new AbstractConverter<ProjectDirectory, UUID>() {
+                new AbstractConverter<>() {
                     protected UUID convert(ProjectDirectory source) {
                         if (source != null) {
                             return source.getId();

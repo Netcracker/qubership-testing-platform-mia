@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,21 +25,20 @@ import static org.qubership.atp.mia.utils.ExcelParserHelper.getHeaderByPattern;
 import java.util.HashMap;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.Range;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.google.common.base.Strings;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public class EventExcelProjectFour extends EventExcelCustomer {
 
     EventExcelProjectFour(@Nonnull XSSFSheet sheet, @Nullable String scenario, @Nullable String testCase) {
         super(sheet, scenario, testCase);
-        eventInfoRange = Range.between(4, 24);
-        headerRowRange = Range.between(1, 3);
+        eventInfoRange = Range.of(4, 24);
+        headerRowRange = Range.of(1, 3);
         attrNameRowNumber = 2;
         identifications = new HashMap<>();
         identifications.put("Priority", false);

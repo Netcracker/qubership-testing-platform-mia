@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.qubership.atp.mia.model.configuration;
 
 import java.util.UUID;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.exceptions.externalsystemintegrations.ProjectNotFoundException;
 
@@ -34,10 +34,10 @@ public class ProjectsJsonTest {
         projectsJson.setException(new ProjectNotFoundException(UUID.randomUUID()));
         projectsJson.setSuccessfulLoad(true);
         projectsJson.setConfigUrl("https://git.somedomain.com/Personal/Custom_projects/PROJ/project_mia");
-        Assert.assertEquals("1", projectsJson.getId());
-        Assert.assertEquals("defaultProject", projectsJson.getName());
-        Assert.assertTrue(projectsJson.isSuccessfulLoad());
-        Assert.assertEquals("https://git.somedomain.com/Personal/Custom_projects/PROJ/project_mia",
+        Assertions.assertEquals("1", projectsJson.getId());
+        Assertions.assertEquals("defaultProject", projectsJson.getName());
+        Assertions.assertTrue(projectsJson.isSuccessfulLoad());
+        Assertions.assertEquals("https://git.somedomain.com/Personal/Custom_projects/PROJ/project_mia",
                 projectsJson.getConfigUrl());
     }
 }

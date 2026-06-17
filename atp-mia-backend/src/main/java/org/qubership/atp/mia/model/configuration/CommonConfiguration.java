@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,34 +17,32 @@
 
 package org.qubership.atp.mia.model.configuration;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.javers.core.metamodel.annotation.Value;
 import org.qubership.atp.mia.model.Constants;
 import org.qubership.atp.mia.model.impl.VariableFormat;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -54,7 +52,6 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "project_common_configuration")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
@@ -62,6 +59,7 @@ import lombok.ToString;
 @Value
 public class CommonConfiguration implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1842137845749660674L;
     @Id
     @Column(name = "project_id")
@@ -85,7 +83,7 @@ public class CommonConfiguration implements Serializable {
     @DiffInclude
     private boolean saveSqlTablesToFile = true;
     @Column(name = "common_variables", columnDefinition = "jsonb")
-    @Type(type = "jsonb")
+    @Type(JsonBinaryType.class)
     @Builder.Default
     @DiffInclude
     private HashMap<String, String> commonVariables = new HashMap<>();
@@ -110,10 +108,9 @@ public class CommonConfiguration implements Serializable {
     @DiffInclude
     private String commandShellSeparator = "\n";
     @OneToMany(mappedBy = "commonConfiguration", targetEntity = CommandPrefix.class, cascade = CascadeType.MERGE,
-            orphanRemoval = true)
+            orphanRemoval = true, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Builder.Default
-    @LazyCollection(LazyCollectionOption.FALSE)
     @DiffInclude
     private List<CommandPrefix> commandShellPrefixes = new ArrayList<>();
     @Column(name = "geneva_date_mask")

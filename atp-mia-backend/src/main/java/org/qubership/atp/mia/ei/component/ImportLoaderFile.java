@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import static java.util.Objects.nonNull;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +48,6 @@ import org.qubership.atp.mia.repo.configuration.FileConfigurationRepository;
 import org.qubership.atp.mia.service.AtpUserService;
 import org.qubership.atp.mia.service.configuration.ProjectConfigurationService;
 import org.qubership.atp.mia.service.file.GridFsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,7 +73,7 @@ public class ImportLoaderFile extends ImportLoader<ExportImportEntities, Project
      * @param fileConfigurationRepository repository to save files
      * @param projectConfigurationService service to update configurations
      */
-    public ImportLoaderFile(@Autowired ObjectLoaderFromDiskService objectLoaderFromDiskService,
+    public ImportLoaderFile(ObjectLoaderFromDiskService objectLoaderFromDiskService,
                             GridFsService gridFsService,
                             AtpUserService atpUserService,
                             FileConfigurationRepository fileConfigurationRepository,
@@ -276,7 +274,7 @@ public class ImportLoaderFile extends ImportLoader<ExportImportEntities, Project
         // 0. Upload import file to gridFS
         FileMetaData metaData = new FileMetaData(
                 projectId,
-                Paths.get(ProjectFileType.MIA_FILE_TYPE_PROJECT.name()).resolve(file.getPathFile()).toString(),
+                Path.of(ProjectFileType.MIA_FILE_TYPE_PROJECT.name()).resolve(file.getPathFile()).toString(),
                 ProjectFileType.MIA_FILE_TYPE_PROJECT
         );
 

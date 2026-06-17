@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,24 +19,52 @@ package org.qubership.atp.mia.utils;
 
 import java.util.UUID;
 
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContextBuilder;
+import javax.net.ssl.SSLContext;
+
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.client5.http.ssl.TrustAllStrategy;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
 
 public class HttpUtils {
 
     /**
-     * TODO Make javadoc documentation for this method.
+     * Create and configure HttpClientBuilder with configuration:
+     *  - Trust all certificates,
+     *  - Don't check hostnames,
+     *  - PoolingHttpClientConnectionManager with shared = true.
+     *  In case errors - return HttpClientBuilder without any config settings.
+     *
+     * @return HttpClientBuilder object created and configured.
      */
     public static HttpClientBuilder createTrustAllHttpClientBuilder() {
         try {
+            // 1. Create SSL context that trusts all certificates
             SSLContextBuilder builder = new SSLContextBuilder();
-            builder.loadTrustMaterial(null, (chain, authType) -> true);
-            SSLConnectionSocketFactory sslsf = new
-                    SSLConnectionSocketFactory(builder.build(), NoopHostnameVerifier.INSTANCE);
-            return HttpClients.custom().setSSLSocketFactory(sslsf);
+            builder.loadTrustMaterial(TrustAllStrategy.INSTANCE);
+            SSLContext sslContext = builder.build();
+
+            // 2. Create an SSLConnectionSocketFactory using the SSLContext
+            SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
+                    .setSslContext(sslContext)
+                    .setHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                    .build();
+
+            // 3. Create a ConnectionManager and set the SSL socket factory on it
+            PoolingHttpClientConnectionManager connectionManager =
+                    PoolingHttpClientConnectionManagerBuilder.create()
+                            .setSSLSocketFactory(sslSocketFactory)
+                            .build();
+
+            // 4. Configure the HttpClientBuilder and set the custom ConnectionManager
+            return HttpClients.custom()
+                    .setConnectionManager(connectionManager)
+                    .setConnectionManagerShared(true); // Important for resource management
         } catch (Exception e) {
             return HttpClientBuilder.create();
         }
@@ -51,6 +79,6 @@ public class HttpUtils {
      * @return MiaEntityUrl.
      */
     public static String getMiaEntityUrl(String url, UUID projectId, UUID entityId) {
-        return String.format(url, projectId, entityId.toString());
+        return url.formatted(projectId, entityId.toString());
     }
 }

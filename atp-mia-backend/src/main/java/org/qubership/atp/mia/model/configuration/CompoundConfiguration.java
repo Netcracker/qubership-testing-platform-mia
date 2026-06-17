@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,30 +17,29 @@
 
 package org.qubership.atp.mia.model.configuration;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.DiffInclude;
 import org.qubership.atp.mia.model.DateAuditorEntity;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -57,6 +56,7 @@ import lombok.experimental.SuperBuilder;
 public class
 CompoundConfiguration extends DateAuditorEntity {
 
+    @Serial
     private static final long serialVersionUID = -4706896104344439606L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -76,21 +76,19 @@ CompoundConfiguration extends DateAuditorEntity {
     @DiffInclude
     private String referToInput;
 
-    @ManyToMany(targetEntity = ProcessConfiguration.class, cascade = CascadeType.MERGE)
+    @ManyToMany(targetEntity = ProcessConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "project_compound_process_configuration",
             joinColumns = @JoinColumn(name = "compound_id"),
             inverseJoinColumns = {@JoinColumn(name = "process_id")})
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @OrderColumn(name = "place")
-    @LazyCollection(LazyCollectionOption.FALSE)
     @DiffInclude
     private List<ProcessConfiguration> processes = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "compounds", targetEntity = SectionConfiguration.class, cascade = CascadeType.MERGE)
+    @ManyToMany(mappedBy = "compounds", targetEntity = SectionConfiguration.class, cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @LazyCollection(LazyCollectionOption.FALSE)
     @DiffInclude
     private List<SectionConfiguration> inSections = new ArrayList<>();
 

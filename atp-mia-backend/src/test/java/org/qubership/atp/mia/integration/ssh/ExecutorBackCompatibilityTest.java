@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@
 
 package org.qubership.atp.mia.integration.ssh;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
 import org.qubership.atp.mia.model.impl.ExecutionResponse;
@@ -55,12 +54,12 @@ public class ExecutorBackCompatibilityTest extends BaseIntegrationTestConfigurat
                 .bodyToMono(ExecutionResponse.class)
                 .block();
         // check response
-        Assert.assertNotNull(response);
+        Assertions.assertNotNull(response);
         CommandOutput commandOutput = response.getCommandResponse().getCommandOutputs().getFirst();
-        Assert.assertNotNull(commandOutput);
+        Assertions.assertNotNull(commandOutput);
         String filename = commandOutput.getLink().getName();
-        Assert.assertTrue("result doesn't contain filepath",
-                commandOutput.getLink().getPath().contains(filename));
+        Assertions.assertTrue(commandOutput.getLink().getPath().contains(filename),
+                "result doesn't contain filepath");
     }
 
     @Test()

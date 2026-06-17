@@ -5,7 +5,7 @@ GRAYLOG_ON: "false"
 # IP of db
 PG_DB_ADDR: "my-postgres-postgresql"
 # Spring profile for security
-SPRING_PROFILES: "disable-security"
+ACTIVE_PROFILES_SPRING: "disable-security"
 keepHookLogs: true
 HELPER_IMAGE: "ghcr.io/netcracker/qubership-testing-platform-helm-hook-helper:main_latest"
 CONTENT_SECURITY_POLICY: "*"
@@ -15,7 +15,9 @@ ATP_SERVICE_PUBLIC: "false"
 JMX_ENABLE: "false"
 KAFKA_ENABLE: "false"
 SERVICE_ENTITIES_MIGRATION_ENABLED: 'false'
-MIA_EI_DB_ENABLE: "false"
 MONGO_DB_ADDR: "my-mongodb"
+MIA_EI_DB_ENABLE: "false"
+EI_GRIDFS_DB_ADDR: "my-mongodb"
+EUREKA_CLIENT_ENABLED: "false"
 infraPassword: ""
 infraUser: ""

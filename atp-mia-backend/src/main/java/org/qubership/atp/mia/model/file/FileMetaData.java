@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package org.qubership.atp.mia.model.file;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.qubership.atp.mia.exceptions.configuration.FileMetaDataNotFoundException;
@@ -33,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class FileMetaData {
 
-    public static final Path PROJECT_FOLDER = Paths.get("PROJECT_FOLDER");
+    public static final Path PROJECT_FOLDER = Path.of("PROJECT_FOLDER");
     private final UUID projectId;
     private final String fileName;
     private final ProjectFileType projectFileType;

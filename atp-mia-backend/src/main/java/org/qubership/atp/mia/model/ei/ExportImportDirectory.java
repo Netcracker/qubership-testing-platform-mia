@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.qubership.atp.mia.model.ei;
 
+import java.io.Serial;
 import java.util.UUID;
 
 import org.qubership.atp.mia.model.file.ProjectDirectory;
@@ -32,6 +33,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class ExportImportDirectory extends ExportImportIdentifier {
 
+    @Serial
     private static final long serialVersionUID = -3765122570864670872L;
 
     private UUID parentDirectory;

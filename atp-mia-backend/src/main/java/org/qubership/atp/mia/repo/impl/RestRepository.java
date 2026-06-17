@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,16 +32,17 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.openjdk.nashorn.api.scripting.ClassFilter;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.qubership.atp.mia.exceptions.rest.RestCopyResultToStringException;
 import org.qubership.atp.mia.exceptions.rest.RestCreateConnectionFailException;
 import org.qubership.atp.mia.exceptions.rest.RestNotFoundException;
@@ -81,7 +81,7 @@ public class RestRepository {
 
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
-    private static final TypeReference<DbTable> TYPE_REF_DB_TABLE = new TypeReference<DbTable>() {
+    private static final TypeReference<DbTable> TYPE_REF_DB_TABLE = new TypeReference<>() {
     };
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final MiaContext miaContext;
@@ -116,13 +116,13 @@ public class RestRepository {
         }
         log.info("Preparing REST client for project: {}", miaContext.getProjectId());
         HttpClient client = restClient.prepareRestClient(server, rest.isDisableRedirect(), connectionInfo);
-        HttpRequestBase request = restClient.prepareRestRequest(rest, server, connectionInfo);
+        HttpUriRequestBase request = restClient.prepareRestRequest(rest, server, connectionInfo);
         connectionInfo.put("timestampRequest", Utils.getTimestamp());
-        HttpResponse httpResponse = restClient.executeRestRequest(client, request);
+        ClassicHttpResponse httpResponse = restClient.executeRestRequest(client, request);
         boolean textChecked = true;
         Map.Entry<File, String> responseBody = getResponseBody(command, httpResponse);
         if (responseBody.getValue() != null) {
-            textChecked = checkForText(restLoopParameters, responseBody.getValue(), httpResponse.getAllHeaders());
+            textChecked = checkForText(restLoopParameters, responseBody.getValue(), httpResponse.getHeaders());
         }
         int retryCount = 0;
         if (!textChecked && restLoopParameters != null
@@ -137,8 +137,7 @@ public class RestRepository {
                 httpResponse = restClient.executeRestRequest(client, request);
                 responseBody = getResponseBody(command, httpResponse);
                 if (responseBody.getValue() != null) {
-                    textChecked = checkForText(restLoopParameters, responseBody.getValue(),
-                            httpResponse.getAllHeaders());
+                    textChecked = checkForText(restLoopParameters, responseBody.getValue(), httpResponse.getHeaders());
                 }
                 retryCount++;
                 if (textChecked) {
@@ -154,12 +153,12 @@ public class RestRepository {
             connectionInfo.put("pollingStatus", pollingInfo);
         }
         connectionInfo.put("timestampResponse", Utils.getTimestamp());
-        connectionInfo.put("code", String.valueOf(httpResponse.getStatusLine().getStatusCode()));
+        connectionInfo.put("code", String.valueOf(httpResponse.getCode()));
         StringJoiner headerResponse = new StringJoiner("\n");
-        Arrays.stream(httpResponse.getAllHeaders()).forEach(h -> headerResponse.add(h.toString()));
+        Arrays.stream(httpResponse.getHeaders()).forEach(h -> headerResponse.add(h.toString()));
         connectionInfo.put("headersResponse", headerResponse.toString());
         if (rest.isSaveCookie()) {
-            Arrays.stream(httpResponse.getAllHeaders()).forEach(header -> {
+            Arrays.stream(httpResponse.getHeaders()).forEach(header -> {
                 if (header.getName().contains("Cookie")) {
                     miaContext.getFlowData().addParameter("Cookie", header.getValue());
                     log.info("Cookie is saved to flow data [ {} ].", header.getValue());
@@ -173,7 +172,7 @@ public class RestRepository {
         commandResponse.setConnectionInfo(connectionInfo);
         if (!textChecked) {
             commandResponse.addError(new IllegalArgumentException(
-                    String.format("Text '%s' defined but not found", restLoopParameters == null
+                    "Text '%s' defined but not found".formatted(restLoopParameters == null
                             ? "null_value"
                             : restLoopParameters.getTextToCheck())
             ));
@@ -226,12 +225,30 @@ public class RestRepository {
     /**
      * Compute result of user script.
      */
-    public String executeScript(Rest rest, HttpResponse httpResponse, String responseBody, String processName) {
+    public String executeScript(Rest rest, ClassicHttpResponse httpResponse, String responseBody, String processName) {
         log.trace("Start executing post script of {} process", processName);
-        ScriptEngineManager factory = new ScriptEngineManager();
-        ScriptEngine engine = factory.getEngineByName("Nashorn");
+
+        NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
+
+        // Combined security defense
+        String[] args = {"--no-java", "--no-syntax-extensions"};
+
+        // ClassFilter blocks any access to Java classes
+        ClassFilter strictFilter = (className) -> {
+            log.debug("Blocked access to Java class: {}", className);
+            return false;
+        };
+
+        ScriptEngine engine = factory.getScriptEngine(args, null, strictFilter);
+
+        /*
+            Old engine init; commented
+         */
+        //ScriptEngineManager factory = new ScriptEngineManager();
+        //ScriptEngine engine = factory.getEngineByName("Nashorn");
+
         if (engine == null) {
-            return String.format("%s can't define OpenJDK Nashorn script engine.", Constants.ERROR);
+            return "%s can't define OpenJDK Nashorn script engine.".formatted(Constants.ERROR);
         }
         engine.put("request", rest);
         engine.put("response", httpResponse);
@@ -260,10 +277,10 @@ public class RestRepository {
                 return "Post script has been successfully executed";
             } catch (ScriptException e) {
                 log.trace("{} in script execution: {}", Constants.ERROR, e.getMessage());
-                return String.format("%s in script: %s", Constants.ERROR, e.getMessage());
+                return "%s in script: %s".formatted(Constants.ERROR, e.getMessage());
             } catch (Exception e) {
                 log.trace("{} in script execution: {}", Constants.ERROR, e.getMessage());
-                return String.format("%s something went wrong when adding the result to global variables: %s",
+                return "%s something went wrong when adding the result to global variables: %s".formatted(
                         Constants.ERROR, e.getMessage());
             }
         }
@@ -320,23 +337,23 @@ public class RestRepository {
      * Save HttpResponse in File and if it's text the string representation also returned.
      *
      * @param httpResponse httpResponse
-     * @return link to file with {@link HttpResponse} and string representation if header CONTENT_TYPE is text.
+     * @return link to file with {@link ClassicHttpResponse} and string representation if header CONTENT_TYPE is text.
      * @throws RuntimeException if {@link HttpEntity} in {@code httpResponse} is not parsable.
      */
-    protected Map.Entry<File, String> getResponseBody(Command command, HttpResponse httpResponse) {
+    protected Map.Entry<File, String> getResponseBody(Command command, ClassicHttpResponse httpResponse) {
         String stringBody = null;
         Path filename;
         ContentType contentType = ContentType.getType(Utils.getHeaderValue(httpResponse, HEADER_CONTENT_TYPE));
         if (command.getLogFileNameFormat() != null) {
-            filename = Paths.get(StringUtils.deleteWhitespace(miaContext.evaluate(command.getLogFileNameFormat())));
+            filename = Path.of(StringUtils.deleteWhitespace(miaContext.evaluate(command.getLogFileNameFormat())));
         } else if (Utils.isHeaderNamePresent(httpResponse, HEADER_CONTENT_DISPOSITION)
                 && (Utils.getFirstGroupFromStringByRegexp(
                 Utils.getHeaderValue(httpResponse, HEADER_CONTENT_DISPOSITION), "filename=(.*)")) != null) {
-            filename = Paths.get(Utils.getFirstGroupFromStringByRegexp(
+            filename = Path.of(Utils.getFirstGroupFromStringByRegexp(
                             Utils.getHeaderValue(httpResponse, HEADER_CONTENT_DISPOSITION), "filename=(.*)")
                     .replaceAll("\"", ""));
         } else {
-            filename = Paths.get(miaContext.createFileName(contentType));
+            filename = Path.of(miaContext.createFileName(contentType));
         }
         File file = miaContext.getLogPath().resolve(filename.getFileName()).toFile();
         try (FileOutputStream outStream = new FileOutputStream(file)) {

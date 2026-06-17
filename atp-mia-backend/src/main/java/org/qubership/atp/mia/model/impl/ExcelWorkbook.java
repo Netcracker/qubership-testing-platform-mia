@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,16 +17,15 @@
 
 package org.qubership.atp.mia.model.impl;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.annotation.Nonnull;
-
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import jakarta.annotation.Nonnull;
 
 public class ExcelWorkbook {
 
@@ -47,7 +46,7 @@ public class ExcelWorkbook {
      */
     public ExcelWorkbook(@Nonnull String filePath) throws IOException {
         this.filePath = filePath;
-        this.fileInputStream = new FileInputStream(new File(filePath));
+        this.fileInputStream = new FileInputStream(filePath);
         this.workbook = new XSSFWorkbook(fileInputStream);
     }
 

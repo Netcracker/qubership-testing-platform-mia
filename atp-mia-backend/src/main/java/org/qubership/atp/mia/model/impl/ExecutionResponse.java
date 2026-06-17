@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@
 
 package org.qubership.atp.mia.model.impl;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 import org.qubership.atp.mia.exceptions.MiaException;
 import org.qubership.atp.mia.model.pot.ProcessStatus;
@@ -30,6 +29,7 @@ import org.qubership.atp.mia.model.pot.Statuses;
 import org.qubership.atp.mia.model.pot.db.SqlResponse;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import jakarta.annotation.Nullable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ExecutionResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 24941995508251952L;
 
     @Nullable

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -55,6 +56,7 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
 
     protected final LoadingCache<Server, Connection> pool;
     protected final ExecutorService executorService;
+    protected final ScheduledExecutorService cleanupScheduler;
     @Autowired
     protected MetricsAggregateService metricsService;
     @Value("${db.close.delay:300}")
@@ -70,7 +72,7 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
     protected SqlDriver(ExecutorService executorService) {
         this.executorService = executorService;
         pool = initPool(log, expiredAfter * 1000);
-        initPoolCleanUp(log, pool, cleanUpTimeout * 1000L);
+        cleanupScheduler = initPoolCleanUp(log, pool, cleanUpTimeout * 1000L);
     }
 
     /**
@@ -79,7 +81,7 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
     protected SqlDriver(ExecutorService executorService, int expireAfter, int cleanUpTimeout) {
         this.executorService = executorService;
         pool = initPool(log, expireAfter);
-        initPoolCleanUp(log, pool, cleanUpTimeout);
+        cleanupScheduler = initPoolCleanUp(log, pool, cleanUpTimeout);
     }
 
     /**
@@ -139,7 +141,6 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
             throw handleConnectionException(query, e);
         }
     }
-
 
     @Override
     public int executeUpdate(Server server, String query) {
@@ -209,9 +210,26 @@ public abstract class SqlDriver implements QueryDriver<Connection> {
 
     private MiaException handleConnectionException(String query, Exception e) {
         Throwable cause = e.getCause();
-        if (cause instanceof SqlConnectionFailException) {
-            return (SqlConnectionFailException) cause;
+        if (cause instanceof SqlConnectionFailException exception) {
+            return exception;
         }
         return new SqlExecuteFailException(query, e);
+    }
+
+    @Override
+    public void shutdown() {
+        if (cleanupScheduler != null && !cleanupScheduler.isShutdown()) {
+            log.info("{}: pool shutdown; shutting down the cleanupScheduler too..", Thread.currentThread().getName());
+            cleanupScheduler.shutdown();
+            try {
+                if (!cleanupScheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                    cleanupScheduler.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                cleanupScheduler.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+            log.info("{}: cleanupScheduler shutdown completed.", Thread.currentThread().getName());
+        }
     }
 }

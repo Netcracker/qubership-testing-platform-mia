@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ import org.qubership.atp.mia.model.file.ProjectDirectory;
 import org.qubership.atp.mia.repo.configuration.DirectoryConfigurationRepository;
 import org.qubership.atp.mia.service.configuration.ProjectConfigurationService;
 import org.qubership.atp.mia.service.file.GridFsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +63,7 @@ public class ImportLoaderDirectory extends ImportLoader<ExportImportEntities, Pr
      * @param directoryConfigurationRepository repository to save directories
      * @param projectConfigurationService      service to update configurations
      */
-    public ImportLoaderDirectory(@Autowired ObjectLoaderFromDiskService objectLoaderFromDiskService,
+    public ImportLoaderDirectory(ObjectLoaderFromDiskService objectLoaderFromDiskService,
                                  GridFsService gridFsService,
                                  DirectoryConfigurationRepository directoryConfigurationRepository,
                                  ProjectConfigurationService projectConfigurationService) {

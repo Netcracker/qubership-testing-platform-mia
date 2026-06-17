@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 package org.qubership.atp.mia.integration.sql;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,10 +27,9 @@ import java.io.InputStreamReader;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.exceptions.MiaException;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
@@ -72,7 +71,7 @@ public class MongoConnectionTest extends BaseIntegrationTestConfiguration {
         try (FileInputStream fs = new FileInputStream(mongoTest_path + mongoTest_filename)) {
             gridFsRepository.save(meta, fs);
             String actual = new BufferedReader(new InputStreamReader(gridFsRepository.get(meta).get())).readLine();
-            Assert.assertEquals("expected text not saved in a file", expectedText, actual);
+            Assertions.assertEquals(expectedText, actual, "expected text not saved in a file");
             gridFsRepository.removeFile(new FileMetaData(miaContext.getProjectId(), dest.getName(), ProjectFileType.MIA_FILE_TYPE_LOG));
         }
     }
@@ -100,6 +99,6 @@ public class MongoConnectionTest extends BaseIntegrationTestConfiguration {
 
     @Test
     public void smokeMongoAvailable() {
-        assertTrue("Error, mock used instead of working repository!", gridFsRepository.isEnable());
+        assertTrue(gridFsRepository.isEnable(), "Error, mock used instead of working repository!");
     }
 }

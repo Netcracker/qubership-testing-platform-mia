@@ -30,8 +30,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.wildfly.common.Assert;
 
 @ExtendWith(SkipTestInJenkins.class)
-@SpringBootTest(classes = {MiaProofOfTestingController.class}, properties = {"spring"
-        + ".cloud.vault.enabled=false"})
+@SpringBootTest(classes = {MiaProofOfTestingController.class}, properties = {"spring.cloud.vault.enabled=false"})
 public class ProofOfTestingControllerTest {
 
     @Autowired

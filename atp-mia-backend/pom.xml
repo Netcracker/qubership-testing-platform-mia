@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.qubership.atp.mia</groupId>
         <artifactId>atp-mia</artifactId>
-        <version>2.0.78-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -19,6 +19,9 @@
             -Djunit.jupiter.execution.parallel.enabled=true
             -Djunit.jupiter.execution.parallel.mode.default=concurrent
             -Djunit.jupiter.execution.parallel.mode.classes.default=concurrent
+            -Dspring.data.mongodb.connection-timeout=5000
+            -Dspring.data.mongodb.socket-timeout=5000
+            -Dspring.data.mongodb.server-selection-timeout=5000
             -Dspring.cloud.consul.config.enabled=false
             -DconfigPath=test
             -DLOCAL_DOCKER_START=false
@@ -26,6 +29,8 @@
             -DMIA_PASSWORD=mia
             -DskipUnstableTests=true
             -Dnashorn.args="-strict --no-java --no-syntax-extensions"
+            -Dspring.data.cassandra.enabled=false
+            -Dspring.autoconfigure.exclude=org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration
         </tests.argLine>
     </properties>
 
@@ -77,7 +82,7 @@
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.qubership.atp.environments</groupId>-->
@@ -95,44 +100,13 @@
             <version>${mapstruct.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.xml.ws</groupId>
-            <artifactId>jaxws-api</artifactId>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.hazelcast</groupId>-->
-<!--            <artifactId>hazelcast-all</artifactId>-->
-<!--            <version>${hazelcast.version}</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.hazelcast</groupId>-->
-<!--            <artifactId>hazelcast</artifactId>-->
-<!--            <classifier>tests</classifier>-->
-<!--            <version>${hazelcast.version}</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>com.hazelcast</groupId>-->
-<!--            <artifactId>hazelcast-all</artifactId>-->
-<!--            <version>${hazelcast-all.version}</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>com.hazelcast</groupId>-->
-<!--                    <artifactId>hazelcast</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.hazelcast</groupId>-->
-<!--            <artifactId>hazelcast</artifactId>-->
-<!--            <version>${hazelcast.version}</version> &lt;!&ndash; Should be tested, because versions are set different currently: 4.2.8 and 5.3.5 &ndash;&gt;-->
-<!--        </dependency>-->
-
-        <!--<dependency>
-            <groupId>com.hazelcast</groupId>
-            &lt;!&ndash; <artifactId>hazelcast-all</artifactId> &ndash;&gt; &lt;!&ndash; It was 'hazelcast-all' dependency here. Replaced to 'hazelcast', should be tested &ndash;&gt;
-            <artifactId>hazelcast</artifactId>
-        </dependency>-->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+        </dependency>
 
         <!-- Hazelcast core -->
         <dependency>
@@ -149,7 +123,6 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.11.0</version>
         </dependency>
 
         <dependency>
@@ -159,8 +132,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -173,22 +146,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-core</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>objenesis</artifactId>
-                    <groupId>org.objenesis</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -199,6 +156,25 @@
             <groupId>biz.paluch.logging</groupId>
             <artifactId>logstash-gelf</artifactId>
         </dependency>
+
+        <!-- Temporary, till atp-common changes will be delivered - START -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.23.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.23.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>log4j-api</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Temporary, till atp-common changes will be delivered - END -->
 
         <dependency>
             <groupId>org.codehaus.janino</groupId>
@@ -282,6 +258,10 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+                <exclusion>
                     <artifactId>asm</artifactId>
                     <groupId>org.ow2.asm</groupId>
                 </exclusion>
@@ -312,8 +292,12 @@
             <artifactId>spring-cloud-starter-consul-config</artifactId>
             <exclusions>
                 <exclusion>
-                    <artifactId>tomcat-embed-el</artifactId>
                     <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-el</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -340,7 +324,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.3.9</version>
+            <version>42.7.7</version>
             <exclusions>
                 <exclusion>
                     <artifactId>checker-qual</artifactId>
@@ -361,17 +345,17 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.cassandra</groupId>
+            <artifactId>java-driver-core</artifactId>
+            <version>4.18.1</version>
+        </dependency>
+        <!-- Commented, to be deleted after new dependency (see above) check
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
@@ -410,7 +394,7 @@
                     <groupId>com.datastax.cassandra</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency> -->
 
         <dependency>
             <groupId>org.qubership.atp</groupId>
@@ -459,6 +443,14 @@
                 <exclusion>
                     <artifactId>spring-boot-starter-tomcat</artifactId>
                     <groupId>org.springframework.boot</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -525,18 +517,12 @@
             <artifactId>spring-cloud-commons</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-sleuth</artifactId>
-            <!--<exclusions>
-                <exclusion>
-                    <artifactId>bcpkix-jdk15on</artifactId>
-                    <groupId>org.bouncycastle</groupId>
-                </exclusion>
-            </exclusions>-->
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
         </dependency>
 
         <dependency>
@@ -581,19 +567,37 @@
             <artifactId>gson</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.1.1</version>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
         </dependency>
+
+        <!-- Required for Eureka Client with Jersey 3 -->
+        <dependency>
+            <groupId>com.netflix.eureka</groupId>
+            <artifactId>eureka-client-jersey3</artifactId>
+            <version>2.0.5</version>
+        </dependency>
+        <!-- Complete Jersey 3 dependencies -->
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>3.1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>3.1.11</version>
+        </dependency>
+
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
-            <version>2.30</version>
+            <version>3.1.11</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
-            <version>2.26</version>
+            <version>3.1.11</version>
         </dependency>
         <dependency>
             <groupId>com.github.ozlerhakan</groupId>
@@ -609,7 +613,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.9.3</version>
+            <version>5.12.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -702,9 +706,9 @@
         </dependency>
         <!--allow to use hibernate custom json types-->
         <dependency>
-            <groupId>com.vladmihalcea</groupId>
-            <artifactId>hibernate-types-52</artifactId>
-            <version>2.21.1</version>
+            <groupId>io.hypersistence</groupId>
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
+            <version>3.9.9</version>
         </dependency>
         <!--liquibase-->
         <dependency>
@@ -719,13 +723,13 @@
         <dependency>
             <groupId>au.com.dius.pact.provider</groupId>
             <artifactId>junit5spring</artifactId>
-            <version>4.1.0</version>
+            <version>4.6.15</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-            <version>1.6.21</version>
+            <version>1.9.25</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -733,9 +737,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>2.0.1.Final</version>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -747,30 +750,10 @@
 <!--        </dependency>-->
 
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.17.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.17.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>log4j-api</artifactId>
-                    <groupId>org.apache.logging.log4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.4</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.projectlombok</groupId>-->
-<!--            <artifactId>lombok</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.openjdk.nashorn</groupId>
             <artifactId>nashorn-core</artifactId>
@@ -780,6 +763,18 @@
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
             <version>1.5.3</version> <!-- Use the latest version -->
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
         </dependency>
     </dependencies>
 
@@ -856,7 +851,23 @@
                 <!-- Generate models and controllers based on api-contract.yml -->
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>6.6.0</version>
+                <version>7.9.0</version>
+                <configuration>
+                    <generatorName>spring</generatorName>
+                    <output>${project.build.directory}/generated-sources</output>
+                    <modelNameSuffix>Dto</modelNameSuffix>
+                    <skipOverwrite>false</skipOverwrite>
+                    <generateModelTests>false</generateModelTests>
+                    <skipValidateSpec>true</skipValidateSpec>
+                    <configOptions>
+                        <useSpringBoot3>true</useSpringBoot3>
+                        <useJakartaEe>true</useJakartaEe>
+                        <java8>true</java8>
+                        <interfaceOnly>true</interfaceOnly>
+                        <useTags>true</useTags>
+                        <skipDefaultInterface>true</skipDefaultInterface>
+                    </configOptions>
+                </configuration>
                 <executions>
                     <execution>
                         <id>openapi-project-v1.yaml</id>
@@ -865,21 +876,11 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>${basedir}/src/main/config/apispecs/api/environments/v1/openapi-project-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${basedir}/src/main/config/apispecs/api/environments/v1/openapi-project-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.clients.api.environments</apiPackage>
                             <modelPackage>org.qubership.atp.mia.clients.api.environments.dto.projects</modelPackage>
                             <invokerPackage>org.qubership.atp.mia.clients</invokerPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
                             <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <serializableModel>true</serializableModel>
                             </configOptions>
                         </configuration>
@@ -891,22 +892,10 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>${basedir}/src/main/config/apispecs/api/environments/v1/openapi-environments-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${basedir}/src/main/config/apispecs/api/environments/v1/openapi-environments-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.clients.api.environments</apiPackage>
                             <modelPackage>org.qubership.atp.mia.clients.api.environments.dto.projects</modelPackage>
                             <invokerPackage>org.qubership.atp.mia.clients</invokerPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -916,22 +905,13 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
                             <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v1/candidates-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto.candidates</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
                             <configOptions>
                                 <additionalModelTypeAnnotations>@lombok.Data
                                     @lombok .AllArgsConstructor
                                 </additionalModelTypeAnnotations>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -942,22 +922,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v1/project-controller-v1.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v1/project-controller-v1.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto.project</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <!-- MIA -->
@@ -968,22 +935,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-models-v2.yaml
-                            </inputSpec>
-                            <modelPackage>
-                                org.qubership.atp.mia.controllers.api.dto
-                            </modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-models-v2.yaml</inputSpec>
+                            <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
                             <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <notNullJacksonAnnotation>true</notNullJacksonAnnotation>
                             </configOptions>
                         </configuration>
@@ -995,22 +949,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-cache-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-cache-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1020,21 +961,10 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-configuration-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-configuration-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <generateModelTests>false</generateModelTests>
                             <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <notNullJacksonAnnotation>true</notNullJacksonAnnotation>
                             </configOptions>
                         </configuration>
@@ -1046,22 +976,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-environment-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-environment-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1071,22 +988,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-execution-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-execution-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1096,21 +1000,10 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-file-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-file-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
+                            <skipValidateSpec>false</skipValidateSpec>
                         </configuration>
                     </execution>
                     <execution>
@@ -1120,22 +1013,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-service-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-service-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1145,22 +1025,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-general-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-general-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                     <execution>
@@ -1170,22 +1037,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>spring</generatorName>
-                            <inputSpec>
-                                ${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-history-changes-controller-v2.yaml
-                            </inputSpec>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-history-changes-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <skipOverwrite>false</skipOverwrite>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useTags>true</useTags>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>
@@ -1193,19 +1047,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.15.0</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <release>${java.version}</release>
+                    <parameters>true</parameters>
                     <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
-                        </path>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
                         </path>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -1218,10 +1073,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.2.0</version>
                 <configuration>
+                    <encoding>UTF-8</encoding>
+                    <propertiesEncoding>UTF-8</propertiesEncoding>
                     <nonFilteredFileExtensions>
                         <nonFilteredFileExtension>p12</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>zip</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
                     </nonFilteredFileExtensions>
                     <includeEmptyDirs>true</includeEmptyDirs>
                 </configuration>
@@ -1254,6 +1113,11 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <skipTests>true</skipTests>
+                    <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
+                    <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
+                    <parallelTestsTimeoutForcedInSeconds>60</parallelTestsTimeoutForcedInSeconds>
+                    <parallelTestsTimeoutInSeconds>60</parallelTestsTimeoutInSeconds>
+                    <argLine>-Djdk.tracePinnedThreads=full</argLine>
                     <runOrder>alphabetical</runOrder>
                     <argLine>${tests.argLine}</argLine>
                     <trimStackTrace>false</trimStackTrace>
@@ -1265,6 +1129,13 @@
                         <exclude>**/*$__CLR*</exclude>
                     </excludes>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>5.12.2</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

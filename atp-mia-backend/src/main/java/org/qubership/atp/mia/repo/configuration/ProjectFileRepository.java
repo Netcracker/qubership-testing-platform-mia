@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,15 +21,14 @@ import java.util.List;
 import java.util.UUID;
 
 import org.qubership.atp.mia.model.file.ProjectFile;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProjectFileRepository extends CrudRepository<ProjectFile, UUID> {
 
-    @Query(value = "SELECT p.gridfs_object_id FROM project_file p WHERE p.project_id = :projectId",
-            nativeQuery = true)
+    @NativeQuery("SELECT p.gridfs_object_id FROM project_file p WHERE p.project_id = :projectId")
     List<String> findAllByProjectId(UUID projectId);
 }
 

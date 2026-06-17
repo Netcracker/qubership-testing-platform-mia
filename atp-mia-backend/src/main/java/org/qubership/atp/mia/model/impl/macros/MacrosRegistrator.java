@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,13 +39,13 @@ public class MacrosRegistrator {
      * @return map of registered macroses (class to concrete registered instance)
      */
     public Map<Class<Macros>, Macros> register() {
-        List<? extends Macros> macroses = new Reflections("org.qubership.atp.mia")
+        List<? extends Macros> macroses = new Reflections("org.qubership.atp.mia.model.impl.macros.impl")
                 .getSubTypesOf(Macros.class)
                 .stream()
                 .map(this::instantiate)
-                .filter(Optional::isPresent) //ignore not registered macroses
-                .map(Optional::get)
-                .collect(Collectors.toList());
+                //ignore not registered macroses
+                .flatMap(Optional::stream)
+                .toList();
         macroses.forEach(MacroRegistryImpl::registerMacros);
         return macroses.stream().collect(Collectors.toMap(m -> (Class<Macros>) m.getClass(), m -> m));
     }
@@ -59,7 +59,7 @@ public class MacrosRegistrator {
      */
     private <T extends Macros> Optional<T> instantiate(Class<T> macrosClass) {
         try {
-            T macros = macrosClass.newInstance();
+            T macros = macrosClass.getDeclaredConstructor().newInstance();
             return Optional.of(macros);
         } catch (Exception e) {
             LOGGER.error("Failed to create macros with abstract module: {}", macrosClass, e);

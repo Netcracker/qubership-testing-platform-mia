@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,21 +35,19 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.entity.EntityBuilder;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,9 +69,8 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
     final ThreadLocal<Command> command = new ThreadLocal<>();
     final ThreadLocal<String> filename = new ThreadLocal<>();
     final ThreadLocal<File> logFile = new ThreadLocal<>();
-    final ThreadLocal<HttpRequestBase> requestBase = new ThreadLocal<>();
-    final ThreadLocal<HttpResponse> response = new ThreadLocal<>();
-    final ThreadLocal<StatusLine> status = new ThreadLocal<>();
+    final ThreadLocal<HttpUriRequestBase> requestBase = new ThreadLocal<>();
+    final ThreadLocal<ClassicHttpResponse> response = new ThreadLocal<>();
 
     @AfterEach
     public void cleanLogFile() {
@@ -88,16 +85,15 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         // mock
         client.set(mock(HttpClient.class));
         restClientExecutor.set(mock(RestClientService.class));
-        requestBase.set(mock(HttpRequestBase.class));
-        response.set(mock(HttpResponse.class));
-        status.set(mock(StatusLine.class));
+        requestBase.set(mock(HttpUriRequestBase.class));
+        response.set(mock(ClassicHttpResponse.class));
         repository.set(spy(new RestRepository(miaContext.get(), restClientExecutor.get(), metricsService)));
         // construct
         command.set(new Command());
         command.get().setSystem(Constants.DEFAULT_SYSTEM_NAME);
         command.get().setRest(rest.get());
         Header[] headers = new Header[]{new BasicHeader("filename=", "text.log")};
-        Path path = Paths.get("PROJECT_FOLDER/"
+        Path path = Path.of("PROJECT_FOLDER/"
                 + miaContext.get().getFlowData().getProjectId() + "/"
                 + ProjectFileType.MIA_FILE_TYPE_LOG + "/"
                 + miaContext.get().getFlowData().getSessionId() + "/");
@@ -109,9 +105,9 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         logFile.set(new File(path.resolve(miaContext.get().createLogFileName(command.get())).toString()));
         filename.set(logFile.get().getName());
         // stub
-        when(status.get().getStatusCode()).thenReturn(200);
-        when(response.get().getStatusLine()).thenReturn(status.get());
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getCode()).thenReturn(200);
+        when(response.get().getReasonPhrase()).thenReturn("OK");
+        when(response.get().getHeaders()).thenReturn(headers);
         when(restClientExecutor.get().createFileWithResponse(any(), any())).thenReturn(filename.get());
         when(restClientExecutor.get().prepareRestClient(any(), anyBoolean(), anyMap())).thenReturn(client.get());
         when(restClientExecutor.get().prepareRestRequest(any(), any(), anyMap())).thenReturn(requestBase.get());
@@ -121,35 +117,35 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
     @Test
     public void when_checkForTextForBody_then_restClientExecutorOnce() {
         doReturn(new AbstractMap.SimpleEntry<>(new File("./logs/tests/" + "test.txt"), "bodytest")).when(repository.get()).getResponseBody(
-                eq(command.get()), any(HttpResponse.class));
+                eq(command.get()), any(ClassicHttpResponse.class));
         rest.get().setParseResponseAsTable(false);
         rest.get().setRestLoopParameters(RestLoopParameters.builder().textToCheck("test").build());
         CommandResponse commandResponse = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(commandResponse);
-        verify(restClientExecutor.get(), times(1)).executeRestRequest(any(HttpClient.class), any(HttpRequestBase.class));
+        verify(restClientExecutor.get(), times(1)).executeRestRequest(any(HttpClient.class), any(HttpUriRequestBase.class));
     }
 
     @Test
     public void when_checkForTextForHeader_then_restClientExecutorOnce() {
         doReturn(new AbstractMap.SimpleEntry<>(new File("./logs/tests/" + "test.txt"), "blabla")).when(repository.get()).getResponseBody(
-                eq(command.get()), any(HttpResponse.class));
+                eq(command.get()), any(ClassicHttpResponse.class));
         rest.get().setParseResponseAsTable(false);
         rest.get().setRestLoopParameters(RestLoopParameters.builder().textToCheck("text").build());
         CommandResponse commandResponse = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(commandResponse);
-        verify(restClientExecutor.get(), times(1)).executeRestRequest(any(HttpClient.class), any(HttpRequestBase.class));
+        verify(restClientExecutor.get(), times(1)).executeRestRequest(any(HttpClient.class), any(HttpUriRequestBase.class));
     }
 
     @Test
     public void when_checkForTextForIncorrectBody_then_restClientExecutor4times() {
         doReturn(new AbstractMap.SimpleEntry<>(new File("./logs/tests/" + "test.txt"), "bodytest")).when(repository.get()).getResponseBody(
-                eq(command.get()), any(HttpResponse.class));
+                eq(command.get()), any(ClassicHttpResponse.class));
         rest.get().setParseResponseAsTable(false);
         rest.get().setRestLoopParameters(RestLoopParameters.builder().textToCheck("incorrect").build());
         CommandResponse commandResponse = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(commandResponse);
         Assertions.assertInstanceOf(IllegalArgumentException.class, commandResponse.getErrors().getFirst());
-        verify(restClientExecutor.get(), times(4)).executeRestRequest(any(HttpClient.class), any(HttpRequestBase.class));
+        verify(restClientExecutor.get(), times(4)).executeRestRequest(any(HttpClient.class), any(HttpUriRequestBase.class));
     }
 
     @Test
@@ -169,7 +165,7 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
 
     private void getAndCheckResponse(String responseStr) throws IOException {
         doReturn(new AbstractMap.SimpleEntry<>(new File(logFile.get().getPath()), responseStr)).when(repository.get())
-                .getResponseBody(eq(command.get()), any(HttpResponse.class));
+                .getResponseBody(eq(command.get()), any(ClassicHttpResponse.class));
         createLogFile(logFile.get().getPath(), responseStr);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
@@ -189,16 +185,18 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         rest.get().setParseResponseAsTable(false);
         File file = miaContext.get().getLogPath().resolve("text.zip").toFile();
         Header[] headers = new Header[]{new BasicHeader("Content-Disposition", "filename=text.zip")};
-        BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
-        basicHttpEntity.setChunked(true);
-        basicHttpEntity.setContent(new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)));
+        BasicHttpEntity basicHttpEntity = new BasicHttpEntity(
+                new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)),
+                ContentType.APPLICATION_OCTET_STREAM,
+                true
+        );
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
-        Assertions.assertFalse(result.getCommandOutputs().get(0).isDisplayed());
-        Assertions.assertEquals(file.getPath(), result.getCommandOutputs().get(0).getInternalPathToFile());
+        Assertions.assertFalse(result.getCommandOutputs().getFirst().isDisplayed());
+        Assertions.assertEquals(file.getPath(), result.getCommandOutputs().getFirst().getInternalPathToFile());
     }
 
     @Test
@@ -207,11 +205,13 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         rest.get().setParseResponseAsTable(false);
         Header[] headers = new Header[]{new BasicHeader("Content-Disposition", "filename=text.json"),
                 new BasicHeader(HEADER_CONTENT_TYPE, ContentType.APPLICATION_JSON.toString())};
-        BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
-        basicHttpEntity.setChunked(true);
-        basicHttpEntity.setContent(new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)));
+        BasicHttpEntity basicHttpEntity = new BasicHttpEntity(
+                new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)),
+                ContentType.APPLICATION_OCTET_STREAM,
+                true
+        );
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
@@ -234,15 +234,17 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         // construct
         rest.get().setParseResponseAsTable(false);
         Header[] headers = new Header[]{new BasicHeader("Content-Type", "application/pdf")};
-        BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
-        basicHttpEntity.setChunked(true);
-        basicHttpEntity.setContent(new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)));
+        BasicHttpEntity basicHttpEntity = new BasicHttpEntity(
+                new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)),
+                ContentType.APPLICATION_OCTET_STREAM,
+                true
+        );
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
-        Assertions.assertFalse(result.getCommandOutputs().get(0).isDisplayed());
+        Assertions.assertFalse(result.getCommandOutputs().getFirst().isDisplayed());
     }
 
     @Test
@@ -250,16 +252,18 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         // construct
         rest.get().setParseResponseAsTable(false);
         Header[] headers = new Header[]{new BasicHeader("Content-Type", "application/json;charset=utf-8")};
-        BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
-        basicHttpEntity.setChunked(true);
-        basicHttpEntity.setContent(new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)));
+        BasicHttpEntity basicHttpEntity = new BasicHttpEntity(
+                new ByteArrayInputStream("anyfile".getBytes(StandardCharsets.UTF_8)),
+                ContentType.APPLICATION_OCTET_STREAM,
+                true
+        );
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(basicHttpEntity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
-        Assertions.assertTrue(result.getCommandOutputs().get(0).isDisplayed());
-        Assertions.assertTrue(result.getCommandOutputs().get(0).getLink().getName().endsWith(".json"),
+        Assertions.assertTrue(result.getCommandOutputs().getFirst().isDisplayed());
+        Assertions.assertTrue(result.getCommandOutputs().getFirst().getLink().getName().endsWith(".json"),
                 "File should have Json extension");
     }
 
@@ -268,8 +272,7 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
         // expect
         final String expected = "{\"message\":\"it's json\"}";
         // mock
-        HttpResponse response = Mockito.mock(HttpResponse.class);
-        StatusLine status = Mockito.mock(StatusLine.class);
+        ClassicHttpResponse response = Mockito.mock(ClassicHttpResponse.class);
         // construct
         Header[] headers =
                 new Header[]{new BasicHeader("Content-Type", ContentType.APPLICATION_JSON.getMimeType())};
@@ -279,9 +282,9 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
                 .chunked()
                 .build();
         // stub
-        when(response.getStatusLine()).thenReturn(status);
-        when(status.getStatusCode()).thenReturn(200);
-        when(response.getAllHeaders()).thenReturn(headers);
+        when(response.getReasonPhrase()).thenReturn("OK");
+        when(response.getCode()).thenReturn(200);
+        when(response.getHeaders()).thenReturn(headers);
         when(response.getEntity()).thenReturn(entity);
         // assert
         Map.Entry<File, String> result = repository.get().getResponseBody(command.get(), response);
@@ -308,7 +311,7 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
                 .chunked()
                 .build();
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(entity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
@@ -332,13 +335,13 @@ public class RestRepositoryTest extends RestRepositoryTestConfiguration {
                 .chunked()
                 .build();
         // stub
-        when(response.get().getAllHeaders()).thenReturn(headers);
+        when(response.get().getHeaders()).thenReturn(headers);
         when(response.get().getEntity()).thenReturn(entity);
         CommandResponse result = repository.get().sendRestRequest(command.get());
         Assertions.assertNotNull(result);
         Assertions.assertNotNull(result.getErrors());
         Assertions.assertFalse(result.getErrors().isEmpty());
-        final String errMsg = String.format("Text '%s' defined but not found", rest.get().getRestLoopParameters().getTextToCheck());
-        Assertions.assertEquals(errMsg, result.getErrors().get(0).getMessage());
+        final String errMsg = "Text '%s' defined but not found".formatted(rest.get().getRestLoopParameters().getTextToCheck());
+        Assertions.assertEquals(errMsg, result.getErrors().getFirst().getMessage());
     }
 }

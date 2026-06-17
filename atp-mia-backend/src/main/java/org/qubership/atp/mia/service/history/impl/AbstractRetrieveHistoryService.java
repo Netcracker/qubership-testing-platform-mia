@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.javers.core.Changes;
 import org.javers.core.ChangesByCommit;
 import org.javers.core.Javers;
@@ -60,6 +58,7 @@ import org.qubership.atp.mia.service.history.RetrieveHistoryService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -185,7 +184,7 @@ public abstract class AbstractRetrieveHistoryService<S extends DateAuditorEntity
                 .withSnapshotType(SnapshotType.INITIAL)
                 .build());
         if (!CollectionUtils.isEmpty(snapshots)) {
-            CommitMetadata initialCommitMetadata = snapshots.get(0).getCommitMetadata();
+            CommitMetadata initialCommitMetadata = snapshots.getFirst().getCommitMetadata();
             destination.setCreatedBy(initialCommitMetadata.getAuthor());
             destination.setCreatedWhen(Timestamp.valueOf(initialCommitMetadata.getCommitDate()).getTime());
         }
@@ -208,8 +207,8 @@ public abstract class AbstractRetrieveHistoryService<S extends DateAuditorEntity
                 .stream()
                 .map(change -> {
                     if (!getEntityClass().getTypeName().equals(change.getAffectedGlobalId().getTypeName())
-                            && change instanceof ValueChange) {
-                        String propertyNameWithPath = ((ValueChange) change).getPropertyNameWithPath();
+                            && change instanceof ValueChange valueChange) {
+                        String propertyNameWithPath = valueChange.getPropertyNameWithPath();
                         return propertyNameWithPath.split("/")[0].split("\\.")[0];
                     } else {
                         return ((PropertyChange) change).getPropertyName();
@@ -281,7 +280,7 @@ public abstract class AbstractRetrieveHistoryService<S extends DateAuditorEntity
         QueryBuilder queryBuilder = QueryBuilder.byInstanceId(uuid, getEntityClass())
                 .withVersion(Long.parseLong(version)).withScopeDeepPlus(Integer.MAX_VALUE);
         if (Objects.nonNull(snapshots) && !snapshots.isEmpty()) {
-            queryBuilder.withCommitId(snapshots.get(0).getCommitId());
+            queryBuilder.withCommitId(snapshots.getFirst().getCommitId());
         }
         List<Shadow<S>> shadows = javers.findShadows(queryBuilder.build());
         log.debug("Shadows found : {}", shadows);

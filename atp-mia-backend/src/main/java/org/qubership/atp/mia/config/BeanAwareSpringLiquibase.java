@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ public class BeanAwareSpringLiquibase extends SpringLiquibase {
      * Static method for get beans in liquibase task changes.
      */
     public static <T> T getBean(Class<T> beanClass) throws Exception {
-        if (applicationContext instanceof ApplicationContext) {
-            return ((ApplicationContext) applicationContext).getBean(beanClass);
+        if (applicationContext instanceof ApplicationContext context) {
+            return context.getBean(beanClass);
         } else {
             throw new Exception("Resource loader is not an instance of ApplicationContext");
         }

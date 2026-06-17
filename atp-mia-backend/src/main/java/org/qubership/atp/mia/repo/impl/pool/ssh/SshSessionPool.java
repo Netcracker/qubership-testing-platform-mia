@@ -31,6 +31,7 @@ import org.qubership.atp.mia.repo.impl.SshConnectionManager;
 import org.qubership.atp.mia.repo.impl.SshSession;
 import org.qubership.atp.mia.service.MiaContext;
 import org.qubership.atp.mia.utils.Utils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -38,35 +39,49 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class SshSessionPool implements ConnectionPool {
+public class SshSessionPool implements ConnectionPool, DisposableBean {
 
-    // Holds System Ids of systems for timeShifting
+    /*
+     * Holds System Ids of systems for timeShifting.
+     */
     public static final Map<UUID, Boolean> systemsForTimeShifting = new ConcurrentHashMap<>();
-    private static final Map<Server, SshSession> connectionCache = new ConcurrentHashMap<>();
-    // Holds actual timeShift sessions
+
+    /*
+     * Holds actual timeShift sessions.
+     */
     private static final Map<Server, SshSession> timeShiftStorage = new ConcurrentHashMap<>();
+
+    /*
+     * Holds connections cache.
+     */
+    private static final Map<Server, SshSession> connectionCache = new ConcurrentHashMap<>();
+
     public static int KEEP_ALIVE_MSG_INTERVAL;
     private final MiaContext miaContext;
+    private final ScheduledExecutorService cleanConnectionPool;
+    private final ScheduledExecutorService cleanTimeShiftPool;
 
     /**
      * Creates connection pool for SSH connections.
      * After {@code cleanTimeout} (seconds) removes ssh connection from cache.
-     * Also every {@code cleanTimeout} (seconds) performs cleaning connections.
+     * Also, every {@code cleanTimeout} (seconds) performs cleaning connections.
      *
      * @param cleanTimeout after this timeout in seconds cache will be
      */
     public SshSessionPool(@Value("${ssh.close.delay:300}") String cleanTimeout,
                           @Value("${db.server.keep.alive:30000}") String keepAlive,
                           MiaContext miaContext) {
+        this.miaContext = miaContext;
+
         KEEP_ALIVE_MSG_INTERVAL =
                 (int) Utils.parseLongValueOrDefault(keepAlive, 30000, "db.server.keep.alive");
         long cleanCacheTimeout = Utils.parseLongValueOrDefault(cleanTimeout, 180, "ssh.close.delay");
+
         // Schedule cache cleanup every cleanCacheTimeout
-        ScheduledExecutorService cleanConnectionPool = Executors.newSingleThreadScheduledExecutor();
+        cleanConnectionPool = Executors.newSingleThreadScheduledExecutor();
         cleanConnectionPool.scheduleAtFixedRate(this::cleanConnectionCache, 0, cleanCacheTimeout, TimeUnit.SECONDS);
-        ScheduledExecutorService cleanTimeShiftPool = Executors.newSingleThreadScheduledExecutor();
+        cleanTimeShiftPool = Executors.newSingleThreadScheduledExecutor();
         cleanTimeShiftPool.scheduleAtFixedRate(this::cleanTimeShiftMap, 0, cleanCacheTimeout, TimeUnit.SECONDS);
-        this.miaContext = miaContext;
     }
 
     /**
@@ -210,5 +225,32 @@ public class SshSessionPool implements ConnectionPool {
             timeShiftStorage.clear();
         }
         log.info("Complete clean manually ssh cache.");
+    }
+
+    @Override
+    public void destroy() {
+        shutdown();
+    }
+
+    public void shutdown() {
+        log.info("Shutting down SshSessionPool executors...");
+
+        shutdown(cleanConnectionPool, "cleanConnectionPool");
+        shutdown(cleanTimeShiftPool, "cleanTimeShiftPool");
+
+        log.info("Shutting down SshSessionPool executors completed.");
+    }
+
+    private void shutdown(ScheduledExecutorService scheduledService, String name) {
+        if (scheduledService != null && !scheduledService.isShutdown()) {
+            scheduledService.shutdownNow();
+            try {
+                if (!scheduledService.awaitTermination(5, TimeUnit.SECONDS)) {
+                    log.warn("{} did not terminate in time", name);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 }

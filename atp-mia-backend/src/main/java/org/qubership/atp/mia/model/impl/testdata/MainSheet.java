@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ package org.qubership.atp.mia.model.impl.testdata;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.ws.Holder;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -31,6 +29,7 @@ import org.qubership.atp.mia.model.impl.testdata.parsed.Description;
 import org.qubership.atp.mia.model.impl.testdata.parsed.Scenario;
 import org.qubership.atp.mia.model.impl.testdata.parsed.ValidatedParameters;
 
+import jakarta.xml.ws.Holder;
 import lombok.Data;
 
 @Data
@@ -73,7 +72,7 @@ public class MainSheet {
         sheet.addMergedRegion(new CellRangeAddress(12, 13, 1, 1));
         final Holder<Integer> rowNum = new Holder<>(13);
         final Holder<Integer> cellNum = new Holder<>(1);
-        if (!scenarios.isEmpty() && !scenarios.get(0).getDescriptions().isEmpty()) {
+        if (!scenarios.isEmpty() && !scenarios.getFirst().getDescriptions().isEmpty()) {
             Description descr = findDescriptionToWriteHeader(true, false, false, false);
             if (descr != null) {
                 descr.getEventParams().forEach((k, v) -> hRow.createCell(++cellNum.value).setCellValue(k));

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 
 package org.qubership.atp.mia.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Objects;
 
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.model.impl.executable.Rest;
@@ -38,7 +38,7 @@ import ch.qos.logback.core.read.ListAppender;
 
 public class RestClientExecutorImplTest extends RestRepositoryTestConfiguration {
 
-    protected static final ThreadLocal<RestClientService> restClientService = new ThreadLocal();
+    protected static final ThreadLocal<RestClientService> restClientService = new ThreadLocal<>();
 
     @BeforeEach
     public void beforeRestClientExecutorImplTest() {
@@ -46,31 +46,32 @@ public class RestClientExecutorImplTest extends RestRepositoryTestConfiguration 
     }
 
     @Test
-    public void prepareRestRequest() {
+    public void prepareRestRequest() throws URISyntaxException {
         miaContext.get().getFlowData().addParameter("postMethod", "POST");
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         listAppender.start();
         ((Logger) LoggerFactory.getLogger(RestClientService.class)).addAppender(listAppender);
-        HttpRequestBase requestBase = restClientService.get().prepareRestRequest(rest.get(), server.get(), new HashMap<>());
-        assertTrue("Appender.list is wrong: " + listAppender.list, listAppender.list.stream().anyMatch(m ->
-                m.getFormattedMessage().equals("Charset \"UTF-8\" will use for parsing request body according to header")));
+        HttpUriRequestBase requestBase = restClientService.get().prepareRestRequest(rest.get(), server.get(), new HashMap<>());
+        assertTrue(listAppender.list.stream().anyMatch(m ->
+                m.getFormattedMessage()
+                        .startsWith("Charset \"UTF-8\" will be used to parse request body according to header")),
+                "Appender.list is wrong: " + listAppender.list);
         assertEquals("http://localhost:8080/CUSTOMECA/services/CUSTOMECAAXPaymentsPort",
-                requestBase.getURI().toString());
-        assert requestBase instanceof HttpEntityEnclosingRequestBase;
-        assert Objects.nonNull(((HttpEntityEnclosingRequestBase) requestBase).getEntity());
+                requestBase.getUri().toString());
+        assert Objects.nonNull(requestBase.getEntity());
         assertEquals("", requestBase.getFirstHeader("soapaction").getValue());
         assertEquals("text/xml;charset=UTF-8", requestBase.getFirstHeader("content-type").getValue());
     }
 
     @Test
-    public void whenHttpRestRequest_correctlyResult() {
+    public void whenHttpRestRequest_correctlyResult() throws URISyntaxException {
         Rest restHttp = Rest.builder().build();
         restHttp.setEndpoint("https://atp-public-gateway:8080/");
         restHttp.setMethod("GET");
         restHttp.setParseResponseAsTable(true);
         restHttp.setBody("test");
-        HttpRequestBase requestBase = restClientService.get().prepareRestRequest(restHttp, server.get(), new HashMap<>());
-        assertEquals(restHttp.getEndpoint(), requestBase.getURI().toString());
+        HttpUriRequestBase requestBase = restClientService.get().prepareRestRequest(restHttp, server.get(), new HashMap<>());
+        assertEquals(restHttp.getEndpoint(), requestBase.getUri().toString());
     }
 
 

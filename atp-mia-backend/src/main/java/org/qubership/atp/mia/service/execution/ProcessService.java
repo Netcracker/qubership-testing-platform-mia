@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.qubership.atp.integration.configuration.annotation.AtpJaegerLog;
 import org.qubership.atp.integration.configuration.annotation.AtpSpanTag;
 import org.qubership.atp.mia.exceptions.configuration.CurrentStatementListIsEmptyException;
@@ -411,7 +411,7 @@ public class ProcessService {
                     return miaContext.evaluate(v.getValue()).equals(sqlResponse.getQuery());
                 }
             }).findFirst();
-            if (!validationOption.isPresent()) {
+            if (validationOption.isEmpty()) {
                 log.debug("Validation options is not present, setting status to: FAIL");
                 executionResponse.getProcessStatus().setStatus(Statuses.FAIL);
             } else {
@@ -446,14 +446,14 @@ public class ProcessService {
                         String value;
                         if (sqlResponse.getRecords() == 0) {
                             value = "Not Found";
-                        } else if (!sqlResponse.getData().getColumns().stream()
-                                .filter(s -> s.equalsIgnoreCase(columnName)).findFirst().isPresent()) {
+                        } else if (sqlResponse.getData().getColumns().stream()
+                                .filter(s -> s.equalsIgnoreCase(columnName)).findFirst().isEmpty()) {
                             value = "Column '" + columnName + "' not found";
                         } else {
                             String returnColumnName = sqlResponse.getData().getColumns().stream()
                                     .filter(s -> s.equalsIgnoreCase(columnName)).findFirst().get();
                             int rowIndex = 0;
-                            if (sqlResponse.getData().getData().get(0).get(0).equals("ER")) {
+                            if (sqlResponse.getData().getData().getFirst().getFirst().equals("ER")) {
                                 rowIndex = 1;
                             }
                             value = sqlResponse.getData().getData().get(rowIndex).get(
@@ -657,7 +657,7 @@ public class ProcessService {
             for (String column : table.getData().getColumns()) {
                 String columnValue;
                 if (table.getRecords() > 0) {
-                    columnValue = table.getData().getData().get(0)
+                    columnValue = table.getData().getData().getFirst()
                             .get(table.getData().getColumns().indexOf(column));
                 } else {
                     columnValue = "Not Found";
@@ -715,7 +715,7 @@ public class ProcessService {
             if (prerequisiteQuery.isPresent()) {
                 final SqlResponse sqlResponse = prerequisiteQuery.get().getSqlResponse();
                 if (sqlResponse.getRecords() > 0) {
-                    final String value = sqlResponse.getData().getData().get(0).get(0);
+                    final String value = sqlResponse.getData().getData().getFirst().getFirst();
                     miaContext.getFlowData().addParameter(prerequisite.getName(), value);
                     log.info("Parameter {} saved as {} from query: {}", prerequisite.getName(), value,
                             sqlResponse.getQuery());
@@ -739,7 +739,7 @@ public class ProcessService {
      * @param variables       variables
      */
     private void saveVariableFromLog(CommandResponse commandResponse, HashMap<String, String> variables) {
-        CommandOutput commandOutput = commandResponse.getCommandOutputs().get(0);
+        CommandOutput commandOutput = commandResponse.getCommandOutputs().getFirst();
         try {
             commandOutput.contentFromFile().forEach(string -> variables.forEach((variableName, regex) -> {
                 String value = Utils.getFirstGroupFromStringByRegexp(string, regex);

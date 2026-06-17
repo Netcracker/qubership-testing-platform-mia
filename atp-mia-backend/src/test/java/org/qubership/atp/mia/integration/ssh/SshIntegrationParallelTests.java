@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,11 +27,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
 import org.qubership.atp.mia.model.impl.ExecutionResponse;
@@ -59,7 +57,7 @@ public class SshIntegrationParallelTests extends BaseIntegrationTestConfiguratio
     public void testSsh_whenManyParallelQueries_expectEveryQueryCorrectOutput() {
         final String process = "Fill Input by 0";
         List<String> commands =
-                IntStream.range(minBound, maxBound).mapToObj(x -> "sleep " + x + "; echo 'process" + x + "'").collect(Collectors.toList());
+                IntStream.range(minBound, maxBound).mapToObj(x -> "sleep " + x + "; echo 'process" + x + "'").toList();
         Set<RequestResponseMap> commandsWithRequests = new HashSet<>();
         commands.forEach(c -> commandsWithRequests.add( new RequestResponseMap(c, createSshRequest(process, c))));
         checkResponsesArray(commandsWithRequests);
@@ -70,7 +68,7 @@ public class SshIntegrationParallelTests extends BaseIntegrationTestConfiguratio
         final String process = "Fill Input by 0";
         List<String> commands = IntStream.range(minBound, maxBound).mapToObj(x -> "sleep "
                 + (new Random().nextInt(maxBound))
-                + "; echo 'process" + x + "'").collect(Collectors.toList());
+                + "; echo 'process" + x + "'").toList();
         Set<RequestResponseMap> commandsWithRequests = new HashSet<>();
         commands.forEach(c -> commandsWithRequests.add( new RequestResponseMap(c, createSshRequest(process, c))));
         checkResponsesArray(commandsWithRequests);
@@ -79,7 +77,7 @@ public class SshIntegrationParallelTests extends BaseIntegrationTestConfiguratio
     @Test
     public void testSsh_whenNoSleepInParallel_expectEveryQueryCorrectOutput() {
         final String process = "Fill Input by 0";
-        List<String> commands = IntStream.range(minBound, maxBound).mapToObj(x -> "echo 'process" + x + "'").collect(Collectors.toList());
+        List<String> commands = IntStream.range(minBound, maxBound).mapToObj(x -> "echo 'process" + x + "'").toList();
         Set<RequestResponseMap> commandsWithRequests = new HashSet<>();
         commands.forEach(c -> commandsWithRequests.add( new RequestResponseMap(c, createSshRequest(process, c))));
         checkResponsesArray(commandsWithRequests);
@@ -108,14 +106,14 @@ public class SshIntegrationParallelTests extends BaseIntegrationTestConfiguratio
                     .block();
             System.out.println("PROCESS executed POST: " + request.getCommand());
             // check response
-            Assert.assertNotNull(result);
-            Assert.assertEquals(Statuses.SUCCESS, result.getProcessStatus().getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(Statuses.SUCCESS, result.getProcessStatus().getStatus());
             CommandOutput commandOutput = result.getCommandResponse().getCommandOutputs().getFirst();
-            Assert.assertNotNull(commandOutput);
+            Assertions.assertNotNull(commandOutput);
             String filename = commandOutput.getLink().getName();
-            Assert.assertTrue(commandOutput.getLink().getPath().contains(filename));
-            Assert.assertTrue(commandOutput.getInternalPathToFile().contains(filename));
-            Assert.assertTrue(commandOutput.getExternalPathToFile().contains(filename));
+            Assertions.assertTrue(commandOutput.getLink().getPath().contains(filename));
+            Assertions.assertTrue(commandOutput.getInternalPathToFile().contains(filename));
+            Assertions.assertTrue(commandOutput.getExternalPathToFile().contains(filename));
         } catch (NullPointerException npe) {
             result = new ExecutionResponse();
             System.out.println("NPE during execution of the command " + request.getCommand() + "; " + npe);
@@ -151,13 +149,15 @@ public class SshIntegrationParallelTests extends BaseIntegrationTestConfiguratio
             if (contentSameToCommand) {
                 countPos++;
             } else {
-                varsNeg.add(String.format("[Expected result [%s];  Actual result: [%s]]\n",
+                varsNeg.add("[Expected result [%s];  Actual result: [%s]]\n".formatted(
                         requestResponse.key, response.getExecutedCommand()));
             }
         }
-        String err = String.format("Errors occurred during execution. Total commands: %s, Positive answers: %s, "
-                + "Negative answers: %s, where errors:\n %s", requestResponseMap.size(), countPos, varsNeg.size(), varsNeg);
-        Assert.assertEquals(err, requestResponseMap.size(), countPos);
+        String err = """
+                Errors occurred during execution. Total commands: %s, Positive answers: %s, \
+                Negative answers: %s, where errors:
+                 %s""".formatted(requestResponseMap.size(), countPos, varsNeg.size(), varsNeg);
+        Assertions.assertEquals(requestResponseMap.size(), countPos, err);
     }
 
     @RequiredArgsConstructor

@@ -4,7 +4,7 @@
 ## To set login and password you should pass LOGIN and PASSWORD as parameters to this script
 
 if [ $# -eq 2 ]; then
-  export SPRING_PROFILES="secured"
+  export ACTIVE_PROFILES_SPRING="secured"
   export SECURE_LOGIN=$1
   export SECURE_PASSWORD=$2
   ./run.sh

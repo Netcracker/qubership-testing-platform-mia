@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 import static org.qubership.atp.mia.TestConstants.JDBC_URL;
 import static org.qubership.atp.mia.TestConstants.SQL_HOST;
 import static org.qubership.atp.mia.TestConstants.SQL_LOGIN;
@@ -45,8 +45,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.modelmapper.ModelMapper;
 import org.qubership.atp.auth.springbootstarter.ssl.Provider;
@@ -81,6 +84,7 @@ import org.qubership.atp.mia.repo.db.RecordingSessionRepository;
 import org.qubership.atp.mia.repo.driver.CassandraDriver;
 import org.qubership.atp.mia.repo.driver.OracleDriver;
 import org.qubership.atp.mia.repo.driver.PostgreSqlDriver;
+import org.qubership.atp.mia.repo.driver.QueryDriver;
 import org.qubership.atp.mia.repo.gridfs.GridFsRepository;
 import org.qubership.atp.mia.service.AtpUserService;
 import org.qubership.atp.mia.service.MiaContext;
@@ -99,6 +103,7 @@ import org.qubership.atp.mia.utils.CryptoUtils;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ConfigTestBean {
 
     public static final String TEST_ENVIRONMENT_NAME = "testEnv";
@@ -114,9 +119,9 @@ public class ConfigTestBean {
     public static String SwitcherSQL1 = "Uncomment/comment Sysdatevalue";
     public static String SwitcherSQL2 = "comment SysdateOverride";
 
-    protected static final ThreadLocal<UUID> projectId = new ThreadLocal();
-    protected static final ThreadLocal<EnvironmentsService> environmentsService = new ThreadLocal();
-    protected static final ThreadLocal<MiaContext> miaContext = new ThreadLocal();
+    protected static final ThreadLocal<UUID> projectId = new ThreadLocal<>();
+    protected static final ThreadLocal<EnvironmentsService> environmentsService = new ThreadLocal<>();
+    protected static final ThreadLocal<MiaContext> miaContext = new ThreadLocal<>();
     protected static final ThreadLocal<ProjectConfigurationRepository> projectConfigurationRepository =  new ThreadLocal<>();
     protected static final ThreadLocal<ProcessConfigurationRepository> processConfigurationRepository =  new ThreadLocal<>();
     protected static final ThreadLocal<CompoundConfigurationRepository> compoundConfigurationRepository =  new ThreadLocal<>();
@@ -124,7 +129,7 @@ public class ConfigTestBean {
     protected static final ThreadLocal<DirectoryConfigurationRepository> directoryConfigurationRepository =  new ThreadLocal<>();
     protected static final ThreadLocal<FileConfigurationRepository> fileConfigurationRepository =  new ThreadLocal<>();
     protected static final ThreadLocal<RecordingSessionRepository> recordingSessionRepository =  new ThreadLocal<>();
-    protected static final ThreadLocal<ProjectConfigurationService> projectConfigurationService = new ThreadLocal();
+    protected static final ThreadLocal<ProjectConfigurationService> projectConfigurationService = new ThreadLocal<>();
     protected static final ThreadLocal<ProcessConfigurationService> processConfigurationService =  new ThreadLocal<>();
     protected static final ThreadLocal<CompoundConfigurationService> compoundConfigurationService =  new ThreadLocal<>();
     protected static final ThreadLocal<SectionConfigurationService> sectionConfigurationService =  new ThreadLocal<>();
@@ -132,24 +137,24 @@ public class ConfigTestBean {
     protected static final ThreadLocal<FileConfigurationService> fileConfigurationService =  new ThreadLocal<>();
     protected static final ThreadLocal<SseEmitterService> sseEmitterService =  new ThreadLocal<>();
     protected static final ThreadLocal<MiaExecutionFinishProducer> kafkaExecutionFinishProducer =  new ThreadLocal<>();
-    protected static final ThreadLocal<ProjectConfiguration> testProjectConfiguration = new ThreadLocal();
-    protected static final ThreadLocal<Decryptor> decryptor = new ThreadLocal();
-    protected static final ThreadLocal<Encryptor> encryptor = new ThreadLocal();
+    protected static final ThreadLocal<ProjectConfiguration> testProjectConfiguration = new ThreadLocal<>();
+    protected static final ThreadLocal<Decryptor> decryptor = new ThreadLocal<>();
+    protected static final ThreadLocal<Encryptor> encryptor = new ThreadLocal<>();
     protected static final ThreadLocal<GridFsRepository> gridFsRepository = new ThreadLocal<>();
     protected static final ThreadLocal<GridFsService> gridFsService = new ThreadLocal<>();
     protected static final ThreadLocal<MiaFileService> miaFileService = new ThreadLocal<>();
-    protected static final ThreadLocal<FlowData> FLOW_DATA_TEST = new ThreadLocal();
-    protected static final ThreadLocal<ExecutionRequest> EXECUTION_REQUEST_TEST = new ThreadLocal();
-    protected static final ThreadLocal<Connection> testConnectionSsh = new ThreadLocal();
-    protected static final ThreadLocal<Connection> testConnectionDb = new ThreadLocal();
-    protected static final ThreadLocal<Connection> testConnectionHttp = new ThreadLocal();
-    protected static final ThreadLocal<System> testSystem = new ThreadLocal();
-    protected static final ThreadLocal<Environment> testEnvironment = new ThreadLocal();
-    protected static final ThreadLocal<Project> testProject = new ThreadLocal();
-    protected static final ThreadLocal<QueryDriverFactory> queryDriverFactory = new ThreadLocal();
-    protected static final ThreadLocal<CassandraDriver> cassandraDriver = new ThreadLocal();
-    protected static final ThreadLocal<OracleDriver> oracleDriver = new ThreadLocal();
-    protected static final ThreadLocal<PostgreSqlDriver> postgreSqlDriver = new ThreadLocal();
+    protected static final ThreadLocal<FlowData> FLOW_DATA_TEST = new ThreadLocal<>();
+    protected static final ThreadLocal<ExecutionRequest> EXECUTION_REQUEST_TEST = new ThreadLocal<>();
+    protected static final ThreadLocal<Connection> testConnectionSsh = new ThreadLocal<>();
+    protected static final ThreadLocal<Connection> testConnectionDb = new ThreadLocal<>();
+    protected static final ThreadLocal<Connection> testConnectionHttp = new ThreadLocal<>();
+    protected static final ThreadLocal<System> testSystem = new ThreadLocal<>();
+    protected static final ThreadLocal<Environment> testEnvironment = new ThreadLocal<>();
+    protected static final ThreadLocal<Project> testProject = new ThreadLocal<>();
+    protected static final ThreadLocal<QueryDriverFactory> queryDriverFactory = new ThreadLocal<>();
+    protected static final ThreadLocal<CassandraDriver> cassandraDriver = new ThreadLocal<>();
+    protected static final ThreadLocal<OracleDriver> oracleDriver = new ThreadLocal<>();
+    protected static final ThreadLocal<PostgreSqlDriver> postgreSqlDriver = new ThreadLocal<>();
 
     protected MiaConfiguration miaConfiguration = spy(new MiaConfiguration());
     protected ModelMapper modelMapper = miaConfiguration.modelMapper();
@@ -206,14 +211,14 @@ public class ConfigTestBean {
         miaFileService.set(spy(new MiaFileService(gridFsService.get(), miaContext.get(), projectConfigurationService.get())));
         when(decryptor.get().decryptIfEncrypted(anyString())).thenAnswer(new Answer<String>() {
             @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
+            public String answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 return (String) args[0];
             }
         });
         when(encryptor.get().encrypt(anyString())).thenAnswer(new Answer<String>() {
             @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
+            public String answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 return (String) args[0];
             }
@@ -256,9 +261,9 @@ public class ConfigTestBean {
                         ))
                         .build())
                 .commonConfiguration(CommonConfiguration.builder()
-                        .commandShellPrefixes(Arrays.asList(CommandPrefix.builder()
+                        .commandShellPrefixes(Collections.singletonList(CommandPrefix.builder()
                                 .system(testSystem.get().getName())
-                                .prefixes(new LinkedHashMap<String, String>() {{
+                                .prefixes(new LinkedHashMap<>() {{
                                     put("accountNumber", "echo \"Something with accountNumber %s\"");
                                     put("genevaDate", "echo \"Something with genevaDate %s\"");
                                     put("infinys_root", "cd %s\nsource infinys.env");
@@ -287,13 +292,37 @@ public class ConfigTestBean {
         sseEmitterService.set(spy(new SseEmitterService(atpUserService, kafkaExecutionFinishProducer.get(), null, sseProperties)));
     }
 
+    @AfterEach
+    public void afterEach() {
+        // Shutdown all drivers
+        shutdownDriver(cassandraDriver.get());
+        shutdownDriver(oracleDriver.get());
+        shutdownDriver(postgreSqlDriver.get());
+
+        // Clear ThreadLocals to prevent memory leaks
+        cassandraDriver.remove();
+        oracleDriver.remove();
+        postgreSqlDriver.remove();
+        queryDriverFactory.remove();
+    }
+
+    public void shutdownDriver(QueryDriver<?> driver) {
+        if (driver != null) {
+            try {
+                driver.shutdown();
+            } catch (Exception e) {
+                // Log but don't fail the test
+            }
+        }
+    }
+
     private Connection createTestConnectionSsh() {
         return Connection.builder()
                 .id(TEST_CONNECTION_SSH_ID)
                 .name(TEST_CONNECTION_SSH_NAME)
                 .sourceTemplateId(Connection.SourceTemplateId.SSH.id)
                 .systemId(TEST_SYSTEM_ID)
-                .parameters(new HashMap<String, String>() {{
+                .parameters(new HashMap<>() {{
                     put(SSH_HOST, "localhost:22");
                     put(SSH_LOGIN, SSH_LOGIN_VALUE);
                     put(SSH_PASSWORD, SSH_PASSWORD_VALUE);
@@ -307,7 +336,7 @@ public class ConfigTestBean {
                 .name(TEST_CONNECTION_DB_NAME)
                 .sourceTemplateId(Connection.SourceTemplateId.DB.id)
                 .systemId(TEST_SYSTEM_ID)
-                .parameters(new HashMap<String, String>() {{
+                .parameters(new HashMap<>() {{
                     put(SQL_HOST, java.lang.System.getProperty("POSTGRES_IP"));
                     put(JDBC_URL, "jdbc:postgresql://" + java.lang.System.getProperty("POSTGRES_IP") + ":5432/mia");
                     put(SQL_LOGIN, SQL_LOGIN_VALUE);
@@ -322,7 +351,7 @@ public class ConfigTestBean {
                 .name(TEST_CONNECTION_HTTP_NAME)
                 .sourceTemplateId(Connection.SourceTemplateId.HTTP.id)
                 .systemId(TEST_SYSTEM_ID)
-                .parameters(new HashMap<String, String>() {{
+                .parameters(new HashMap<>() {{
                     put("http_host", "http://localhost:8080");
                     put("url", "http://localhost:8080");
                 }})

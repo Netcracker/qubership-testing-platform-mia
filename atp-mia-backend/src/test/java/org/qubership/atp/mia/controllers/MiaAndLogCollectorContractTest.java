@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,12 +25,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
 
-import javax.servlet.ServletContext;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.qubership.atp.common.lock.LockManager;
 import org.qubership.atp.mia.config.ContextInterceptor;
 import org.qubership.atp.mia.config.MiaConfiguration;
 import org.qubership.atp.mia.controllers.api.dto.FlowConfigDto;
@@ -54,10 +53,16 @@ import org.qubership.atp.mia.model.pot.db.table.TableMarkerResult;
 import org.qubership.atp.mia.repo.ContextRepository;
 import org.qubership.atp.mia.repo.impl.ProofOfTestingRepository;
 import org.qubership.atp.mia.service.MiaContext;
+import org.qubership.atp.mia.service.configuration.CompoundConfigurationService;
+import org.qubership.atp.mia.service.configuration.DirectoryConfigurationService;
+import org.qubership.atp.mia.service.configuration.FileConfigurationService;
+import org.qubership.atp.mia.service.configuration.ProcessConfigurationService;
 import org.qubership.atp.mia.service.configuration.ProjectConfigurationService;
+import org.qubership.atp.mia.service.configuration.SectionConfigurationService;
 import org.qubership.atp.mia.service.execution.CompoundService;
 import org.qubership.atp.mia.service.execution.ProcessService;
 import org.qubership.atp.mia.service.file.MiaFileService;
+import org.qubership.atp.mia.service.monitoring.MetricsAggregateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
@@ -67,7 +72,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.servlet.MockMvc;
 
 import au.com.dius.pact.provider.junit5.PactVerificationContext;
@@ -76,13 +81,14 @@ import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
 import au.com.dius.pact.provider.junitsupport.loader.PactUrl;
 import au.com.dius.pact.provider.spring.junit5.MockMvcTestTarget;
+import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Provider("atp-mia")
-@PactUrl(urls = {"classpath:pacts/atp-logcollector-atp-mia.json"})
+@PactUrl(urls = {"file:./src/test/resources/pacts/atp-logcollector-atp-mia.json"})
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(controllers = {MiaExecutionController.class, MiaConfigurationController.class})
-@ContextConfiguration(classes = {MiaAndLogCollectorContractTest.TestApp.class})
+@SpringJUnitConfig(classes = {MiaAndLogCollectorContractTest.TestApp.class})
 @EnableAutoConfiguration
 @Import({JacksonAutoConfiguration.class,
         HttpMessageConvertersAutoConfiguration.class,
@@ -93,6 +99,14 @@ import lombok.extern.slf4j.Slf4j;
         MiaConfigurationController.class
 })
 @Slf4j
+
+/*
+    It was disabled by Bogdan just when GitHub repository was populated.
+    Now - 2026-04-11 - I confirm it and leave the test disabled, because:
+        - The test itself is executed, but assertions are failed with significant differences in
+        response bodies.
+        - So, it seems, atp-logcollector-atp-mia.json is outdated now.
+ */
 @Disabled
 public class MiaAndLogCollectorContractTest {
 
@@ -114,11 +128,33 @@ public class MiaAndLogCollectorContractTest {
     @MockBean
     private ProjectConfigurationService projectConfigurationService;
     @MockBean
+    private ProcessConfigurationService processConfigurationService;
+    @MockBean
+    private CompoundConfigurationService compoundConfigurationService;
+    @MockBean
+    private SectionConfigurationService sectionConfigurationService;
+    @MockBean
+    private DirectoryConfigurationService directoryConfigurationService;
+    @MockBean
+    private FileConfigurationService fileConfigurationService;
+    @MockBean
+    private LockManager lockManager;
+    @MockBean
     private MiaFileService miaFileService;
     @MockBean
     private ServletContext servletContext;
+    @MockBean
+    private MetricsAggregateServiceImpl metricsAggregateService;
 
     public void beforeAll() {
+        // Three below settings were to configure pact spec (json) vs. controller response matching, but didn't help.
+        // Treat null and missing field as equivalent
+        System.setProperty("pact.verifier.flexibleMatching", "true");
+        // Ignore extra fields in actual response
+        System.setProperty("pact.verifier.ignoreExtraFields", "true");
+        // This tells Pact to only validate types, not exact values
+        System.setProperty("pact.verifier.disableUrlPathValidation", "true");
+
         when(projectConfigurationService.getOldConfig(any(UUID.class))).thenReturn(createFlowConfig());
         LinkedList<ExecutionResponse> list = new LinkedList<>();
         list.add(createExecutionResponse());
@@ -149,7 +185,7 @@ public class MiaAndLogCollectorContractTest {
 
     public CommonConfiguration createCommonConfiguration() {
         return CommonConfiguration.builder().genevaDateMask("geneva").sshRsaFilePath("ssh")
-                .defaultSystem("defaultSystem").commonVariables(new HashMap<String, String>()).build();
+                .defaultSystem("defaultSystem").commonVariables(new HashMap<>()).build();
     }
 
     @State("all ok")

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import static org.qubership.atp.mia.ei.ExportImportTestUtils.compareProjectAndEi
 import static org.qubership.atp.mia.ei.ExportImportTestUtils.readEntity;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -78,7 +77,7 @@ public class ImportTest extends ExportImportBaseTest {
         MiaException thrown = assertThrows(
                 MiaException.class,
                 () -> {
-                    Map<String, Set<String>> scopes = new HashMap<String, Set<String>>() {{
+                    Map<String, Set<String>> scopes = new HashMap<>() {{
                         put(ExportImportEntities.MIA_SECTION.name(), new HashSet<>());
                     }};
                     exportScope.set(new ExportScope(scopes));
@@ -97,7 +96,7 @@ public class ImportTest extends ExportImportBaseTest {
 
     @Test
     public void import_TheSameProject() {
-        Map<String, Set<String>> scopes = new HashMap<String, Set<String>>() {{
+        Map<String, Set<String>> scopes = new HashMap<>() {{
             put(ExportImportEntities.MIA_SECTION.name(), new HashSet() {{
                 add(new UUID(1, 1));
                 add(new UUID(1, 2));
@@ -128,7 +127,7 @@ public class ImportTest extends ExportImportBaseTest {
             }});
         }};
         exportScope.set(new ExportScope(scopes));
-        Path importPath = Paths.get("src/test/resources/ei/import/TheSameProject/");
+        Path importPath = Path.of("src/test/resources/ei/import/TheSameProject/");
         ExportImportData data = new ExportImportData(projectId.get(), exportScope.get(), ExportFormat.ATP);
         exportImportData.set(data);
         ArgumentCaptor<ProjectConfiguration> captor = ArgumentCaptor.forClass(ProjectConfiguration.class);
@@ -142,7 +141,7 @@ public class ImportTest extends ExportImportBaseTest {
         SectionConfiguration sectionToCheck = config.getSections().stream().filter(s -> s.getName().equals("Section1")).findAny().get();
         assertNull(sectionToCheck.getParentSection());
         assertEquals(1, sectionToCheck.getCompounds().size());
-        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().get(0).getId());
+        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().getFirst().getId());
         assertEquals(2, sectionToCheck.getProcesses().size());
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getId().equals(new UUID(3, 1))));
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getId().equals(new UUID(3, 2))));
@@ -336,7 +335,7 @@ public class ImportTest extends ExportImportBaseTest {
 
     @Test
     public void import_AnotherProject() {
-        Map<String, Set<String>> scopes = new HashMap<String, Set<String>>() {{
+        Map<String, Set<String>> scopes = new HashMap<>() {{
             put(ExportImportEntities.MIA_SECTION.name(), new HashSet() {{
                 add(new UUID(1, 1));
                 add(new UUID(1, 2));
@@ -367,7 +366,7 @@ public class ImportTest extends ExportImportBaseTest {
             }});
         }};
         exportScope.set(new ExportScope(scopes));
-        Path importPath = Paths.get("src/test/resources/ei/import/AnotherProject/");
+        Path importPath = Path.of("src/test/resources/ei/import/AnotherProject/");
         exportImportData.set(new ExportImportData(projectId.get(), exportScope.get(), ExportFormat.ATP, false,
                 true, projectId.get(), new HashMap<>(), null, null, false));
         ValidationResult validationResult = atpMiaImportExecutor.validateData(exportImportData.get(), importPath);
@@ -385,7 +384,7 @@ public class ImportTest extends ExportImportBaseTest {
         SectionConfiguration sectionToCheck = config.getSections().stream().filter(s -> s.getName().equals("Section1")).findAny().get();
         assertNull(sectionToCheck.getParentSection());
         assertEquals(1, sectionToCheck.getCompounds().size());
-        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().get(0).getId());
+        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().getFirst().getId());
         assertEquals(2, sectionToCheck.getProcesses().size());
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getId().equals(new UUID(3, 1))));
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getId().equals(new UUID(3, 2))));
@@ -597,9 +596,9 @@ public class ImportTest extends ExportImportBaseTest {
                         ))
                         .build())
                 .commonConfiguration(CommonConfiguration.builder()
-                        .commandShellPrefixes(Arrays.asList(CommandPrefix.builder()
+                        .commandShellPrefixes(Collections.singletonList(CommandPrefix.builder()
                                 .system(testSystem.get().getName())
-                                .prefixes(new LinkedHashMap<String, String>() {{
+                                .prefixes(new LinkedHashMap<>() {{
                                     put("accountNumber", "echo \"Something with accountNumber %s\"");
                                     put("genevaDate", "echo \"Something with genevaDate %s\"");
                                     put("infinys_root", "cd %s\nsource infinys.env");
@@ -614,7 +613,7 @@ public class ImportTest extends ExportImportBaseTest {
                 .thenReturn(testProjectConfiguration.get());
         when(projectConfigurationService.get().getConfiguration(eq(projectId.get())))
                 .thenReturn(testProjectConfiguration.get());
-        Map<String, Set<String>> scopes = new HashMap<String, Set<String>>() {{
+        Map<String, Set<String>> scopes = new HashMap<>() {{
             put(ExportImportEntities.MIA_SECTION.name(), new HashSet() {{
                 add(new UUID(1, 1));
                 add(new UUID(1, 2));
@@ -646,7 +645,7 @@ public class ImportTest extends ExportImportBaseTest {
             }});
         }};
         exportScope.set(new ExportScope(scopes));
-        Path importPath = Paths.get("src/test/resources/ei/import/NewProject/");
+        Path importPath = Path.of("src/test/resources/ei/import/NewProject/");
         exportImportData.set(new ExportImportData(projectId.get(), exportScope.get(), ExportFormat.ATP, false,
                 true, projectId.get(), new HashMap<>(), null, null, false));
         ValidationResult validationResult = atpMiaImportExecutor.validateData(exportImportData.get(), importPath);
@@ -663,7 +662,7 @@ public class ImportTest extends ExportImportBaseTest {
         SectionConfiguration sectionToCheck = config.getSections().stream().filter(s -> s.getName().equals("Section1")).findAny().get();
         assertNull(sectionToCheck.getParentSection());
         assertEquals(1, sectionToCheck.getCompounds().size());
-        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().get(0).getSourceId());
+        assertEquals(new UUID(2, 1), sectionToCheck.getCompounds().getFirst().getSourceId());
         assertEquals(2, sectionToCheck.getProcesses().size());
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getSourceId().equals(new UUID(3, 1))));
         assertTrue(sectionToCheck.getProcesses().stream().anyMatch(p -> p.getSourceId().equals(new UUID(3, 2))));

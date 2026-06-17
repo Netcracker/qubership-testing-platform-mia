@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.qubership.atp.mia.model.impl.executable;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import lombok.Data;
@@ -24,6 +25,7 @@ import lombok.Data;
 @Data
 public class FileMarker implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -2312268821870028355L;
     private String expectedValue;
     private int stringNumber;

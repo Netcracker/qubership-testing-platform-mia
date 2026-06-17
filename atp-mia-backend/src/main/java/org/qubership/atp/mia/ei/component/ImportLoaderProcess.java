@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.qubership.atp.mia.model.configuration.SectionConfiguration;
 import org.qubership.atp.mia.model.ei.ExportImportEntities;
 import org.qubership.atp.mia.model.ei.ExportImportProcess;
 import org.qubership.atp.mia.service.configuration.SectionConfigurationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +45,7 @@ public class ImportLoaderProcess extends ImportLoader<ExportImportEntities,
         ProcessConfiguration,
         ExportImportProcess> {
 
-    public ImportLoaderProcess(@Autowired ObjectLoaderFromDiskService objectLoaderFromDiskService) {
+    public ImportLoaderProcess(ObjectLoaderFromDiskService objectLoaderFromDiskService) {
         super(objectLoaderFromDiskService);
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,16 +22,16 @@ import static org.qubership.atp.mia.model.Constants.DEFAULT_PROJECT_NAME;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.qubership.atp.mia.controllers.MiaConfigurationController;
@@ -68,51 +68,51 @@ public class ExecuteSshTest extends BaseIntegrationTestConfiguration {
 
     @BeforeEach
     public void beforeExecuteSshTest() {
-        int randomId = (int) (Math.random() * 1000);
+        int randomId = (int) (ThreadLocalRandom.current().nextDouble() * 1000);
         UUID envId = UUID.randomUUID();
         UUID systemId = UUID.randomUUID();
         System testSystem2 = System.builder()
                 .id(systemId)
                 .name(TEST_SYSTEM_NAME + randomId)
                 .environmentId(envId)
-                .connections(Arrays.asList())
+                .connections(List.of())
                 .build();
         Environment testEnvironment2 = Environment.builder()
                 .projectId(projectId.get())
                 .id(envId)
                 .name(TEST_ENVIRONMENT_NAME + randomId)
-                .systems(Arrays.asList(testSystem2))
+                .systems(Collections.singletonList(testSystem2))
                 .build();
         Project testProject2 = Project.builder()
                 .id(projectId.get())
                 .name(DEFAULT_PROJECT_NAME + randomId)
-                .environments(Arrays.asList(testEnvironment2.getId()))
+                .environments(Collections.singletonList(testEnvironment2.getId()))
                 .build();
         Mockito.when(environmentsService.getEnvironmentsByProject(eq(projectId.get())))
-                .thenReturn(Arrays.asList(testEnvironment2));
+                .thenReturn(List.of(testEnvironment2));
         Mockito.when(environmentsService.getEnvironmentsFull(eq(envId), eq(projectId.get()))).thenReturn(testEnvironment2);
-        Mockito.when(environmentsService.getProjects()).thenReturn(Arrays.asList(testProject2));
+        Mockito.when(environmentsService.getProjects()).thenReturn(Collections.singletonList(testProject2));
         Mockito.when(environmentsService.getProject(eq(projectId.get()))).thenReturn(testProject2);
         miaContext.setContext(projectId.get(), null);
     }
 
     @BeforeEach
     public void createTempTable() {
-        int randomNumber = (int) (Math.random() * 1000);
+        int randomNumber = (int) (ThreadLocalRandom.current().nextDouble() * 1000);
         tempTableName.set("TempTable_" + randomNumber);
         Server dbServer = TestUtils.preparePostgresServer(postgresJdbcUrl);
         String createTable = "DROP TABLE IF EXISTS " + tempTableName.get() + ";"
                 + " CREATE table IF NOT EXISTS " + tempTableName.get() + "(id serial, name varchar)",
                 insertTable = "INSERT INTO " + tempTableName.get() + " (name) VALUES ('some_name');";
-        Assert.assertEquals(0, postgreSqlDriver.get().executeUpdate(dbServer, createTable));
-        Assert.assertEquals(1, postgreSqlDriver.get().executeUpdate(dbServer, insertTable));
+        Assertions.assertEquals(0, postgreSqlDriver.get().executeUpdate(dbServer, createTable));
+        Assertions.assertEquals(1, postgreSqlDriver.get().executeUpdate(dbServer, insertTable));
     }
 
     @AfterEach
     public void removeTempTable() {
         Server dbServer = TestUtils.preparePostgresServer(postgresJdbcUrl);
         String dropTable = "DROP TABLE IF EXISTS " + tempTableName.get() + ";";
-        Assert.assertEquals(0, postgreSqlDriver.get().executeUpdate(dbServer, dropTable));
+        Assertions.assertEquals(0, postgreSqlDriver.get().executeUpdate(dbServer, dropTable));
     }
 
     @AfterEach
@@ -126,18 +126,18 @@ public class ExecuteSshTest extends BaseIntegrationTestConfiguration {
     @Test
     public void executeSsh_commandSystemEmpty_AutoSetToDefaultSystem() {
         List<ProcessShortDto> processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(24, processes.size());
+        Assertions.assertEquals(24, processes.size());
         //Add a Temporary Process
         String processName = "SSH_PWD";
         String currentStatement = "select * from " + tempTableName.get() + " where id = 1";
         UUID sectionId = processes.stream()
                 .filter(processShortDto -> processShortDto.getName().equals("SSH_BG"))
                 .findFirst().get()
-                .getInSections().get(0);
-        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Arrays.asList(sectionId), currentStatement, null);
+                .getInSections().getFirst();
+        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Collections.singletonList(sectionId), currentStatement, null);
         miaConfigurationController.addProcess(projectId.get(), processDto);
         processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(25, processes.size());
+        Assertions.assertEquals(25, processes.size());
         //Request Creation
         ExecutionRequest request = new ExecutionRequest();
         request.setSessionId(UUID.randomUUID());
@@ -154,24 +154,24 @@ public class ExecuteSshTest extends BaseIntegrationTestConfiguration {
         // Execution & Validation
         ExecutionResponse executionResponse =
                 miaExecutionController.executeProcess(projectId.get(), "Test", request).getBody();
-        Assert.assertNotNull(executionResponse);
+        Assertions.assertNotNull(executionResponse);
     }
 
     @Test
     public void executeSsh_globalVariablesTest() {
         List<ProcessShortDto> processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(24, processes.size());
+        Assertions.assertEquals(24, processes.size());
         //Add a Temporary Process
         String processName = "SSH_PWD";
         UUID sectionId = processes.stream()
                 .filter(processShortDto -> processShortDto.getName().equals("SSH_BG"))
                 .findFirst().get()
-                .getInSections().get(0);
-        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Arrays.asList(sectionId), null, null);
+                .getInSections().getFirst();
+        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Collections.singletonList(sectionId), null, null);
         processDto.getProcessSettings().getGlobalVariables().put("globalInput", ":defaultSystem");
         miaConfigurationController.addProcess(projectId.get(), processDto);
         processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(25, processes.size());
+        Assertions.assertEquals(25, processes.size());
         //Request Creation
         ExecutionRequest request = new ExecutionRequest();
         request.setSessionId(UUID.randomUUID());
@@ -188,31 +188,31 @@ public class ExecuteSshTest extends BaseIntegrationTestConfiguration {
         // Execution & Validation
         ExecutionResponse executionResponse =
                 miaExecutionController.executeProcess(projectId.get(), "Test", request).getBody();
-        Assert.assertNotNull(executionResponse);
-        Assert.assertEquals(1, executionResponse.getGlobalVariables().size());
-        Assert.assertEquals("Billing System", executionResponse.getGlobalVariables().get("globalInput"));
+        Assertions.assertNotNull(executionResponse);
+        Assertions.assertEquals(1, executionResponse.getGlobalVariables().size());
+        Assertions.assertEquals("Billing System", executionResponse.getGlobalVariables().get("globalInput"));
     }
 
     @Test
     public void executeSsh_ValidationTableMarker_checkSuccess() {
         List<ProcessShortDto> processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(24, processes.size());
+        Assertions.assertEquals(24, processes.size());
         //Add a Temporary Process
         String processName = "SSH_PWD";
         String validation = "select * from " + tempTableName.get() + " where id = 1";
         UUID sectionId = processes.stream()
                 .filter(processShortDto -> processShortDto.getName().equals("SSH_BG"))
                 .findFirst().get()
-                .getInSections().get(0);
-        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Arrays.asList(sectionId), null, validation);
+                .getInSections().getFirst();
+        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Collections.singletonList(sectionId), null, validation);
         TableMarkerDto tableMarkerDto = new TableMarkerDto();
-        tableMarkerDto.setExpectedResultForQuery(new HashMap<String, String>() {{
+        tableMarkerDto.setExpectedResultForQuery(new HashMap<>() {{
             put("id", "1");
         }});
-        processDto.getProcessSettings().getValidations().get(0).setTableMarker(tableMarkerDto);
+        processDto.getProcessSettings().getValidations().getFirst().setTableMarker(tableMarkerDto);
         miaConfigurationController.addProcess(projectId.get(), processDto);
         processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(25, processes.size());
+        Assertions.assertEquals(25, processes.size());
         //Request Creation
         ExecutionRequest request = new ExecutionRequest();
         request.setSessionId(UUID.randomUUID());
@@ -229,32 +229,32 @@ public class ExecuteSshTest extends BaseIntegrationTestConfiguration {
         // Execution & Validation
         ExecutionResponse executionResponse =
                 miaExecutionController.executeProcess(projectId.get(), "Test", request).getBody();
-        Assert.assertNotNull(executionResponse);
-        Assert.assertEquals(1, executionResponse.getValidations().size());
-        Assert.assertEquals(Statuses.SUCCESS,
-                executionResponse.getValidations().get(0).getTableMarkerResult().getColumnStatuses().get(0).getStatus());
+        Assertions.assertNotNull(executionResponse);
+        Assertions.assertEquals(1, executionResponse.getValidations().size());
+        Assertions.assertEquals(Statuses.SUCCESS,
+                executionResponse.getValidations().getFirst().getTableMarkerResult().getColumnStatuses().getFirst().getStatus());
     }
 
     @Test
     public void executeSsh_ValidationTableMarker_checkFailure() {
         List<ProcessShortDto> processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(24, processes.size());
+        Assertions.assertEquals(24, processes.size());
         //Add a Temporary Process
         String processName = "SSH_PWD";
         String validation = "select * from " + tempTableName.get() + " where id = 1";
         UUID sectionId = processes.stream()
                 .filter(processShortDto -> processShortDto.getName().equals("SSH_BG"))
                 .findFirst().get()
-                .getInSections().get(0);
-        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Arrays.asList(sectionId), null, validation);
+                .getInSections().getFirst();
+        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Collections.singletonList(sectionId), null, validation);
         TableMarkerDto tableMarkerDto = new TableMarkerDto();
-        tableMarkerDto.setExpectedResultForQuery(new HashMap<String, String>() {{
+        tableMarkerDto.setExpectedResultForQuery(new HashMap<>() {{
             put("id", "2");
         }});
-        processDto.getProcessSettings().getValidations().get(0).setTableMarker(tableMarkerDto);
+        processDto.getProcessSettings().getValidations().getFirst().setTableMarker(tableMarkerDto);
         miaConfigurationController.addProcess(projectId.get(), processDto);
         processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(25, processes.size());
+        Assertions.assertEquals(25, processes.size());
         //Request Creation
         ExecutionRequest request = new ExecutionRequest();
         request.setSessionId(UUID.randomUUID());
@@ -271,30 +271,30 @@ public class ExecuteSshTest extends BaseIntegrationTestConfiguration {
         // Execution & Validation
         ExecutionResponse executionResponse =
                 miaExecutionController.executeProcess(projectId.get(), "Test", request).getBody();
-        Assert.assertNotNull(executionResponse);
-        Assert.assertEquals(1, executionResponse.getValidations().size());
-        Assert.assertEquals(Statuses.FAIL,
-                executionResponse.getValidations().get(0).getTableMarkerResult().getColumnStatuses().get(0).getStatus());
+        Assertions.assertNotNull(executionResponse);
+        Assertions.assertEquals(1, executionResponse.getValidations().size());
+        Assertions.assertEquals(Statuses.FAIL,
+                executionResponse.getValidations().getFirst().getTableMarkerResult().getColumnStatuses().getFirst().getStatus());
     }
 
     @Test
     public void executeSsh_ValidationTableMarker_checkRowCountForSuccess() {
         List<ProcessShortDto> processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(24, processes.size());
+        Assertions.assertEquals(24, processes.size());
         //Add a Temporary Process
         String processName = "SSH_PWD";
         String validation = "select * from " + tempTableName.get() + " where id = 1";
         UUID sectionId = processes.stream()
                 .filter(processShortDto -> processShortDto.getName().equals("SSH_BG"))
                 .findFirst().get()
-                .getInSections().get(0);
-        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Arrays.asList(sectionId), null, validation);
+                .getInSections().getFirst();
+        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Collections.singletonList(sectionId), null, validation);
         TableMarkerDto tableMarkerDto = new TableMarkerDto();
         tableMarkerDto.setTableRowCount("1");
-        processDto.getProcessSettings().getValidations().get(0).setTableMarker(tableMarkerDto);
+        processDto.getProcessSettings().getValidations().getFirst().setTableMarker(tableMarkerDto);
         miaConfigurationController.addProcess(projectId.get(), processDto);
         processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(25, processes.size());
+        Assertions.assertEquals(25, processes.size());
         //Request Creation
         ExecutionRequest request = new ExecutionRequest();
         request.setSessionId(UUID.randomUUID());
@@ -311,30 +311,30 @@ public class ExecuteSshTest extends BaseIntegrationTestConfiguration {
         // Execution & Validation
         ExecutionResponse executionResponse =
                 miaExecutionController.executeProcess(projectId.get(), "Test", request).getBody();
-        Assert.assertNotNull(executionResponse);
-        Assert.assertEquals(1, executionResponse.getValidations().size());
-        Assert.assertEquals(Statuses.SUCCESS,
-                executionResponse.getValidations().get(0).getTableMarkerResult().getTableRowCount().getStatus());
+        Assertions.assertNotNull(executionResponse);
+        Assertions.assertEquals(1, executionResponse.getValidations().size());
+        Assertions.assertEquals(Statuses.SUCCESS,
+                executionResponse.getValidations().getFirst().getTableMarkerResult().getTableRowCount().getStatus());
     }
 
     @Test
     public void executeSsh_ValidationTableMarker_checkRowCountForFailure() {
         List<ProcessShortDto> processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(24, processes.size());
+        Assertions.assertEquals(24, processes.size());
         //Add a Temporary Process
         String processName = "SSH_PWD";
         String validation = "select * from " + tempTableName.get() + " where id = 1";
         UUID sectionId = processes.stream()
                 .filter(processShortDto -> processShortDto.getName().equals("SSH_BG"))
                 .findFirst().get()
-                .getInSections().get(0);
-        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Arrays.asList(sectionId), null, validation);
+                .getInSections().getFirst();
+        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Collections.singletonList(sectionId), null, validation);
         TableMarkerDto tableMarkerDto = new TableMarkerDto();
         tableMarkerDto.setTableRowCount(">1");
-        processDto.getProcessSettings().getValidations().get(0).setTableMarker(tableMarkerDto);
+        processDto.getProcessSettings().getValidations().getFirst().setTableMarker(tableMarkerDto);
         miaConfigurationController.addProcess(projectId.get(), processDto);
         processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(25, processes.size());
+        Assertions.assertEquals(25, processes.size());
         //Request Creation
         ExecutionRequest request = new ExecutionRequest();
         request.setSessionId(UUID.randomUUID());
@@ -351,31 +351,31 @@ public class ExecuteSshTest extends BaseIntegrationTestConfiguration {
         // Execution & Validation
         ExecutionResponse executionResponse =
                 miaExecutionController.executeProcess(projectId.get(), "Test", request).getBody();
-        Assert.assertNotNull(executionResponse);
-        Assert.assertEquals(1, executionResponse.getValidations().size());
-        Assert.assertEquals(Statuses.FAIL,
-                executionResponse.getValidations().get(0).getTableMarkerResult().getTableRowCount().getStatus());
+        Assertions.assertNotNull(executionResponse);
+        Assertions.assertEquals(1, executionResponse.getValidations().size());
+        Assertions.assertEquals(Statuses.FAIL,
+                executionResponse.getValidations().getFirst().getTableMarkerResult().getTableRowCount().getStatus());
     }
 
     @Test
     public void executeSsh_Validation_ExportVariables() {
         List<ProcessShortDto> processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(24, processes.size());
+        Assertions.assertEquals(24, processes.size());
         //Add a Temporary Process
         String processName = "SSH_PWD";
         String validation = "select * from " + tempTableName.get() + " where id = 1";
         UUID sectionId = processes.stream()
                 .filter(processShortDto -> processShortDto.getName().equals("SSH_BG"))
                 .findFirst().get()
-                .getInSections().get(0);
-        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Arrays.asList(sectionId), null, validation);
-        processDto.getProcessSettings().getValidations().get(0).setExportVariables(new HashMap<String, String>() {{
+                .getInSections().getFirst();
+        ProcessDto processDto = getProcess(UUID.randomUUID(), processName, Collections.singletonList(sectionId), null, validation);
+        processDto.getProcessSettings().getValidations().getFirst().setExportVariables(new HashMap<>() {{
             put("var1", "name");
         }});
         processDto.getProcessSettings().getGlobalVariables().put("globalInput", ":var1");
         miaConfigurationController.addProcess(projectId.get(), processDto);
         processes = miaConfigurationController.getProcesses(projectId.get()).getBody();
-        Assert.assertEquals(25, processes.size());
+        Assertions.assertEquals(25, processes.size());
         //Request Creation
         ExecutionRequest request = new ExecutionRequest();
         request.setSessionId(UUID.randomUUID());
@@ -392,9 +392,9 @@ public class ExecuteSshTest extends BaseIntegrationTestConfiguration {
         // Execution & Validation
         ExecutionResponse executionResponse =
                 miaExecutionController.executeProcess(projectId.get(), "Test", request).getBody();
-        Assert.assertNotNull(executionResponse);
-        Assert.assertEquals(1, executionResponse.getValidations().size());
-        Assert.assertEquals("some_name", executionResponse.getGlobalVariables().get("globalInput"));
+        Assertions.assertNotNull(executionResponse);
+        Assertions.assertEquals(1, executionResponse.getValidations().size());
+        Assertions.assertEquals("some_name", executionResponse.getGlobalVariables().get("globalInput"));
     }
 
     private ProcessDto getProcess(UUID processId, String processName, List<UUID> inSections, String currentStatement,

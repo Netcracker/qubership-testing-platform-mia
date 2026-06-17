@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,13 +17,12 @@
 
 package org.qubership.atp.mia.model.converters;
 
-import javax.persistence.AttributeConverter;
-
 import org.qubership.atp.mia.controllers.api.dto.ProcessSettingsDto;
 import org.qubership.atp.mia.model.impl.executable.ProcessSettings;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.AttributeConverter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

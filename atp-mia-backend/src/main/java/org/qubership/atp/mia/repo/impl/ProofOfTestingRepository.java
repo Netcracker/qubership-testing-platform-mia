@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,9 +33,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.xml.ws.Holder;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
@@ -89,6 +86,7 @@ import org.qubership.atp.mia.service.file.MiaFileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -129,8 +127,8 @@ public class ProofOfTestingRepository {
         UUID sessionId = miaContext.getFlowData().getSessionId();
         log.info("Start save POT for [{}] session", sessionId);
         Path parentPath = miaContext.getLogPath();
-        File potDocxFile = parentPath.resolve(String.format(POT_DOCX, sessionId)).toFile();
-        File potArchiveFile = parentPath.resolve(String.format(POT_ARCHIVE, sessionId)).toFile();
+        File potDocxFile = parentPath.resolve(POT_DOCX.formatted(sessionId)).toFile();
+        File potArchiveFile = parentPath.resolve(POT_ARCHIVE.formatted(sessionId)).toFile();
         Optional<PotSession> session = recordingSessionsService.getSession(sessionId);
         if (session.isPresent()) {
             if (!parentPath.toFile().exists()) {
@@ -211,7 +209,7 @@ public class ProofOfTestingRepository {
                     bookmarkId++;
                 }
                 if (document.getParagraphs().size() > 3) {
-                    while (document.getParagraphs().get(0).getText().startsWith("Heading")) {
+                    while (document.getParagraphs().getFirst().getText().startsWith("Heading")) {
                         document.removeBodyElement(0);
                     }
                 }
@@ -232,7 +230,7 @@ public class ProofOfTestingRepository {
         List<Link> resultFiles = new ArrayList<>();
         if (!filePaths.isEmpty()) {
             filePaths.add(targetFile.getAbsolutePath());
-            Path archivePath = targetFile.getParentFile().toPath().resolve(String.format(POT_ARCHIVE, session.getId()));
+            Path archivePath = targetFile.getParentFile().toPath().resolve(POT_ARCHIVE.formatted(session.getId()));
 
             //validatePathTraversal(archivePath, baseDir);
 
@@ -403,7 +401,7 @@ public class ProofOfTestingRepository {
     private XWPFRun createRunForEmptyHeaderCell(XWPFTableCell cell) {
         cell.setColor("ffffff");
         cell.getCTTc().getTcPr().addNewTcW().setW(BigInteger.valueOf(5000));
-        return getXwpfRunFromParagraph(cell.getParagraphs().get(0), 11);
+        return getXwpfRunFromParagraph(cell.getParagraphs().getFirst(), 11);
     }
 
     private LineIterator getLineIterator(File outputFile) {
@@ -423,19 +421,19 @@ public class ProofOfTestingRepository {
     }
 
     private XWPFRun getRunForCell(XWPFTableCell cell) {
-        return getXwpfRunFromParagraph(cell.getParagraphs().get(0), 6);
+        return getXwpfRunFromParagraph(cell.getParagraphs().getFirst(), 6);
     }
 
     private XWPFRun getRunForColumnNameCell(XWPFTableCell cell) {
         cell.setColor("E3FCDF");
         cell.getCTTc().getTcPr().addNewTcW().setW(BigInteger.valueOf(1500));
-        return getXwpfRunFromParagraph(cell.getParagraphs().get(0), 6);
+        return getXwpfRunFromParagraph(cell.getParagraphs().getFirst(), 6);
     }
 
     private XWPFRun getRunForFirstHeaderCell(XWPFTableCell cell) {
         cell.setColor("E3FCDF");
         cell.getCTTc().getTcPr().addNewTcW().setW(BigInteger.valueOf(2000));
-        final XWPFRun run = getXwpfRunFromParagraph(cell.getParagraphs().get(0), 11);
+        final XWPFRun run = getXwpfRunFromParagraph(cell.getParagraphs().getFirst(), 11);
         run.setBold(true);
         return run;
     }
@@ -595,7 +593,7 @@ public class ProofOfTestingRepository {
                                 new Command("POT_header", "SSH", header.getSystem(),
                                         listToSet(header.getValue())));
                         if (!commandResponse.getCommandOutputs().isEmpty()) {
-                            value = String.join("\n", commandResponse.getCommandOutputs().get(0).contentFromFile());
+                            value = String.join("\n", commandResponse.getCommandOutputs().getFirst().contentFromFile());
                         } else {
                             value = "No output file for SSH command execution '" + header.getValue() + "'";
                         }
@@ -633,11 +631,11 @@ public class ProofOfTestingRepository {
         if (potHeaderConfiguration.getHeaders().isEmpty()
                 || potHeaderConfiguration.getHeaders().stream().noneMatch(header ->
                 header.getName().equalsIgnoreCase("Environment"))) {
-            potHeaderConfiguration.getHeaders().add(0, new PotHeader(
+            potHeaderConfiguration.getHeaders().addFirst(new PotHeader(
                     "Environment", PotHeaderType.INPUT.toString(), null,
                     session.getPotExecutionSteps().stream()
                             .map(PotExecutionStep::getEnvironmentName)
-                            .collect(Collectors.toList()).toString()));
+                            .toList().toString()));
         }
         XWPFTable table = document.createTable();
         XWPFTableRow row = setTableStyleAndCreateRow(table);

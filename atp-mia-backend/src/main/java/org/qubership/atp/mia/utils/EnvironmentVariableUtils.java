@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,14 +19,13 @@ package org.qubership.atp.mia.utils;
 
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
 import org.qubership.atp.mia.exceptions.macrosandevaluations.IncorrectEnvironmentVariableFormatException;
 import org.qubership.atp.mia.model.environment.Connection;
 import org.qubership.atp.mia.model.environment.System;
 import org.qubership.atp.mia.repo.ContextRepository;
 import org.springframework.stereotype.Repository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

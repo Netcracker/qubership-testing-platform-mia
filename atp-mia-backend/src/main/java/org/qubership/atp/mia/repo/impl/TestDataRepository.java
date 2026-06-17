@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import javax.xml.ws.Holder;
-
 import org.qubership.atp.mia.exceptions.testdata.MatrixExcelParseFailException;
 import org.qubership.atp.mia.exceptions.testdata.MatrixQuerySheetMissedDbTypeException;
 import org.qubership.atp.mia.model.configuration.CommonConfiguration;
@@ -63,6 +61,7 @@ import org.springframework.stereotype.Repository;
 
 import com.poiji.bind.Poiji;
 import com.poiji.option.PoijiOptions;
+import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -108,7 +107,7 @@ public class TestDataRepository {
         final CommonConfiguration cConf = miaContext.getConfig().getCommonConfiguration();
         if (command.getTestDataParams().isEventFileForEachDescription() || templates.isEmpty()) {
             final String ethalonFile = miaContext.evaluate(command.getTestDataParams().getEventFileTemplate(), params);
-            final String toGeneration = miaContext.evaluate(command.getNamesOfFilesForGeneration().get(0), params);
+            final String toGeneration = miaContext.evaluate(command.getNamesOfFilesForGeneration().getFirst(), params);
             fileName = toGeneration;
             templates.add(new Template(miaContext, miaFileService, ethalonFile, toGeneration,
                     command.getFileExtension(), command.definedCharsetForGeneratedFile()));
@@ -337,7 +336,7 @@ public class TestDataRepository {
                     .stream().filter(q -> q.getValidateValue()
                             .stream().anyMatch(v -> v.getValidateName().equals(validK)))
                     .findAny();
-            if (!queryOptional.isPresent()) {
+            if (queryOptional.isEmpty()) {
                 descrM.addValidatedParam(validK, "ERROR: QUERY TO EXECUTE NOT FOUND");
                 return;
             }
@@ -713,13 +712,13 @@ public class TestDataRepository {
         if (value != null && value.toLowerCase().endsWith(".sql")) {
             try {
                 final List<CommandResponse> result = sqlService.executeCommand(value, system, params, false);
-                if (!result.isEmpty() && result.get(0).getSqlResponse() != null
-                        && result.get(0).getSqlResponse().getData() != null
-                        && result.get(0).getSqlResponse().getData().getData() != null
-                        && !result.get(0).getSqlResponse().getData().getData().isEmpty()
-                        && result.get(0).getSqlResponse().getData().getData().get(0) != null
-                        && !result.get(0).getSqlResponse().getData().getData().get(0).isEmpty()) {
-                    value = result.get(0).getSqlResponse().getData().getData().get(0).get(0);
+                if (!result.isEmpty() && result.getFirst().getSqlResponse() != null
+                        && result.getFirst().getSqlResponse().getData() != null
+                        && result.getFirst().getSqlResponse().getData().getData() != null
+                        && !result.getFirst().getSqlResponse().getData().getData().isEmpty()
+                        && result.getFirst().getSqlResponse().getData().getData().getFirst() != null
+                        && !result.getFirst().getSqlResponse().getData().getData().getFirst().isEmpty()) {
+                    value = result.getFirst().getSqlResponse().getData().getData().getFirst().getFirst();
                 } else {
                     value = "SQL ERROR: can't parse result of execution";
                 }
@@ -739,7 +738,7 @@ public class TestDataRepository {
      * @return result of execution as string
      */
     private String addColumnWithParsingFromLog(Command command, CommandResponse response, Description description) {
-        final String stringResponse = String.join("\n", response.getCommandOutputs().get(0).contentFromFile());
+        final String stringResponse = String.join("\n", response.getCommandOutputs().getFirst().contentFromFile());
         if (stringResponse != null && command.getVariablesToExtractFromLog() != null) {
             command.getVariablesToExtractFromLog().forEach((columnName, regex) -> {
                 String value = Utils.getFirstGroupFromStringByRegexp(stringResponse, regex);

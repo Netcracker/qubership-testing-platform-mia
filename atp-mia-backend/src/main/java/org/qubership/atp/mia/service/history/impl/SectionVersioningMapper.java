@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.qubership.atp.mia.controllers.api.dto.SectionHistoryChangeDto;
 import org.qubership.atp.mia.model.configuration.CompoundConfiguration;
 import org.qubership.atp.mia.model.configuration.ProcessConfiguration;
 import org.qubership.atp.mia.model.configuration.SectionConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,9 +20,8 @@ package org.qubership.atp.mia.utils;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -41,15 +40,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.qubership.atp.mia.exceptions.fileservice.ReadFailIoExceptionDuringOperation;
 import org.qubership.atp.mia.exceptions.itflite.IncorrectProcessNameException;
 import org.qubership.atp.mia.model.Constants;
@@ -62,6 +59,8 @@ import org.slf4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -144,7 +143,7 @@ public class Utils {
         ArrayList<String> paths = new ArrayList<>();
         Pattern pattern = Pattern.compile(regex);
         try {
-            String result = new String(Files.readAllBytes(Paths.get(outputFilePath)), StandardCharsets.UTF_8);
+            String result = Files.readString(Path.of(outputFilePath));
             Matcher matcher = pattern.matcher(result);
             while (matcher.find()) {
                 final String pathToFileFound = matcher.group();
@@ -192,7 +191,7 @@ public class Utils {
      * check content-disposition is present in http response header.
      */
     public static boolean isHeaderNamePresent(HttpResponse httpResponse, String headerName) {
-        return Arrays.stream(httpResponse.getAllHeaders())
+        return Arrays.stream(httpResponse.getHeaders())
                 .anyMatch(h -> h.getName().equalsIgnoreCase(headerName));
     }
 
@@ -200,7 +199,7 @@ public class Utils {
      * Get header value from the response header by passing header name as input.
      */
     public static String getHeaderValue(HttpResponse httpResponse, String headerName) {
-        return Arrays.stream(httpResponse.getAllHeaders())
+        return Arrays.stream(httpResponse.getHeaders())
                 .filter(h -> h.getName().equalsIgnoreCase(headerName))
                 .map(v -> v.getValue()).reduce("", String::concat);
     }
@@ -358,8 +357,7 @@ public class Utils {
             tempValue = Long.parseLong(valueToParse);
         } catch (NumberFormatException e) {
             tempValue = defaultValue;
-            log.debug("Error can't parse {} value [{}], use the standard [{}]",
-                    valueName, valueToParse, defaultValue);
+            log.debug("Error can't parse {} value [{}], use the standard [{}]", valueName, valueToParse, defaultValue);
         }
         return tempValue;
     }
@@ -385,7 +383,7 @@ public class Utils {
     public static void sleepForTimeInMillSeconds(long millSeconds) {
         if (millSeconds > 0) {
             try {
-                log.debug("Waiting for {} milli seconds", millSeconds);
+                log.debug("Waiting for {} milliseconds", millSeconds);
                 Thread.sleep(millSeconds);
             } catch (InterruptedException e) {
                 log.debug("InterruptedException while waiting for above timeout", e);

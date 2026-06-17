@@ -23,16 +23,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.ServletContext;
-
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.qubership.atp.mia.controllers.api.dto.FlowConfigDto;
 import org.qubership.atp.mia.controllers.api.dto.ProjectConfigurationDto;
@@ -62,6 +59,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.ServletContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -96,7 +94,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
         pathForConfiguration.toFile().mkdirs();
         try {
             configurationFileSerializer.serializeToPath(projectConfiguration, pathForConfiguration);
-            String zipName = String.format("project_configuration_%s_%s.zip", projectId, sessionId);
+            String zipName = "project_configuration_%s_%s.zip".formatted(projectId, sessionId);
             Path zipPath = getProjectPathWithType(projectId, ProjectFileType.MIA_FILE_TYPE_LOG, sessionId)
                     .resolve(zipName);
             try (ZipOutputStream zos =
@@ -287,7 +285,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
             if (projectConfiguration.getGitUrl().startsWith("http")) {
                 gitService.downloadGitRepo(projectConfiguration.getGitUrl(), pathForConfiguration);
             } else {
-                FileUtils.copyFolder(Paths.get(projectConfiguration.getGitUrl()), pathForConfiguration);
+                FileUtils.copyFolder(Path.of(projectConfiguration.getGitUrl()), pathForConfiguration);
             }
             loadConfigurationFromFile(projectConfiguration, pathForConfiguration, isMigration);
             projectConfiguration.setLastLoadedWhen(LocalDateTime.now());
@@ -298,7 +296,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
                 self.removeProject(projectConfiguration.getProjectId(), false);
                 projectConfiguration.setPrimaryMigrationDone(true);
             }
-            if (Strings.isNotBlank(projectConfiguration.getGitUrl())
+            if (StringUtils.isNotBlank(projectConfiguration.getGitUrl())
                     && !projectConfiguration.getGitUrl().startsWith("http")) {
                 projectConfiguration.setGitUrl(null);
             }
@@ -378,7 +376,7 @@ public class ProjectConfigurationService extends AbstractEntityHistoryService<Pr
             UUID projectId = projectConfiguration.getProjectId();
             ProjectConfiguration projectConfigurationEntity =
                     modelMapper.map(projectConfigurationDto, ProjectConfiguration.class);
-            if (Strings.isNotBlank(projectConfigurationEntity.getGitUrl())
+            if (StringUtils.isNotBlank(projectConfigurationEntity.getGitUrl())
                     && !projectConfigurationEntity.getGitUrl().equals(projectConfiguration.getGitUrl())) {
                 projectConfiguration = self.hardReloadConfiguration(
                         ProjectConfiguration.builder()

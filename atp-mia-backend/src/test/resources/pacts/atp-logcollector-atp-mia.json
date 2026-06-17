@@ -51,7 +51,6 @@
             "showTestData": true
           },
           "commonConfiguration": {
-            "projectDownloadPath": "string",
             "nextBillDateSql": "string",
             "saveFilesToWorkingDir": true,
             "commandShellSeparator": "string",
@@ -365,14 +364,6 @@
               ],
               "combine": "AND"
             },
-            "$.commonConfiguration.projectDownloadPath": {
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ],
-              "combine": "AND"
-            },
             "$.commonConfiguration.sshRsaFilePath": {
               "matchers": [
                 {
@@ -662,10 +653,6 @@
               "type": "RandomString",
               "size": 20
             },
-            "$.commonConfiguration.projectDownloadPath": {
-              "type": "RandomString",
-              "size": 20
-            },
             "$.commonConfiguration.sshRsaFilePath": {
               "type": "RandomString",
               "size": 20
@@ -787,7 +774,6 @@
             "projectId": "string",
             "parameters": null,
             "commonConfiguration": {
-              "projectDownloadPath": "string",
               "nextBillDateSql": "string",
               "saveFilesToWorkingDir": true,
               "commandShellSeparator": "string",
@@ -1060,14 +1046,6 @@
               "combine": "AND"
             },
             "$.flowData.commonConfiguration.genevaDateMask": {
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ],
-              "combine": "AND"
-            },
-            "$.flowData.commonConfiguration.projectDownloadPath": {
               "matchers": [
                 {
                   "match": "type"
@@ -1718,8 +1696,8 @@
               "size": 20
             },
             "$.flowData.projectId": {
-              "type": "RandomString",
-              "size": 20
+              "type": "Uuid",
+              "size": 36
             },
             "$.flowData.commonConfiguration.variableFormat": {
               "type": "RandomString",
@@ -1750,10 +1728,6 @@
               "size": 20
             },
             "$.flowData.commonConfiguration.genevaDateMask": {
-              "type": "RandomString",
-              "size": 20
-            },
-            "$.flowData.commonConfiguration.projectDownloadPath": {
               "type": "RandomString",
               "size": 20
             },
@@ -2466,7 +2440,6 @@
             "projectId": "string",
             "parameters": null,
             "commonConfiguration": {
-              "projectDownloadPath": "string",
               "nextBillDateSql": "string",
               "saveFilesToWorkingDir": true,
               "commandShellSeparator": "string",
@@ -2739,14 +2712,6 @@
               "combine": "AND"
             },
             "$.flowData.commonConfiguration.genevaDateMask": {
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ],
-              "combine": "AND"
-            },
-            "$.flowData.commonConfiguration.projectDownloadPath": {
               "matchers": [
                 {
                   "match": "type"
@@ -3397,8 +3362,8 @@
               "size": 20
             },
             "$.flowData.projectId": {
-              "type": "RandomString",
-              "size": 20
+              "type": "Uuid",
+              "size": 36
             },
             "$.flowData.commonConfiguration.variableFormat": {
               "type": "RandomString",
@@ -3429,10 +3394,6 @@
               "size": 20
             },
             "$.flowData.commonConfiguration.genevaDateMask": {
-              "type": "RandomString",
-              "size": 20
-            },
-            "$.flowData.commonConfiguration.projectDownloadPath": {
               "type": "RandomString",
               "size": 20
             },

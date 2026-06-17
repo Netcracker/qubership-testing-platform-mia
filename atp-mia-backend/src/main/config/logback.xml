@@ -48,6 +48,11 @@
             </if>
         </then>
         <else>
+            <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                </encoder>
+            </appender>
             <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
                 <file>console.log</file>
@@ -67,6 +72,7 @@
             </appender>
 
             <root level="${log.graylog.level:INFO}">
+                <appender-ref ref="CONSOLE" />
                 <appender-ref ref="FILE"/>
             </root>
             <if condition='${ATP_HTTP_LOGGING:-false}'>

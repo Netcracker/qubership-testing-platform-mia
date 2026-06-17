@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,14 +21,13 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.ws.Holder;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.qubership.atp.mia.model.impl.testdata.parsed.Scenario;
 
+import jakarta.xml.ws.Holder;
 import lombok.Data;
 
 @Data
@@ -68,8 +67,8 @@ public class TestDataSheet {
         final Cell cellDescr = headerRow.createCell(++cellNum.value);
         cellDescr.setCellValue(MainSheetRecord.DESCRIPTION);
         cellDescr.setCellStyle(wb.getCellStyle(IndexedColors.YELLOW));
-        if (scenarios != null && !scenarios.isEmpty() && !scenarios.get(0).getDescriptions().isEmpty()) {
-            final LinkedHashMap<String, String> params = scenarios.get(0).getDescriptions().get(0).getOtherParams();
+        if (scenarios != null && !scenarios.isEmpty() && !scenarios.getFirst().getDescriptions().isEmpty()) {
+            final LinkedHashMap<String, String> params = scenarios.getFirst().getDescriptions().getFirst().getOtherParams();
             if (!params.isEmpty()) {
                 params.forEach((k, v) -> {
                     final Cell cell = headerRow.createCell(++cellNum.value);

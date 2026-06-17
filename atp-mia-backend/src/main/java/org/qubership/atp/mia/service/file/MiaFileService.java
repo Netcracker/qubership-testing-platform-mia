@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,13 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
-
-import javax.servlet.ServletContext;
 
 import org.bson.types.ObjectId;
 import org.qubership.atp.mia.exceptions.fileservice.FileEmptyException;
@@ -53,6 +50,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mongodb.MongoGridFSException;
+import jakarta.servlet.ServletContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -273,7 +271,7 @@ public class MiaFileService {
 
     private String uploadFile(MultipartFile file, boolean needDos2Unix, ProjectFileType fileType) {
         if (file != null && !file.isEmpty()) {
-            Path fileName = Paths.get(file.getOriginalFilename());
+            Path fileName = Path.of(file.getOriginalFilename());
             final File dest = miaContext.getProjectPathWithType(fileType).resolve(fileName.getFileName()).toFile();
             try (InputStream is = file.getInputStream()) {
                 dest.getParentFile().mkdirs();

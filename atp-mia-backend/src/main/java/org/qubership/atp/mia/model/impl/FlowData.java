@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.mia.model.Constants;
 import org.qubership.atp.mia.model.environment.Environment;
 import org.qubership.atp.mia.model.environment.System;
@@ -64,7 +64,7 @@ public class FlowData {
      * @return custom parameter
      */
     public String getCustom(Constants.CustomParameters parameter, MiaContext miaContext) {
-        if (Strings.isNotBlank(parameters.get(parameter.toString()))) {
+        if (StringUtils.isNotBlank(parameters.get(parameter.toString()))) {
             parameters.put(parameter.toString(), miaContext.evaluate(parameters.get(parameter.toString())));
         }
         return parameters.get(parameter.toString());

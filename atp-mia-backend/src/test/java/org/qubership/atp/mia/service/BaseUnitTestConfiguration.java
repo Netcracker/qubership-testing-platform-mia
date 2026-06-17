@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
-
-import javax.servlet.ServletContext;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,6 +75,7 @@ import org.qubership.atp.mia.utils.FileUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.google.common.collect.ImmutableList;
+import jakarta.servlet.ServletContext;
 
 @ExtendWith(SkipTestInJenkins.class)
 @SpringBootTest(classes = {ModelMapper.class})
@@ -112,30 +113,30 @@ public class BaseUnitTestConfiguration extends ConfigTestBean {
     }
 
     public void BaseUnitTestConfiguration_prepareEnvironment() {
-        int randomId = (int) (Math.random() * 1000);
+        int randomId = (int) (ThreadLocalRandom.current().nextDouble() * 1000);
         UUID envId = UUID.randomUUID();
         UUID systemId = UUID.randomUUID();
         System testSystem2 = System.builder()
                 .id(systemId)
                 .name(TEST_SYSTEM_NAME + randomId)
                 .environmentId(envId)
-                .connections(Arrays.asList())
+                .connections(List.of())
                 .build();
         Environment testEnvironment2 = Environment.builder()
                 .projectId(projectId.get())
                 .id(envId)
                 .name(TEST_ENVIRONMENT_NAME + randomId)
-                .systems(Arrays.asList(testSystem2))
+                .systems(Collections.singletonList(testSystem2))
                 .build();
         Project testProject2 = Project.builder()
                 .id(projectId.get())
                 .name(DEFAULT_PROJECT_NAME + randomId)
-                .environments(Arrays.asList(testEnvironment2.getId()))
+                .environments(Collections.singletonList(testEnvironment2.getId()))
                 .build();
         when(environmentsService.get().getEnvironmentsByProject(eq(projectId.get())))
-                .thenReturn(Arrays.asList(testEnvironment2));
+                .thenReturn(List.of(testEnvironment2));
         when(environmentsService.get().getEnvironmentsFull(eq(envId), eq(projectId.get()))).thenReturn(testEnvironment2);
-        when(environmentsService.get().getProjects()).thenReturn(Arrays.asList(testProject2));
+        when(environmentsService.get().getProjects()).thenReturn(Collections.singletonList(testProject2));
         when(environmentsService.get().getProject(eq(projectId.get()))).thenReturn(testProject2);
         miaContext.get().setContext(projectId.get(), null);
     }
@@ -173,7 +174,9 @@ public class BaseUnitTestConfiguration extends ConfigTestBean {
                                         .command(Command.builder()
                                                 .name("GPARAMS")
                                                 .type("SQL")
-                                                .values(new LinkedHashSet<String>() {{add("some command");}})
+                                                .values(new LinkedHashSet<>() {{
+                                                    add("some command");
+                                                }})
                                                 .build())
                                         .build())
                                 .projectConfiguration(testProjectConfiguration.get())
@@ -187,7 +190,9 @@ public class BaseUnitTestConfiguration extends ConfigTestBean {
                                         .command(Command.builder()
                                                 .name("BG")
                                                 .type("SSH")
-                                                .values(new LinkedHashSet<String>() {{add("some command");}})
+                                                .values(new LinkedHashSet<>() {{
+                                                    add("some command");
+                                                }})
                                                 .build())
                                         .build())
                                 .projectConfiguration(testProjectConfiguration.get())

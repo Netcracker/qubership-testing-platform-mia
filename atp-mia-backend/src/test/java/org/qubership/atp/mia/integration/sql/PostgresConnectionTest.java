@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@
 
 package org.qubership.atp.mia.integration.sql;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
 import org.qubership.atp.mia.integration.utils.TestUtils;
@@ -35,10 +34,10 @@ public class PostgresConnectionTest extends BaseIntegrationTestConfiguration {
                 + " CREATE table IF NOT EXISTS MIA_TABLE(id serial, name varchar)",
                 insertTable = "INSERT INTO MIA_TABLE (name) VALUES ('some_name');",
                 selectTable = "SELECT * FROM MIA_TABLE;";
-        Assert.assertEquals(0, queryDriverFactory.get().getDriver(dbServer).executeUpdate(dbServer, createTable));
-        Assert.assertEquals(1, queryDriverFactory.get().getDriver(dbServer).executeUpdate(dbServer, insertTable));
+        Assertions.assertEquals(0, queryDriverFactory.get().getDriver(dbServer).executeUpdate(dbServer, createTable));
+        Assertions.assertEquals(1, queryDriverFactory.get().getDriver(dbServer).executeUpdate(dbServer, insertTable));
         DbTable dbTable = queryDriverFactory.get().getDriver(dbServer).executeQuery(dbServer, selectTable);
-        Assert.assertNotNull(dbTable);
-        Assert.assertEquals(2, dbTable.getColumns().size());
+        Assertions.assertNotNull(dbTable);
+        Assertions.assertEquals(2, dbTable.getColumns().size());
     }
 }

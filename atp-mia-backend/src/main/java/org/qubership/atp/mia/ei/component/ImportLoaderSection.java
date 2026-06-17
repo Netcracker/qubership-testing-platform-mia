@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import org.qubership.atp.mia.model.configuration.ProjectConfiguration;
 import org.qubership.atp.mia.model.configuration.SectionConfiguration;
 import org.qubership.atp.mia.model.ei.ExportImportEntities;
 import org.qubership.atp.mia.model.ei.ExportImportSection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ImportLoaderSection extends
         ImportLoader<ExportImportEntities, SectionConfiguration, ExportImportSection> {
 
-    public ImportLoaderSection(@Autowired ObjectLoaderFromDiskService objectLoaderFromDiskService) {
+    public ImportLoaderSection(ObjectLoaderFromDiskService objectLoaderFromDiskService) {
         super(objectLoaderFromDiskService);
     }
 
@@ -120,7 +119,7 @@ public class ImportLoaderSection extends
                         }
                     }
 
-                    if (!parentSectionOptional.isPresent()) {
+                    if (parentSectionOptional.isEmpty()) {
                         parentSectionOptional = projectConfiguration.getSections().stream()
                                 .filter(s -> importSection.getParentSection().equals(s.getId()))
                                 .findAny();

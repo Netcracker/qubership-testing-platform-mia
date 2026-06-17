@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024-2025 NetCracker Technology Corporation
+ *  Copyright 2024-2026 NetCracker Technology Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,15 +17,14 @@
 
 package org.qubership.atp.mia.integration.sql;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.qubership.atp.mia.integration.configuration.BaseIntegrationTestConfiguration;
 import org.qubership.atp.mia.model.Constants;
@@ -69,17 +68,17 @@ public class MongoIntegrationTest extends BaseIntegrationTestConfiguration {
                 .exchange()
                 .flatMap(resp -> {
                     if (resp.statusCode().isError()) {
-                        String err = "Error during webClient SSH request execution code [" + resp.rawStatusCode() + "]";
+                        String err = "Error during webClient SSH request execution code [" + resp.statusCode().value() + "]";
                         log.error(err);
                         return Mono.error(new Exception(err));
                     }
-                    ParameterizedTypeReference<List<Link>> typeRef = new ParameterizedTypeReference<List<Link>>() {
+                    ParameterizedTypeReference<List<Link>> typeRef = new ParameterizedTypeReference<>() {
                     };
                     return resp.bodyToMono(typeRef);
                 })
                 .block();
-        Assert.assertNotNull(saveResponse);
-        String filename = saveResponse.get(0).getName();
+        Assertions.assertNotNull(saveResponse);
+        String filename = saveResponse.getFirst().getName();
         Path path = miaContext.getLogPath().resolve(filename);
         assertTrue(path.toFile().exists());
     }

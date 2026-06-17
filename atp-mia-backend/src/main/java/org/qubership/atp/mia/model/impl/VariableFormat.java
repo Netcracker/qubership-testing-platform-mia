@@ -17,7 +17,7 @@
 
 package org.qubership.atp.mia.model.impl;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 import lombok.Data;
 
@@ -42,7 +42,7 @@ public class VariableFormat {
         afterVariableName = !variableFormat.endsWith(VariableFormat.VAR_NAME) ? split[split.length - 1] : "";
         matches.append("[^").append(beforeVariableName).append("]*");
         matches.append(beforeVariableName);
-        if (Strings.isNotBlank(afterVariableName)) {
+        if (StringUtils.isNotBlank(afterVariableName)) {
             matches.append("([^").append(afterVariableName).append("]*)");
         } else {
             matches.append("([^\\W]*)");
