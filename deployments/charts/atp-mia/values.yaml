@@ -1,7 +1,7 @@
 PAAS_PLATFORM: "KUBERNETES"
 ATP_NET: ""
 # Additional Java options
-ADDITIONAL_JAVA_OPTIONS: "-XX:MaxRAMPercentage=75.0 -Xss100m"
+ADDITIONAL_JAVA_OPTIONS: "-XX:MaxRAMPercentage=75.0 -Xss100m -Dspring.jpa.properties.hibernate.default_batch_fetch_size=30"
 # Placeholder for Public key for ENCRYPT
 ATP_CRYPTO_KEY: ""
 # Placeholder for Private key for ENCRYPT
