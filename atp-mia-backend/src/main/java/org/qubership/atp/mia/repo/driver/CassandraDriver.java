@@ -52,6 +52,8 @@ import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.oss.driver.api.core.auth.AuthenticationException;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
+import com.datastax.oss.driver.api.core.config.ProgrammaticDriverConfigLoaderBuilder;
+import com.datastax.oss.driver.internal.core.loadbalancing.DcInferringLoadBalancingPolicy;
 import com.datastax.oss.driver.api.core.cql.AsyncResultSet;
 import com.datastax.oss.driver.api.core.cql.BoundStatement;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
@@ -124,7 +126,9 @@ public class CassandraDriver implements QueryDriver<CqlSession> {
             log.info("Using keyspace: {}", keyspace);
         }
 
-        DriverConfigLoader driverConfigLoader = DriverConfigLoader.programmaticBuilder()
+        String dataCenter = server.getProperty("local_datacenter");
+
+        ProgrammaticDriverConfigLoaderBuilder configBuilder = DriverConfigLoader.programmaticBuilder()
                 .withDuration(
                         DefaultDriverOption.CONNECTION_CONNECT_TIMEOUT,
                         Duration.ofSeconds(server.getTimeoutConnect(1, 60))
@@ -147,16 +151,18 @@ public class CassandraDriver implements QueryDriver<CqlSession> {
                 .withDuration(
                         DefaultDriverOption.HEARTBEAT_INTERVAL,
                         Duration.ofSeconds(30)
-                )
-                .build();
+                );
 
-        builder.withConfigLoader(driverConfigLoader);
-
-        // Set Datacenter (if configured)
-        String dataCenter = server.getProperty("local_datacenter");
-        if (!StringUtils.isEmpty(dataCenter)) {
+        if (StringUtils.isEmpty(dataCenter)) {
+            configBuilder.withClass(
+                    DefaultDriverOption.LOAD_BALANCING_POLICY_CLASS,
+                    DcInferringLoadBalancingPolicy.class
+            );
+        } else {
             builder.withLocalDatacenter(dataCenter);
         }
+
+        builder.withConfigLoader(configBuilder.build());
         return builder.build();
     }
 
@@ -202,7 +208,7 @@ public class CassandraDriver implements QueryDriver<CqlSession> {
                         fetched++;
                     }
 
-                    // Переходим к следующей странице, если нужно
+                    // Iterate to the next page if required
                     if (fetched < limitRecords && queryResult.hasMorePages()) {
                         queryResult = queryResult
                                 .fetchNextPage()
