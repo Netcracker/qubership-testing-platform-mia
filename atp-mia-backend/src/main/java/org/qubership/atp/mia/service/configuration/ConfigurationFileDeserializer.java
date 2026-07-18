@@ -601,7 +601,10 @@ public class ConfigurationFileDeserializer {
             ProcessSettings proc = p.getProcessSettings();
             proc.getCommand().setSystemIfNull(defaultSystem);
             if (proc.getPrerequisites() != null) {
-                proc.getPrerequisites().forEach(prereq -> prereq.setSystemIfNull(defaultSystem));
+                proc.getPrerequisites().forEach(prereq -> {
+                    prereq.setSystemIfNull(defaultSystem);
+                    prereq.normalizeReferFields();
+                });
             }
             if (proc.getValidations() != null) {
                 proc.getValidations().forEach(valid -> valid.setSystemIfNull(defaultSystem));

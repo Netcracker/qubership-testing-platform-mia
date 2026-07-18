@@ -387,6 +387,18 @@ public class ProcessServiceTest extends ProcessServiceBaseTest {
     }
 
     @Test
+    public void executePrerequisites_whenReferFieldsEmpty_thenExecutePrerequisite() {
+        final Command command = new Command("Command", "SSH", TEST_SYSTEM_NAME, listToSet(commandValue));
+        final Prerequisite prerequisite = new Prerequisite("SQL", TEST_SYSTEM_NAME, sqlPrerequisiteValue);
+        prerequisite.setReferToInputName(new ArrayList<>());
+        prerequisite.setReferToCommandValue(new ArrayList<>());
+        final ProcessSettings process = new ProcessSettings().toBuilder().name(processName)
+                .prerequisites(List.of(prerequisite)).command(command).build();
+        executeProcess(process);
+        verify(sqlService.get(), Mockito.times(1)).executeCommand(eq(sqlPrerequisiteValue), any());
+    }
+
+    @Test
     public void executePrerequisites_whenNoParamsAndReferPresent_thenNotExecutePrerequisite() {
         miaContext.get().getFlowData().setParameters(null);
         final Command command = new Command("Command", "SQL", TEST_SYSTEM_NAME, listToSet("commandValue"));

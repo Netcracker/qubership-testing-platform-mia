@@ -162,6 +162,18 @@ public class Prerequisite extends GeneralModel {
         this.referToCommandValue = referToCommandValue;
     }
 
+    /**
+     * Treats empty refer lists as unset. Empty arrays are not valid conditions and must behave like null.
+     */
+    public void normalizeReferFields() {
+        if (referToInputName != null && referToInputName.isEmpty()) {
+            referToInputName = null;
+        }
+        if (referToCommandValue != null && referToCommandValue.isEmpty()) {
+            referToCommandValue = null;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -42,6 +42,7 @@ import org.qubership.atp.mia.model.configuration.CompoundConfiguration;
 import org.qubership.atp.mia.model.configuration.ProcessConfiguration;
 import org.qubership.atp.mia.model.configuration.ProjectConfiguration;
 import org.qubership.atp.mia.model.configuration.SectionConfiguration;
+import org.qubership.atp.mia.model.impl.executable.Prerequisite;
 import org.qubership.atp.mia.model.impl.executable.ProcessSettings;
 import org.qubership.atp.mia.repo.configuration.ProcessConfigurationRepository;
 import org.qubership.atp.mia.service.history.impl.AbstractEntityHistoryService;
@@ -80,6 +81,7 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
             processConfiguration.setProcessSettings(
                     modelMapper.map(processDto.getProcessSettings(), ProcessSettings.class));
             processConfiguration.getProcessSettings().setName(processDto.getName());
+            normalizePrerequisiteReferFields(processConfiguration.getProcessSettings());
             syncProcessSections(projectConfiguration, processConfiguration, processDto);
             if (processDto.getInCompounds() != null) {
                 log.debug("Processing compound associations for process '{}'", processDto.getName());
@@ -250,6 +252,7 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
      * @return list of {@link ProcessDto}
      */
     public ProcessDto toDto(ProcessConfiguration processConfiguration) {
+        normalizePrerequisiteReferFields(processConfiguration.getProcessSettings());
         ProcessDto retValue = modelMapper.map(processConfiguration, ProcessDto.class);
         //model mapper don't support LinkedHashMap map to HashMap and keep correct order
         //in that case set fields with LinkedHashMap manually
@@ -286,6 +289,7 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
             processConfiguration.setProcessSettings(
                     modelMapper.map(processDto.getProcessSettings(), ProcessSettings.class));
             processConfiguration.getProcessSettings().setName(processDto.getName());
+            normalizePrerequisiteReferFields(processConfiguration.getProcessSettings());
             projectConfigurationService.synchronizeConfiguration(projectConfiguration.getProjectId(),
                     () -> {
                         processConfigurationRepository.save(processConfiguration);
@@ -363,5 +367,11 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
                 }, false);
         log.info("Successfully restored process configuration '{}'", processConfiguration.getName());
         return processConfiguration;
+    }
+
+    private void normalizePrerequisiteReferFields(ProcessSettings processSettings) {
+        if (processSettings != null && processSettings.getPrerequisites() != null) {
+            processSettings.getPrerequisites().forEach(Prerequisite::normalizeReferFields);
+        }
     }
 }
