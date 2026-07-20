@@ -257,7 +257,25 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
                 processConfiguration.getProcessSettings().getCommand().getAtpValues());
         retValue.getProcessSettings().getCommand().setVariablesToExtractFromLog(
                 processConfiguration.getProcessSettings().getCommand().getVariablesToExtractFromLog());
+        normalizePrerequisiteReferFields(retValue);
         return retValue;
+    }
+
+    private void normalizePrerequisiteReferFields(ProcessDto processDto) {
+        if (processDto.getProcessSettings() == null
+                || processDto.getProcessSettings().getPrerequisites() == null) {
+            return;
+        }
+        processDto.getProcessSettings().getPrerequisites().forEach(prerequisite -> {
+            if (prerequisite.getReferToInputName() != null
+                    && prerequisite.getReferToInputName().isEmpty()) {
+                prerequisite.setReferToInputName(null);
+            }
+            if (prerequisite.getReferToCommandValue() != null
+                    && prerequisite.getReferToCommandValue().isEmpty()) {
+                prerequisite.setReferToCommandValue(null);
+            }
+        });
     }
 
     /**

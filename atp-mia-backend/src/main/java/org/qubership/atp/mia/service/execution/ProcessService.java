@@ -764,16 +764,16 @@ public class ProcessService {
         final List<String> commandValuesToRefer = prerequisite.getReferToCommandValue();
         final List<String> inputNamesToRefer = prerequisite.getReferToInputName();
         boolean toSkip = false;
-        if (commandValuesToRefer != null) {
+        if (commandValuesToRefer != null && !commandValuesToRefer.isEmpty()) {
             if (commandValuesToRefer.stream().anyMatch(commandValue ->
                     commandValue.equalsIgnoreCase(command.getToExecute()))) {
-                if (inputNamesToRefer != null) {
+                if (inputNamesToRefer != null && !inputNamesToRefer.isEmpty()) {
                     toSkip = checkInput(inputNamesToRefer);
                 }
             } else {
                 toSkip = true;
             }
-        } else if (inputNamesToRefer != null) {
+        } else if (inputNamesToRefer != null && !inputNamesToRefer.isEmpty()) {
             toSkip = checkInput(inputNamesToRefer);
         }
         return toSkip;
