@@ -519,14 +519,14 @@ components:
       properties:
         referToInputName:
           type: array
-          nullable: true
           items:
             type: string
+          nullable: true
         referToCommandValue:
           type: array
-          nullable: true
           items:
             type: string
+          nullable: true
         name:
           type: string
         type:
