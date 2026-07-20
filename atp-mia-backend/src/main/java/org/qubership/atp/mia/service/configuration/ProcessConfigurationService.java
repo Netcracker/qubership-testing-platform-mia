@@ -260,6 +260,7 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
                 processConfiguration.getProcessSettings().getCommand().getAtpValues());
         retValue.getProcessSettings().getCommand().setVariablesToExtractFromLog(
                 processConfiguration.getProcessSettings().getCommand().getVariablesToExtractFromLog());
+        logPrerequisiteReferFieldsInDto(retValue.getName(), processConfiguration.getProcessSettings());
         return retValue;
     }
 
@@ -370,8 +371,36 @@ public class ProcessConfigurationService extends AbstractEntityHistoryService<Pr
     }
 
     private void normalizePrerequisiteReferFields(ProcessSettings processSettings) {
-        if (processSettings != null && processSettings.getPrerequisites() != null) {
-            processSettings.getPrerequisites().forEach(Prerequisite::normalizeReferFields);
+        if (processSettings == null || processSettings.getPrerequisites() == null) {
+            log.info("Prerequisite refer-field normalization skipped for process '{}': no prerequisites found",
+                    processSettings != null ? processSettings.getName() : null);
+            return;
         }
+        log.info("Normalizing prerequisite refer fields for process '{}', prerequisiteCount={}",
+                processSettings.getName(), processSettings.getPrerequisites().size());
+        processSettings.getPrerequisites().forEach(prerequisite -> {
+            log.info("Prerequisite '{}' (type={}) refer fields before normalization: referToInputName={}, "
+                            + "referToCommandValue={}",
+                    prerequisite.getName(), prerequisite.getType(),
+                    prerequisite.getReferToInputName(), prerequisite.getReferToCommandValue());
+            prerequisite.normalizeReferFields();
+            log.info("Prerequisite '{}' refer fields after normalization: referToInputName={}, "
+                            + "referToCommandValue={}",
+                    prerequisite.getName(),
+                    prerequisite.getReferToInputName(), prerequisite.getReferToCommandValue());
+        });
+    }
+
+    private void logPrerequisiteReferFieldsInDto(String processName, ProcessSettings processSettings) {
+        if (processSettings == null || processSettings.getPrerequisites() == null) {
+            log.info("Process '{}' GET response prerequisites: none", processName);
+            return;
+        }
+        processSettings.getPrerequisites().forEach(prerequisite ->
+                log.info("Process '{}' GET response prerequisite '{}': referToInputName={}, "
+                                + "referToCommandValue={}, value={}",
+                        processName, prerequisite.getName(),
+                        prerequisite.getReferToInputName(), prerequisite.getReferToCommandValue(),
+                        prerequisite.getValue()));
     }
 }

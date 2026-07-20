@@ -237,7 +237,11 @@ public class ProcessService {
             });
         }
         if (processSettings.getPrerequisites() != null) {
+            log.info("Process '{}' loaded {} prerequisite(s) for execution",
+                    processSettings.getName(), processSettings.getPrerequisites().size());
             executionResponse.setPrerequisites(executePrerequisites(processSettings.getPrerequisites(), command));
+        } else {
+            log.info("Process '{}' has no prerequisites configured for execution", processSettings.getName());
         }
         if (switchersListFromBe != null) {
             switchersListFromBe.forEach(switcher -> {
@@ -571,13 +575,19 @@ public class ProcessService {
         //FlowData flowData = contextRepository.getContext();
         List<CommandResponse> responses = new ArrayList<>();
         List<String> sshPrerequisitesToExecute = new ArrayList<>();
+        log.info("Executing prerequisites: count={}, commandToExecute={}",
+                prerequisites != null ? prerequisites.size() : 0, command.getToExecute());
         for (Prerequisite prerequisite : prerequisites) {
             prerequisite.normalizeReferFields();
             if (skipPrerequisite(prerequisite, command)) {
-                log.debug("Prerequisite {} has been skipped", prerequisite);
+                log.info("Prerequisite skipped: name='{}', type='{}', referToInputName={}, referToCommandValue={}",
+                        prerequisite.getName(), prerequisite.getType(),
+                        prerequisite.getReferToInputName(), prerequisite.getReferToCommandValue());
                 continue;
             }
-            log.debug("Execute prerequisite: {}", prerequisite);
+            log.info("Prerequisite will be executed: name='{}', type='{}', system='{}', value='{}'",
+                    prerequisite.getName(), prerequisite.getType(), prerequisite.getSystem(),
+                    prerequisite.getValue());
             String type = prerequisite.getType();
             if (SQL.toString().equals(type)) {
                 final List<CommandResponse> prerequisiteResponses = sqlService.executeCommand(prerequisite.getValue(),
@@ -777,6 +787,9 @@ public class ProcessService {
         } else if (inputNamesToRefer != null && !inputNamesToRefer.isEmpty()) {
             toSkip = checkInput(inputNamesToRefer);
         }
+        log.info("skipPrerequisite decision for '{}': toSkip={}, referToCommandValue={}, referToInputName={}, "
+                        + "commandToExecute={}",
+                prerequisite.getName(), toSkip, commandValuesToRefer, inputNamesToRefer, command.getToExecute());
         return toSkip;
     }
 

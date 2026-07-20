@@ -27,11 +27,13 @@ import java.util.StringJoiner;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Class for prerequisite in Process.
  */
 @SuperBuilder(toBuilder = true)
+@Slf4j
 public class Prerequisite extends GeneralModel {
 
     @Serial
@@ -167,9 +169,13 @@ public class Prerequisite extends GeneralModel {
      */
     public void normalizeReferFields() {
         if (referToInputName != null && referToInputName.isEmpty()) {
+            log.info("Normalized empty referToInputName to null for prerequisite '{}' (type: {})",
+                    getName(), getType());
             referToInputName = null;
         }
         if (referToCommandValue != null && referToCommandValue.isEmpty()) {
+            log.info("Normalized empty referToCommandValue to null for prerequisite '{}' (type: {})",
+                    getName(), getType());
             referToCommandValue = null;
         }
     }
