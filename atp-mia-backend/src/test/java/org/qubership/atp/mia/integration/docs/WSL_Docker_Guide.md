@@ -3,7 +3,7 @@
 
 ## Enable WSL
 
-> Open Power Shell console as administrator:
+> Open PowerShell console as administrator:
 
 1. `dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart`
 2. `dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart`
@@ -17,7 +17,7 @@
 
 ## Install Ubuntu
 
-> Open Power Shell console as administrator again:
+> Open PowerShell console as administrator again:
 
 ```bash
 wsl --install -d Ubuntu
@@ -66,7 +66,7 @@ sudo dockerd
 
 > ⚠️ After reboot or logout, WSL shuts down with Docker.
 
-To start Docker automatically on WSL launch (based on [this StackOverflow answer](https://stackoverflow.com/questions/65813979)):
+To start Docker automatically on WSL launch (based on [this StackOverflow answer](https://stackoverflow.com/questions/65813979/sudo-systemctl-enable-docker-not-available-automatically-run-docker-at-boot-o)):
 
 1. Open Ubuntu console
 2. Add to `~/.profile`:
@@ -111,7 +111,7 @@ docker restart $(docker ps -a -q)
     netsh interface portproxy add v4tov4 listenport=${YOUR_PORT} listenaddress=0.0.0.0 connectport=${YOUR_PORT} connectaddress=${WSL_INSTANCE_IP}
     ```
 
-> Reference: [Microsoft Docs](https://docs.microsoft.com/en-us/windows/wsl/networking)
+> Reference: [Microsoft Learn](https://learn.microsoft.com/en-us/windows/wsl/networking)
 
 ---
 
@@ -144,7 +144,7 @@ iptables v1.8.x (legacy): can't initialize iptables table `nat': Table does not 
 
 2. Reinstall and switch to WSL2:
 
-    - Open Power Shell (admin):
+    - Open PowerShell (admin):
       ```bash
       dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
       ```
@@ -174,7 +174,7 @@ ping 8.8.8.8   # If fails – network problem
 ping google.com  # If fails – DNS problem
 ```
 
-> [Cisco AnyConnect and WSL2 Issues](https://community.cisco.com/t5/vpn/anyconnect-wsl-2-windows-substem-for-linux/td-p/4179888)
+> Use information from [Cisco AnyConnect and WSL2 Issues] at `community.cisco.com`: Cisco Community / Technology and Support / Security / VPN / anyconnect WSL 2 - Windows Substem for Linux
 
 ---
 
