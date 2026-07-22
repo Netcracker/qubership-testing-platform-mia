@@ -32,9 +32,7 @@ wsl --install --web-download -d Ubuntu
 
 ---
 
-# Docker
-
-## Installation
+## Docker Installation
 
 > Open WSL console:
 
@@ -66,7 +64,7 @@ sudo dockerd
 
 > ⚠️ After reboot or logout, WSL shuts down with Docker.
 
-To start Docker automatically on WSL launch (based on [this StackOverflow answer](https://stackoverflow.com/questions/65813979/sudo-systemctl-enable-docker-not-available-automatically-run-docker-at-boot-o)):
+To start Docker automatically on WSL launch (based on [this `StackOverflow` answer](https://stackoverflow.com/questions/65813979/sudo-systemctl-enable-docker-not-available-automatically-run-docker-at-boot-o)):
 
 1. Open Ubuntu console
 2. Add to `~/.profile`:
@@ -93,7 +91,7 @@ docker restart $(docker ps -a -q)
 
 ---
 
-# Network Interaction
+## Network Interaction
 
 > In Docker Desktop you can access containers from LAN.  
 > In WSL this requires manual setup.
@@ -115,13 +113,13 @@ docker restart $(docker ps -a -q)
 
 ---
 
-# Problems
+## Problems
 
-## ❗ Error Initializing Network Controller
+### ❗ Error Initializing Network Controller
 
 **Symptoms:**
 
-```
+```logs
 failed to start daemon: Error initializing network controller: error obtaining controller instance: failed to create NAT chain DOCKER
 iptables v1.8.x (legacy): can't initialize iptables table `nat': Table does not exist
 (exit status 3)
@@ -129,7 +127,7 @@ iptables v1.8.x (legacy): can't initialize iptables table `nat': Table does not 
 
 > You are using **WSL1**
 
-### ✅ Solution: Upgrade to WSL2
+#### ✅ Solution: Upgrade to WSL2
 
 1. Check version:
     ```bash
@@ -137,7 +135,7 @@ iptables v1.8.x (legacy): can't initialize iptables table `nat': Table does not 
     ```
 
     You should see:
-    ```
+    ```text
     NAME      STATE           VERSION
     * Ubuntu    Running         1
     ```
@@ -165,9 +163,9 @@ iptables v1.8.x (legacy): can't initialize iptables table `nat': Table does not 
 
 ---
 
-# No Internet Connection
+### No internet connection
 
-### Step 1: Diagnose
+#### Step 1: Diagnose
 
 ```bash
 ping 8.8.8.8   # If fails – network problem  
@@ -178,7 +176,7 @@ ping google.com  # If fails – DNS problem
 
 ---
 
-## VPN: No connection to NC intranet
+### VPN: No connection to NC intranet
 
 > Add NC DNS servers to `/etc/resolv.conf`
 
@@ -196,7 +194,7 @@ ping google.com  # If fails – DNS problem
     ```
 
 3. Add nameservers:
-    ```
+    ```text
     nameserver 127.0.0.1
     nameserver 127.0.0.2
     nameserver 127.0.0.3
@@ -204,7 +202,7 @@ ping google.com  # If fails – DNS problem
     nameserver 8.8.8.8
     ```
 
-4. Lock file:
+4. Lock configuration file:
     ```bash
     sudo chattr +i /etc/resolv.conf
     ```
@@ -213,11 +211,11 @@ ping google.com  # If fails – DNS problem
 
 ---
 
-## VirtualBox Conflict
+### VirtualBox Conflict
 
 If using **VirtualBox**, WSL may fail with Cisco VPN.
 
-### Solution:
+#### Solution
 
 1. Uninstall VirtualBox
 2. Uninstall Cisco AnyConnect
