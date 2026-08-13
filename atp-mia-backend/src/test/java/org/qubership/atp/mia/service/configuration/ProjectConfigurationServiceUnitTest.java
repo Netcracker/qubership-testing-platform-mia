@@ -30,14 +30,58 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.qubership.atp.mia.controllers.api.dto.CompoundDto;
+import org.qubership.atp.mia.controllers.api.dto.PrerequisiteDto;
+import org.qubership.atp.mia.controllers.api.dto.ProcessDto;
+import org.qubership.atp.mia.controllers.api.dto.ValidationDto;
 import org.qubership.atp.mia.exceptions.MiaException;
 import org.qubership.atp.mia.exceptions.configuration.DuplicateDirectoryException;
 import org.qubership.atp.mia.exceptions.configuration.FIleNotFoundException;
 import org.qubership.atp.mia.model.configuration.CompoundConfiguration;
 import org.qubership.atp.mia.model.file.ProjectDirectory;
 import org.qubership.atp.mia.service.BaseUnitTestConfiguration;
+import org.qubership.atp.mia.service.DeserializerConfigBaseTest;
 
 public class ProjectConfigurationServiceUnitTest extends BaseUnitTestConfiguration {
+
+    @Test
+    public void processToDto_unsetReferFieldsAreNull() {
+        ProcessDto processDto = processConfigurationService.get().toDto(DeserializerConfigBaseTest.getBg());
+        assertUnsetPrerequisiteReferFieldsAreNull(processDto);
+
+        ProcessDto processWithValidation = processConfigurationService.get()
+                .toDto(DeserializerConfigBaseTest.getGenerationPp());
+        assertUnsetValidationReferFieldIsNull(processWithValidation);
+    }
+
+    @Test
+    public void compoundToDto_unsetReferFieldsAreNull() {
+        CompoundDto compoundDto = compoundConfigurationService.get()
+                .toDto(DeserializerConfigBaseTest.getDefaultCompound());
+
+        ProcessDto bgProcess = compoundDto.getProcesses().stream()
+                .filter(process -> "SSH_BG".equals(process.getName()))
+                .findFirst()
+                .orElseThrow();
+        assertUnsetPrerequisiteReferFieldsAreNull(bgProcess);
+
+        ProcessDto generationPpProcess = compoundDto.getProcesses().stream()
+                .filter(process -> "SSH_GenerationFile_Postal_Payment".equals(process.getName()))
+                .findFirst()
+                .orElseThrow();
+        assertUnsetValidationReferFieldIsNull(generationPpProcess);
+    }
+
+    private void assertUnsetPrerequisiteReferFieldsAreNull(ProcessDto processDto) {
+        PrerequisiteDto prerequisite = processDto.getProcessSettings().getPrerequisites().getFirst();
+        Assertions.assertNull(prerequisite.getReferToInputName());
+        Assertions.assertNull(prerequisite.getReferToCommandValue());
+    }
+
+    private void assertUnsetValidationReferFieldIsNull(ProcessDto processDto) {
+        ValidationDto validation = processDto.getProcessSettings().getValidations().getFirst();
+        Assertions.assertNull(validation.getReferToCommandExecution());
+    }
 
     @Test
     public void getCompoundById() {

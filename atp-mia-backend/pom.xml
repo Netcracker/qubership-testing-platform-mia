@@ -929,20 +929,6 @@
                     </execution>
                     <!-- MIA -->
                     <execution>
-                        <id>openapi-mia-models-v2.yaml</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-models-v2.yaml</inputSpec>
-                            <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
-                            <configOptions>
-                                <notNullJacksonAnnotation>true</notNullJacksonAnnotation>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>cache-controller-v2.yaml</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -1040,6 +1026,21 @@
                             <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-history-changes-controller-v2.yaml</inputSpec>
                             <apiPackage>org.qubership.atp.mia.controllers.api</apiPackage>
                             <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>openapi-mia-models-v2.yaml</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/../atp-mia-rest-openapi-specifications/v2/openapi-mia-models-v2.yaml</inputSpec>
+                            <modelPackage>org.qubership.atp.mia.controllers.api.dto</modelPackage>
+                            <configOptions>
+                                <containerDefaultToNull>true</containerDefaultToNull>
+                                <notNullJacksonAnnotation>true</notNullJacksonAnnotation>
+                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>
