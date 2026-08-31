@@ -15,12 +15,12 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.23/community/" >/etc/apk/repo
         gcompat=1.1.0-r4 \
         gettext=0.24.1-r1 \
         git=2.52.0-r0 \
-        htop=3.4.1-r1 \
+        htop=3.4.1-r2 \
         jq=1.8.1-r0 \
         libpng=1.6.58-r1 \
-        libcrypto3=3.5.7-r0 \
-        libexpat=2.8.2-r0 \
-        libssl3=3.5.7-r0 \
+        libcrypto3=3.5.6-r0 \
+        libexpat=2.8.3-r0 \
+        libssl3=3.5.6-r0 \
         musl=1.2.5-r23 \
         musl-utils=1.2.5-r23 \
         net-tools=2.10-r3 \
