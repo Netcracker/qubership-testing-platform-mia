@@ -44,7 +44,7 @@ on:
           - 'github'
           - 'central'
         required: false
-        default: 'central'
+        default: 'github'
       mvn-args:
         description: 'Additional maven arguments to pass (e.g. -DskipTests=true -Dmaven.javadoc.skip=true)'
         required: false
@@ -93,7 +93,7 @@ jobs:
         uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/actions/databases/ssh_for_build@main
 
       - name: "Build and Publish current SNAPSHOT (dry run)"
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@b6bee6f61fdc8b367777c1173fc852a58878a6a7 #v2.5.0
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@4ce44398bac0a6f82e55aeb4a753aada3530de5b #v2.7.1
         with:
           java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
@@ -152,7 +152,7 @@ jobs:
       - name: "Build and Publish"
         id: build-and-publish
 
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@b6bee6f61fdc8b367777c1173fc852a58878a6a7 #v2.5.0
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@4ce44398bac0a6f82e55aeb4a753aada3530de5b #v2.7.1
         with:
           java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
@@ -224,7 +224,7 @@ jobs:
     steps:
       - name: "Docker Build"
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@b6bee6f61fdc8b367777c1173fc852a58878a6a7 #v2.5.0
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@4ce44398bac0a6f82e55aeb4a753aada3530de5b #v2.7.1
         with:
           ref: v${{ needs.deploy.outputs.release-version }}
           download-artifact: true
@@ -239,7 +239,7 @@ jobs:
   github-release:
     needs: [deploy]
     if: ${{ needs.deploy.result == 'success' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@b6bee6f61fdc8b367777c1173fc852a58878a6a7 #v2.5.0
+    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@4ce44398bac0a6f82e55aeb4a753aada3530de5b #v2.7.1
     with:
       version: ${{ needs.deploy.outputs.release-version }}
       publish: true
@@ -250,7 +250,7 @@ jobs:
     if: ${{ needs.docker-build.result == 'success' }}
     uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/workflows/deploy-run-tests.yaml@main
     with:
-      repository_name: 'qubership-testing-platform-mia'
+      repository_name: ${{ github.event.repository.name }}
       service_name: 'atp-mia'
       namespace: 'mia'
       pipeline_branch: 'main'
