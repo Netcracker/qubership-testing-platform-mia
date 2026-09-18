@@ -64,8 +64,7 @@ sudo dockerd
 
 > ⚠️ After reboot or logout, WSL shuts down with Docker.
 
-To start Docker automatically on WSL launch (based on [this `StackOverflow` answer](https://stackoverflow.com/questions/65813979/sudo-systemctl-enable-docker-not-available-automatically-run-docker-at-boot-o)):
-
+To start Docker automatically on WSL launch:
 1. Open Ubuntu console
 2. Add to `~/.profile`:
     ```bash
